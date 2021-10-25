@@ -8,6 +8,11 @@ doi={https://doi.org/10.1023/A:1016592219341}
 }
 """
 
+"""
+    solve(f, α, u₀, T, h)
+
+Computing the Fractional Differential Equations in time interval [0, T] with initial value y(0)=u₀, α-order derivative and step size h
+"""
 function solve(f, α, u0, T, h)
     N=T/h
     y=zeros(Int64(N+1))
@@ -53,9 +58,3 @@ end
 function B(j, n, α, h)
     return h^α/α*((n+1-j)^α-(n-j)^α)
 end
-
-fun(x, y) = 1-y
-result=solve(fun, 0.75, 0, 1, 0.01)
-tspan=collect(0:0.01:1)
-print(result)
-#plot(tspan, result)
