@@ -1,5 +1,7 @@
 module FractionalDiffEq
 
-# Write your package code here.
+using SpecialFunctions
+
+export solve
 
 end
