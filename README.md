@@ -65,3 +65,7 @@ tspan=collect(0:0.001:5)
 And if you plot the result, you can see the result of the fractional differential equation:
 
 ![Example](/docs/src/assets/simple_example.png)
+
+## Contributing
+
+If you are interested in Fractional Differential Equations and Julia, welcome to raise an issue or file a Pull Request!!

@@ -2,7 +2,6 @@ using FractionalDiffEq
 using Test
 
 
-
 @testset "Test Diethelm algorithms" begin
     fun(x, y) = 1-y
     result=solve(fun, 0.75, 0, 1, 0.01)

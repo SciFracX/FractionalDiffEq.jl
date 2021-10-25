@@ -15,7 +15,8 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
-        "Example" => "example/example.md"
+        "Example" => "example/example.md",
+        "FractionalDiffEq APIs" => "APIs.md"
     ],
 )
 
