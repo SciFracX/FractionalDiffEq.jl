@@ -31,6 +31,7 @@
     <img alt="GitHub forks" src="https://img.shields.io/github/forks/SciFracX/FractionalDiffEq.jl?style=flat-square">
   </a>
 </p>
+
 # Installation
 
 If you have already install Julia, you can install FractionalDiffEq.jl in REPL using Julia package manager:
@@ -42,16 +43,16 @@ Pkg> add FractionalDiffEq
 Or if you want to experience the latest version of FractionalDiffEq.jl:
 
 ```julia
-Pkg> add FractionalDiffEq
+Pkg> add FractionalDiffEq#master
 ```
 
 # Quick start
 
 Let's see if we have a initial value problem:
 
-<img src="https://latex.codecogs.com/gif.latex?D^{0.5} y(x)=1-y" />
-
-<img src="https://latex.codecogs.com/gif.latex?y(0)=0" />
+<p align="center">
+<img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/READMELaTeX.png"/>
+</p>
 
 So we can use FractionalDiffEq.jl to solve the problem:
 
