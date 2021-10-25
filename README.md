@@ -31,4 +31,36 @@
     <img alt="GitHub forks" src="https://img.shields.io/github/forks/SciFracX/FractionalDiffEq.jl?style=flat-square">
   </a>
 </p>
-FractionalDiffEq.jl provides supports for solving fractional differential equations.
+# Installation
+
+If you have already install Julia, you can install FractionalDiffEq.jl in REPL using Julia package manager:
+
+```julia
+Pkg> add FractionalDiffEq
+```
+
+Or if you want to experience the latest version of FractionalDiffEq.jl:
+
+```julia
+Pkg> add FractionalDiffEq
+```
+
+# Quick start
+
+Let's see if we have a initial value problem:
+
+<img src="https://latex.codecogs.com/gif.latex?D^{0.5} y(x)=1-y" />
+
+<img src="https://latex.codecogs.com/gif.latex?y(0)=0" />
+
+So we can use FractionalDiffEq.jl to solve the problem:
+
+```julia
+fun(x, y) = 1-y
+result=solve(fun, 0.5, 0, 5, 0.001)
+tspan=collect(0:0.001:5)
+```
+
+And if you plot the result, you can see the result of the fractional differential equation:
+
+![Example](/docs/src/assets/simple_example.png)
