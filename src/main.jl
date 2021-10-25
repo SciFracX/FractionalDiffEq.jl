@@ -53,3 +53,9 @@ end
 function B(j, n, α, h)
     return h^α/α*((n+1-j)^α-(n-j)^α)
 end
+
+fun(x, y) = 1-y
+result=solve(fun, 0.75, 0, 1, 0.01)
+tspan=collect(0:0.01:1)
+print(result)
+#plot(tspan, result)
