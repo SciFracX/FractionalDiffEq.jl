@@ -58,7 +58,8 @@ So we can use FractionalDiffEq.jl to solve the problem:
 
 ```julia
 fun(x, y) = 1-y
-result=solve(fun, 0.5, 0, 5, 0.001)
+prob = FDEProblem(fun, 0.5, 0, 5, 0.001)
+result=solve(prob)
 tspan=collect(0:0.001:5)
 ```
 

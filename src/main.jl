@@ -1,5 +1,10 @@
 using SpecialFunctions
 
+"""
+    FDEProblem(f, α, u0, T, h)
+
+Define a Fractional Differential in time interval [0, T] with initial value y(0)=u₀, α-order derivative and step size h.
+"""
 struct FDEProblem
     f::Function
     α::Float64
@@ -17,14 +22,18 @@ doi={https://doi.org/10.1023/A:1016592219341}
 """
 
 """
-    solve(f, α, u₀, T, h)
+    solve(FDEProblem)
 
-Computing the Fractional Differential Equations in time interval [0, T] with initial value y(0)=u₀, α-order derivative and step size h
+After define the FDEProblem, use **solve** to computing the Fractional Differential Equation
+
+Note that we use Predictor-Corrector algorithms to approximate the result, with can be specified as PECE(Predict-Evaluate-Correct-Evaluate)
+
+Algorithm taken from Diethelm's paper.
 """
 function solve(FDE::FDEProblem)
     f, α, u0, T, h = FDE.f, FDE.α, FDE.u0, FDE.T, FDE.h
-    N=T/h
-    y=zeros(Int64(N+1))
+    N=Int64(T/h)
+    y=zeros(N+1)
 
     for n in range(0, N, step=1)
         y[Int64(n+1)]=u0 + h^α/gamma(α+2)*f((n+1)*h, predictor(f, y, α, n, h, u0))+h^α/gamma(α+2)*right(f, y, α, n, h)

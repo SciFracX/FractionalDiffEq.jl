@@ -3,3 +3,8 @@
 ```@docs
 FractionalDiffEq.solve
 ```
+
+```@docs
+F
+```
+
