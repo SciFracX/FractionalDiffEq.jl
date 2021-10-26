@@ -1,5 +1,13 @@
 using SpecialFunctions
 
+struct FDEProblem
+    f::Function
+    α::Float64
+    u0
+    T
+    h::Float64
+end
+
 """
 @article{
 title={A predictor-corrector approach for the numerical solution of fractional differential equations},
@@ -13,12 +21,13 @@ doi={https://doi.org/10.1023/A:1016592219341}
 
 Computing the Fractional Differential Equations in time interval [0, T] with initial value y(0)=u₀, α-order derivative and step size h
 """
-function solve(f, α, u0, T, h)
+function solve(FDE::FDEProblem)
+    f, α, u0, T, h = FDE.f, FDE.α, FDE.u0, FDE.T, FDE.h
     N=T/h
     y=zeros(Int64(N+1))
 
     for n in range(0, N, step=1)
-        y[Int64(n+1)]=u0 + h^α/gamma(α+2)*f((n+1)*h, predictor(f, y, α, n, h, u0))+h^α/gamma(α+2)+right(f, y, α, n, h)
+        y[Int64(n+1)]=u0 + h^α/gamma(α+2)*f((n+1)*h, predictor(f, y, α, n, h, u0))+h^α/gamma(α+2)*right(f, y, α, n, h)
     end
 
     return y
@@ -31,7 +40,7 @@ function right(f, y, α, n, h)
         temp+=A(j, n, α)*f(j*h, y[Int64(j+1)])
     end
 
-    return h^α/gamma(α+2)*temp
+    return temp
 end
 
 function predictor(f, y, α, n, h, u0)

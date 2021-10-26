@@ -3,6 +3,6 @@ module FractionalDiffEq
 using SpecialFunctions
 
 include("main.jl")
-export solve
+export solve, FDEProblem
 
 end
