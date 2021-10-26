@@ -28,7 +28,7 @@ After define the FDEProblem, use **solve** to computing the Fractional Different
 
 Note that we use [Predictor-Corrector algorithms](https://en.wikipedia.org/wiki/Predictor%E2%80%93corrector_method) to approximate the result, with can be specified as PECE(Predict-Evaluate-Correct-Evaluate)
 
-Algorithm taken from Diethelm's paper.
+Algorithm is taken from Diethelm's paper.
 """
 function solve(FDE::FDEProblem)
     f, α, u0, T, h = FDE.f, FDE.α, FDE.u0, FDE.T, FDE.h

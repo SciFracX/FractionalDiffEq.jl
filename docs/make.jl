@@ -14,7 +14,7 @@ makedocs(;
         assets=["assets/favicon.ico"],
     ),
     pages=[
-        "Home" => "index.md",
+        "FractionalDiffEq.jl" => "index.md",
         "Example" => "example/example.md",
         "FractionalDiffEq APIs" => "APIs.md"
     ],
