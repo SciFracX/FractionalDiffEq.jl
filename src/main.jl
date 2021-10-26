@@ -26,7 +26,7 @@ doi={https://doi.org/10.1023/A:1016592219341}
 
 After define the FDEProblem, use **solve** to computing the Fractional Differential Equation
 
-Note that we use Predictor-Corrector algorithms to approximate the result, with can be specified as PECE(Predict-Evaluate-Correct-Evaluate)
+Note that we use [Predictor-Corrector algorithms](https://en.wikipedia.org/wiki/Predictor%E2%80%93corrector_method) to approximate the result, with can be specified as PECE(Predict-Evaluate-Correct-Evaluate)
 
 Algorithm taken from Diethelm's paper.
 """

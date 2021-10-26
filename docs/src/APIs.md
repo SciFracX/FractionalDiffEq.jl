@@ -5,6 +5,5 @@ FractionalDiffEq.solve
 ```
 
 ```@docs
-F
+FractionalDiffEq.FDEProblem
 ```
-
