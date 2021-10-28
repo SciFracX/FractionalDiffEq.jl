@@ -34,9 +34,17 @@ function solve(FDE::FDEProblem)
     f, α, u0, T, h = FDE.f, FDE.α, FDE.u0, FDE.T, FDE.h
     N=Int64(T/h)
     y=zeros(N+1)
+    leftsum=0
+
+    if floor(α)==0
+        leftsum=u0
+    elseif floor(α)==1
+        leftsum=u0+T*u0
+    end
 
     for n in range(0, N, step=1)
-        y[Int64(n+1)]=u0 + h^α/gamma(α+2)*f((n+1)*h, predictor(f, y, α, n, h, u0))+h^α/gamma(α+2)*right(f, y, α, n, h)
+        #y[Int64(n+1)]=u0 + h^α/gamma(α+2)*f((n+1)*h, predictor(f, y, α, n, h, u0))+h^α/gamma(α+2)*right(f, y, α, n, h)
+        y[Int64(n+1)]=leftsum + h^α/gamma(α+2)*f((n+1)*h, predictor(f, y, α, n, h, u0))+h^α/gamma(α+2)*right(f, y, α, n, h)
     end
 
     return y
@@ -52,14 +60,22 @@ function right(f, y, α, n, h)
     return temp
 end
 
-function predictor(f, y, α, n, h, u0)
+function predictor(f, y, α, n, h, u0, T)
      predict = 0
+     leftsum = 0
+
+     if floor(α)==0
+        leftsum=u0
+     elseif floor(α)==1
+        leftsum=u0+T*u0
+     end
 
      for j in range(0, n, step=1)
         predict+=B(j, n, α, h)*f(j*h, y[Int64(j+1)])
      end
 
-     return u0+predict
+     #return u0+predict
+     return leftsum+predict
 end
 
 
@@ -76,3 +92,4 @@ end
 function B(j, n, α, h)
     return h^α/α*((n+1-j)^α-(n-j)^α)
 end
+
