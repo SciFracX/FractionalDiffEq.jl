@@ -31,7 +31,6 @@
     <img alt="GitHub forks" src="https://img.shields.io/github/forks/SciFracX/FractionalDiffEq.jl?style=flat-square">
   </a>
 </p>
-
 # Installation
 
 If you have already install Julia, you can install FractionalDiffEq.jl in REPL using Julia package manager:
@@ -45,6 +44,8 @@ Or if you want to experience the latest version of FractionalDiffEq.jl:
 ```julia
 Pkg> add FractionalDiffEq#master
 ```
+
+> Please note the scope of order is only 0 < α < 2
 
 # Quick start
 

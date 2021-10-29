@@ -5,6 +5,7 @@ using MittagLeffler
 #Analytical solution
 target = []
 
+#MittagLeffler.jl doesn't support array argument
 for i in 0:0.01:20
     push!(target, i^1.8*mittleff(1.8,2.8,-i^1.8))
 end

@@ -26,6 +26,9 @@ Or if you want to experience the latest version of FractionalDiffEq.jl:
 Pkg> add FractionalDiffEq#master
 ```
 
+!!! warning "Scope of order"
+	Please note that right now, FractionalDiffEq.jl only support $0 < \alpha < 2$
+
 ## Plans
 
 * More algorithms are planned to support
