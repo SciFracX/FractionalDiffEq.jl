@@ -43,8 +43,7 @@ function solve(FDE::FDEProblem)
     end
 
     for n in range(0, N, step=1)
-        #y[Int64(n+1)]=u0 + h^α/gamma(α+2)*f((n+1)*h, predictor(f, y, α, n, h, u0))+h^α/gamma(α+2)*right(f, y, α, n, h)
-        y[Int64(n+1)]=leftsum + h^α/gamma(α+2)*f((n+1)*h, predictor(f, y, α, n, h, u0))+h^α/gamma(α+2)*right(f, y, α, n, h)
+        y[Int64(n+1)]=leftsum + h^α/gamma(α+2)*f((n+1)*h, predictor(f, y, α, n, h, u0, T))+h^α/gamma(α+2)*right(f, y, α, n, h)
     end
 
     return y
@@ -92,4 +91,3 @@ end
 function B(j, n, α, h)
     return h^α/α*((n+1-j)^α-(n-j)^α)
 end
-

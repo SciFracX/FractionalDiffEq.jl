@@ -48,7 +48,7 @@ Pkg> add FractionalDiffEq#master
 
 # Quick start
 
-Let's see if we have a initial value problem:
+Let's see if we have an initial value problem:
 
 <p align="center">
 <img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/READMELaTeX.png"/>
