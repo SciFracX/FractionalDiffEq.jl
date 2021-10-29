@@ -48,10 +48,12 @@ Pkg> add FractionalDiffEq#master
 
 # Quick start
 
+### An easy example
+
 Let's see if we have an initial value problem:
 
 <p align="center">
-<img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/READMELaTeX.png"/>
+<img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/simple_example_latex.png"/>
 </p>
 
 So we can use FractionalDiffEq.jl to solve the problem:
@@ -66,6 +68,20 @@ tspan=collect(0:0.001:5)
 And if you plot the result, you can see the result of the fractional differential equation:
 
 ![Example](/docs/src/assets/simple_example.png)
+
+### A sophisticated example
+
+Let's see if the initial value problem like:
+
+<p align="center">
+<img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/example_latex.png"/>
+</p>
+
+Here, **E** means [MittagLeffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function).
+
+Use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/example.jl) to plot the numerical approximation and analytical solution, we can see the numerical approximation in FractionalDiffEq.jl is powerful:
+
+![Example](docs/src/assets/example.png)
 
 ## Contributing
 
