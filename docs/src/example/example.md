@@ -33,18 +33,24 @@ Bingo!! You get the result!
 Let's see if the result computed using FractionalDiffEq.jl is correct compared with analytical solution.
 
 Suppose there is an initial value problem:
-$$
+
+```math
 D^{1.8}y(x)+y(x)=1 \\
 y(0)=0,\ y'(0)=0
-$$
+```
+
 We already know the solution of this fractional differential equation is
-$$
+
+```math
 y(x)=x^{1.8}E_{1.8,\ 2.8}(-x^{1.8})
-$$
+```
+
 Here, $E$ represent [Mittag Leffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function):
-$$
+
+```math
 E_{\alpha,\ \beta}=\displaystyle\sum_{k=0}^{\infty}\frac{z^k}{\Gamma(\alpha k+\beta)}
-$$
+```
+
 And we use [jlapeyre/MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl) to generate Mittag Leffler function.
 
 ```julia
