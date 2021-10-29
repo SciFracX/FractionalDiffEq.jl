@@ -77,6 +77,12 @@ Let's see if the initial value problem like:
 <img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/example_latex.png"/>
 </p>
 
+While we already know that the solution of this fractional differential equation is:
+
+<p align="center">
+<img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/analytical_latex.png"/>
+</p>
+
 Here, **E** means [MittagLeffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function).
 
 Use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/example.jl) to plot the numerical approximation and analytical solution, we can see the numerical approximation in FractionalDiffEq.jl is powerful:
