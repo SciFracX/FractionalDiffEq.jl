@@ -1,5 +1,9 @@
 using SpecialFunctions
 
+abstract type FractionalDiffEqAlgorithm end
+
+struct PECE <: FractionalDiffEqAlgorithm end
+
 """
     FDEProblem(f, α, u0, T, h)
 
@@ -30,7 +34,7 @@ Note that we use [Predictor-Corrector algorithms](https://en.wikipedia.org/wiki/
 
 Algorithm is taken from Diethelm's paper.
 """
-function solve(FDE::FDEProblem)
+function solve(FDE::FDEProblem, ::PECE)
     f, α, u0, T, h = FDE.f, FDE.α, FDE.u0, FDE.T, FDE.h
     N=Int64(T/h)
     y=zeros(N+1)

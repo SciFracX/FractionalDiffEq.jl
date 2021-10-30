@@ -90,6 +90,15 @@ Use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/mast
 
 ![Example](docs/src/assets/example.png)
 
+## Plans
+
+* Trapezoid PI rule
+* Fractional Linear Multi-step Method
+
+### Multi-term support
+
+
+
 ## Contributing
 
 If you are interested in Fractional Differential Equations and Julia, welcome to raise an issue or file a Pull Request!!
