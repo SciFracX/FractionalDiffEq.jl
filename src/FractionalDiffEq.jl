@@ -1,6 +1,6 @@
 module FractionalDiffEq
 
-using SpecialFunctions, InvertedIndices, MittagLeffler
+using LinearAlgebra, SpecialFunctions, InvertedIndices, MittagLeffler
 
 include("main.jl")
 include("matrix.jl")

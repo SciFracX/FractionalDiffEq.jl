@@ -1,6 +1,6 @@
 import FractionalDiffEq.solve
 
-using LinearAlgebra, InvertedIndices, Plots
+using LinearAlgebra, InvertedIndices
 
 
 abstract type FractionalDiffEqAlgorithm end
