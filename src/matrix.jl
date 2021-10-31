@@ -5,29 +5,18 @@ using LinearAlgebra, InvertedIndices, Plots
 
 abstract type FractionalDiffEqAlgorithm end
 
-
-struct MatrixDiscrete <: FractionalDiffEqAlgorithm end
-
-
 """
+Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional differential equations to simple algebra system and solve the system.
+
+```tex
 @inproceedings{Podlubny2000MATRIXAT,
   title={MATRIX APPROACH TO DISCRETE FRACTIONAL CALCULUS},
   author={Igor Podlubny},
   year={2000}
 }
+```
 """
-
-
-"""
-    eliminator(n, row)
-
-Compute the eliminator matrix Sₖ by omiting n-th row
-"""
-function eliminator(n, row)
-    temp = zeros(n, n)+I
-    return temp[Not(row), :]
-end
-
+struct MatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 
 """
@@ -39,6 +28,41 @@ end
 """
 
 """
+@inproceedings{Podlubny2000MATRIXAT,
+  title={MATRIX APPROACH TO DISCRETE FRACTIONAL CALCULUS},
+  author={Igor Podlubny},
+  year={2000}
+}
+"""
+
+"""
+    solve(p1, α, p2, c, h, T, MatrixDiscrete)
+
+Using the Matrix Discretization algorithms proposed by Prof Igor Podlubny to approximate the numerical solution.
+"""
+function solve(p1, α, p2, c, h, T, ::MatrixDiscrete)
+    n=Int64(floor(α))
+    rows=collect(1:n)
+    N=Int64(T/h+1)
+    equation = p1*B(N, α, h)+p2*(zeros(N, N)+I)
+    equation = eliminator(N, rows)*equation*eliminator(N, rows)'
+    righthand = c*eliminator(N, rows)*ones(N)
+    result = equation\righthand
+    return vcat(zeros(n), result)
+end
+
+"""
+    eliminator(n, row)
+
+Compute the eliminator matrix Sₖ by omiting n-th row
+"""
+function eliminator(n, row)
+    temp = zeros(n, n)+I
+    return temp[Not(row), :]
+end
+
+"""
+Generating elements in Matrix.
 """
 function omega(n, p)
     omega = zeros(n+1)
@@ -74,17 +98,4 @@ function F(N, p, h)
     result=reverse(reverse(result, dims=1), dims=2)
 
     return (-1)^(ceil(p))*h^(-p)*result
-end
-
-
-function solve(p1, α, p2, c, h, T, ::MatrixDiscrete)
-    
-    n=Int64(floor(α))
-    rows=collect(1:n)
-    N=Int64(T/h+1)
-    equation = p1*B(N, α, h)+p2*(zeros(N, N)+I)
-    equation = eliminator(N, rows)*equation*eliminator(N, rows)'
-    righthand = c*eliminator(N, rows)*ones(N)
-    result = equation\righthand
-    return vcat(zeros(n), result)
 end

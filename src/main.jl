@@ -26,9 +26,9 @@ doi={https://doi.org/10.1023/A:1016592219341}
 """
 
 """
-    solve(FDEProblem)
+    solve(FDEProblem, PECE())
 
-After define the FDEProblem, use **solve** to computing the Fractional Differential Equation
+After define the FDEProblem, use **PECE(Predict-Evaluate-Correct-Evaluate)** algorithm to computing the Fractional Differential Equation
 
 Note that we use [Predictor-Corrector algorithms](https://en.wikipedia.org/wiki/Predictor%E2%80%93corrector_method) to approximate the result, with can be specified as PECE(Predict-Evaluate-Correct-Evaluate)
 
