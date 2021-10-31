@@ -14,11 +14,19 @@ FractionalDiffEq.solve
 
 ## Current algorithms:
 
+### Base type
+
+```@docs
+FractionalDiffEq.FractionalDiffEqAlgorithm
+```
+
+### Detailed types
+
 ```@docs
 FractionalDiffEq.PECE
 ```
 
 ```@docs
-FractionalDiffEq.MatrixD
+FractionalDiffEq.MatrixDiscrete
 ```
 

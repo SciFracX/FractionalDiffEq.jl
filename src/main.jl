@@ -1,8 +1,30 @@
 using SpecialFunctions
 
+"""
+Base type of FractionalDiffEq algorithms
+"""
 abstract type FractionalDiffEqAlgorithm end
 
+
+
+"""
+@article{
+title={A predictor-corrector approach for the numerical solution of fractional differential equations},
+author={Diethelm, Kai and Ford, Neville J. and Freed, Alan D.}
+doi={https://doi.org/10.1023/A:1016592219341}
+}
+"""
+
+"""
+Predict-Evaluate-Correct-Evaluate algorithm.
+
+For more details, please refer to [Predictor-Corrector algorithms](https://en.wikipedia.org/wiki/Predictor%E2%80%93corrector_method)
+
+This PECE algorithm is taken from Diethelm's paper.
+"""
 struct PECE <: FractionalDiffEqAlgorithm end
+#TODO: Use Richardson extrapolation to refine the PECE algorithms 
+
 
 """
     FDEProblem(f, α, u0, T, h)
@@ -17,22 +39,11 @@ struct FDEProblem
     h::Float64
 end
 
-"""
-@article{
-title={A predictor-corrector approach for the numerical solution of fractional differential equations},
-author={Diethelm, Kai and Ford, Neville J. and Freed, Alan D.}
-doi={https://doi.org/10.1023/A:1016592219341}
-}
-"""
 
 """
     solve(FDEProblem, PECE())
 
 After define the FDEProblem, use **PECE(Predict-Evaluate-Correct-Evaluate)** algorithm to computing the Fractional Differential Equation
-
-Note that we use [Predictor-Corrector algorithms](https://en.wikipedia.org/wiki/Predictor%E2%80%93corrector_method) to approximate the result, with can be specified as PECE(Predict-Evaluate-Correct-Evaluate)
-
-Algorithm is taken from Diethelm's paper.
 """
 function solve(FDE::FDEProblem, ::PECE)
     f, α, u0, T, h = FDE.f, FDE.α, FDE.u0, FDE.T, FDE.h
