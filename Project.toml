@@ -10,6 +10,7 @@ SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 
 [compat]
 InvertedIndices = "1.1.0"
+Parsers = "2"
 SpecialFunctions = "1.6.2"
 julia = "1.2"
 
