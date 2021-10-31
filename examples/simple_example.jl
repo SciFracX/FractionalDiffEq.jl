@@ -1,7 +1,7 @@
 using FractionalDiffEq, Plots
 
 fun(x, y) = 1-y
-prob=FDEProblem(fun, 1.8, 0, 10, 0.01)
+prob=FDEProblem(fun, 1.8, 0, 10, 0.01, PECE())
 result=solve(prob)
 tspan=collect(0:0.01:10)
 

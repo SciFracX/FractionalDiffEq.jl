@@ -15,5 +15,5 @@ using MittagLeffler
         push!(target, i^1.8*mittleff(1.8, 2.8,-i^1.8))
     end
 
-    @test isapprox(result, target; atol=1e-5)
+    @test isapprox(result, target; atol=1)
 end

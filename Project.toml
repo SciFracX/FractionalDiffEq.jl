@@ -5,13 +5,13 @@ version = "0.1.0"
 
 [deps]
 InvertedIndices = "41ab1584-1d38-5bbf-9106-f11c6c58b48f"
-SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 MittagLeffler = "9c257583-4f8f-53fd-abd9-c69d5080dd54"
+SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 
 [compat]
 InvertedIndices = "1.1"
-SpecialFunctions = "1.8"
-MittagLeffler = "0.2"
+MittagLeffler = "0.2.0"
+SpecialFunctions = "0.7.0"
 julia = "1.2"
 
 [extras]

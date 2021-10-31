@@ -13,7 +13,7 @@ end
 #Numerical solution
 fun(x, y) = 1-y
 prob = FDEProblem(fun, 1.8, 0, 20, 0.01)
-result=solve(prob)
+result=solve(prob, PECE())
 tspan=collect(0:0.01:20)
 
 #Want to use a more elegant plotting backend, especially for the LaTeX rendering, failed anyway (T_T)
