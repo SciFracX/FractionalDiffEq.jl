@@ -36,9 +36,9 @@ struct MatrixDiscrete <: FractionalDiffEqAlgorithm end
 """
 
 """
-    solve(p1, α, p2, c, h, T, MatrixDiscrete)
+    solve(p1, α, p2, c, h, T, MatrixDiscrete())
 
-Using the Matrix Discretization algorithms proposed by Prof Igor Podlubny to approximate the numerical solution.
+Using the **Matrix Discretization algorithm** proposed by [Prof Igor Podlubny](http://people.tuke.sk/igor.podlubny/index.html) to approximate the numerical solution.
 """
 function solve(p1, α, p2, c, h, T, ::MatrixDiscrete)
     n=Int64(floor(α))

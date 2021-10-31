@@ -21,6 +21,14 @@ Predict-Evaluate-Correct-Evaluate algorithm.
 For more details, please refer to [Predictor-Corrector algorithms](https://en.wikipedia.org/wiki/Predictor%E2%80%93corrector_method)
 
 This PECE algorithm is taken from Diethelm's paper.
+
+```tex
+@article{
+title={A predictor-corrector approach for the numerical solution of fractional differential equations},
+author={Diethelm, Kai and Ford, Neville J. and Freed, Alan D.}
+doi={https://doi.org/10.1023/A:1016592219341}
+}
+```
 """
 struct PECE <: FractionalDiffEqAlgorithm end
 #TODO: Use Richardson extrapolation to refine the PECE algorithms 
@@ -43,7 +51,7 @@ end
 """
     solve(FDEProblem, PECE())
 
-After define the FDEProblem, use **PECE(Predict-Evaluate-Correct-Evaluate)** algorithm to computing the Fractional Differential Equation
+After define the FDEProblem, use **PECE(Predict-Evaluate-Correct-Evaluate) algorithm** to computing the Fractional Differential Equation
 """
 function solve(FDE::FDEProblem, ::PECE)
     f, α, u0, T, h = FDE.f, FDE.α, FDE.u0, FDE.T, FDE.h
