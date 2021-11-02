@@ -12,14 +12,16 @@ y(0)=0
 So to solve the problem, we can use FractionalDiffEq.jl like this:
 
 ```julia
-using FractionalDiffEq, Plots
+using FractionalDiffEq, Plots, LaTeXStrings
+
+s="\$D^{0.5}y(x)=1-y,\\ y(0)=0\$"
 
 fun(x, y) = 1-y
 prob=FDEProblem(fun, 0.5, 0, 5, 0.001)
 result=solve(prob)
 tspan=collect(0:0.001:5)
 
-plot(tspan, result, title="D^α y(x)=1-y, y(0)=0", linewidth=2, legend=:bottomright)
+plot(tspan, result, title=s, linewidth=2, legend=:bottomright)
 ```
 
 And execute the file in your favorite IDE (VSCode recommend).
@@ -65,6 +67,8 @@ for i in 0:0.01:20
     push!(target, i^1.8*mittleff(1.8,2.8,-i^1.8))
 end
 
+s="\$D^{0.5}y(x)=1-y,\\ y(0)=0\$"
+
 #Numerical solution
 fun(x, y) = 1-y
 prob = FDEProblem(fun, 1.8, 0, 20, 0.01)
@@ -73,7 +77,7 @@ tspan=collect(0:0.01:20)
 
 gr()
 
-plot(tspan, result, title="D^1.8 y(x)=1-y, y(0)=0", linewidth=5, label="Numerical", legend=:bottomright)
+plot(tspan, result, title=s, linewidth=5, label="Numerical", legend=:bottomright)
 plot!(tspan, target, lw=3, ls=:dash, label="Analytical")
 ```
 

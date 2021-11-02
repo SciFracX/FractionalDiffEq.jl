@@ -8,4 +8,3 @@ result=solve(prob, PECE())
 tspan=collect(0:0.01:5)
 
 plot(tspan, result, title=s, linewidth=2, legend=:bottomright)
-savefig("D:\\simple_example.png")
