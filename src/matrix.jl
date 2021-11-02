@@ -3,8 +3,6 @@ import FractionalDiffEq.solve
 using LinearAlgebra, InvertedIndices
 
 
-abstract type FractionalDiffEqAlgorithm end
-
 """
 Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional differential equations to simple algebra system and solve the system.
 

@@ -40,7 +40,7 @@ struct PECE <: FractionalDiffEqAlgorithm end
 Define a Fractional Differential in time interval [0, T] with initial value y(0)=u₀, α-order derivative and step size h.
 """
 struct FDEProblem
-    f::Function
+    f
     α::Float64
     u0
     T
