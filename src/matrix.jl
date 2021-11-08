@@ -1,7 +1,7 @@
 import FractionalDiffEq.solve, FractionalDiffEq.FractionalDiffEqAlgorithm
 
 using LinearAlgebra, InvertedIndices
-
+using Plots
 
 """
 Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional differential equations to simple algebra system and solve the system.
@@ -38,7 +38,6 @@ struct MatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 Using the **Matrix Discretization algorithm** proposed by [Prof Igor Podlubny](http://people.tuke.sk/igor.podlubny/index.html) to approximate the numerical solution.
 """
-
 function solve(p1, α, p2, c, h, T, ::MatrixDiscrete)
     n=Int64(floor(α))
     rows=collect(1:n)
@@ -106,4 +105,19 @@ function F(N, p, h)
     result=reverse(reverse(result, dims=1), dims=2)
 
     return (-1)^(ceil(p))*h^(-p)*result
+end
+
+"""
+    bagleytorvik(p1, p2, p3, T, h)
+
+By specifying the parameters of Bagley Torvik Equation, we can use **bagleytorvik** to directly obtain the numerical approximation.
+"""
+function bagleytorvik(p1, p2, p3, T, h)
+    N=Int64(T/h+1)
+    equation = p1*B(N, 2, h)+p2*B(N, 1.5, h)+p3*(zeros(N, N)+I)
+    equation = eliminator(N, [1,2])*equation*eliminator(N, [1,2])'
+    right = eliminator(N, [1,2])*ones(N)
+    result = equation\right
+
+    return vcat(zeros(2), result)
 end

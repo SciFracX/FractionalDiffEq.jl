@@ -26,9 +26,6 @@ Or if you want to experience the latest version of FractionalDiffEq.jl:
 Pkg> add FractionalDiffEq#master
 ```
 
-!!! warning "Scope of order"
-	Please note that right now, FractionalDiffEq.jl only support $0 < \alpha < 2$
-
 ## Plans
 
 * More algorithms are planned to support
@@ -43,4 +40,4 @@ The development of FractionalDiffEq.jl is on [GitHub](https://github.com/SciFrac
 **FractionalDiffEq.jl** is built upon the hard work of many scientific researchers, I sincerely appreciate what they have done to help the development of science and technology.
 
 !!! info "WIP"
-		FractionalDiffEq.jl is under heavy construction, some APIs or docs might change a lot.
+	FractionalDiffEq.jl is under heavy construction, some APIs or docs might change a lot.

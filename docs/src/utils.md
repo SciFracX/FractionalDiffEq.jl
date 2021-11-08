@@ -8,14 +8,19 @@ Well, fractional differential equation can be seen as the generalization of ODE 
 
 ## A simple example —— Relaxation Oscillation Equation
 
-Let's see a simple model involving fractional differential equations:
+Let's see a simple model involving fractional differential equations: [Relaxation Oscillation Process]()
 
 ```math
 D^{1.8}y(t)+y(t)=1,\ (t>0)
-\\
-\\
+```
+
+```math
 y^{(k)}(0)=0
 ```
+
+
+
+![Relaxation Oscillation](./assets/src/example.png)
 
 ## FDE with specific initial value
 
