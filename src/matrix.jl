@@ -1,4 +1,4 @@
-import FractionalDiffEq.solve
+import FractionalDiffEq.solve, FractionalDiffEq.FractionalDiffEqAlgorithm
 
 using LinearAlgebra, InvertedIndices
 
@@ -38,6 +38,7 @@ struct MatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 Using the **Matrix Discretization algorithm** proposed by [Prof Igor Podlubny](http://people.tuke.sk/igor.podlubny/index.html) to approximate the numerical solution.
 """
+
 function solve(p1, α, p2, c, h, T, ::MatrixDiscrete)
     n=Int64(floor(α))
     rows=collect(1:n)
@@ -46,6 +47,15 @@ function solve(p1, α, p2, c, h, T, ::MatrixDiscrete)
     equation = eliminator(N, rows)*equation*eliminator(N, rows)'
     righthand = c*eliminator(N, rows)*ones(N)
     result = equation\righthand
+    return vcat(zeros(n), result)
+end
+
+
+function solve(equation, right, h, T)
+    N=Int64(T/h+1)
+    equation = eliminator(N, rows)*equation*eliminator(N, rows)'
+    right = right*eliminator(N, rows)*ones(N)
+    result = equation\right
     return vcat(zeros(n), result)
 end
 

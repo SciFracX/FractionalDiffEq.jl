@@ -39,12 +39,12 @@ struct PECE <: FractionalDiffEqAlgorithm end
 
 Define a Fractional Differential in time interval [0, T] with initial value y(0)=u₀, α-order derivative and step size h.
 """
-struct FDEProblem
+struct FDEProblem{T<:Float64}
     f
-    α::Float64
-    u0
+    α::T
+    u0::T
     T
-    h::Float64
+    h::T
 end
 
 
@@ -57,7 +57,7 @@ function solve(FDE::FDEProblem, ::PECE)
     f, α, u0, T, h = FDE.f, FDE.α, FDE.u0, FDE.T, FDE.h
     N=Int64(T/h)
     y=zeros(N+1)
-    leftsum=0
+    leftsum = 0
 
     if floor(α)==0
         leftsum=u0
@@ -65,7 +65,7 @@ function solve(FDE::FDEProblem, ::PECE)
         leftsum=u0+T*u0
     end
 
-    for n in range(0, N, step=1)
+    @fastmath @inbounds @simd for n in range(0, N, step=1)
         y[Int64(n+1)]=leftsum + h^α/gamma(α+2)*f((n+1)*h, predictor(f, y, α, n, h, u0, T))+h^α/gamma(α+2)*right(f, y, α, n, h)
     end
 
@@ -92,7 +92,7 @@ function predictor(f, y, α, n, h, u0, T)
         leftsum=u0+T*u0
      end
 
-     for j in range(0, n, step=1)
+     @fastmath @inbounds @simd for j in range(0, n, step=1)
         predict+=B(j, n, α, h)*f(j*h, y[Int64(j+1)])
      end
 

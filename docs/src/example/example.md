@@ -5,6 +5,7 @@
 Long story short! Let's try FractionalDiffEq.jl to solve a fractional differential equation!!!
 
 Suppose we have the initial value problem:
+
 ```math
 D^{0.5} y(x)=1-y \\
 y(0)=0
