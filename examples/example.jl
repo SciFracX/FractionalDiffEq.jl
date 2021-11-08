@@ -22,5 +22,3 @@ gr()
 
 plot(tspan, result, title=s, linewidth=5, label="Numerical", legend=:bottomright)
 plot!(tspan, target, lw=3, ls=:dash, label="Analytical")
-
-savefig("./example.png")
