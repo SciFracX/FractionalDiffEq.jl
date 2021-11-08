@@ -1,2 +1,0 @@
-# Relaxation Oscillation Equation
-

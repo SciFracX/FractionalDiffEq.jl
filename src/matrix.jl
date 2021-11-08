@@ -1,7 +1,6 @@
 import FractionalDiffEq.solve, FractionalDiffEq.FractionalDiffEqAlgorithm
 
 using LinearAlgebra, InvertedIndices
-using Plots
 
 """
 Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional differential equations to simple algebra system and solve the system.
@@ -111,6 +110,9 @@ end
     bagleytorvik(p1, p2, p3, T, h)
 
 By specifying the parameters of Bagley Torvik Equation, we can use **bagleytorvik** to directly obtain the numerical approximation.
+
+!!! info p2 ≠ 0
+    Please note that the parameter of fractional derivative item must not be 0
 """
 function bagleytorvik(p1, p2, p3, T, h)
     N=Int64(T/h+1)

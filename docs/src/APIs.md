@@ -30,3 +30,8 @@ FractionalDiffEq.PECE
 FractionalDiffEq.MatrixDiscrete
 ```
 
+## Some models
+
+```@docs
+FractionalDiffEq.bagleytorvik
+```

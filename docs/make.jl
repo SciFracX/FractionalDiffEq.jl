@@ -15,7 +15,11 @@ makedocs(;
     ),
     pages=[
         "FractionalDiffEq.jl" => "index.md",
-        "Get Started" => "utils.md",
+        "Get Started" => "get_start.md",
+        "Detailed Models" => [
+            "Relaxation Oscillation" => "relaxation-oscillation.md",
+            "Bagley-torvik" => "bagley-torvik.md"
+        ],
         "Examples" => "example/example.md",
         "FractionalDiffEq APIs" => "APIs.md"
     ],

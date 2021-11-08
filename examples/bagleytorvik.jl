@@ -9,4 +9,3 @@ tspan = collect(0:h:T)
 result = bagleytorvik(1, 1, 1, T, h)
 
 plot(tspan, result, title=s, legend=:bottomright)
-savefig("./bagleytorvik.png")
