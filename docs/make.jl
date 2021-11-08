@@ -15,7 +15,7 @@ makedocs(;
     ),
     pages=[
         "FractionalDiffEq.jl" => "index.md",
-        "Get Start" => "utils.md",
+        "Get Started" => "utils.md",
         "Examples" => "example/example.md",
         "FractionalDiffEq APIs" => "APIs.md"
     ],

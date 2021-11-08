@@ -13,6 +13,7 @@ Let's see a simple model involving fractional differential equations:
 ```math
 D^{1.8}y(t)+y(t)=1,\ (t>0)
 \\
+\\
 y^{(k)}(0)=0
 ```
 

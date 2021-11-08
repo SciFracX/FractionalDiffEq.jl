@@ -42,7 +42,7 @@ Define a Fractional Differential in time interval [0, T] with initial value y(0)
 struct FDEProblem{T<:Float64}
     f
     α::T
-    u0::T
+    u0
     T
     h::T
 end

@@ -8,6 +8,7 @@ Suppose we have the initial value problem:
 
 ```math
 D^{0.5} y(x)=1-y \\
+\\
 y(0)=0
 ```
 So to solve the problem, we can use FractionalDiffEq.jl like this:
