@@ -111,7 +111,7 @@ end
 
 By specifying the parameters of Bagley Torvik Equation, we can use **bagleytorvik** to directly obtain the numerical approximation.
 
-!!! info p2 ≠ 0
+!!! info "p2 ≠ 0"
     Please note that the parameter of fractional derivative item must not be 0
 """
 function bagleytorvik(p1, p2, p3, T, h)

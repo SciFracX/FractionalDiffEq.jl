@@ -45,3 +45,8 @@ By ploting the numerical result, we can get the approximation result:
 ## FDE with specific initial value
 
 While the former examples we only use the zero initial value problem, here, we can look at some problems with non-zero examples.
+
+## Some Algorithms explanation:
+
+As a matter of fact, to solve a fractional differential equations is to solve a volterra integral equation:
+
