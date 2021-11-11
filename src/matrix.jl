@@ -32,24 +32,13 @@ struct MatrixDiscrete <: FractionalDiffEqAlgorithm end
 }
 """
 
+
 """
-    solve(p1, α, p2, c, h, T, MatrixDiscrete())
+    solve(equation, right, h, T, MatrixDiscrete())
 
 Using the **Matrix Discretization algorithm** proposed by [Prof Igor Podlubny](http://people.tuke.sk/igor.podlubny/index.html) to approximate the numerical solution.
 """
-function solve(p1, α, p2, c, h, T, ::MatrixDiscrete)
-    n=Int64(floor(α))
-    rows=collect(1:n)
-    N=Int64(T/h+1)
-    equation = p1*B(N, α, h)+p2*(zeros(N, N)+I)
-    equation = eliminator(N, rows)*equation*eliminator(N, rows)'
-    righthand = c*eliminator(N, rows)*ones(N)
-    result = equation\righthand
-    return vcat(zeros(n), result)
-end
-
-
-function solve(equation, right, h, T)
+function solve(equation, right, h, T, ::MatrixDiscrete)
     N=Int64(T/h+1)
     equation = eliminator(N, rows)*equation*eliminator(N, rows)'
     right = right*eliminator(N, rows)*ones(N)
@@ -70,32 +59,62 @@ end
 """
 Generating elements in Matrix.
 """
-function omega(n, p)
+function omega(n, α)
     omega = zeros(n+1)
 
     omega[1]=1
     for i in range(1, n, step=1)
-        omega[i+1]=(1-(p+1)/i)*omega[i]
+        omega[i+1]=(1-(α+1)/i)*omega[i]
     end
     
     return omega
 
 end
 
-function B(N, p, h)
+"""
+    D(N, α, h)
+
+Using this function to construct left hand equations.
+
+### Example
+
+Suppose we have a equation:
+
+```math
+y''(t)+D^{frac{3}{2}}_t y(t)=1
+```
+
+```julia-repl
+equation=D(100, 2, 0.01)+D(100, 3/2, 0.01)
+```
+
+We construct the left side equation!
+
+After we construct the right side, alll we need to do is:
+
+```julia-repl
+solve(equation, right, h, T)
+```
+
+And then we can get the numerical approximation.
+
+!!! info
+    Here ```N``` is the size of discrete matrix.
+"""
+function D(N, α, h)
     result=zeros(N, N)
-    temp=omega(N, p)
+    temp=omega(N, α)
 
     for i in range(1, N, step=1)
         result[i, 1:i]=reverse(temp[1:i])
     end
 
-    return h^(-p)*result
+    return h^(-α)*result
 end
 
-function F(N, p, h)
+function F(N, α, h)
     result=zeros(N, N)
-    temp = omega(N, p)
+    temp = omega(N, α)
 
     for i in range(1, N, step=1)
         result[i, 1:i]=reverse(temp[1:i])
@@ -103,7 +122,7 @@ function F(N, p, h)
 
     result=reverse(reverse(result, dims=1), dims=2)
 
-    return (-1)^(ceil(p))*h^(-p)*result
+    return (-1)^(ceil(α))*h^(-α)*result
 end
 
 """
@@ -116,10 +135,15 @@ By specifying the parameters of Bagley Torvik Equation, we can use **bagleytorvi
 """
 function bagleytorvik(p1, p2, p3, T, h)
     N=Int64(T/h+1)
-    equation = p1*B(N, 2, h)+p2*B(N, 1.5, h)+p3*(zeros(N, N)+I)
+    equation = p1*D(N, 2, h)+p2*D(N, 1.5, h)+p3*(zeros(N, N)+I)
     equation = eliminator(N, [1,2])*equation*eliminator(N, [1,2])'
     right = eliminator(N, [1,2])*ones(N)
     result = equation\right
 
     return vcat(zeros(2), result)
 end
+
+
+
+
+
