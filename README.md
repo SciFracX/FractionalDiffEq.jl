@@ -47,8 +47,6 @@ Or if you want to experience the latest version of FractionalDiffEq.jl:
 Pkg> add FractionalDiffEq#master
 ```
 
-> Please note the scope of order is only 0 < α < 2
-
 # Quick start
 
 ### An easy example
@@ -64,7 +62,7 @@ So we can use FractionalDiffEq.jl to solve the problem:
 ```julia
 fun(x, y) = 1-y
 prob = FDEProblem(fun, 0.5, 0, 5, 0.001)
-result=solve(prob)
+result=solve(prob, PECE())
 tspan=collect(0:0.001:5)
 ```
 
@@ -99,7 +97,7 @@ Use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/mast
 
 ### Multi-term support
 
-
+With [Matrix Discrete method](https://scifracx.github.io/FractionalDiffEq.jl/dev/APIs/#FractionalDiffEq.MatrixDiscrete), we can handle multi-term FDE now!!
 
 ## Contributing
 
