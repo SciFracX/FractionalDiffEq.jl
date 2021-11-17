@@ -102,13 +102,3 @@ With [Matrix Discrete method](https://scifracx.github.io/FractionalDiffEq.jl/dev
 ## Contributing
 
 If you are interested in Fractional Differential Equations and Julia, welcome to raise an issue or file a Pull Request!!
-$$
-^C_0D^\alpha_tu=\frac{\partial^2u}{\partial x^2}
-$$
-
-
-
-
-$$_{0}^{C}\!D_{t}^{\alpha}y-\frac{\partial^\beta y}{\partial |x|^\beta} = f(x,t)$$
-
-$$y(0,t) = 0, \quad y(1,t) = 0; \qquad  \quad y(x,0) = 0.$$
