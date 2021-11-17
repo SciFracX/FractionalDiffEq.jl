@@ -1,6 +1,6 @@
 module FractionalDiffEq
 
-using LinearAlgebra, SpecialFunctions, InvertedIndices, FractionalCalculus
+using LinearAlgebra, SpecialFunctions, InvertedIndices
 
 include("main.jl")
 include("matrix.jl")

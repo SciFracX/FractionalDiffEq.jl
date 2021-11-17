@@ -23,6 +23,7 @@ struct FODEMatrixDiscrete <: FractionalDiffEqAlgorithm end
    author={Podlubny, Igor and Chechkin, Aleksei and Skovranek, Tomas and Chen, YangQuan and Vinagre Jara, Blas M.},
 }
 """
+
 """
 Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional partial differential equations to simple algebra system and solve the system.
 """
