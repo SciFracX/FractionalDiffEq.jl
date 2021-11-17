@@ -142,8 +142,3 @@ function bagleytorvik(p1, p2, p3, T, h)
 
     return vcat(zeros(2), result)
 end
-
-
-
-
-

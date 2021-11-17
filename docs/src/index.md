@@ -6,7 +6,7 @@ CurrentModule = FractionalDiffEq
 
 Hello there👋!
 
-FractionalDiffEq.jl is a Julia package aiming at solving Fractional Differential Equations using high performance numerical methods
+FractionalDiffEq.jl is a Julia package aiming at solving Fractional Differential Equations using high performance numerical methods.
 
 ```@contents
 Pages = ["index.md"]
@@ -26,10 +26,9 @@ Or if you want to experience the latest version of FractionalDiffEq.jl:
 Pkg> add FractionalDiffEq#master
 ```
 
-## Plans
-
-* More algorithms are planned to support
-* Fractional Partial differential Equations
+## Roadmap
+- [ ] More algorithms are planned to support
+- [ ] Fractional Partial differential Equations
 
 ## Contributing
 

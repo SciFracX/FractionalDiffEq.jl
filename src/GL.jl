@@ -1,5 +1,5 @@
 # Need to be verified
-function test(f, α, T, h, b)
+function solve(f, α, T, h, b)
     n=Int64(T/h)
     y=zeros(n)# Prelocate result
     y[1]=0
@@ -28,7 +28,3 @@ function coeff(α, k)
     end
 
 end
-
-tspan = collect(0.01:0.01:3)
-result=test(x->x, 0.5, 3, 0.01, 1)
-plot(tspan, result)
