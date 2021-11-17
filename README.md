@@ -102,6 +102,10 @@ With [Matrix Discrete method](https://scifracx.github.io/FractionalDiffEq.jl/dev
 ## Contributing
 
 If you are interested in Fractional Differential Equations and Julia, welcome to raise an issue or file a Pull Request!!
+$$
+^C_0D^\alpha_tu=\frac{\partial^2u}{\partial x^2}
+$$
+
 
 
 

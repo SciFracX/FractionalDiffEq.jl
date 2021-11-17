@@ -1,6 +1,6 @@
 module FractionalDiffEq
 
-using LinearAlgebra, SpecialFunctions, InvertedIndices, MittagLeffler
+using LinearAlgebra, SpecialFunctions, InvertedIndices, FractionalCalculus
 
 include("main.jl")
 include("matrix.jl")
@@ -14,6 +14,6 @@ export D
 # Export some special equtions
 export bagleytorvik
 
-export solve, FDEProblem
+export solve, FODEProblem, FPDEProblem
 
 end

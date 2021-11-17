@@ -1,19 +1,32 @@
-import FractionalDiffEq.solve, FractionalDiffEq.FractionalDiffEqAlgorithm
+import FractionalDiffEq: solve, FractionalDiffEqAlgorithm
 
 using LinearAlgebra, InvertedIndices
 
 """
-Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional differential equations to simple algebra system and solve the system.
-
-```tex
 @inproceedings{Podlubny2000MATRIXAT,
   title={MATRIX APPROACH TO DISCRETE FRACTIONAL CALCULUS},
   author={Igor Podlubny},
   year={2000}
 }
-```
 """
-struct MatrixDiscrete <: FractionalDiffEqAlgorithm end
+
+"""
+Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional ordinary differential equations to simple algebra system and solve the system.
+"""
+struct FODEMatrixDiscrete <: FractionalDiffEqAlgorithm end
+
+
+"""
+@article{2009,
+   title={Matrix approach to discrete fractional calculus II: Partial fractional differential equations},
+   DOI={10.1016/j.jcp.2009.01.014},
+   author={Podlubny, Igor and Chechkin, Aleksei and Skovranek, Tomas and Chen, YangQuan and Vinagre Jara, Blas M.},
+}
+"""
+"""
+Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional partial differential equations to simple algebra system and solve the system.
+"""
+struct FPDEMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 
 """
@@ -24,13 +37,6 @@ struct MatrixDiscrete <: FractionalDiffEqAlgorithm end
 }
 """
 
-"""
-@inproceedings{Podlubny2000MATRIXAT,
-  title={MATRIX APPROACH TO DISCRETE FRACTIONAL CALCULUS},
-  author={Igor Podlubny},
-  year={2000}
-}
-"""
 
 
 """
@@ -38,7 +44,7 @@ struct MatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 Using the **Matrix Discretization algorithm** proposed by [Prof Igor Podlubny](http://people.tuke.sk/igor.podlubny/index.html) to approximate the numerical solution.
 """
-function solve(equation, right, h, T, ::MatrixDiscrete)
+function solve(equation, right, h, T, ::FODEMatrixDiscrete)
     N=Int64(T/h+1)
     equation = eliminator(N, rows)*equation*eliminator(N, rows)'
     right = right*eliminator(N, rows)*ones(N)
@@ -141,4 +147,60 @@ function bagleytorvik(p1, p2, p3, T, h)
     result = equation\right
 
     return vcat(zeros(2), result)
+end
+
+
+"""
+
+    solve(α, β, T, M, N, ::FPDEProblem)
+
+When using the Martix 
+
+
+"""
+function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
+    h=T/(M-1)
+    τ=h^2/6
+    TMatrix = kron(D(N-1, α, τ)', zeros(M, M)+I)
+    SMatrix = kron(zeros(N-1, N-1)+I, RieszMatrix(β, M, h))
+
+    system = TMatrix-SMatrix
+
+    # Handling boundary conditions
+    BMatrix = kron(zeros(N-1, N-1)+I, eliminator(M, [1 M]))
+    system = system*BMatrix'
+
+    left = BMatrix*system
+
+    result = left\ones(size(left, 1), 1)
+    return result
+
+end
+function RieszMatrix(α, N, h)
+    caputo=B(N+1, α)
+    caputo=caputo[2:(N+1), 1:N]
+    result=1/2*(caputo+caputo')
+    result=h^(-α)*result
+
+    return result
+end
+function B(N, p)
+    result=zeros(N, N)
+    temp=omega(N, p)
+
+    @inbounds @simd for i in range(1, N, step=1)
+        @views result[i, 1:i]=reverse(temp[1:i])
+    end
+
+    return result
+end
+
+
+"""
+    diffusion(α, β)
+
+**Diffusion equation** with time fractional derivative.
+"""
+function diffusion(α, β)
+    solve(α, β, 1, 21, 148, FPDEMatrixDiscrete())
 end

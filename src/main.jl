@@ -41,22 +41,32 @@ struct HadamardFPI <: FractionalDiffEqAlgorithm end
 
 Define a Fractional Differential in time interval [0, T] with initial value y(0)=u₀, α-order derivative and step size h.
 """
-struct FDEProblem{T<:Float64}
+abstract type FDEProblem end
+
+struct FODEProblem <: FDEProblem
     f
-    α::T
+    α
     u0
     T
-    h::T
+    h
+end
+
+struct FPDEProblem <: FDEProblem
+    f
+    α
+    u0
+    T
+    h
 end
 
 
 """
-    solve(FDEProblem, PECE())
+    solve(FODEProblem, PECE())
 
 After define the FDEProblem, use **PECE(Predict-Evaluate-Correct-Evaluate) algorithm** to computing the Fractional Differential Equation
 """
-function solve(FDE::FDEProblem, ::PECE)
-    f, α, u0, T, h = FDE.f, FDE.α, FDE.u0, FDE.T, FDE.h
+function solve(FODE::FODEProblem, ::PECE)
+    f, α, u0, T, h = FODE.f, FODE.α, FODE.u0, FODE.T, FODE.h
     N=Int64(T/h)
     y=zeros(N+1)
     leftsum = 0
@@ -116,6 +126,14 @@ end
 function B(j, n, α, h)
     return h^α/α*((n+1-j)^α-(n-j)^α)
 end
+
+
+
+
+
+
+
+
 
 function solve(f, α, u0, T, h, ::HadamardFPI)
 
