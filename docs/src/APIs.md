@@ -20,6 +20,13 @@ FractionalDiffEq.solve
 FractionalDiffEq.FractionalDiffEqAlgorithm
 ```
 
+## Problem types
+
+```@docs
+FractionalDiffEq.FODEProblem
+FractionalDiffEq.FPDEProblem
+```
+
 ### Detailed types
 
 ```@docs
@@ -27,11 +34,16 @@ FractionalDiffEq.PECE
 ```
 
 ```@docs
-FractionalDiffEq.MatrixDiscrete
+FractionalDiffEq.FODEMatrixDiscrete
+FractionalDiffEq.FPDEMatrixDiscrete
 ```
 
 ## Some models
 
 ```@docs
 FractionalDiffEq.bagleytorvik
+```
+
+```@docs
+FractionalDiffEq.diffusion
 ```

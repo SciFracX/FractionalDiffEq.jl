@@ -41,6 +41,12 @@ Define a Fractional Differential in time interval [0, T] with initial value y(0)
 """
 abstract type FDEProblem end
 
+"""
+
+    FODEProblem(f, α, u0, T, h)
+
+Fractional Ordinary Differential Equations definition
+"""
 struct FODEProblem <: FDEProblem
     f
     α
@@ -49,6 +55,11 @@ struct FODEProblem <: FDEProblem
     h
 end
 
+"""
+
+    FPDEProblem()
+
+"""
 struct FPDEProblem <: FDEProblem
     α
     β

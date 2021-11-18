@@ -43,7 +43,7 @@ struct FPDEMatrixDiscrete <: FractionalDiffEqAlgorithm end
 """
     solve(equation, right, h, T, MatrixDiscrete())
 
-Using the **Matrix Discretization algorithm** proposed by [Prof Igor Podlubny](http://people.tuke.sk/igor.podlubny/index.html) to approximate the numerical solution.
+Using the **Matrix Discretization algorithm** proposed by [Prof Igor Podlubny](http://people.tuke.sk/igor.podlubny/index.html) to obtain the numerical solution.
 """
 function solve(equation, right, h, T, ::FODEMatrixDiscrete)
     N=Int64(T/h+1)
@@ -64,7 +64,7 @@ function eliminator(n, row)
 end
 
 """
-Generating elements in Matrix.
+Generating elements in Triangular Strip Matrix.
 """
 function omega(n, α)
     omega = zeros(n+1)
@@ -81,7 +81,7 @@ end
 """
     D(N, α, h)
 
-Using this function to construct left hand equations.
+Using D function to construct left hand equations.
 
 ### Example
 
@@ -91,13 +91,19 @@ Suppose we have a equation:
 y''(t)+D^{frac{3}{2}}_t y(t)=1
 ```
 
+To represent the left side equation, use ``D(size, order, step)`` to construct the derivative part.
+
 ```julia-repl
 equation=D(100, 2, 0.01)+D(100, 3/2, 0.01)
 ```
 
-We construct the left side equation!
+Then the right side can be constructed like:
 
-After we construct the right side, alll we need to do is:
+```julia-repl
+right = ones(N)
+```
+
+After we construct both sides, all we need to do is:
 
 ```julia-repl
 solve(equation, right, h, T)
@@ -135,10 +141,10 @@ end
 """
     bagleytorvik(p1, p2, p3, T, h)
 
-By specifying the parameters of Bagley Torvik Equation, we can use **bagleytorvik** to directly obtain the numerical approximation.
+By specifying the parameters of Bagley Torvik Equation, we can use **bagleytorvik** to directly obtain the numerical approximation of a bagley torvik equation.
 
 !!! info "p2 ≠ 0"
-    Please note that the parameter of fractional derivative item must not be 0
+    Please note that the parameter of fractional derivative part must not be 0
 """
 function bagleytorvik(p1, p2, p3, T, h)
     N=Int64(T/h+1)
@@ -153,11 +159,9 @@ end
 
 """
 
-    solve(α, β, T, M, N, ::FPDEProblem)
+    solve(α, β, T, M, N, FPDEMatrixDiscrete())
 
 When using the Martix 
-
-
 """
 function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
     h=T/(M-1)
@@ -177,6 +181,7 @@ function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
     return result
 
 end
+# Construct Riesz Symmetric Matrix
 function RieszMatrix(α, N, h)
     caputo=B(N+1, α)
     caputo=caputo[2:(N+1), 1:N]
@@ -201,6 +206,8 @@ end
     diffusion(α, β)
 
 **Diffusion equation** with time fractional derivative.
+
+α and β are the coefficients of the time derivative and spatial derivative.
 """
 function diffusion(α, β)
     solve(α, β, 1, 21, 148, FPDEMatrixDiscrete())
