@@ -18,7 +18,7 @@ makedocs(;
         "Get Started" => "get_start.md",
         "Detailed Models" => [
             "Relaxation Oscillation" => "relaxation-oscillation.md",
-            "Bagley-torvik" => "bagley-torvik.md"
+            "Bagley Torvik" => "bagley-torvik.md"
         ],
         "Examples" => "example/example.md",
         "FractionalDiffEq APIs" => "APIs.md"

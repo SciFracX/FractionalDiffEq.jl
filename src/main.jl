@@ -34,8 +34,6 @@ struct PECE <: FractionalDiffEqAlgorithm end
 #TODO: Use Richardson extrapolation to refine the PECE algorithms 
 
 
-struct HadamardFPI <: FractionalDiffEqAlgorithm end
-
 """
     FDEProblem(f, α, u0, T, h)
 
@@ -52,11 +50,11 @@ struct FODEProblem <: FDEProblem
 end
 
 struct FPDEProblem <: FDEProblem
-    f
     α
-    u0
+    β
     T
-    h
+    M
+    N
 end
 
 
@@ -125,24 +123,4 @@ end
 
 function B(j, n, α, h)
     return h^α/α*((n+1-j)^α-(n-j)^α)
-end
-
-
-
-
-
-
-
-
-
-function solve(f, α, u0, T, h, ::HadamardFPI)
-
-end
-
-function LRectCoeff(i, n, h, α, x₀)
-    if 0 ≤ i ≤ n-2
-        return 1/gamma(1-α)*((log((x₀+n*h)/(x₀+i*h)))^(-α) - (log((x₀+n*h)/(x₀+(i+1)*h)))^(-α))
-    elseif i == n-1
-        return 1/gamma(1-α)*(log((x₀+n*h)/(x₀+i*h)))^(-α)
-    end
 end

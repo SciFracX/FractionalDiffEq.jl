@@ -14,7 +14,7 @@ Pages = ["index.md"]
 
 ## Installation
 
-If you have already install Julia, you can install FractionalDiffEq.jl in REPL using Julia package manager:
+If you have already installed Julia, you can install FractionalDiffEq.jl in REPL using Julia package manager:
 
 ```julia
 Pkg> add FractionalDiffEq
