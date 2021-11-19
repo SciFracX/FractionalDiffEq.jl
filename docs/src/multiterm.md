@@ -31,12 +31,13 @@ Bingo! the result would represent the numerical solution of this equation!!!!
 
 We have an initla problem:
 
-$$
+```math
 y'''(t)+\frac{1}{16} {^C_0D^{2.5}_ty(t)}+\frac{4}{5}y''(t)+\frac{3}{2}y'(t)+\frac{1}{25}{^C_0D^{0.5}_ty(t)}+\frac{6}{5}y(t)=\frac{172}{125}\cos(\frac{4t}{5})
-$$
-$$
+```
+
+```math
 y(0)=0,\ y'(0)=0,\ y''(0)=0
-$$
+```
 
 Model this problem and solve the equation:
 
