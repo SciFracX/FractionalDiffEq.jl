@@ -12,7 +12,7 @@ And also the CRONE controller and $PI^\lambda D^\mu$ controller deploy fractiona
 
 ## A simple example —— Relaxation Oscillation Equation
 
-Let's see a simple model involving fractional differential equations: [Relaxation Oscillation Process]()
+Let's see a simple model involving fractional differential equations: [Relaxation Oscillation Process](https://encyclopediaofmath.org/wiki/Relaxation_oscillation)
 
 ```math
 D^{1.8}y(t)+y(t)=1,\ (t>0)

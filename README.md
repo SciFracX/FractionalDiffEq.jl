@@ -35,7 +35,7 @@
 
 # Installation
 
-If you have already install Julia, you can install FractionalDiffEq.jl in REPL using Julia package manager:
+If you have already installed Julia, you can install FractionalDiffEq.jl in REPL using Julia package manager:
 
 ```julia
 Pkg> add FractionalDiffEq
@@ -61,7 +61,7 @@ So we can use FractionalDiffEq.jl to solve the problem:
 
 ```julia
 fun(x, y) = 1-y
-prob = FDEProblem(fun, 0.5, 0, 5, 0.001)
+prob = FODEProblem(fun, 0.5, 0, 5, 0.001)
 result=solve(prob, PECE())
 tspan=collect(0:0.001:5)
 ```
@@ -82,7 +82,7 @@ Use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/mast
 
 ![Example](docs/src/assets/complicated_example.png)
 
-## Plans
+## Road map
 
 * Trapezoid PI rule
 * Fractional Linear Multi-step Method

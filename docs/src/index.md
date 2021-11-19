@@ -28,11 +28,17 @@ Pkg> add FractionalDiffEq#master
 
 ## Features
 
+1. While most fractional differential equations solvers are implemented using Matlab, **FractionalDiffEq.jl** is totally driven by [Julia](https://julialang.org/) and licensed with [MIT License](https://en.wikipedia.org/wiki/MIT_License), ensure its everlasting development and open source.
+
+2. Benefit from the advancing features of JuliaLang, FractionalDiffEq.jl has impressing performance and high speed, help the model more efficient and robust.
+
 
 
 ## Roadmap
-- [ ] More algorithms are planned to support
-- [ ] Fractional Partial differential Equations
+
+[ ] More algorithms are planned to support.
+[ ] Improve benchmark.
+
 
 ## Contributing
 
