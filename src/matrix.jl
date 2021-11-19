@@ -45,7 +45,7 @@ struct FPDEMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 Using the **Matrix Discretization algorithm** proposed by [Prof Igor Podlubny](http://people.tuke.sk/igor.podlubny/index.html) to obtain the numerical solution.
 """
-function solve(equation, right, highestorder, h, T)
+function solve(equation, right, highestorder, h, T, ::FODEMatrixDiscrete)
     N=Int64(T/h)
     rows = collect(1:highestorder)
     equation = eliminator(N, rows)*equation*eliminator(N, rows)'

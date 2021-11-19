@@ -21,6 +21,7 @@ makedocs(;
             "Bagley Torvik" => "bagley-torvik.md",
             "Diffusion" => "diffusion.md"
         ],
+        "Multi-term FDE" => "multiterm.md",
         "Examples" => "example/example.md",
         "FractionalDiffEq APIs" => "APIs.md"
     ],
