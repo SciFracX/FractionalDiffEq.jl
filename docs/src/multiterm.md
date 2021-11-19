@@ -31,7 +31,12 @@ Bingo! the result would represent the numerical solution of this equation!!!!
 
 We have an initla problem:
 
-![LaTeX](./assets/complicated_example_latex.png)
+$$
+y'''(t)+\frac{1}{16} {^C_0D^{2.5}_ty(t)}+\frac{4}{5}y''(t)+\frac{3}{2}y'(t)+\frac{1}{25}{^C_0D^{0.5}_ty(t)}+\frac{6}{5}y(t)=\frac{172}{125}\cos(\frac{4t}{5})
+$$
+$$
+y(0)=0,\ y'(0)=0,\ y''(0)=0
+$$
 
 Model this problem and solve the equation:
 
@@ -39,7 +44,7 @@ Model this problem and solve the equation:
 using FractionalDiffEq
 using Plots, LaTeXStrings
 
-s="\$ An\\ complicated\\ example \$"
+s="\$ A\\ complicated\\ example \$"
 
 T=30
 h=0.05
@@ -49,10 +54,7 @@ equation = D(600, 3, h)+1/16*D(600, 2.5, h)+4/5*D(600, 2, h)+3/2*D(600, 1, h)+1/
 rightfun(x)=172/125*cos(4/5*x)
 result=solve(equation, rightfun, 3, h, T)
 
-result=result.-1 .-4/5 .*tspan .+16/25 .*tspan.^2
-
 plot(tspan, result, title=s, legend=:bottomright)
-savefig("./complicated_example.png")
 ```
 
 !!! info "Example in GitHub"
