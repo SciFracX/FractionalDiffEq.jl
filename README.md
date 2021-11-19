@@ -75,30 +75,22 @@ And if you plot the result, you can see the result of the fractional differentia
 Let's see if the initial value problem like:
 
 <p align="center">
-<img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/example_latex.png"/>
+<img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/complicated_example_latex.png"/>
 </p>
 
-While we already know that the solution of this fractional differential equation is:
 
-<p align="center">
-<img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/analytical_latex.png"/>
-</p>
 
-Here, **E** means [MittagLeffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function).
 
-Use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/example.jl) to plot the numerical approximation and analytical solution, we can see the numerical approximation in FractionalDiffEq.jl is powerful:
+Use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl) to plot the numerical approximation, we can see the FDE solver in FractionalDiffEq.jl is powerful:
 
-![Example](docs/src/assets/example.png)
+![Example](docs/src/assets/complicated_example.png)
 
 ## Plans
 
 * Trapezoid PI rule
 * Fractional Linear Multi-step Method
 
-### Multi-term support
-
-With [Matrix Discrete method](https://scifracx.github.io/FractionalDiffEq.jl/dev/APIs/#FractionalDiffEq.MatrixDiscrete), we can handle multi-term FDE now!!
-
 ## Contributing
 
 If you are interested in Fractional Differential Equations and Julia, welcome to raise an issue or file a Pull Request!!
+

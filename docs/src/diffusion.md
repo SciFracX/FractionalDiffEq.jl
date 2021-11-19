@@ -34,9 +34,6 @@ When we modeling our problems, **time fractional derivative** maybe more suitabl
 ```math
 ^C_0D^\alpha_tu=\frac{\partial^2u}{\partial x^2}
 ```
-```math
-u(0, t)=0,\quad u(1, t)=0
-```
 
 ## General fractional diffusion equation
 
