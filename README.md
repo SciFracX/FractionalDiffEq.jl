@@ -75,11 +75,8 @@ And if you plot the result, you can see the result of the fractional differentia
 Let's see if the initial value problem like:
 
 <p align="center">
-<img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/complicated_example_latex.png"/>
+<img width="600px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/complicated_example_latex.png"/>
 </p>
-
-
-
 
 Use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl) to plot the numerical approximation, we can see the FDE solver in FractionalDiffEq.jl is powerful:
 
