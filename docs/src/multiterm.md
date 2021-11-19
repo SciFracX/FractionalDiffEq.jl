@@ -7,7 +7,7 @@ Let's see if we have a initial value problem with multiple terms derivative cont
 All we have to do is use the general derivative representing function ```D(size, order, step)``` to represent different derivative, for example, ```D(30, 2, 0.01)``` represent the second order derivative $y''(t)$ term and ```D(30, 2.5, 0.01)``` represent the 2.5 order derivative $D^{2.5}y(t)$ term.
 
 !!! warning "Keep the parameter unanimous"
-When we are use ```D``` to represent different order deriavtives, please note we should keep the first parameter and third parameter unanimous, which represent the size of the discrete matrix and step size.
+    When we are use ```D``` to represent different order deriavtives, please note we should keep the first parameter and third parameter unanimous, which represent the size of the discrete matrix and step size.
 
 ## Detailed Usage
 
@@ -56,7 +56,7 @@ savefig("./complicated_example.png")
 ```
 
 !!! info "Example in GitHub"
-This example is an official example in the source code, please see the [example folder](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl)
+    This example is an official example in the source code, please see the [example folder](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl)
 
 By solving the equation and plotting the result, we can see its solution here:
 
