@@ -78,7 +78,7 @@ Let's see if the initial value problem like:
 <img width="600px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/complicated_example_latex.png"/>
 </p>
 
-Use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl) to plot the numerical approximation, we can see the FDE solver in FractionalDiffEq.jl is powerful:
+Use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl) to plot the numerical approximation, we can see the FDE solver in FractionalDiffEq.jl is amazingly powerful:
 
 ![Example](docs/src/assets/complicated_example.png)
 
@@ -90,4 +90,3 @@ Use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/mast
 ## Contributing
 
 If you are interested in Fractional Differential Equations and Julia, welcome to raise an issue or file a Pull Request!!
-

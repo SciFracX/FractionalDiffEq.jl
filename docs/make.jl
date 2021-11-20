@@ -16,12 +16,12 @@ makedocs(;
     pages=[
         "FractionalDiffEq.jl" => "index.md",
         "Get Started" => "get_start.md",
+        "Multi-term FDE" => "multiterm.md",
         "Detailed Models" => [
             "Relaxation Oscillation" => "relaxation-oscillation.md",
             "Bagley Torvik" => "bagley-torvik.md",
             "Diffusion" => "diffusion.md"
         ],
-        "Multi-term FDE" => "multiterm.md",
         "Examples" => "example/example.md",
         "FractionalDiffEq APIs" => "APIs.md"
     ],

@@ -36,8 +36,8 @@ Pkg> add FractionalDiffEq#master
 
 ## Roadmap
 
-[ ] More algorithms are planned to support.
-[ ] Improve benchmark.
+* More algorithms are planned to support.
+* Improve benchmark.
 
 
 ## Contributing

@@ -9,7 +9,7 @@ export FractionalDiffEqAlgorithm
 export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete
 
 # Export some api to construct the equation
-export D
+export D, RieszMatrix
 
 # Export some special equtions
 export bagleytorvik

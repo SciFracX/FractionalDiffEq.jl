@@ -58,9 +58,11 @@ result=solve(equation, rightfun, 3, h, T)
 plot(tspan, result, title=s, legend=:bottomright)
 ```
 
-!!! info "Example in GitHub"
-    This example is an official example in the source code, please see the [example folder](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl)
 
 By solving the equation and plotting the result, we can see its solution here:
 
 ![Solution](./assets/complicated_example.png)
+
+
+!!! info "Example in GitHub"
+    This example is an official example in the source code, please see the [example folder](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl)

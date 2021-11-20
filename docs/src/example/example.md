@@ -20,7 +20,7 @@ s="\$D^{0.5}y(x)=1-y,\\ y(0)=0\$"
 
 fun(x, y) = 1-y
 prob=FDEProblem(fun, 0.5, 0, 5, 0.001)
-result=solve(prob)
+result=solve(prob, PECE())
 tspan=collect(0:0.001:5)
 
 plot(tspan, result, title=s, linewidth=2, legend=:bottomright)
@@ -74,7 +74,7 @@ s="\$D^{1.8}y(x)=1-y(x),\\ y(0)=0\$"
 #Numerical solution
 fun(x, y) = 1-y
 prob = FDEProblem(fun, 1.8, 0, 20, 0.01)
-result=solve(prob)
+result=solve(prob, PECE())
 tspan=collect(0:0.01:20)
 
 gr()
