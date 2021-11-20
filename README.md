@@ -18,6 +18,9 @@
   <a href="https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/SciFracX/FractionalDiffEq.jl?style=flat-square" alt="license">
   </a>
+  <a href="https://zenodo.org/badge/latestdoi/420992306">
+  	<img src="https://zenodo.org/badge/420992306.svg" alt="DOI">
+  </a>
 </p>
 
 <p align="center">
