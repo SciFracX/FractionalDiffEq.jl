@@ -49,7 +49,13 @@ function solve(equation, right, highestorder, h, T, ::FODEMatrixDiscrete)
     N=Int64(T/h)
     rows = collect(1:highestorder)
     equation = eliminator(N, rows)*equation*eliminator(N, rows)'
-    rightside = eliminator(N, rows)*right.(collect(h:h:T))
+
+    if typeof(right) <: Number
+        rightside = eliminator(N, rows)*right*ones(N)
+    else
+        rightside = eliminator(N, rows)*right.(collect(h:h:T))
+    end
+
     result = equation\rightside
     return vcat(zeros(highestorder), result)
 end
