@@ -6,15 +6,6 @@ Base type of FractionalDiffEq algorithms
 abstract type FractionalDiffEqAlgorithm end
 
 
-
-"""
-@article{
-title={A predictor-corrector approach for the numerical solution of fractional differential equations},
-author={Diethelm, Kai and Ford, Neville J. and Freed, Alan D.}
-doi={https://doi.org/10.1023/A:1016592219341}
-}
-"""
-
 """
 Predict-Evaluate-Correct-Evaluate algorithm.
 

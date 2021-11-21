@@ -3,47 +3,41 @@ import FractionalDiffEq: solve, FractionalDiffEqAlgorithm
 using LinearAlgebra, InvertedIndices
 
 """
+Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional ordinary differential equations to simple algebra system and solve the system.
+
 @inproceedings{Podlubny2000MATRIXAT,
   title={MATRIX APPROACH TO DISCRETE FRACTIONAL CALCULUS},
   author={Igor Podlubny},
   year={2000}
 }
 """
-
-"""
-Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional ordinary differential equations to simple algebra system and solve the system.
-"""
 struct FODEMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 
 """
+Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional partial differential equations to simple algebra system and solve the system.
+
 @article{2009,
    title={Matrix approach to discrete fractional calculus II: Partial fractional differential equations},
    DOI={10.1016/j.jcp.2009.01.014},
    author={Podlubny, Igor and Chechkin, Aleksei and Skovranek, Tomas and Chen, YangQuan and Vinagre Jara, Blas M.},
 }
 """
-
-"""
-Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional partial differential equations to simple algebra system and solve the system.
-"""
 struct FPDEMatrixDiscrete <: FractionalDiffEqAlgorithm end
-
-
-"""
-@inproceedings{Podlubny1998FractionalDE,
-  title={Fractional differential equations},
-  author={Igor Podlubny},
-  year={1998}
-}
-"""
-
 
 
 """
     solve(equation, right, h, T, MatrixDiscrete())
 
 Using the **Matrix Discretization algorithm** proposed by [Prof Igor Podlubny](http://people.tuke.sk/igor.podlubny/index.html) to obtain the numerical solution.
+
+## References
+
+@inproceedings{Podlubny1998FractionalDE,
+  title={Fractional differential equations},
+  author={Igor Podlubny},
+  year={1998}
+}
 """
 function solve(equation, right, highestorder, h, T, ::FODEMatrixDiscrete)
     N=Int64(T/h)
@@ -188,6 +182,7 @@ function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
     return result
 
 end
+
 # Construct Riesz Symmetric Matrix
 function RieszMatrix(α, N, h)
     caputo=B(N+1, α)
@@ -219,3 +214,8 @@ end
 function diffusion(α, β)
     solve(α, β, 1, 21, 148, FPDEMatrixDiscrete())
 end
+
+
+
+## An fractional partial differential equation Example
+
