@@ -185,10 +185,10 @@ end
 
 # Construct Riesz Symmetric Matrix
 function RieszMatrix(α, N, h)
-    caputo=B(N+1, α)
-    caputo=caputo[2:(N+1), 1:N]
-    result=1/2*(caputo+caputo')
-    result=h^(-α)*result
+    caputo = B(N+1, α)
+    caputo = caputo[2:(N+1), 1:N]
+    result = 1/2*(caputo+caputo')
+    result = h^(-α)*result
 
     return result
 end
@@ -218,4 +218,6 @@ end
 
 
 ## An fractional partial differential equation Example
+
+
 
