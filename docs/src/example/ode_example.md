@@ -1,4 +1,4 @@
-# ODE example
+# ODE Example
 
 It is noteworthy that some differential equation solvers in FractionalDiffEq.jl is also capable of solving **Ordinary Differential Equations**, let's directly see an example here!!
 
@@ -44,3 +44,7 @@ plot!(tspan, target, lw=3,ls=:dash,label="ODE Analytical Solution!")
 And by plotting the numerical and analytical solution, we can see the matrix discrete algorithm in FractionalDiffEq.jl is quite powerful!
 
 ![ODE Example](../assets/ode_example.png)
+
+
+!!! tip "Better Choice"
+    While the solver in FractionalDiffEq.jl can solve ordinary differential equations, we still strongly recommend users to use [SciML/OrdinaryDiffEq.jl](https://github.com/SciML/OrdinaryDiffEq.jl) to solve ODEs instead, for various, robust and perfornant algorithms
