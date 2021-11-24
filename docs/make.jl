@@ -22,7 +22,11 @@ makedocs(;
             "Bagley Torvik" => "bagley-torvik.md",
             "Diffusion" => "diffusion.md"
         ],
-        "Examples" => "example/example.md",
+        "Examples" => [
+            "example/ode_example.md",
+            "example/fde_example.md",
+            "example/pde_example.md"
+        ],
         "FractionalDiffEq APIs" => "APIs.md"
     ],
 )

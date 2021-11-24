@@ -14,8 +14,6 @@ eq = D(600, 2, h)+D(600, 1, h)
 rightfun(x) = sin(x)
 result = solve(eq, rightfun, 2, h, T, FODEMatrixDiscrete())
 
-plot(tspan, result, title=s, legend=:bottomright, label="ODE numerical solution!")
+plot(tspan, result, title=s, legend=:bottomright, label="ODE Numerical Solution!")
 
-plot!(tspan, target, lw=3,ls=:dash,label="ODE analytical Solution!")
-
-savefig("./odeexample.png")
+plot!(tspan, target, lw=3,ls=:dash,label="ODE Analytical Solution!")
