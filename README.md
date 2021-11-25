@@ -81,7 +81,24 @@ Let's see if the initial value problem like:
 <img width="600px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/complicated_example_latex.png"/>
 </p>
 
-Use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl) to plot the numerical approximation, we can see the FDE solver in FractionalDiffEq.jl is amazingly powerful:
+```julia
+using FractionalDiffEq
+using Plots, LaTeXStrings
+
+s="\$ A\\ complicated\\ example \$"
+
+T=30
+h=0.05
+tspan = collect(0.05:h:T)
+
+equation = D(600, 3, h)+1/16*D(600, 2.5, h)+4/5*D(600, 2, h)+3/2*D(600, 1, h)+1/25*D(600, 0.5, h)+6/5*D(600, 1, h);
+rightfun(x)=172/125*cos(4/5*x)
+result=solve(equation, rightfun, 3, h, T)
+
+plot(tspan, result, title=s, legend=:bottomright)
+```
+
+Or use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl) to plot the numerical approximation, we can see the FDE solver in FractionalDiffEq.jl is amazingly powerful:
 
 ![Example](docs/src/assets/complicated_example.png)
 
