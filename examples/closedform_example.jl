@@ -1,3 +1,4 @@
+using FractionalDiffEq
 using Plots, LaTeXStrings
 
 s="\$ Use\\ closed-form\\ solution\$"

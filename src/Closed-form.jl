@@ -1,3 +1,13 @@
+"""
+    solve(parameters, order, lparameters, lorders, u, t)
+
+Use Closed-Form solution to obtain numerical solution at zero initial condition.
+
+## Reference:
+
+Dingyu Xue, Northeastern University, China
+ISBN:9787030543981
+"""
 function testsolve(parameters, orders, lparameters, lorders, u, t)
     h = t[2]-t[1]
     D = sum(parameters./(h.^orders))
