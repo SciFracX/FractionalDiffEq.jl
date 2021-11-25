@@ -23,9 +23,7 @@ makedocs(;
             "Diffusion" => "diffusion.md"
         ],
         "Examples" => [
-            "example/ode_example.md",
-            "example/fde_example.md",
-            "example/pde_example.md"
+            "example/example.md"
         ],
         "FractionalDiffEq APIs" => "APIs.md"
     ],
