@@ -4,6 +4,7 @@ using LinearAlgebra, SpecialFunctions, InvertedIndices
 
 include("main.jl")
 include("matrix.jl")
+include("Closedform.jl")
 
 export FractionalDiffEqAlgorithm
 export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete
