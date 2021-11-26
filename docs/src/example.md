@@ -32,7 +32,7 @@ And execute the file in your favorite IDE (VSCode recommend).
 
 Bingo!! You get the result!
 
-![Simple Example image](/assets/simple_example.png)
+![Simple Example image](./assets/simple_example.png)
 
 ### Comparison  with analytical solution
 
@@ -87,7 +87,7 @@ plot!(tspan, target, lw=3, ls=:dash, label="Analytical")
 
 And execute the program you can get:
 
-![Example image](/assets/example.png)
+![Example image](./assets/example.png)
 
 
 
@@ -136,7 +136,7 @@ plot!(tspan, target, lw=3,ls=:dash,label="ODE Analytical Solution!")
 
 And by plotting the numerical and analytical solution, we can see the matrix discrete algorithm in FractionalDiffEq.jl is quite powerful!
 
-![ODE Example](/assets/ode_example.png)
+![ODE Example](./assets/ode_example.png)
 
 
 !!! tip "Better Choice"
