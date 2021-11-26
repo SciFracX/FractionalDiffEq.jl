@@ -1,2 +1,0 @@
-# Bagley Torvik Equation
-

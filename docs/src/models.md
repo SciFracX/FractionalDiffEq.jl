@@ -1,6 +1,8 @@
-# Diffusion equation.
+# Detailed Models
 
-## Diffusion equation
+## Diffusion equation.
+
+### Diffusion equation
 
 **Diffusion equation** is a classical partial equation widely used in Physics to describe **density fluctuations** in a material undergonig diffusion.
 
@@ -18,7 +20,7 @@ The Diffusion Equation belongs to [Partial Differential Equations](https://en.wi
 
 See [Survey of PDE Packages](https://github.com/JuliaPDE/SurveyofPDEPackages)
 
-## Differential Equations with spatial fractional derivative
+### Differential Equations with spatial fractional derivative
 
 When we modeling our problems, **spatial fractional derivative** maybe more suitable for our model, which change the diffusion equation to **Diffusion equation with spatial fractional derivative**
 
@@ -27,7 +29,7 @@ When we modeling our problems, **spatial fractional derivative** maybe more suit
 ```
 
 
-## Diffusion Equations with time fractional derivative
+### Diffusion Equations with time fractional derivative
 
 When we modeling our problems, **time fractional derivative** maybe more suitable for our model, which change the diffusion equation to **Diffusion equation with time fractional derivative**
 
@@ -35,10 +37,18 @@ When we modeling our problems, **time fractional derivative** maybe more suitabl
 ^C_0D^\alpha_tu=\frac{\partial^2u}{\partial x^2}
 ```
 
-## General fractional diffusion equation
+### General fractional diffusion equation
 
 Well, time fractional derivative and spatial fractional derivative are both need to take into consideration:
 
 ```math
 ^C_0D^\alpha_tu-\frac{\partial^\beta u}{\partial|x|^\beta}=f(t, u)
 ```
+
+## Bagley Torvik Equation
+
+## Relaxation Oscillation Equation
+
+![Relaxo](./assets/Relaxo.png)
+
+https://en.wikipedia.org/wiki/Relaxation_oscillator

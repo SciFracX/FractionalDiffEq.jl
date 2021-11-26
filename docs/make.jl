@@ -17,14 +17,9 @@ makedocs(;
         "FractionalDiffEq.jl" => "index.md",
         "Get Started" => "get_start.md",
         "Multi-term FDE" => "multiterm.md",
-        "Detailed Models" => [
-            "Relaxation Oscillation" => "relaxation-oscillation.md",
-            "Bagley Torvik" => "bagley-torvik.md",
-            "Diffusion" => "diffusion.md"
-        ],
-        "Examples" => [
-            "example/example.md"
-        ],
+        "System of FDE" => "system_of_FDE.md",
+        "Detailed Models" => "models",
+        "Examples" => "example.md",
         "FractionalDiffEq APIs" => "APIs.md"
     ],
 )
