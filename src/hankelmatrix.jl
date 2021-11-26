@@ -72,7 +72,6 @@ function newhankel(v)
 
 end
 
-using Plots
 
 t=collect(0:0.002:10);
 
