@@ -56,12 +56,13 @@ jobs:
           julia --project=docs -e '
             using Pkg
             Pkg.develop(PackageSpec(path=pwd()))
-            Pkg.instantiate()'
+            Pkg.instantiate()
+            Pkg.add("Plots")'
       - run: |
           julia --project=docs -e '
             using Documenter: DocMeta, doctest
-            using FractionalDiffEq
-            DocMeta.setdocmeta!(FractionalDiffEq, :DocTestSetup, :(using FractionalDiffEq); recursive=true)
+            using FractionalDiffEq, Plots
+            DocMeta.setdocmeta!(FractionalDiffEq, :DocTestSetup, :(using FractionalDiffEq, Plots); recursive=true)
             doctest(FractionalDiffEq)'
       - run: julia --project=docs docs/make.jl
         env:
