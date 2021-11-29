@@ -7,7 +7,7 @@ include("matrix.jl")
 include("Closedform.jl")
 
 export FractionalDiffEqAlgorithm
-export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete
+export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete, ClosedForm
 
 # Export some api to construct the equation
 export D, RieszMatrix, omega

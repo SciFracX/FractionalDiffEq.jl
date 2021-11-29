@@ -2,16 +2,16 @@
 
 By specifying different order in the equation, we can handle multi-term differential equations now!
 
-Let's see if we have a initial value problem with multiple terms derivative containing both fractional and integer, we can use the **FODEMatrixDiscrete** algorithm to solve the equation.
+Let's see if we have an initial value problem with multiple terms derivative containing both fractional and integer, we can use the **FODEMatrixDiscrete** algorithm to solve the equation.
 
 All we have to do is use the general derivative representing function ```D(size, order, step)``` to represent different derivative, for example, ```D(30, 2, 0.01)``` represent the second order derivative $y''(t)$ term and ```D(30, 2.5, 0.01)``` represent the 2.5 order derivative $D^{2.5}y(t)$ term.
 
 !!! warning "Keep the parameter unanimous"
-    When we are use ```D``` to represent different order deriavtives, please note we should keep the first parameter and third parameter unanimous, which represent the size of the discrete matrix and step size.
+    When we are using ```D``` to represent different order deriavtives, please note we should keep the first parameter and third parameter unanimous, which represent the size of the discrete matrix and step size.
 
 ## Detailed Usage
 
-Let's see if we have a equation like:
+Let's see if we have an equation like:
 
 ```math
 2y''(t)+4D^{1.5}y(t)=1
