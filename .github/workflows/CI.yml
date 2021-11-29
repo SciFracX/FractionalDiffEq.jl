@@ -57,7 +57,8 @@ jobs:
             using Pkg
             Pkg.develop(PackageSpec(path=pwd()))
             Pkg.instantiate()
-            Pkg.add("Plots")'
+            Pkg.add("Plots")
+            Pkg.add("LaTeXStrings")'
       - run: |
           julia --project=docs -e '
             using Documenter: DocMeta, doctest
