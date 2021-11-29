@@ -16,6 +16,6 @@ export D, RieszMatrix, omega
 export bagleytorvik
 export diffusion
 
-export solve, FODEProblem, FPDEProblem
+export solve, FDEProblem, FODEProblem, FPDEProblem
 
 end

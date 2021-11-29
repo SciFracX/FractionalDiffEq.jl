@@ -1,3 +1,11 @@
+```@meta
+CurrentModule = FractionalDiffEq
+DocTestSetup  = quote
+    using FractionalDiffEq
+end
+DocTestFilters = [r"Stacktrace:[\s\S]+"]
+```
+
 # FractionalDiffEq.jl APIs
 
 ## Problem definition:
@@ -12,7 +20,7 @@ FractionalDiffEq.FDEProblem
 FractionalDiffEq.solve
 ```
 
-The general solving API ```solve``` can accept various kinds of inputs, including [FDEProblem](@ref FDEProblem), [FODEProblem](@ref FODEProblem) and [FPDEProblem](@ref FPDEProblem)
+The general solving API ```solve``` can accept various kinds of inputs, including [FDEProblem](@ref #FDEProblem), [FODEProblem](@ref #FODEProblem) and [FPDEProblem](@ref FPDEProblem)
 
 ## Current algorithms:
 
