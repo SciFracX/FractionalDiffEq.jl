@@ -1,3 +1,13 @@
+```@meta
+DocTestSetup = quote
+    using FractionalDiffEq, Plots
+    plotsDir = joinpath(dirname(pathof(FractionalDiffEq)), "..", "docs", "build", "plots")
+    mkpath(plotsDir)
+    save_docs_plot(name) = Plots.savefig(joinpath(plotsDir,name))
+    save_docs_plot(p, name) = Plots.savefig(p, joinpath(plotsDir,name))
+end
+```
+
 # Get Start
 
 ## What is Fractional Differential Equations?
@@ -24,7 +34,7 @@ y^{(k)}(0)=0
 
 We can solve the Relaxation Oscillation Equation using FractionalDiffEq.jl:
 
-```julia
+```jldoctest; output = false
 using FractionalDiffEq, Plots, LaTeXStrings
 
 s="\$D^{0.5}y(x)=1-y,\\ y(0)=0\$"
@@ -34,12 +44,17 @@ prob=FDEProblem(fun, 0.5, 0, 5, 0.01)
 result=solve(prob, PECE())
 tspan=collect(0:0.01:5)
 
-plot(tspan, result, title=s, linewidth=2, legend=:bottomright)
+Plots.plot(tspan, result, title=s, linewidth=2, legend=:bottomright)
+
+save_docs_plot("relaxationoscillation.svg"); # hide
+
+# output
+
 ```
 
 By ploting the numerical result, we can get the approximation result:
 
-![Relaxation Oscillation](./assets/simple_example.png)
+![Relaxation Oscillation](../../plots/relaxationoscillation.svg)
 
 ## FDE with specific initial value
 
