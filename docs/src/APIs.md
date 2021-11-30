@@ -20,7 +20,7 @@ FractionalDiffEq.FDEProblem
 FractionalDiffEq.solve
 ```
 
-The general solving API [```solve```](FractionalDiffEq.solve) can accept various kinds of inputs, including [FDEProblem](#FractionalDiffEq.FDEProblem), [FODEProblem](#FractionalDiffEq.FODEProblem) and [FPDEProblem](FractionalDiffEq.FPDEProblem)
+The general solving API [```solve```](#FractionalDiffEq.solve) can accept various kinds of inputs, including [FDEProblem](#FractionalDiffEq.FDEProblem), [FODEProblem](#FractionalDiffEq.FODEProblem) and [FPDEProblem](#FractionalDiffEq.FPDEProblem)
 
 ## Current algorithms:
 
