@@ -71,7 +71,7 @@ function omega(n, α)
     omega = zeros(n+1)
 
     omega[1]=1
-    for i in range(1, n, step=1)
+    @fastmath @inbounds @simd for i in range(1, n, step=1)
         omega[i+1]=(1-(α+1)/i)*omega[i]
     end
     
@@ -119,7 +119,7 @@ function D(N, α, h)
     result=zeros(N, N)
     temp=omega(N, α)
 
-    for i in range(1, N, step=1)
+    @fastmath @inbounds @simd for i in range(1, N, step=1)
         result[i, 1:i]=reverse(temp[1:i])
     end
 
@@ -130,7 +130,7 @@ function F(N, α, h)
     result=zeros(N, N)
     temp = omega(N, α)
 
-    for i in range(1, N, step=1)
+    @fastmath @inbounds @simd for i in range(1, N, step=1)
         result[i, 1:i]=reverse(temp[1:i])
     end
 

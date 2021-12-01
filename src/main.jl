@@ -87,7 +87,7 @@ end
 function right(f, y, α, n, h)
     temp = 0
 
-    for j in range(0, n, step=1)
+    @fastmath @inbounds @simd for j in range(0, n, step=1)
         temp+=A(j, n, α)*f(j*h, y[Int64(j+1)])
     end
 

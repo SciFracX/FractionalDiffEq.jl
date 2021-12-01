@@ -22,7 +22,7 @@ function testsolve(parameters, orders, rparameters, rorders, u, t, ::ClosedForm)
     D = sum(parameters./(h.^orders))
     nT = length(t)
 
-    #TODO: For little orders? e.g. if rparameters and rorders is Number???
+    #TODO: For small orders? e.g. if rparameters and rorders is Number???
     D1 = rparameters[:]./h.^rorders[:]
 
     nA = length(parameters)
@@ -31,18 +31,18 @@ function testsolve(parameters, orders, rparameters, rorders, u, t, ::ClosedForm)
     y1=zeros(nT)
     W = ones(nT, length(vect))
     
-    for j=2:nT
+    @fastmath @inbounds @simd for j=2:nT
         W[j, :]= W[j-1, :].*(1 .-(vect'.+1)/(j.-1))
     end
 
-    for i=2:nT
+    @fastmath @inbounds @simd for i=2:nT
         A=y1[i-1:-1:1]'*W[2:i, 1:nA]
         y1[i]=(u[i]-sum(A.*parameters./(h.^orders)))/D
     end
 
     y=zeros(nT) # Initial the final result
 
-    for i=2:nT
+    @fastmath @inbounds @simd for i=2:nT
         y[i]=(W[1:i, (nA+1):end]*D1)'*y1[i:-1:1]
     end
 
