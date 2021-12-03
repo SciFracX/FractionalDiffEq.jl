@@ -56,9 +56,17 @@ Pkg> add FractionalDiffEq#master
 
 Let's see if we have an initial value problem:
 
+<p align="center">
+
 <img src="https://latex.codecogs.com/svg.image?D^{0.5}y(x)=1-y" title="D^{0.5}y(x)=1-y" />
 
+</p>
+
+<p align="center">
+
 <img src="https://latex.codecogs.com/svg.image?y(0)=0" title="y(0)=0" />
+
+</p>
 
 
 So we can use FractionalDiffEq.jl to solve the problem:
@@ -78,10 +86,17 @@ And if you plot the result, you can see the result of the fractional differentia
 
 Let's see if the initial value problem like:
 
+<p align="center">
+
 <img src="https://latex.codecogs.com/svg.image?y'''(t)&plus;\frac{1}{16}{^C_0D^{2.5}_t}y(t)&plus;\frac{4}{5}y''(t)&plus;\frac{3}{2}y'(t)&plus;\frac{1}{25}{^C_0D^{0.5}_t}y(t)&plus;\frac{6}{5}y(t)=\frac{172}{125}\cos(\frac{4t}{5})" title="y'''(t)+\frac{1}{16}{^C_0D^{2.5}_t}y(t)+\frac{4}{5}y''(t)+\frac{3}{2}y'(t)+\frac{1}{25}{^C_0D^{0.5}_t}y(t)+\frac{6}{5}y(t)=\frac{172}{125}\cos(\frac{4t}{5})" />
+
+</p>
+
+<p align="center">
 
 <img src="https://latex.codecogs.com/svg.image?y(0)=0,\&space;y'(0)=0,\&space;y''(0)=0" title="y(0)=0,\ y'(0)=0,\ y''(0)=0" />
 
+</p>
 
 ```julia
 using FractionalDiffEq
