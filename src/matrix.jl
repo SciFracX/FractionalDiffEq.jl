@@ -71,8 +71,8 @@ function omega(n, α)
     omega = zeros(n+1)
 
     omega[1]=1
-    @fastmath @inbounds @simd for i in range(1, n, step=1)
-        omega[i+1]=(1-(α+1)/i)*omega[i]
+    @fastmath @inbounds @simd for i ∈ 1:n
+        omega[i+1] = (1-(α+1)/i)*omega[i]
     end
     
     return omega
@@ -116,11 +116,11 @@ And then we can get the numerical approximation.
     Here ```N``` is the size of discrete matrix.
 """
 function D(N, α, h)
-    result=zeros(N, N)
-    temp=omega(N, α)
+    result = zeros(N, N)
+    temp = omega(N, α)
 
     @fastmath @inbounds @simd for i in range(1, N, step=1)
-        result[i, 1:i]=reverse(temp[1:i])
+        result[i, 1:i] = reverse(temp[1:i])
     end
 
     return h^(-α)*result
@@ -130,7 +130,7 @@ function F(N, α, h)
     result=zeros(N, N)
     temp = omega(N, α)
 
-    @fastmath @inbounds @simd for i in range(1, N, step=1)
+    @fastmath @inbounds @simd for i ∈ 1:N
         result[i, 1:i]=reverse(temp[1:i])
     end
 
@@ -196,7 +196,7 @@ function B(N, p)
     result=zeros(N, N)
     temp=omega(N, p)
 
-    @inbounds @simd for i in range(1, N, step=1)
+    @inbounds @simd for i ∈ 1:N
         @views result[i, 1:i]=reverse(temp[1:i])
     end
 

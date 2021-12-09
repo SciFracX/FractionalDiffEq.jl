@@ -35,6 +35,7 @@
   </a>
 </p>
 
+> See our talk on JuliaCN 2021 Winter Conf: [slide](https://julia-cn-conf2021.vercel.app/1)
 
 # Installation
 
