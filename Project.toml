@@ -1,7 +1,7 @@
 name = "FractionalDiffEq"
 uuid = "c7492dd8-6170-483b-af64-cefb6c377d9a"
 authors = ["Qingyu Qu <erikqqy123@gmail.com>"]
-version = "0.1.2"
+version = "0.1.3"
 
 [deps]
 InvertedIndices = "41ab1584-1d38-5bbf-9106-f11c6c58b48f"
