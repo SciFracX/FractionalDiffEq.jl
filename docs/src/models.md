@@ -49,7 +49,7 @@ Well, time fractional derivative and spatial fractional derivative are both need
 
 The Bagley Torvik can be used to describe the moving of damped object.
 
-![Damped](/assets/damped.png)
+![Damped](./assets/damped.png)
 
 ```math
 Ay''(t)+BD^{\frac{3}{2}}_ty(t)+Cy(t)=f(t)
@@ -70,6 +70,8 @@ result = bagleytorvik(1, 1, 1, 1, T, h)
 
 plot(tspan, result, title=s, legend=:bottomright)
 ```
+
+
 
 ## Relaxation Oscillation Equation
 
