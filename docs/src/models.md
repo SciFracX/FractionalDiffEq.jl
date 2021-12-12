@@ -47,6 +47,30 @@ Well, time fractional derivative and spatial fractional derivative are both need
 
 ## Bagley Torvik Equation
 
+The Bagley Torvik can be used to describe the moving of damped object.
+
+![Damped](/assets/damped.png)
+
+```math
+Ay''(t)+BD^{\frac{3}{2}}_ty(t)+Cy(t)=f(t)
+```
+
+In FractionalDiffEq.jl, we can specify the parameters and solve the equation:
+
+```julia
+using FractionalDiffEq
+using Plots, LaTeXStrings
+
+s="\$Bagley\\ Torvik\\ Equation\$"
+
+T=30
+h=0.05
+tspan = collect(0:h:T)
+result = bagleytorvik(1, 1, 1, 1, T, h)
+
+plot(tspan, result, title=s, legend=:bottomright)
+```
+
 ## Relaxation Oscillation Equation
 
 ![Relaxo](./assets/Relaxo.png)

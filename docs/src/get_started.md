@@ -39,7 +39,7 @@ Plots.plot(tspan, result, title=s, linewidth=2, legend=:bottomright)
 
 By ploting the numerical result, we can get the approximation result:
 
-![Relaxation Oscillation](/assets/simple_example.svg)
+![Relaxation Oscillation](/assets/simple_example.png)
 
 ## FDE with specific initial value
 

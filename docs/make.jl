@@ -12,7 +12,7 @@ makedocs(;
     ),
     pages=[
         "FractionalDiffEq.jl" => "index.md",
-        "Get Started" => "get_start.md",
+        "Get Started" => "get_started.md",
         "Multi-term FDE" => "multiterm.md",
         "System of FDE" => "system_of_FDE.md",
         "Detailed Models" => "models.md",
