@@ -35,16 +35,11 @@ result=solve(prob, PECE())
 tspan=collect(0:0.01:5)
 
 Plots.plot(tspan, result, title=s, linewidth=2, legend=:bottomright)
-
-save_docs_plot("relaxationoscillation.svg"); # hide
-
-# output
-
 ```
 
 By ploting the numerical result, we can get the approximation result:
 
-![Relaxation Oscillation](../../plots/relaxationoscillation.svg)
+![Relaxation Oscillation](/assets/simple_example.svg)
 
 ## FDE with specific initial value
 

@@ -1,3 +1,5 @@
+# FIXME: Not well done!
+
 """
 http://www.koreascience.or.kr/article/JAKO200833338752380.pdf
 """
@@ -16,13 +18,14 @@ Ahmed, H. (2018). FRACTIONAL EULER METHOD; AN EFFECTIVE TOOL FOR SOLVING FRACTIO
 
 function solve(f, α, u0, h, T)
     N=Int64(T/h)
-    m=Int64(ceil(α))
+    #m=Int64(ceil(α))
     
-    y=zeros(N+1)
+    y=ones(N+1)
     y[1]=u0
 
-    for i in range(0, N, step=1)
-        y[i+1]=left(i, u0, h, m) + h^α/gamma(α+1)*coeff(i, α, N)*f(i*h, y[i])
+    for i in range(1, N, step=1)
+        #y[i+1]=left(i, u0, h, m) + h^α/gamma(α+1)*coeff(i, α, N)*f(i*h, y[i])
+        y[i+1] = y[i] + h^α/gamma(α+1)*f(i*h, y[i])
     end
 
     return y
@@ -40,9 +43,9 @@ function left(n, u0, h, m)
     return temp
 end
 
-fun(x, y) = -y
+fun(t, y) = y
 
-result=solve(fun, 0.5, 1, 0.001, 5)
+result=solve(fun, 0.5, 0, 0.001, 5)
 tspan=collect(0:0.001:5)
 
 plot(tspan, result)

@@ -147,12 +147,18 @@ By specifying the parameters of Bagley Torvik Equation, we can use **bagleytorvi
 !!! info "p2 ≠ 0"
     Please note that the parameter of fractional derivative part must not be 0
 """
-function bagleytorvik(p1, p2, p3, T, h)
+function bagleytorvik(p1, p2, p3, right T, h)
     N=Int64(T/h+1)
     equation = p1*D(N, 2, h)+p2*D(N, 1.5, h)+p3*(zeros(N, N)+I)
     equation = eliminator(N, [1,2])*equation*eliminator(N, [1,2])'
-    right = eliminator(N, [1,2])*ones(N)
-    result = equation\right
+    
+    if typeof(right) <: Number
+        rightside = eliminator(N, rows)*right*ones(N)
+    else
+        rightside = eliminator(N, rows)*right.(collect(h:h:T))
+    end
+    
+    result = equation\rightside
 
     return vcat(zeros(2), result)
 end
