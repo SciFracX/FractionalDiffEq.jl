@@ -38,22 +38,24 @@ function genfun(p)
 end
 
 function getvec(α, n, g)
-    p=length(g)-1
-    b=1+α
-    g0=g[1]
-    w=zeros(1, n)
-    w[1]=g[1]^α
+    p = length(g)-1
+    b = 1 + α
+    g0 = g[1]
+    w = Float64[]
+    push!(w, g[1]^α)
 
-    for m=2:p
-        M=m-1
-        dA=b/M
-        w[m]=(-(g[2:m].*collect((1-dA):-dA:(1-b)))*w[M:-1:1]'/g0)[1]
+    for m = 2:p
+        M = m-1
+        dA = b/M
+        temp = (-(g[2:m] .*collect((1-dA):-dA:(1-b))))' *w[M:-1:1]/g0
+        push!(w, temp)
     end
 
-    for k=p+1:n
-        M=k-1
-        dA=b/M
-        w[k]=(-(g[2:(p+1)].*collect((1-dA):-dA:(1-p*dA)))*w[M:-1:(k-p)]'/g0)[1]
+    for k = p+1:n
+        M = k-1
+        dA = b/M
+        temp = (-(g[2:(p+1)] .*collect((1-dA):-dA:(1-p*dA))))' *w[M:-1:(k-p)]/g0
+        push!(w, temp)
     end
 
     return w
@@ -82,4 +84,4 @@ result=solve([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], [30 90], [1 0.3], u, t);
 plot(t, result)
 
 
-# It need to known that in Julia, for is somewhat slowerer than vectorization
+# It need to known that in Julia, for is somewhat faster than vectorization
