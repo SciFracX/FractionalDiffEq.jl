@@ -6,6 +6,9 @@ include("main.jl")
 include("matrix.jl")
 include("Closedform.jl")
 
+include("mlfun.jl")
+export mittleff
+
 export FractionalDiffEqAlgorithm
 export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete, ClosedForm
 

@@ -1,7 +1,5 @@
 using FractionalDiffEq
 using Test
-using MittagLeffler
-
 
 @testset "Test Diethelm PECE algorithms" begin
     fun(x, y) = 1-y
