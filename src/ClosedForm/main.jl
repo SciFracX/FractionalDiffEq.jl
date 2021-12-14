@@ -3,7 +3,7 @@ import FractionalDiffEq.FractionalDiffEqAlgorithm
 # Algorithms extending
 
 """
-Closed form 
+Closed Form solution algorithm.
 
 ## Reference:
 
@@ -17,7 +17,7 @@ struct ClosedForm <: FractionalDiffEqAlgorithm end
 
 Use Closed-Form solution to obtain numerical solution at zero initial condition.
 """
-function testsolve(parameters, orders, rparameters, rorders, u, t, ::ClosedForm)
+function solve(parameters, orders, rparameters, rorders, u, t, ::ClosedForm)
     h = t[2]-t[1]
     D = sum(parameters./(h.^orders))
     nT = length(t)
