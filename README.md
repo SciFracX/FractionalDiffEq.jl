@@ -120,10 +120,51 @@ Or use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/m
 
 ![Example](docs/src/assets/complicated_example.png)
 
+### ODE Example
+
+FractionalDiffEq.jl is also able to solve ordinary differential equations~ Let's see an example here:
+
+<p align="center">
+<img src="https://latex.codecogs.com/svg.image?y''(x)&plus;y'(x)=\sin(x)" title="y''(x)+y'(x)=\sin(x)" />
+
+<p>
+
+<p align="center">
+
+<img src="https://latex.codecogs.com/svg.image?y(0)=0" title="y(0)=0" />
+
+</p>
+
+
+```julia
+using FractionalDiffEq
+using Plots, LaTeXStrings
+
+s="\$ODE\\ Example\$"
+
+T = 30
+h=0.05
+tspan = collect(0.05:h:T)
+
+f(x)=1/2*(-exp(-x)-sin(x)-cos(x)+2)
+target=f.(tspan)
+
+eq = D(600, 2, h)+D(600, 1, h)
+rightfun(x) = sin(x)
+result = solve(eq, rightfun, 2, h, T, FODEMatrixDiscrete())
+
+plot(tspan, result, title=s, legend=:bottomright, label="ODE Numerical Solution!")
+
+plot!(tspan, target, lw=3,ls=:dash,label="ODE Analytical Solution!")
+```
+
+![ODE Example](docs/src/assets/ode_example.png)
+
 ## Road map
 
-* Trapezoid PI rule
-* Fractional Linear Multi-step Method
+* More performant algorithms
+* Better docs
+* More interesting ideas~
 
 ## Contributing
 
