@@ -28,12 +28,28 @@ Pkg> add FractionalDiffEq#master
 
 2. Benefit from the advancing features of JuliaLang, FractionalDiffEq.jl has impressing performance and high speed, help the model more efficient and robust.
 
+3. Capable of solving both linear and nonlinear fractional differential equations.
+
+4. Detailed models supporting, such as Bagley Torvik equations, Relaxation Oscillation equation etc.
+
+
+> See SciFracX 2021 Winter Report
+
+<iframe width="560" height="500" src="https://www.youtube.com/watch?v=oVvrW7EgEwg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 
 
 ## Roadmap
 
 * More algorithms are planned to support.
+
 * Improve benchmark.
+
+* Systems of FDEs.
+
+* Connect with SciML ecosystem.
+
+* More interesting ideas~
 
 
 ## Contributing

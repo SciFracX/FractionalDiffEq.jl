@@ -57,12 +57,11 @@ Here, $E$ represent [Mittag Leffler function](https://en.wikipedia.org/wiki/Mitt
 E_{\alpha,\ \beta}=\displaystyle\sum_{k=0}^{\infty}\frac{z^k}{\Gamma(\alpha k+\beta)}
 ```
 
-And we use [jlapeyre/MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl) to generate Mittag Leffler function.
+The Mittag Leffler function $E_{\alpha, \beta}$ is build inside the FractionalDiffEq.jl.
 
 ```julia
 using FractionalDiffEq
 using Plots
-using MittagLeffler
 
 #Analytical solution
 target = []

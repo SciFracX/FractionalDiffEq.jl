@@ -49,7 +49,7 @@ Well, time fractional derivative and spatial fractional derivative are both need
 
 The Bagley Torvik can be used to describe the moving of damped object.
 
-![Damped](./assets/damped.png)
+<img src="./assets/damped.png" height="400px" width="300px"></img>
 
 ```math
 Ay''(t)+BD^{\frac{3}{2}}_ty(t)+Cy(t)=f(t)
