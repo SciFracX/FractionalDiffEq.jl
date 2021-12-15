@@ -12,6 +12,7 @@ SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 SpecialMatrices = "928aab9d-ef52-54ac-8ca1-acd7ca42c160"
 
 [compat]
+FractionalCalculus = "0.1"
 InvertedIndices = "1.1"
 SpecialFunctions = "2.0.0"
 SpecialMatrices = "2.0.0"
