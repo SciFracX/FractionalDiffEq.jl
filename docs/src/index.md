@@ -8,6 +8,13 @@ Hello there👋!
 
 FractionalDiffEq.jl is a Julia package aiming at solving Fractional Differential Equations using high performance numerical methods.
 
+```@contents
+Pages = ["index.md"]
+```
+
+!!! tip "Star Us"
+	If you think **FractionalDiffEq.jl** is useful and powerful, please [star us in GitHub](httpd://github.com/SciFracX/FractionalDiffEq.jl), it means a lot to us!
+
 ## Installation
 
 If you have already installed Julia, you can install FractionalDiffEq.jl in REPL using Julia package manager:
@@ -24,20 +31,22 @@ Pkg> add FractionalDiffEq#master
 
 ## Features
 
-1. While most fractional differential equations solvers are implemented using Matlab, **FractionalDiffEq.jl** is totally driven by [Julia](https://julialang.org/) and licensed with [MIT License](https://en.wikipedia.org/wiki/MIT_License), ensure its everlasting development and open source.
+* While most fractional differential equations solvers are implemented using Matlab, **FractionalDiffEq.jl** is totally driven by [Julia](https://julialang.org/) and licensed with [MIT License](https://en.wikipedia.org/wiki/MIT_License), ensure its everlasting development and open source.
 
-2. Benefit from the advancing features of JuliaLang, FractionalDiffEq.jl has impressing performance and high speed, help the model more efficient and robust.
+* Benefit from the advancing features of JuliaLang, FractionalDiffEq.jl has impressing performance and high speed, help the model more efficient and robust.
 
-3. Capable of solving both linear and nonlinear fractional differential equations.
+* Capable of solving both linear and nonlinear fractional differential equations.
 
-4. Detailed models supporting, such as Bagley Torvik equations, Relaxation Oscillation equation etc.
+* Detailed models supporting, such as Bagley Torvik equations, Relaxation Oscillation equation etc.
 
 
 > See SciFracX 2021 Winter Report
 
+```@raw html
+
 <iframe width="560" height="500" src="https://www.youtube.com/watch?v=oVvrW7EgEwg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-
+```
 
 ## Roadmap
 
