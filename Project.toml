@@ -13,6 +13,7 @@ SpecialMatrices = "928aab9d-ef52-54ac-8ca1-acd7ca42c160"
 
 [compat]
 InvertedIndices = "1.1"
+QuadGK = "2"
 SpecialFunctions = "2.0.0"
 SpecialMatrices = "2.0.0"
 julia = "1.2"
