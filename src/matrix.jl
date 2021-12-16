@@ -173,13 +173,13 @@ When using the Martix
 function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
     h=T/(M-1)
     τ=h^2/6
-    TMatrix = kron(D(N-1, α, τ)', zeros(M, M)+I)
+    TMatrix = kron(D(N-1, α, τ)', zeros(M, M) + I)
     SMatrix = kron(zeros(N-1, N-1)+I, RieszMatrix(β, M, h))
 
     system = TMatrix-SMatrix
 
     # Handling boundary conditions
-    BMatrix = kron(zeros(N-1, N-1)+I, eliminator(M, [1 M]))
+    BMatrix = kron(zeros(N-1, N-1) + I, eliminator(M, [1 M]))
     system = system*BMatrix'
 
     left = BMatrix*system

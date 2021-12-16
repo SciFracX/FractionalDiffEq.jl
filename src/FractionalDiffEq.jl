@@ -2,10 +2,10 @@ module FractionalDiffEq
 
 using LinearAlgebra, SpecialFunctions, InvertedIndices
 
-include("main.jl")
+include("PECE.jl")
 include("matrix.jl")
 include("ClosedForm/hankelmatrix.jl")
-include("ClosedForm/main.jl")
+include("ClosedForm/ClosedForm.jl")
 
 
 include("mlfun.jl")

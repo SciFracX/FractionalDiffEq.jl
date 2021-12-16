@@ -17,7 +17,7 @@ Ahmed, H. (2018). FRACTIONAL EULER METHOD; AN EFFECTIVE TOOL FOR SOLVING FRACTIO
 """
 
 function solve(f, α, u0, h, T)
-    N=Int64(T/h)
+    N = Int64(floor(T/h))
     #m=Int64(ceil(α))
     
     y=ones(N+1)

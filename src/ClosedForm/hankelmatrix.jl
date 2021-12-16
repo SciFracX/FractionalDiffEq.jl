@@ -30,10 +30,10 @@ function solve(a, na, b, nb, u, t, ::ClosedFormHankelM)
         B = B .+ getvec(nb[i], nt, g)*b[i]/(h^nb[i])
     end
 
-    A=rotl90(newhankel(A[end:-1:1]))
-    B=rotl90(newhankel(B[end:-1:1]))
+    A = rotl90(newhankel(A[end:-1:1]))
+    B = rotl90(newhankel(B[end:-1:1]))
 
-    y=B*inv(A)*u
+    y = B*inv(A)*u
     return y
 end
 
@@ -46,8 +46,8 @@ g_p(z)=\\sum_{k=1}^p \\frac{1}{k}(1-z)^k
 ```
 """
 function genfun(p)
-    a=collect(1:p+1)
-    A=Vandermonde(a)'
+    a = collect(1:p+1)
+    A = Vandermonde(a)'
     return (1 .-a')*inv(A')
 end
 
@@ -76,12 +76,12 @@ function getvec(α, n, g)
 end
 
 function newhankel(v)
-    n=length(v)
-    v=v[:]
+    n = length(v)
+    v = v[:]
 
-    hankelm=zeros(n, n)
+    hankelm = zeros(n, n)
     for i=1:length(v)
-        hankelm[i, 1:end-i+1]=v[i:end]
+        hankelm[i, 1:end-i+1] = v[i:end]
     end
 
     return hankelm

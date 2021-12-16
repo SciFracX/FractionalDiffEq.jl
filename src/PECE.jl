@@ -70,15 +70,16 @@ function solve(FODE::FODEProblem, ::PECE)
     N = Int64(floor(T/h))
     y = zeros(N+1)
     leftsum = 0
+    l = floor(α)
 
-    if floor(α) == 0
+    if l == 0
         leftsum = u0
-    elseif floor(α) == 1
+    elseif l == 1
         leftsum = u0 + T*u0
     end
 
     @fastmath @inbounds @simd for n ∈ 0:N
-        y[Int64(n+1)] = leftsum + h^α/gamma(α+2)*(f((n+1)*h, predictor(f, y, α, n, h, u0, T)) + right(f, y, α, n, h))
+        y[n+1] = leftsum + h^α/gamma(α+2)*(f((n+1)*h, predictor(f, y, α, n, h, u0, T)) + right(f, y, α, n, h))
     end
 
     return y
@@ -94,18 +95,20 @@ function right(f, y, α, n, h)
     return temp
 end
 
-function predictor(f, y, α, n, h, u0, T)
+function predictor(f, y, α::Float64, n::Int64, h, u0, T)
      predict = 0
      leftsum = 0
 
-     if floor(α) == 0
+     l = floor(α)
+
+     if l == 0
         leftsum = u0
-     elseif floor(α) == 1
+     elseif l == 1
         leftsum = u0 + T*u0
      end
 
      @fastmath @inbounds @simd for j ∈ 0:n
-        predict += B(j, n, α, h)*f(j*h, y[Int64(j+1)])
+        predict += B(j, n, α, h)*f(j*h, y[j+1])
      end
 
      return leftsum + predict
