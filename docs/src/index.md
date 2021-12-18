@@ -42,11 +42,7 @@ Pkg> add FractionalDiffEq#master
 
 > See SciFracX 2021 Winter Report
 
-```@raw html
-
-<iframe width="560" height="500" src="https://www.youtube.com/watch?v=oVvrW7EgEwg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-```
+[![conf2021](assets/conf2021.png)](https://www.youtube.com/watch?v=oVvrW7EgEwg)
 
 ## Roadmap
 
