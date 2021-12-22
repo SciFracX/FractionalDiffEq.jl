@@ -15,11 +15,6 @@
 
 import QuadGK: quadgk
 
-macro br(n)
-#    esc(:(println(stderr, "branch ", $n)))
-    nothing
-end
-
 function ourquadgk(f, a, b)
     (res, err) = quadgk(f, a, b; order=17)
     return res
@@ -78,16 +73,13 @@ end
 function choosesum(α, β, z, ρ)
     k0 = floor(Int, -log(ρ)/log(abs(z)))
     if abs(angle(z)) < pi*α/4 + 1//2 * min(pi, pi*α)
-        @br 3
         return 1/α * z^((1-β)/α) * exp(z^(1/α)) - sum2(α, β, z, k0)
     else
-        @br 4
         return - sum2(α, β, z, k0)
     end
 end
 
 function mittleffsum(α, β, z)
-    @br 1
     k0::Int = floor(Int, α) + 1
     s = zero(z)
     for k=0:(k0 - 1)
@@ -102,7 +94,6 @@ end
 # So, we compute k0 using only the real part of k0.
 # The effect on the accuracy is not controlled.
 function mittleffsum2(α, β, z, ρ)
-    @br 2
     zr = real(z)
     k0 = max(ceil(Int, (1-β)/α), ceil(Int, log(ρ*(1-abs(zr)))/log(abs(zr))))
     s = zero(z)
@@ -122,22 +113,17 @@ function mittleffints(α, β, z, ρ)
     aaz = abs(angle(z))
     if aaz > α * pi
         if β <= 1
-            @br 5
             return Kint(α, β, χ0, z)
         else
-            @br 6
             return Kint(α, β, 1, χ0, z) + Pint(α, β, z)
         end
     elseif aaz < pi*α
         if β <= 1
-            @br 7
             return Kint(α, β, χ0, z) + (1/α)*z^((1-β)/α) * exp(z^(1/α))
         else
-            @br 8
             return Kint(α, β, az/2, χ0, z) + Pint(α, β, (az)/2, z) + (1/α)*z^((1-β)/α) * exp(z^(1/α))
         end
     else
-        @br 9
         return Kint(α, β, (az+1)/2, χ0, z) + Pint(α, β, (az+1)/2, z)
     end
 end

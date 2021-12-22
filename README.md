@@ -12,7 +12,7 @@
   <a href="https://codecov.io/gh/SciFracX/FractionalDiffEq.jl">
     <img alt="codecov" src="https://codecov.io/gh/SciFracX/FractionalDiffEq.jl/branch/master/graph/badge.svg">
   </a>
-  <a href="https://www.erikqqy.xyz/FractionalDiffEq.jl/dev/">
+  <a href="https://scifracx.github.io/FractionalDiffEq.jl/dev/">
     <img src="https://img.shields.io/badge/docs-dev-blue.svg" alt="license">
   </a>
   <a href="https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/LICENSE">
