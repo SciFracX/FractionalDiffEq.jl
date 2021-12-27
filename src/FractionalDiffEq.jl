@@ -12,6 +12,12 @@ include("mlfun.jl")
 export mittleff
 
 export FractionalDiffEqAlgorithm
+
+# Export problem types
+export FDEProblem, FPDEProblem
+
+export SingleTermFODEProblem, MultiTermsFODEProblem
+
 export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete, ClosedForm, ClosedFormHankelM
 
 # Export some api to construct the equation

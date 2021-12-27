@@ -1,5 +1,7 @@
 import FractionalDiffEq.FractionalDiffEqAlgorithm
 
+import FractionalDiffEq.FODEProblem
+
 # Algorithms extending
 
 """
@@ -12,12 +14,14 @@ ISBN:9787030543981
 """
 struct ClosedForm <: FractionalDiffEqAlgorithm end
 
+
 """
     solve(parameters, order, lparameters, lorders, u, t)
 
 Use Closed-Form solution to obtain numerical solution at zero initial condition.
 """
-function solve(parameters, orders, rparameters, rorders, u, t, ::ClosedForm)
+function solve(prob::MultiTermsFODEProblem, u, t, ::ClosedForm)
+    parameters, orders, rparameters, rorders = prob.parameters, prob.orders, prob.rparameters, prob.rorders
     h = t[2]-t[1]
     D = sum(parameters./(h.^orders))
     nT = length(t)

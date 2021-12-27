@@ -3,9 +3,9 @@ using Test
 
 @testset "Test Diethelm PECE algorithms" begin
     fun(x, y) = 1-y
-    prob=FODEProblem(fun, 1.8, 0, 5, 0.01)
-    result=solve(prob, PECE())
-    tspan=collect(0:0.01:5)
+    prob = SingleTermFODEProblem(fun, 1.8, 0.01)
+    result = solve(prob, 0, 5, PECE())
+    tspan = collect(0:0.01:5)
 
     target = []
 
@@ -54,6 +54,8 @@ end
 
     u=sin.(t.^2);
 
-    result=solve([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], [30 90], [1 0.3], u, t, ClosedForm())
+    prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], [30 90], [1 0.3])
+
+    result=solve(prob, u, t, ClosedForm())
 
 end

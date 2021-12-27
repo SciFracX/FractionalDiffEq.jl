@@ -25,26 +25,9 @@ struct PECE <: FractionalDiffEqAlgorithm end
 #TODO: Use Richardson extrapolation to refine the PECE algorithms 
 
 
-"""
-    FDEProblem(f, α, u0, T, h)
 
-Define a Fractional Differential in time interval [0, T] with initial value y(0)=u₀, α-order derivative and step size h.
-"""
-abstract type FDEProblem end
 
-"""
 
-    FODEProblem(f, α, u0, T, h)
-
-Fractional Ordinary Differential Equations definition
-"""
-struct FODEProblem <: FDEProblem
-    f
-    α
-    u0
-    T
-    h
-end
 
 """
 
@@ -65,8 +48,8 @@ end
 
 After define the FDEProblem, use **PECE(Predict-Evaluate-Correct-Evaluate) algorithm** to computing the Fractional Differential Equation
 """
-function solve(FODE::FODEProblem, ::PECE)
-    f, α, u0, T, h = FODE.f, FODE.α, FODE.u0, FODE.T, FODE.h
+function solve(FODE::SingleTermFODEProblem, u0, T, ::PECE)
+    f, α, h = FODE.f, FODE.α, FODE.h
     N = Int64(floor(T/h))
     y = zeros(N+1)
     leftsum = 0
@@ -76,7 +59,7 @@ function solve(FODE::FODEProblem, ::PECE)
         leftsum = u0
     elseif l == 1
         leftsum = u0 + T*u0
-    end
+end
 
     @fastmath @inbounds @simd for n ∈ 0:N
         y[n+1] = leftsum + h^α/gamma(α+2)*(f((n+1)*h, predictor(f, y, α, n, h, u0, T)) + right(f, y, α, n, h))

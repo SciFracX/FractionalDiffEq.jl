@@ -1,5 +1,8 @@
+struct GL <: FractionalDiffEqAlgorithm end
+
 # Need to be verified
-function solve(f, α, T, h, b)
+function solve(prob::SingleTermFODEProblem, T, b, ::GL)
+    f, α, h = prob.f, prob.α, prob.h
     n=Int64(T/h)
     y=zeros(n)# Prelocate result
     y[1]=0
