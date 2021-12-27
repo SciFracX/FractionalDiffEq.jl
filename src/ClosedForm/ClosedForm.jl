@@ -1,7 +1,5 @@
 import FractionalDiffEq.FractionalDiffEqAlgorithm
 
-import FractionalDiffEq.FODEProblem
-
 # Algorithms extending
 
 """
