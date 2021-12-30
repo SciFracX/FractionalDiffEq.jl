@@ -25,7 +25,11 @@ function solve(prob::MultiTermsFODEProblem, u, t, ::ClosedForm)
     nT = length(t)
 
     #TODO: For small orders? e.g. if rparameters and rorders is Number???
-    D1 = rparameters[:]./h.^rorders[:]
+    if isa(rparameters, Number) && typeof(rorders) <: Number
+        D1 = rparameters/h^rorders
+    else
+        D1 = rparameters[:]./h.^rorders[:]
+    end
 
     nA = length(parameters)
     vect = hcat(orders, rorders)
@@ -42,9 +46,9 @@ function solve(prob::MultiTermsFODEProblem, u, t, ::ClosedForm)
         y1[i] = (u[i]-sum(A.*parameters./(h.^orders)))/D
     end
 
-    y = zeros(nT) # Initial the final result
+    y = zeros(nT) # Prelocate the final result
 
-    @fastmath @inbounds @simd for i=2:nT
+    for i=2:nT
         y[i] = (W[1:i, (nA+1):end]*D1)'*y1[i:-1:1]
     end
 
