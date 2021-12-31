@@ -15,6 +15,7 @@ makedocs(;
         "Get Started" => "get_started.md",
         "Multi-term FDE" => "multiterm.md",
         "System of FDE" => "system_of_FDE.md",
+        "Fractional PDE" => "fpde.md",
         "Detailed Models" => "models.md",
         "Examples" => "example.md",
         "Comparison" => "comparison.md",
