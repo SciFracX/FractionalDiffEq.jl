@@ -74,9 +74,9 @@ So we can use FractionalDiffEq.jl to solve the problem:
 
 ```julia
 fun(x, y) = 1-y
-prob = FODEProblem(fun, 0.5, 0, 5, 0.001)
-result=solve(prob, PECE())
-tspan=collect(0:0.001:5)
+prob = SingleTermFODEProblem(fun, 0.5, 0.001)
+result = solve(prob, 0, 5, PECE())
+tspan = collect(0:0.001:5)
 ```
 
 And if you plot the result, you can see the result of the fractional differential equation:
