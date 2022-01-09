@@ -1,4 +1,4 @@
-using SpecialMatrices
+#using SpecialMatrices
 
 function nlsolve(f, α, x0, h, tn)    
     n = length(x0)
@@ -91,6 +91,6 @@ result=nlsolve(chua, alpha, x0, h, tn)
 m=result[1, :]
 n=result[2, :]
 
-using Plots
+#using Plots
 gr()
 plot(n, m)
