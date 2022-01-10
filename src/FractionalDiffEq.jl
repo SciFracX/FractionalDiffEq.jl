@@ -7,6 +7,8 @@ include("matrix.jl")
 include("ClosedForm/hankelmatrix.jl")
 include("ClosedForm/ClosedForm.jl")
 
+include("NonLinear/NonLinear.jl")
+
 include("mlfun.jl")
 
 
@@ -29,6 +31,8 @@ export D, RieszMatrix, omega
 # Export some special equtions
 export bagleytorvik
 export diffusion
+
+export NonLinearAlg
 
 export solve, FDEProblem, FODEProblem, FPDEProblem
 
