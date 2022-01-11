@@ -120,6 +120,68 @@ Or use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/m
 
 ![Example](docs/src/assets/complicated_example.png)
 
+### System of Fractional Differential Equations:
+
+FractionalDiffEq.jl is a powerful tool to solve the system of Fractional Differential Equations:
+
+A Chua circuit:
+
+![Chua](docs/src/assets/chua_diode.svg)
+
+The system of fractional differential equations to abstract the Chua circuit:
+
+<p align="center">
+
+<img src="https://latex.codecogs.com/svg.image?\begin{cases}
+D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x+1|-|x-1|)]\\
+D^{\alpha_2}y=x-y+z\\
+D^{\alpha_3}z=-10.593y-0.268z
+\end{cases}" title="\begin{cases}
+D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x+1|-|x-1|)]\\
+D^{\alpha_2}y=x-y+z\\
+D^{\alpha_3}z=-10.593y-0.268z
+\end{cases}" />
+
+</p>
+
+```julia
+using FractionalDiffEq
+using Plots
+
+function chua(t, x, k)
+    a=10.725
+    b=10.593
+    c=0.268
+    m0=-1.1726
+    m1=-0.7872
+
+    if k==1
+        f=m1*x[1]+0.5*(m0-m1)*(abs(x[1]+1)-abs(x[1]-1))
+        y=a*(x[2]-x[1]-f)
+        return y
+    elseif k==2
+        y=x[1]-x[2]+x[3]
+        return y
+    elseif k==3
+        y=-b*x[2]-c*x[3]
+        return y
+    end
+end
+
+alpha = [0.93, 0.99, 0.92];
+x0 = [0.2; -0.1; 0.1];
+h = 0.01;
+tn = 200;
+result = nlsolve(chua, alpha, x0, h, tn)
+
+gr()
+plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)
+```
+
+And plot the result:
+
+![Chua](docs/src/assets/chua.png)
+
 ### ODE Example
 
 FractionalDiffEq.jl is also able to solve ordinary differential equations~ Let's see an example here:
@@ -127,7 +189,7 @@ FractionalDiffEq.jl is also able to solve ordinary differential equations~ Let's
 <p align="center">
 <img src="https://latex.codecogs.com/svg.image?y''(x)&plus;y'(x)=\sin(x)" title="y''(x)+y'(x)=\sin(x)" />
 
-<p>
+</p>
 
 <p align="center">
 
