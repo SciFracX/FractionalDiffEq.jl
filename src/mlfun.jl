@@ -12,11 +12,12 @@
 """
 # This MittagLeffler function is modified from [John Lapeyre](https://github.com/jlapeyre)'s [MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl)
 # Since Mittag Leffler functions is widely used in Fractional Differential Equation, so we decided to has the Mittag Leffler function build in.
+# Credits go to John🙂, bugs are mine.
 
 import QuadGK: quadgk
 
 function ourquadgk(f, a, b)
-    (res, err) = quadgk(f, a, b; order=17)
+    (res, _) = quadgk(f, a, b; order=17)
     return res
 end
 
@@ -157,7 +158,7 @@ myeps(x::Complex) =  x |> real |> myeps
 """
     mittleff(α, β, z)
 
-Compute the Mittag-Leffler function at `z` for parameters `α,β`.
+Compute the Mittag-Leffler function at `z` for parameters `α, β`.
 """
 mittleff(α, β, z) = _mittleff(α, β, float(z))
 mittleff(α, β, z::Union{Integer,Complex{T}}) where {T<:Integer} = mittleff(α, β, float(z))
@@ -171,6 +172,10 @@ Compute `mittleff(α, 1, z)`.
 """
 mittleff(α, z) = _mittleff(α,1,z)
 #mittleff(α, z::Union{Integer,Complex{T}}) where {T<:Integer} = mittleff(α, float(z))
+
+mittleff(α, vec::Vector) = map(x -> mittleff(α, 1, x), vec)
+mittleff(α, β, vec::Vector) = map(x -> mittleff(α, β, x), vec)
+
 
 function _mittleff_special_beta_one(α,z)
     z == 0 && return one(z)
