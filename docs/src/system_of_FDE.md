@@ -2,19 +2,21 @@
 
 Many "real life" situations are governed by a system of fractional differential equations.
 
-So here, we will look at an example: Chua system.
+So here, we will look at an example: Chua circuit.
 
 The circuit diagram of the Chua system is shown below:
 
 ![Chua diode](./assets/chua_diode.svg)
 
+> Here, **``N_R``** is the [memoristor](https://en.wikipedia.org/wiki/Memristor), which is a non-linear electrical component relating electric charge and magnetic flux linkage.
+
 Let's see if we abstract the Chua system into a fractional differential equation system:
 
 ```math
 \begin{cases}
-\frac{dx}{dt}=10.725[y-1.7802x-[0.1927(|x+1|-|x-1|)]\\
-\frac{dy}{dt}=x-y+z\\
-\frac{dz}{dt}=-10.593y-0.268z
+D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x+1|-|x-1|)]\\
+D^{\alpha_2}y=x-y+z\\
+D^{\alpha_3}z=-10.593y-0.268z
 \end{cases}
 ```
 
