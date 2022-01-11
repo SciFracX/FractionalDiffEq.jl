@@ -132,15 +132,7 @@ The system of fractional differential equations to abstract the Chua circuit:
 
 <p align="center">
 
-<img src="https://latex.codecogs.com/svg.image?\begin{cases}
-D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x+1|-|x-1|)]\\
-D^{\alpha_2}y=x-y+z\\
-D^{\alpha_3}z=-10.593y-0.268z
-\end{cases}" title="\begin{cases}
-D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x+1|-|x-1|)]\\
-D^{\alpha_2}y=x-y+z\\
-D^{\alpha_3}z=-10.593y-0.268z
-\end{cases}" />
+<img src="https://latex.codecogs.com/svg.image?\begin{cases}D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x&plus;1|-|x-1|)]\\D^{\alpha_2}y=x-y&plus;z\\D^{\alpha_3}z=-10.593y-0.268z\end{cases}" title="\begin{cases}D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x+1|-|x-1|)]\\D^{\alpha_2}y=x-y+z\\D^{\alpha_3}z=-10.593y-0.268z\end{cases}" />
 
 </p>
 
