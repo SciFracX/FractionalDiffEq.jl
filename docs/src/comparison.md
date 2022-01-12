@@ -14,6 +14,7 @@ FOTF toolbox is a Matlab toolbox developed by Prof Dingyu Xue, with fractional c
 |-----|-----|
 | ```fode_sol9``` | ```ClosedForm``` |
 | ```fode_solm``` | ```ClosedFormHankelM``` |
+| ```nlfode_vec``` | ```NonLinearAlg```|
 
 ### Matrix approach to discretization of ODEs and PDEs of arbitrary real order
 

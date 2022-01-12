@@ -1,3 +1,8 @@
+"""
+    solve(f, α, x0, h, t, NonLinearAlg)
+    
+Non linear algorithm for nonlinear fractional differential equations.
+"""
 struct NonLinearAlg <: FractionalDiffEqAlgorithm end
 
 function solve(f, α, x0, h, tn, ::NonLinearAlg)    
@@ -8,7 +13,7 @@ function solve(f, α, x0, h, tn, ::NonLinearAlg)
     x0 = x0[:]
     ha = h.^α
     z = zeros(n, m)
-    x1 = copy(x0) #Here pass the value of x0 to x1, kept finding this bug for almost a whole night 😅
+    x1 = copy(x0) #Here pass the value of x0 to x1, kept finding this bug for almost a whole night😅
 
 
     W = zeros(n, m)

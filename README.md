@@ -1,4 +1,4 @@
-# FractionalDiffEq
+# FractionalDiffEq.jl
 
 <p align="center">
 <img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/logo.svg"/>

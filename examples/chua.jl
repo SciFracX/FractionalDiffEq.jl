@@ -8,15 +8,15 @@ function chua(t, x, k)
     m0=-1.1726
     m1=-0.7872
 
-    if k==1
-        f=m1*x[1]+0.5*(m0-m1)*(abs(x[1]+1)-abs(x[1]-1))
-        y=a*(x[2]-x[1]-f)
+    if k == 1
+        f = m1*x[1]+0.5*(m0-m1)*(abs(x[1]+1)-abs(x[1]-1))
+        y = a*(x[2]-x[1]-f)
         return y
-    elseif k==2
-        y=x[1]-x[2]+x[3]
+    elseif k == 2
+        y = x[1]-x[2]+x[3]
         return y
-    elseif k==3
-        y=-b*x[2]-c*x[3]
+    elseif k == 3
+        y = -b*x[2]-c*x[3]
         return y
     end
 end
@@ -25,7 +25,7 @@ alpha = [0.93, 0.99, 0.92];
 x0 = [0.2; -0.1; 0.1];
 h = 0.01;
 tn = 200;
-result = nlsolve(chua, alpha, x0, h, tn)
+result = solve(chua, alpha, x0, h, tn, NonLinearAlg())
 
 gr()
 plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)
