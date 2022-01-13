@@ -59,3 +59,7 @@ plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)
 ![Chua](./assets/chua.png)
 
 Cheers!🎉🎉🎉
+
+It is noteworthy that in the reference book [Fractional Calculus and Fractional-order Control](^1), the computing time is almost 20 minutes to solve this problem in [FOTF toolbox](https://www.mathworks.com/matlabcentral/fileexchange/60874-fotf-toolbox), while in FractionalDiffEq.jl, the computing time has a speed up of about 2 times, only cost 8 minutes and 31 seconds!!
+
+[^1]: 分数阶微积分学与分数阶控制 薛定宇 ISBN:9787030543981

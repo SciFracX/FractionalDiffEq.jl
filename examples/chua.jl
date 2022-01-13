@@ -23,7 +23,7 @@ end
 
 alpha = [0.93, 0.99, 0.92];
 x0 = [0.2; -0.1; 0.1];
-h = 0.01;
+h = 0.001;
 tn = 200;
 result = solve(chua, alpha, x0, h, tn, NonLinearAlg())
 
