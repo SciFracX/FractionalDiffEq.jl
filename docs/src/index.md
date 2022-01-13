@@ -13,7 +13,7 @@ Pages = ["index.md"]
 ```
 
 !!! tip "Star Us"
-	If you think **FractionalDiffEq.jl** is useful and powerful, please [star us in GitHub](httpd://github.com/SciFracX/FractionalDiffEq.jl), it means a lot to us!
+	If you think **FractionalDiffEq.jl** is useful, please [star us in GitHub](httpd://github.com/SciFracX/FractionalDiffEq.jl), it means a lot to us!
 
 ## Installation
 
@@ -37,10 +37,10 @@ pkg> add FractionalDiffEq#master
 
 * Capable of solving both linear and nonlinear fractional differential equations.
 
-* Detailed models supporting, such as Bagley Torvik equations, Relaxation Oscillation equation etc.
+* Detailed models supporting, such as Bagley Torvik equations, Relaxation Oscillation equations etc.
 
 
-> See SciFracX 2021 Winter Report
+> See our SciFracX 2021 Winter Report in JuliaCN Conference:
 
 [![conf2021](assets/conf2021.png)](https://www.youtube.com/watch?v=oVvrW7EgEwg)
 
@@ -49,8 +49,6 @@ pkg> add FractionalDiffEq#master
 * More algorithms are planned to support.
 
 * Improve benchmark.
-
-* Systems of FDEs.
 
 * Connect with SciML ecosystem.
 

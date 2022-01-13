@@ -2,11 +2,13 @@
 
 There are some build-in auxiliary functions in FractionalDiffEq.jl.
 
-## Mittag Leffler function
+## Generalized exponential function
+
+### Mittag Leffler function
 
 > The mittag leffler function is adapted from [MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl) implemented by [John Lapeyre](https://github.com/jlapeyre). We build in the mittag leffler function and add a few more functionalities.
 
-The [mittag leffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function) is defined as:
+The [mittag leffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function)(two parameter) is defined as:
 
 ```math
 E_{\alpha,\ \beta}(z)=\sum_{k=0}^{\infty}\frac{z^k}{\Gamma(\alpha k+\beta)}
@@ -32,3 +34,12 @@ Different order single parameter plot(``0<\alpha<1``):
 And also ``1<\alpha<2``:
 
 ![MittagLeffler](./assets/mittlefffunhigh.png)
+
+
+### The generalized ``\alpha`` exponential function
+
+The generalized ``\alpha`` exponential function ``e_\alpha^{\lambda z}`` is defined as:
+
+```math
+e_\alpha^{\lambda z}=z^{\alpha-1}E_{\alpha,\ \alpha}(\lambda z^\alpha)=\sum_{k=0}^{\infty}\frac{\lambda^k z^{\alpha(k-1)}}{\Gamma(\alpha(k+1))}\quad (z,\ \lambda\in\mathbb{C},\ \mathfrak{Re}(\alpha)>0)
+```
