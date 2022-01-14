@@ -43,4 +43,4 @@ plotly()
 plot(XX, YY, U, st=:surface)
 ```
 
-![Diffusion](./assets/diffusion.svg)
+![Diffusion](./assets/diffusion.png)
