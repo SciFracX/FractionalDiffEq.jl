@@ -17,9 +17,6 @@ U=[zeros(1, 21)' U]
 
 XX, YY = meshgrid(0.05^2/6 .*(0:147), 0:0.05:1)
 
-
-
-#gr()
 plotly()
 
 plot(XX, YY, U, st=:surface)
