@@ -74,7 +74,7 @@ function omega(n, α)
 
     omega[1]=1
     @fastmath @inbounds @simd for i ∈ 1:n
-        omega[i+1] = (1-(α+1)/i)*omega[i]
+        omega[i+1] = (1 - (α+1)/i)*omega[i]
     end
     
     return omega
@@ -172,11 +172,11 @@ end
 
 When using the Martix 
 """
-function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
-    h=T/(M-1)
-    τ=h^2/6
+function testsolve(α, β, T, M, N)
+    h = T/(M-1)
+    τ = h^2/6
     TMatrix = kron(D(N-1, α, τ)', zeros(M, M) + I)
-    SMatrix = kron(zeros(N-1, N-1)+I, RieszMatrix(β, M, h))
+    SMatrix = kron(zeros(N-1, N-1) + I, RieszMatrix(β, M, h))
 
     system = TMatrix-SMatrix
 
@@ -186,10 +186,48 @@ function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
 
     left = BMatrix*system
 
-    result = left\ones(size(left, 1), 1)
-    return result
+    result = left\(8*ones(size(left, 1), 1))
 
+    return result
 end
+
+#=
+
+tmp = testsolve(0.7, 0.8, 1, 21, 148)
+
+YS = reshape(tmp, 19, 147)
+Y = reverse(YS, dims=2)
+U = 5 .*copy(Y)
+
+
+rows, columns = size(U)
+
+temp = [zeros(1, columns); U; zeros(1, columns)]
+U=[zeros(1, 21)' temp]
+
+XX, YY = meshgrid(0.05^2/6 .*(0:147), 0:0.05:1)
+print(size(XX))
+
+using Plots
+
+plot3d(XX, YY, U)
+
+=#
+
+function meshgrid(xin,yin)
+    nx=length(xin)
+    ny=length(yin)
+    xout=zeros(ny,nx)
+    yout=zeros(ny,nx)
+    for jx=1:nx
+        for ix=1:ny
+            xout[ix,jx]=xin[jx]
+            yout[ix,jx]=yin[ix]
+        end
+    end
+    return (x=xout, y=yout)
+end
+
 
 # Construct Riesz Symmetric Matrix
 function RieszMatrix(α, N, h)
