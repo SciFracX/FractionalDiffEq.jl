@@ -174,11 +174,34 @@ And plot the result:
 
 ![Chua](docs/src/assets/chua.png)
 
+## Fractional Partial Differential Equations
+
+Fractional provide powerful algorithms to solve fractional partial differential equations, let's see a diffusion example here:
+
+<p align="center">
+
+<img src="https://latex.codecogs.com/svg.image?_{0}^{C}\!D_{t}^{\alpha}y-&space;\frac{\partial^\beta&space;y}{\partial&space;|x|^\beta}&space;=&space;f(x,t)" title="_{0}^{C}\!D_{t}^{\alpha}y- \frac{\partial^\beta y}{\partial |x|^\beta} = f(x,t)" />
+
+</p>
+
+With initial and boundry conditions:
+
+<p align="center">
+
+<img src="https://latex.codecogs.com/svg.image?y(0,t)&space;=&space;0,&space;\quad&space;y(1,t)&space;=&space;0&space;\qquad&space;&space;\quad&space;y(x,0)&space;=&space;0" title="y(0,t) = 0, \quad y(1,t) = 0 \qquad  \quad y(x,0) = 0" />
+
+</p>
+
+By using the FPDE solvers in FractionalDiffEq.jl and plot the numerical approximation:
+
+![diffusion](docs/src/assets/diffusion.png)
+
 ### ODE Example
 
 FractionalDiffEq.jl is also able to solve ordinary differential equations~ Let's see an example here:
 
 <p align="center">
+
 <img src="https://latex.codecogs.com/svg.image?y''(x)&plus;y'(x)=\sin(x)" title="y''(x)+y'(x)=\sin(x)" />
 
 </p>
