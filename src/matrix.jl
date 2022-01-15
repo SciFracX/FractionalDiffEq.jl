@@ -42,7 +42,7 @@ Using the **Matrix Discretization algorithm** proposed by [Prof Igor Podlubny](h
 function solve(equation, right, highestorder, h, T, ::FODEMatrixDiscrete)
     
     
-    N = Int64(floor(T/h)+1)
+    N = Int64(floor(T/h))
     rows = collect(1:highestorder)
     equation = eliminator(N, rows)*equation*eliminator(N, rows)'
 
