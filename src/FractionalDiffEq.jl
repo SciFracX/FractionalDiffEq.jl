@@ -26,7 +26,7 @@ export SingleTermFODEProblem, MultiTermsFODEProblem
 export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete, ClosedForm, ClosedFormHankelM
 
 # Export some api to construct the equation
-export D, RieszMatrix, omega
+export D, RieszMatrix, omega, meshgrid
 
 # Export some special equtions
 export bagleytorvik

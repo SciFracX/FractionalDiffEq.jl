@@ -7,7 +7,7 @@ FractionalDiffEq.jl has support for solving fractional partial differential equa
 Time fractional differential equation:
 
 ```math
-_{0}^{C}\!D_{t}^{\alpha}y- \frac{\partial^\beta y}{\partial |x|^\beta} = f(x,t)
+_{0}^{C}\!D_{t}^{\alpha}y - \frac{\partial^\beta y}{\partial |x|^\beta} = f(x,t)
 ```
 
 With initial and boundry conditions:

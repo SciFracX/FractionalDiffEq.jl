@@ -42,7 +42,7 @@ Using the **Matrix Discretization algorithm** proposed by [Prof Igor Podlubny](h
 function solve(equation, right, highestorder, h, T, ::FODEMatrixDiscrete)
     
     
-    N=Int64(T/h)
+    N = Int64(floor(T/h)+1)
     rows = collect(1:highestorder)
     equation = eliminator(N, rows)*equation*eliminator(N, rows)'
 
@@ -73,7 +73,7 @@ Generating elements in Triangular Strip Matrix.
 function omega(n, α)
     omega = zeros(n+1)
 
-    omega[1]=1
+    omega[1] = 1
     @fastmath @inbounds @simd for i ∈ 1:n
         omega[i+1] = (1 - (α+1)/i)*omega[i]
     end
@@ -130,27 +130,27 @@ function D(N, α, h)
 end
 
 function F(N, α, h)
-    result=zeros(N, N)
+    result = zeros(N, N)
     temp = omega(N, α)
 
     @fastmath @inbounds @simd for i ∈ 1:N
-        result[i, 1:i]=reverse(temp[1:i])
+        result[i, 1:i] = reverse(temp[1:i])
     end
 
-    result=reverse(reverse(result, dims=1), dims=2)
+    result = reverse(reverse(result, dims=1), dims=2)
 
     return (-1)^(ceil(α))*h^(-α)*result
 end
 
 function meshgrid(xin,yin)
-    nx=length(xin)
-    ny=length(yin)
-    xout=zeros(ny,nx)
-    yout=zeros(ny,nx)
-    for jx=1:nx
-        for ix=1:ny
-            xout[ix,jx]=xin[jx]
-            yout[ix,jx]=yin[ix]
+    nx = length(xin)
+    ny = length(yin)
+    xout = zeros(ny,nx)
+    yout = zeros(ny,nx)
+    for jx = 1:nx
+        for ix = 1:ny
+            xout[ix,jx] = xin[jx]
+            yout[ix,jx] = yin[ix]
         end
     end
     return (x=xout, y=yout)
@@ -167,8 +167,8 @@ function RieszMatrix(α, N, h)
     return result
 end
 function B(N, p)
-    result=zeros(N, N)
-    temp=omega(N, p)
+    result = zeros(N, N)
+    temp = omega(N, p)
 
     @inbounds @simd for i ∈ 1:N
         @views result[i, 1:i]=reverse(temp[1:i])
@@ -186,8 +186,8 @@ By specifying the parameters of Bagley Torvik Equation, we can use **bagleytorvi
     Please note that the parameter of fractional derivative part must not be 0
 """
 function bagleytorvik(p1, p2, p3, right, T, h)
-    N=Int64(T/h+1)
-    equation = p1*D(N, 2, h)+p2*D(N, 1.5, h)+p3*(zeros(N, N)+I)
+    N = Int64(floor(T/h)+1)
+    equation = p1*D(N, 2, h) + p2*D(N, 1.5, h)+p3*(zeros(N, N)+I)
     equation = eliminator(N, [1,2])*equation*eliminator(N, [1,2])'
     
     if typeof(right) <: Number
@@ -211,10 +211,11 @@ When using the Martix
 function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
     h = T/(M-1)
     τ = h^2/6
-    B1=D(N-1, α, τ)'
-    TMatrix = kron(B1, zeros(M, M) + I)
+    
+    # Construct the time partial derivative matrix
+    TMatrix = kron(D(N-1, α, τ)', zeros(M, M) + I)
 
-
+    # Construct the spatial partial derivative matrix
     SMatrix = kron(zeros(N-1, N-1) + I, RieszMatrix(β, M, h))
 
     system = TMatrix-SMatrix
@@ -225,7 +226,7 @@ function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
 
     left = BMatrix*system
 
-    result = left\(8*ones(size(left, 1), 1))
+    result = left\(ones(size(left, 1), 1))
 
     return result
 end
@@ -234,7 +235,7 @@ end
 
 
 
-#=
+
 """
     diffusion(α, β)
 
@@ -245,8 +246,6 @@ end
 function diffusion(α, β)
     solve(α, β, 1, 21, 148, FPDEMatrixDiscrete())
 end
-
-=#
 
 ## An fractional partial differential equation Example
 
