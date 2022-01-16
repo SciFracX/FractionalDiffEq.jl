@@ -88,14 +88,14 @@ function solve(FODE::SingleTermFODEProblem, u0, T, ::PECE)
     f, α, h = FODE.f, FODE.α, FODE.h
     N = Int64(floor(T/h))
     y = zeros(N+1)
-    leftsum = 0
+    leftsum = zero(Float64)
     l = floor(α)
 
     if l == 0
         leftsum = u0
     elseif l == 1
         leftsum = u0 + T*u0
-end
+    end
 
     @fastmath @inbounds @simd for n ∈ 0:N
         y[n+1] = leftsum + h^α/gamma(α+2)*(f((n+1)*h, predictor(f, y, α, n, h, u0, T)) + right(f, y, α, n, h))

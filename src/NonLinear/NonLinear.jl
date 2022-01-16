@@ -29,7 +29,7 @@ function solve(f, α, x0, h, tn, ::NonLinearAlg)
         for i = 1:n
             x1[i] = f(tk, x1, i)*ha[i] - W[i, 2:L+1]'*z[i, k-1:-1:k-L] + x0[i]
         end
-        z[:, k] = x1-x0
+        z[:, k] = x1 - x0
     end
 
     result = (z + repeat(x0, 1, m))'
