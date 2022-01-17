@@ -6,19 +6,29 @@ There are some build-in auxiliary functions in FractionalDiffEq.jl.
 
 ### Mittag Leffler function
 
-> The mittag leffler function is adapted from [MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl) implemented by [John Lapeyre](https://github.com/jlapeyre). We build in the mittag leffler function and add a few more functionalities.
+> The mittag leffler function is adapted from [MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl) implemented by [John Lapeyre](https://github.com/jlapeyre). We built in the mittag leffler function and add a few more functionalities.
 
-The [mittag leffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function)(two parameter) is defined as:
+The two-parametric [mittag leffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function) is defined by Gösta Magnus Mittag-Leffler bu a power series as:
 
 ```math
 E_{\alpha,\ \beta}(z)=\sum_{k=0}^{\infty}\frac{z^k}{\Gamma(\alpha k+\beta)}
 ```
 
-And single parameter version:
+And single-parametric version:
 
 ```math
 E_\alpha(z)=E_{\alpha,\ 1}(z)
 ```
+
+And also the three-parametric Mittag Leffler function:
+
+```math
+E_{\alpha, \beta}^\gamma(z)=\sum_{k=0}^{\infty}\frac{(\gamma)_k}{k!\Gamma(\alpha k+\beta)}
+```
+
+Here ``(\gamma)_k=\frac{\Gamma(\gamma+k)}{\Gamma(\gamma)}`` is the Pochhammer symbol.
+
+> Funny anecdote: The Mittag Leffler function can be seen as the Queen Function of Fractional Calculus.[^1]
 
 In FractionalDiffEq.jl, you can compute the mittag leffler function by calling:
 
@@ -35,6 +45,8 @@ And also ``1<\alpha<2``:
 
 ![MittagLeffler](./assets/mittlefffunhigh.png)
 
+For more interesting topic and application about Mittag Leffler function, we recommend you to read [Mittag-Leffler Functions, Related Topics and Applications](https://link.springer.com/book/10.1007/978-3-662-61550-8)
+
 
 ### The generalized ``\alpha`` exponential function
 
@@ -43,3 +55,6 @@ The generalized ``\alpha`` exponential function ``e_\alpha^{\lambda z}`` is defi
 ```math
 e_\alpha^{\lambda z}=z^{\alpha-1}E_{\alpha,\ \alpha}(\lambda z^\alpha)=\sum_{k=0}^{\infty}\frac{\lambda^k z^{\alpha(k-1)}}{\Gamma(\alpha(k+1))}\quad (z,\ \lambda\in\mathbb{C},\ \mathfrak{Re}(\alpha)>0)
 ```
+
+
+[^1]: Page 2 of [Mittag-Leffler Functions, Related Topics and Applications](https://link.springer.com/book/10.1007/978-3-662-61550-8)
