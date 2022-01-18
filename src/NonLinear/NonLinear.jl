@@ -5,7 +5,7 @@ Non linear algorithm for nonlinear fractional differential equations.
 """
 struct NonLinearAlg <: FractionalDiffEqAlgorithm end
 
-function solve(f, α, x0, h, tn, ::NonLinearAlg)    
+function solve(f, α, x0, h, tn, ::NonLinearAlg, L0=1e10)    
     n = length(x0)
     m = Int64(round(tn/h)+1)
     g = genfun(1)
@@ -16,16 +16,16 @@ function solve(f, α, x0, h, tn, ::NonLinearAlg)
     x1 = copy(x0) #Here we pass the value of x0 to x1. Honestly, I kept finding this bug for almost a whole night😅
 
 
-    W = zeros(n, m) #Initializing W a n*m matrix
+    W = zeros(n, min(m, L0+1)) #Initializing W a n*m matrix
 
     for i = 1:n
-        W[i, :] = getvec(α[i], m, g)
+        W[i, :] = getvec(α[i], min(m, L0+1), g)
     end
 
 
     for k = 2:m
         tk = (k-1)*h
-        L = Int64(k-1)
+        L = min(Int64(k-1), Int64(L0))
         for i = 1:n
             x1[i] = f(tk, x1, i)*ha[i] - W[i, 2:L+1]'*z[i, k-1:-1:k-L] + x0[i]
         end
