@@ -62,16 +62,19 @@ Cheers!🎉🎉🎉
 
 It is noteworthy that in the reference book Fractional Calculus and Fractional-order Control[^1], the computing time is almost 20 minutes to solve this problem in [FOTF toolbox](https://www.mathworks.com/matlabcentral/fileexchange/60874-fotf-toolbox), while in FractionalDiffEq.jl, the computing time has a speed up of about 2 times, only cost 8 minutes and 31 seconds!!
 
+### Short memory effect in FDE
+
 To further elaborate, we can look at how the short memory affects the approximation:
 
-By using the same code above, but set ``t_n=500`` and set the short memory as ``L_0=10000`` to see the model more comprehensively but reduce the computing cost the same time:
+By using the same code above, but set ``t_n=500`` and memory length as ``L_0=10000`` to see the model more comprehensively but reduce the computing cost the same time:
 
 ```julia
-result=solve(chua, alpha, x0, h, tn, NonLinearAlg(), 10000)
+result = solve(chua, alpha, x0, h, tn, NonLinearAlg(), 10000)
 ```
 
 ![Chua_short_memory](./assets/chua_short_memory.png)
 
-While in the reference[^1], using FOTF toolbox cost 228.5s to solve problem, in FractionalDiffEq.jl, the computing time is only almost 80s.
+While in the reference[^1], using FOTF toolbox costs 228.5s to solve the problem, in FractionalDiffEq.jl, the computing time is only almost 80s.
+
 
 [^1]: 分数阶微积分学与分数阶控制 薛定宇 ISBN:9787030543981 Page 208
