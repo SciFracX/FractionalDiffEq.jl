@@ -64,7 +64,7 @@ It is noteworthy that in the reference book Fractional Calculus and Fractional-o
 
 To further elaborate, we can look at how the short memory affects the approximation:
 
-By using the same code above, but set ``t_n=500`` and set the short memory as ``L0=10000``:
+By using the same code above, but set ``t_n=500`` and set the short memory as ``L_0=10000`` to see the model more comprehensively but reduce the computing cost the same time:
 
 ```julia
 result=solve(chua, alpha, x0, h, tn, NonLinearAlg(), 10000)
