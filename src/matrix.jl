@@ -233,7 +233,63 @@ end
 
 
 
+#=
+Test code for FPDEMatrixDiscrete, to explore the wide usage of FPDEMatrixDiscrete
+=#
+#=
+function testsolve(α, β, T, M, N)
+    h = T/(M-1)
+    τ = h^2/6
+    
+    # Construct the time partial derivative matrix
+    TMatrix = kron(D(N-1, α, τ)', zeros(M, M) + I)
 
+    # Construct the spatial partial derivative matrix
+    SMatrix = kron(zeros(N-1, N-1) + I, RieszMatrix(β, M, h))
+
+    system = TMatrix+SMatrix
+
+    #FIXME: Handling boundary conditions
+    BMatrix = kron(zeros(N-1, N-1) + I, eliminator(M, [1, M]))
+    system = system*BMatrix'
+
+    leftside = BMatrix*system
+
+    XX = range(1/2793, 1, step=1/2793)
+    YY = range(1/2793, 1, step=1/2793)
+
+    result = leftside\(-sin.(π .*XX).*sin.(π .*YY))
+
+
+    return result
+end
+
+using Plots
+
+using LinearAlgebra, InvertedIndices
+
+tmp = testsolve(2, 2, 1, 21, 148)
+
+
+
+YS = reshape(tmp, 19, 147)
+YS = reverse(YS, dims=2)
+U = YS
+
+
+rows, columns = size(U)
+
+U = [zeros(1, columns); U; zeros(1, columns)]
+U=[zeros(1, 21)' U]
+
+XX, YY = meshgrid(0.05^2/6 .*(0:147), 0:0.05:1)
+
+plotlyjs()
+
+plot(XX, YY, U, st=:surface)
+
+
+=#
 
 
 """

@@ -6,7 +6,8 @@ There are some build-in auxiliary functions in FractionalDiffEq.jl.
 
 ### Mittag Leffler function
 
-> The mittag leffler function is adapted from [MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl) implemented by [John Lapeyre](https://github.com/jlapeyre). We built in the mittag leffler function and add a few more functionalities.
+!!! info
+    The mittag leffler function is adapted from [MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl) implemented by [John Lapeyre](https://github.com/jlapeyre). We built in the mittag leffler function and add a few more functionalities.
 
 The two-parametric [mittag leffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function) is defined by Gösta Magnus Mittag-Leffler bu a power series as:
 
@@ -26,7 +27,7 @@ And also the three-parametric Mittag Leffler function:
 E_{\alpha, \beta}^\gamma(z)=\sum_{k=0}^{\infty}\frac{(\gamma)_k}{k!\Gamma(\alpha k+\beta)}
 ```
 
-Here ``(\gamma)_k=\frac{\Gamma(\gamma+k)}{\Gamma(\gamma)}`` is the Pochhammer symbol.
+Here ``(\gamma)_k=\frac{\Gamma(\gamma+k)}{\Gamma(\gamma)}`` is the [Pochhammer symbol](https://en.wikipedia.org/wiki/Falling_and_rising_factorials).
 
 > Funny anecdote: The Mittag Leffler function can be seen as the Queen Function of Fractional Calculus.[^1]
 
