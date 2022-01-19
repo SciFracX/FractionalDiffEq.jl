@@ -10,9 +10,8 @@ tspan = collect(0.05:h:T)
 f(x)=1/2*(-exp(-x)-sin(x)-cos(x)+2)
 target=f.(tspan)
 
-eq = D(600, 2, h)+D(600, 1, h)
 rightfun(x) = sin(x)
-result = solve(eq, rightfun, 2, h, T, FODEMatrixDiscrete())
+result = solve([1, 1], [2, 1], rightfun, h, T, FODEMatrixDiscrete())
 
 plot(tspan, result, title=s, legend=:bottomright, label="ODE Numerical Solution!")
 

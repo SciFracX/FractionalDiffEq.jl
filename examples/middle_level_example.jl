@@ -8,11 +8,11 @@ end
 
 prob = FODEProblem(testfun, α, 0, 1, 0.001)
 
-result=solve(prob, PECE())
+result = solve(prob, PECE())
 
-tfun(t)=t^8-3t^4.25+9/4*t^0.5
+tfun(t) = t^8-3t^4.25+9/4*t^0.5
 
-tspan=collect(0:0.001:1)
+tspan = collect(0:0.001:1)
 
 plot(tspan, result)
 
