@@ -4,10 +4,10 @@ By specifying different order in the equation, we can handle multi-term differen
 
 Let's see if we have an initial value problem with multiple terms derivative containing both fractional and integer, we can use the **FODEMatrixDiscrete** algorithm to solve the equation.
 
-All we have to do is use the general derivative representing function ```D(size, order, step)``` to represent different derivative, for example, ```D(30, 2, 0.01)``` represent the second order derivative $y''(t)$ term and ```D(30, 2.5, 0.01)``` represent the 2.5 order derivative $D^{2.5}y(t)$ term.
+All we have to do is passing the parameters and orders of the fractional ordinary differential equation to the API ```solve``` as two arrays.
 
-!!! warning "Keep the parameter unanimous"
-    When we are using ```D``` to represent different order deriavtives, please note we should keep the first parameter and third parameter unanimous, which represent the size of the discrete matrix and step size.
+!!! warning "The parameters and orders array must have the same length"
+    When we are using ```FODEMatrixDiscrete``` to solve the problem, please note we should keep the parameters array and orders array must have the same length.
 
 ## Detailed Usage
 
@@ -20,9 +20,8 @@ Let's see if we have an equation like:
 To solve this equation, you can use the code:
 
 ```julia
-equation = 2*D(30, 2, 0.01) + 4*D(30, 1.5, 0.01)
 rightside = 1
-solve(equation, rightside, 2, 30, 0.01)
+solve([2, 4], [2, 1.5], rightside, 30, 0.01)
 ```
 
 Bingo! the result would represent the numerical solution of this equation!!!!
@@ -51,9 +50,8 @@ T=30
 h=0.05
 tspan = collect(0.05:h:T)
 
-equation = D(600, 3, h)+1/16*D(600, 2.5, h)+4/5*D(600, 2, h)+3/2*D(600, 1, h)+1/25*D(600, 0.5, h)+6/5*D(600, 1, h);
 rightfun(x)=172/125*cos(4/5*x)
-result=solve(equation, rightfun, 3, h, T)
+result = solve([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 1], rightfun, h, T, FODEMatrixDiscrete())
 
 plot(tspan, result, title=s, legend=:bottomright)
 ```
