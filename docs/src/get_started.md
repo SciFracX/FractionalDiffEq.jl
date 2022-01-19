@@ -6,9 +6,9 @@ While the Ordinary Differential Equations and Partial Differential Equations are
 
 Well, fractional differential equation can be seen as the generalization of ODE and PDE. In our daily life, models usually are better described in fractional differential equations.
 
-A special applying case for fractional differential equations is viscoelasty, which research the property of a subject with both [Viscosity](https://en.wikipedia.org/wiki/Viscosity) and [Elasticity](https://en.wikipedia.org/wiki/Elasticity_(physics)). 
+A special applying case for fractional differential equations is viscoelasticity, which researches the property of a subject with both [Viscosity](https://en.wikipedia.org/wiki/Viscosity) and [Elasticity](https://en.wikipedia.org/wiki/Elasticity_(physics)). 
 
-And also the CRONE controller and $PI^\lambda D^\mu$ controller deploy fractional derivative to better describe system. 
+And also the CRONE controller and $PI^\lambda D^\mu$ controller deploy fractional derivative to better describe the system. 
 
 ## A simple example —— Relaxation Oscillation Equation
 
@@ -37,7 +37,7 @@ tspan=collect(0:0.01:5)
 Plots.plot(tspan, result, title=s, linewidth=2, legend=:bottomright)
 ```
 
-By ploting the numerical result, we can get the approximation result:
+By plotting the numerical result, we can get the approximation result:
 
 ![Relaxation Oscillation](./assets/simple_example.png)
 

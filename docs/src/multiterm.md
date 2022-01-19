@@ -1,13 +1,13 @@
 # Multi term FDE
 
-By specifying different order in the equation, we can handle multi-term differential equations now!
+By specifying different orders in the equation, we can handle multi-term differential equations now!
 
 Let's see if we have an initial value problem with multiple terms derivative containing both fractional and integer, we can use the **FODEMatrixDiscrete** algorithm to solve the equation.
 
-All we have to do is passing the parameters and orders of the fractional ordinary differential equation to the API ```solve``` as two arrays.
+All we have to do is pass the parameters and orders of the fractional ordinary differential equation to the API ```solve``` as two arrays.
 
 !!! warning "The parameters and orders array must have the same length"
-    When we are using ```FODEMatrixDiscrete``` to solve the problem, please note we should keep the parameters array and orders array must have the same length.
+    When we are using ```FODEMatrixDiscrete``` to solve the problem, please note we should keep the parameters and orders array must have the same length.
 
 ## Detailed Usage
 
@@ -28,7 +28,7 @@ Bingo! the result would represent the numerical solution of this equation!!!!
 
 ## Example
 
-We have an initla problem:
+We have an initial problem:
 
 ```math
 y'''(t)+\frac{1}{16} {^C_0D^{2.5}_ty(t)}+\frac{4}{5}y''(t)+\frac{3}{2}y'(t)+\frac{1}{25}{^C_0D^{0.5}_ty(t)}+\frac{6}{5}y(t)=\frac{172}{125}\cos(\frac{4t}{5})

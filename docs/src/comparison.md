@@ -1,12 +1,12 @@
 # Comparison with other toolboxes
 
-There are also some toolboxes can be used for fractional differential equations, here, we make a survey of all these toolboxes and have a more intuitive perspective.
+There are also some toolboxes that can be used for fractional differential equations, here we make a survey of all these toolboxes and have a more intuitive perspective.
 
 ## Matlab
 
 ### FOTF toolbox
 
-FOTF toolbox is a Matlab toolbox developed by Prof Dingyu Xue, with fractional calculus, fractional differential equations and fractional order systems integrated together. To be honest, FOTF has a great impact on FractionalDiffEq.jl, all of the algorithm in FOTF toolbox is all supported in FractionalDiffEq.jl
+FOTF toolbox is a Matlab toolbox developed by Prof Dingyu Xue, with fractional calculus, fractional differential equations and fractional order systems integrated together. To be honest, FOTF has a great impact on FractionalDiffEq.jl, all of the algorithms in FOTF toolbox is all supported in FractionalDiffEq.jl
 
 #### corresponding APIs:
 
@@ -30,4 +30,4 @@ FLMM2 toolbox is a toolbox developed by [Prof Roberto Garrappa](https://www.dm.u
 
 ## R
 
-Also don't see any packages for fractional differential equations.
+Don't see any packages for fractional differential equations.

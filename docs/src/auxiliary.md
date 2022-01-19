@@ -7,7 +7,7 @@ There are some build-in auxiliary functions in FractionalDiffEq.jl.
 ### Mittag Leffler function
 
 !!! info
-    The mittag leffler function is adapted from [MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl) implemented by [John Lapeyre](https://github.com/jlapeyre). We built in the mittag leffler function and add a few more functionalities.
+    The mittag leffler function is adapted from [MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl) implemented by [John Lapeyre](https://github.com/jlapeyre). We built in the mittag leffler function and added a few more functionalities.
 
 The two-parametric [mittag leffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function) is defined by Gösta Magnus Mittag-Leffler bu a power series as:
 
@@ -46,7 +46,7 @@ And also ``1<\alpha<2``:
 
 ![MittagLeffler](./assets/mittlefffunhigh.png)
 
-For more interesting topic and application about Mittag Leffler function, we recommend you to read [Mittag-Leffler Functions, Related Topics and Applications](https://link.springer.com/book/10.1007/978-3-662-61550-8)
+For more interesting topics and applications about Mittag Leffler function, we recommend you to read [Mittag-Leffler Functions, Related Topics and Applications](https://link.springer.com/book/10.1007/978-3-662-61550-8)
 
 
 ### The generalized ``\alpha`` exponential function

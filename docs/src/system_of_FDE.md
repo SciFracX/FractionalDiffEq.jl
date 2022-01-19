@@ -60,13 +60,13 @@ plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)
 
 Cheers!🎉🎉🎉
 
-It is noteworthy that in the reference book Fractional Calculus and Fractional-order Control[^1], the computing time is almost 20 minutes to solve this problem in [FOTF toolbox](https://www.mathworks.com/matlabcentral/fileexchange/60874-fotf-toolbox), while in FractionalDiffEq.jl, the computing time has a speed up of about 2 times, only cost 8 minutes and 31 seconds!!
+It is noteworthy that in the reference book Fractional Calculus and Fractional-order Control[^1], the computing time is almost 20 minutes to solve this problem in [FOTF toolbox](https://www.mathworks.com/matlabcentral/fileexchange/60874-fotf-toolbox), while in FractionalDiffEq.jl, the computing time has a speedup of about two times, only cost 8 minutes and 31 seconds!!
 
 ### Short memory effect in FDE
 
 To further elaborate, we can look at how the short memory affects the approximation:
 
-By using the same code above, but set ``t_n=500`` and memory length as ``L_0=10000`` to see the model more comprehensively but reduce the computing cost the same time:
+By using the same code above, but set ``t_n=500`` and memory length as ``L_0=10000`` to see the model more comprehensively but reduce the computing cost same time:
 
 ```julia
 result = solve(chua, alpha, x0, h, tn, NonLinearAlg(), 10000)
