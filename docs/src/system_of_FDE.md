@@ -64,7 +64,10 @@ It is noteworthy that in the reference book Fractional Calculus and Fractional-o
 
 ### Short memory effect in FDE
 
-To further elaborate, we can look at how the short memory affects the approximation:
+!!! tip "Why we use short memory effect in simulation?"
+    While the Chua system is a real life chaos system, when we want to simulate the system more to see the system more clearly, we must increase the simulating time ``t_n``, however, limited by the fact that the hardware resources and the computing capability can't increase endlessly, we need to use short memory effect to help us improve the simulating efficiency.
+
+To further elaborate, we can look at how the short memory affects the simulation:
 
 By using the same code above, but set ``t_n=500`` and memory length as ``L_0=10000`` to see the model more comprehensively but reduce the computing cost same time:
 
@@ -75,6 +78,14 @@ result = solve(chua, alpha, x0, h, tn, NonLinearAlg(), 10000)
 ![Chua_short_memory](./assets/chua_short_memory.png)
 
 While in the reference[^1], using FOTF toolbox costs 228.5s to solve the problem, in FractionalDiffEq.jl, the computing time is only almost 80s.
+
+!!! info
+    The cost time doesn't use any multi-threading or parallel computing speedup.
+    ```julia-repl
+    julia> Threads.nthreads()
+    1
+    ```
+    So I think the performance would be more impressive by using multi-threading and paralell computing.
 
 
 [^1]: 分数阶微积分学与分数阶控制 薛定宇 ISBN:9787030543981 Page 208
