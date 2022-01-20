@@ -7,6 +7,9 @@ include("matrix.jl")
 include("ClosedForm/hankelmatrix.jl")
 include("ClosedForm/ClosedForm.jl")
 
+include("GLWithMemory.jl")
+include("Direct.jl")
+
 include("NonLinear/NonLinear.jl")
 
 include("mlfun.jl")
