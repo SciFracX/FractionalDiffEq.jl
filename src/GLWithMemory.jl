@@ -7,4 +7,43 @@ title={Efficient Computation of the Grünwald-Letnikov Method for ARM-Based Impl
 year={2019},   
 doi={10.1109/MOCAST.2019.8742063}}
 ```
+
+Python version by https://github.com/DClementeL/Grunwald_Letnikov
+
 """
+#struct GLWithMemory <: FractionalDiffEqAlgorithm end
+
+#function solve()
+
+q=0.99
+h=0.005
+hq=h^q
+tf=30
+n=Int64(tf/h+1)
+x, y, z = zeros(n), zeros(n), zeros(n)
+x[1]=1
+y[1]=0
+z[1]=1
+
+a, b, c = 10, 28, 8/3
+
+Cq=zeros(n)
+Cq[1]=1
+
+for j in range(2, n, step=1)
+    Cq[j]=(1-(1+q)/(j-1))*Cq[j-1]
+end
+
+for k in range(2, n, step=1)
+    sum1, sum2, sum3 = 0, 0, 0
+
+    for j in range(1, k-1, step=1)
+        sum1 += Cq[j+1]*x[k-j]
+        sum2 += Cq[j+1]*y[k-j]
+        sum3 += Cq[j+1]*z[k-j]
+    end
+
+    x[k]=hq*(a*(y[k-1]-x[k-1]))-sum1
+    y[k]=hq*(x[k-1]*(b-z[k-1]) - y[k-1])-sum2
+    z[k]=hq*(x[k-1]*y[k-1]-c*z[k-1])-sum3
+end

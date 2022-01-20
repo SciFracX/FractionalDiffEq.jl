@@ -136,9 +136,9 @@ end
 
 function A(j, n, α)
     if j == 0
-        return n^(α+1)-(n-α)*(n+1)^α
+        return n^(α+1) - (n-α)*(n+1)^α
     elseif 1 ≤ j ≤ n
-        return (n-j+2)^(α+1)+(n-j)^(α+1)-2*(n-j+1)^(α+1)
+        return (n-j+2)^(α+1) + (n-j)^(α+1) - 2*(n-j+1)^(α+1)
     elseif j == n+1
         return 1
     end
