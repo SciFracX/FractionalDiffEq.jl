@@ -21,7 +21,7 @@ To solve this equation, you can use the code:
 
 ```julia
 rightside = 1
-solve([2, 4], [2, 1.5], rightside, 30, 0.01)
+solve([2, 4], [2, 1.5], rightside, 30, 0.01, FODEMatrixDiscrete())
 ```
 
 Bingo! the result would represent the numerical solution of this equation!!!!
