@@ -4,7 +4,7 @@ By specifying different orders in the equation, we can handle multi-term differe
 
 Let's see if we have an initial value problem with multiple terms derivative containing both fractional and integer, we can use the **FODEMatrixDiscrete** algorithm to solve the equation.
 
-All we have to do is pass the parameters and orders of the fractional ordinary differential equation to the API ```solve``` as two arrays.
+All we need to do is passing the parameters and orders of the fractional ordinary differential equation to the API ```solve``` as two arrays.
 
 !!! warning "The parameters and orders array must have the same length"
     When we are using ```FODEMatrixDiscrete``` to solve the problem, please note we should keep the parameters and orders array must have the same length.

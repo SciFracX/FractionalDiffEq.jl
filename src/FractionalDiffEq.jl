@@ -11,6 +11,7 @@ include("GLWithMemory.jl")
 include("Direct.jl")
 
 include("NonLinear/NonLinear.jl")
+include("NonLinear/DelayPECE.jl")
 
 include("mlfun.jl")
 
@@ -21,12 +22,14 @@ export mittleff
 
 export FractionalDiffEqAlgorithm
 
-# Export problem types
-export FDEProblem, FPDEProblem
+# Export detailed problem types
+export FDEProblem, FPDEProblem, FDDEProblem
 
 export SingleTermFODEProblem, MultiTermsFODEProblem
 
-export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete, ClosedForm, ClosedFormHankelM
+export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete, ClosedForm, ClosedFormHankelM, G2Direct
+
+export DelayPECE
 
 # Export some api to construct the equation
 export D, RieszMatrix, omega, meshgrid

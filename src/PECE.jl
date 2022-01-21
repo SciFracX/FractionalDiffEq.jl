@@ -78,6 +78,13 @@ struct FPDEProblem <: FDEProblem
     N
 end
 
+struct FDDEProblem <: FDEProblem
+    f
+    ϕ
+    α
+    τ
+end
+
 
 """
     solve(FODEProblem, PECE())
