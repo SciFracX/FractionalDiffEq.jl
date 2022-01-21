@@ -32,7 +32,7 @@ export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete, ClosedForm, ClosedFormHanke
 export DelayPECE
 
 # Export some api to construct the equation
-export D, RieszMatrix, omega, meshgrid
+export RieszMatrix, omega, meshgrid
 
 # Export some special equtions
 export bagleytorvik

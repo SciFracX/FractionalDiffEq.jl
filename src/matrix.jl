@@ -233,7 +233,17 @@ function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
 
     left = BMatrix*system
 
-    result = left\(ones(size(left, 1), 1))
+    tmp = left\(ones(size(left, 1), 1))
+
+    YS = reshape(tmp, M-2, N-1)
+    YS = reverse(YS, dims=2)
+    U = YS
+    rows, columns = size(U)
+
+    # Boundry conditions
+    U = [zeros(1, columns); U; zeros(1, columns)]
+    result = [zeros(M) U]
+
 
     return result
 end
