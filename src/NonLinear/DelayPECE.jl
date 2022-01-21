@@ -43,9 +43,11 @@ function a(j, n, α)
     end
     return result*h^α / (α * (α + 1))
 end
+
 function b(j, n, α)
     return h^α/α*((n-j+1)^α-(n-j)^α)
 end
+
 function v(n, τ, h, y, yp)
     if τ >= (n-1)*h
         return ϕ((n-1)*h-τ)

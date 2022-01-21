@@ -40,15 +40,16 @@ Using the **Matrix Discretization algorithm** proposed by [Prof Igor Podlubny](h
 }
 """
 function solve(leftparameters, leftorders, right, h, T, ::FODEMatrixDiscrete)
-    N = Int(floor(T/h))
-    highestorder = Int64(findmax(leftorders)[1])
+    N = Int64(floor(T/h))
+    highestorder = Int64(findmax(ceil.(leftorders))[1])
     rows = collect(1:highestorder)
 
     equation = zeros(N, N)
 
-    for i ∈ leftparameters, j ∈ leftorders
+    for (i, j) in zip(leftparameters, leftorders)
         equation += i*D(N, j, h)
     end
+
 
     equation = eliminator(N, rows)*equation*eliminator(N, rows)'
 
