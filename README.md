@@ -105,13 +105,12 @@ using Plots, LaTeXStrings
 
 s="\$ A\\ complicated\\ example \$"
 
-T=30
-h=0.05
+T = 30
+h = 0.05
 tspan = collect(0.05:h:T)
 
-equation = D(600, 3, h)+1/16*D(600, 2.5, h)+4/5*D(600, 2, h)+3/2*D(600, 1, h)+1/25*D(600, 0.5, h)+6/5*D(600, 1, h);
-rightfun(x)=172/125*cos(4/5*x)
-result=solve(equation, rightfun, 3, h, T, FODEMatrixDiscrete())
+rightfun(x) = 172/125*cos(4/5*x)
+result = solve([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 1], rightfun, h, T, FODEMatrixDiscrete())
 
 plot(tspan, result, title=s, legend=:bottomright)
 ```
@@ -164,7 +163,7 @@ alpha = [0.93, 0.99, 0.92];
 x0 = [0.2; -0.1; 0.1];
 h = 0.01;
 tn = 200;
-result = nlsolve(chua, alpha, x0, h, tn)
+result = solve(chua, alpha, x0, h, tn, NonLinearAlg())
 
 gr()
 plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)
@@ -220,15 +219,14 @@ using Plots, LaTeXStrings
 s="\$ODE\\ Example\$"
 
 T = 30
-h=0.05
+h = 0.05
 tspan = collect(0.05:h:T)
 
-f(x)=1/2*(-exp(-x)-sin(x)-cos(x)+2)
-target=f.(tspan)
+f(x) = 1/2*(-exp(-x)-sin(x)-cos(x)+2)
+target =f .(tspan)
 
-eq = D(600, 2, h)+D(600, 1, h)
 rightfun(x) = sin(x)
-result = solve(eq, rightfun, 2, h, T, FODEMatrixDiscrete())
+result = solve([1, 1], [2, 1], rightfun, h, T, FODEMatrixDiscrete())
 
 plot(tspan, result, title=s, legend=:bottomright, label="ODE Numerical Solution!")
 

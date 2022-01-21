@@ -4,7 +4,7 @@ using Plots, LaTeXStrings
 s="\$ODE\\ Example\$"
 
 T = 30
-h=0.05
+h = 0.05
 tspan = collect(0.05:h:T)
 
 f(x)=1/2*(-exp(-x)-sin(x)-cos(x)+2)
