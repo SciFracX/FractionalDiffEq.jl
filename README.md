@@ -131,7 +131,7 @@ Let's see if we have a Chua chaos system:
 
 </p>
 
-By using the ```NonLinear``` algorithms to solve this problem:
+By using the ```NonLinearAlg``` algorithms to solve this problem:
 
 ```julia
 using FractionalDiffEq

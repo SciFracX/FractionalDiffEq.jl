@@ -31,13 +31,13 @@ pkg> add FractionalDiffEq#master
 
 ## Features
 
-* While most fractional differential equations solvers are implemented using Matlab, **FractionalDiffEq.jl** is totally driven by [Julia](https://julialang.org/) and licensed with [MIT License](https://en.wikipedia.org/wiki/MIT_License), ensure its everlasting development and open source.
+* While most fractional differential equations solvers are implemented using Matlab, **FractionalDiffEq.jl** is totally driven by [Julia](https://julialang.org/) and licensed with [MIT License](https://en.wikipedia.org/wiki/MIT_License), ensuring its everlasting development and open source.
 
 * Benefit from the advancing features of JuliaLang, FractionalDiffEq.jl has impressive performance and high speed, help the model more efficient and robust.
 
-* Capable of solving both linear and nonlinear fractional differential equations.
+* Capable of solving both linear and nonlinear fractional differential equations. Including fractional ordinary differential equations, fractional partial differential equations and fractional delayed differential equations.
 
-* Detailed models supporting, such as Bagley Torvik equations, Relaxation Oscillation equations and Diffusion equations etc.
+* Detailed models supporting, such as Bagley Torvik equations, Relaxation Oscillation equations and Diffusion equations many more.
 
 
 > See our SciFracX 2021 Winter Report in JuliaCN Conference:
@@ -57,7 +57,7 @@ pkg> add FractionalDiffEq#master
 
 ## Contributing
 
-Just by using FractionalCalculus.jl you're already contributing!
+Just by using FractionalDiffEq.jl you're already contributing!
 
 The development of FractionalDiffEq.jl is on [GitHub](https://github.com/SciFracX/FractionalDiffEq.jl), please [report bugs](https://github.com/SciFracX/FractionalDiffEq.jl/issues) or [send pull requests](https://github.com/SciFracX/FractionalDiffEq.jl/pulls) to help FractionalDiffEq.jl grow.
 
