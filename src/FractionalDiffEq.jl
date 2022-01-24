@@ -12,7 +12,7 @@ include("ClosedForm/highprecision.jl")
 include("Direct.jl")
 
 include("NonLinear/NonLinear.jl")
-include("NonLinear/DelayPECE.jl")
+include("FDDE/DelayPECE.jl")
 include("NonLinear/Qi.jl")
 
 include("mlfun.jl")
