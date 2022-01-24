@@ -6,6 +6,7 @@ include("PECE.jl")
 include("matrix.jl")
 include("ClosedForm/hankelmatrix.jl")
 include("ClosedForm/ClosedForm.jl")
+include("ClosedForm/highprecision.jl")
 
 #include("GLWithMemory.jl")
 include("Direct.jl")

@@ -2,38 +2,38 @@ import FractionalDiffEq.FractionalDiffEqAlgorithm
 
 struct ClosedFormHighPercision <: FractionalDiffEqAlgorithm end
 
-function testsolve(a, na, b, nb, u, t, p)
-    h=t[2]-t[1]
-    n=length(t)
-    na=na[:]
-    nb=nb[:]
-    b=b[:]
-    vec=[na; nb]
-    u=u[:]
-    g=genfun(p)
-    t=t[:]
-    W=zeros(n, n)
+function solve(a, na, b, nb, u, t, p, ::ClosedFormHighPercision)
+    h =t[2]-t[1]
+    n = length(t)
+    na = na[:]
+    nb = nb[:]
+    b = b[:]
+    vec = [na; nb]
+    u = u[:]
+    g = genfun(p)
+    t = t[:]
+    W = zeros(n, n)
 
 
     for i=1:length(vec)
         W[i, :] = getvec(vec[i], n, g)
     end
 
-    D1=b./h.^nb
-    nA=length(a)
-    y1=zeros(n)
+    D1 = b./h.^nb
+    nA = length(a)
+    y1 = zeros(n)
 
     #W=W'
-    D=sum((a[:].*W[1, 1:nA])./h.^na)
+    D = sum((a[:].*W[1, 1:nA])./h.^na)
 
-    for i=2:n
+    for i = 2:n
         A = y1[i-1:-1:1]'*W[2:i, 1:nA]
-        y1[i]=(u[i]-sum(A.*a./h.^na))/D
+        y1[i] = (u[i]-sum(A.*a./h.^na))/D
     end
 
-    y=zeros(n)
+    y = zeros(n)
 
-    for i=2:n
+    for i = 2:n
         # Here are some problems with the indexing
         y[i] = (W[1:i, nA+1:end]*D1)'*y1[i:-1:1]
     end

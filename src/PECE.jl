@@ -67,7 +67,7 @@ struct PECE <: FractionalDiffEqAlgorithm end
 
 """
 
-    FPDEProblem()
+    FPDEProblem(α, β, T, M, N)
 
 """
 struct FPDEProblem <: FDEProblem
@@ -78,6 +78,9 @@ struct FPDEProblem <: FDEProblem
     N
 end
 
+"""
+    FDDEProblem(f, ϕ, α, τ)
+"""
 struct FDDEProblem <: FDEProblem
     f
     ϕ
@@ -98,6 +101,7 @@ function solve(FODE::SingleTermFODEProblem, u0, T, ::PECE)
     leftsum = zero(Float64)
     l = floor(α)
 
+    # Handling initial value
     if l == 0
         leftsum = u0
     elseif l == 1
@@ -112,9 +116,9 @@ function solve(FODE::SingleTermFODEProblem, u0, T, ::PECE)
 end
 
 function right(f, y, α, n, h)
-    temp = 0
+    temp = zero(Float64)
 
-    @fastmath @inbounds @simd for j ∈ 0:n
+    @fastmath @inbounds @simd for j = 0:n
         temp += A(j, n, α)*f(j*h, y[Int64(j+1)])
     end
 
@@ -122,22 +126,23 @@ function right(f, y, α, n, h)
 end
 
 function predictor(f, y, α::Float64, n::Int64, h, u0, T)
-     predict = 0
-     leftsum = 0
+    predict = 0
+    leftsum = 0
 
-     l = floor(α)
+    l = floor(α)
 
-     if l == 0
+    # Handling initial value
+    if l == 0
         leftsum = u0
-     elseif l == 1
+    elseif l == 1
         leftsum = u0 + T*u0
-     end
+    end
 
-     @fastmath @inbounds @simd for j ∈ 0:n
+    @fastmath @inbounds @simd for j ∈ 0:n
         predict += B(j, n, α, h)*f(j*h, y[j+1])
-     end
+    end
 
-     return leftsum + predict
+    return leftsum + predict
 end
 
 
