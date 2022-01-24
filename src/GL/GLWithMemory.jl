@@ -14,10 +14,8 @@ doi={10.1109/MOCAST.2019.8742063}}
 Python version by https://github.com/DClementeL/Grunwald_Letnikov
 
 """
-struct GLWithMemory <: FractionalDiffEqAlgorithm end
-
+#=
 function solve()
-
     α=0.99
     h=0.005
     hα=h^α
@@ -34,7 +32,7 @@ function solve()
     Cα[1]=1
 
     for j in range(2, n, step=1)
-        Cα[j]=(1-(1+α)/(j-1))*Cα[j-1]
+        Cα[j] = (1-(1+α)/(j-1))*Cα[j-1]
     end
 
     for k in range(2, n, step=1)
@@ -52,3 +50,4 @@ function solve()
     end
     return x, y, z
 end
+=#

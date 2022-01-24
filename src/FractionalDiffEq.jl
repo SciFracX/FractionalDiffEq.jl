@@ -13,6 +13,7 @@ include("Direct.jl")
 
 include("NonLinear/NonLinear.jl")
 include("NonLinear/DelayPECE.jl")
+include("NonLinear/Qi.jl")
 
 include("mlfun.jl")
 

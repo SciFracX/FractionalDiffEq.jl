@@ -3,7 +3,7 @@ import FractionalDiffEq.FractionalDiffEqAlgorithm
 struct ClosedFormHighPercision <: FractionalDiffEqAlgorithm end
 
 function solve(a, na, b, nb, u, t, p, ::ClosedFormHighPercision)
-    h =t[2]-t[1]
+    h = t[2]-t[1]
     n = length(t)
     na = na[:]
     nb = nb[:]

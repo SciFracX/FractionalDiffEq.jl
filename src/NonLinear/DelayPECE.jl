@@ -39,13 +39,13 @@ function a(j, n, α)
     elseif j == 0
         result = n^(α+1)-(n-α)*(n+1)^α
     else
-        result = (n-j+2)^(α+1) + (n-j)^(α+1)-2*(n-j+1)^(α+1)
+        result = (n-j+2)^(α+1) + (n-j)^(α+1) - 2*(n-j+1)^(α+1)
     end
     return result*h^α / (α * (α + 1))
 end
 
 function b(j, n, α)
-    return h^α/α*((n-j+1)^α-(n-j)^α)
+    return h^α/α*((n-j+1)^α - (n-j)^α)
 end
 
 function v(n, τ, h, y, yp)
