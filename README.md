@@ -74,8 +74,8 @@ So we can use FractionalDiffEq.jl to solve the problem:
 
 ```julia
 fun(x, y) = 1-y
-prob = SingleTermFODEProblem(fun, 0.5, 0.001)
-result = solve(prob, 0, 5, PECE())
+prob = SingleTermFODEProblem(fun, 0.5, 0, 5)
+result = solve(prob, 0.001, PECE())
 tspan = collect(0:0.001:5)
 ```
 
@@ -110,8 +110,10 @@ h = 0.05
 tspan = collect(0.05:h:T)
 
 rightfun(x) = 172/125*cos(4/5*x)
-result = solve([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 1], rightfun, h, T, FODEMatrixDiscrete())
 
+prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 1], rightfun)
+
+result = solve(prob, h, T, FODEMatrixDiscrete())
 plot(tspan, result, title=s, legend=:bottomright)
 ```
 
@@ -224,7 +226,8 @@ f(x) = 1/2*(-exp(-x)-sin(x)-cos(x)+2)
 target =f .(tspan)
 
 rightfun(x) = sin(x)
-result = solve([1, 1], [2, 1], rightfun, h, T, FODEMatrixDiscrete())
+prob = MultiTermsFODEProblem([1, 1], [2, 1], rightfun)
+result = solve(prob, h, T, FODEMatrixDiscrete())
 
 plot(tspan, result, title=s, legend=:bottomright, label="ODE Numerical Solution!")
 
