@@ -18,11 +18,12 @@ struct ClosedForm <: FractionalDiffEqAlgorithm end
 
 Use Closed-Form solution to obtain numerical solution at zero initial condition.
 """
-function solve(prob::MultiTermsFODEProblem, u, t, ::ClosedForm)
-    parameters, orders, rparameters, rorders = prob.parameters, prob.orders, prob.rparameters, prob.rorders
+function solve(prob::MultiTermsFODEProblem, t, ::ClosedForm)
+    parameters, orders, rightfun, rparameters, rorders = prob.parameters, prob.orders, prob.rightfun, prob.rparameters, prob.rorders
     h = t[2]-t[1]
     D = sum(parameters./(h.^orders))
     nT = length(t)
+    u = rightfun.(t)
 
     #TODO: For small orders? e.g. if rparameters and rorders is Number???
     if isa(rparameters, Number) && typeof(rorders) <: Number

@@ -18,9 +18,13 @@ Define a multi-terms fractional ordinary differential equation.
 struct MultiTermsFODEProblem <: FDEProblem
     parameters
     orders
-    rparameters
-    rorders
+    rightfun
+    rparameters::Union{Matrix, Nothing}
+    rorders::Union{Matrix, Nothing}
 end
+
+#=MultiTermsFODEProblem constructor=#
+MultiTermsFODEProblem(parameters, orders, rightfun) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing)
 
 
 """
@@ -32,7 +36,8 @@ Define a single term fractional ordinary differential equation, there are only o
 struct SingleTermFODEProblem <: FDEProblem
     f
     α
-    h
+    u0
+    T
 end
 
 
@@ -94,8 +99,8 @@ end
 
 After define the FDEProblem, use **PECE(Predict-Evaluate-Correct-Evaluate) algorithm** to computing the Fractional Differential Equation
 """
-function solve(FODE::SingleTermFODEProblem, u0, T, ::PECE)
-    f, α, h = FODE.f, FODE.α, FODE.h
+function solve(FODE::SingleTermFODEProblem, h, ::PECE)
+    f, α, u0, T = FODE.f, FODE.α, FODE.u0, FODE.T
     N = Int64(floor(T/h))
     y = zeros(N+1)
     leftsum = zero(Float64)

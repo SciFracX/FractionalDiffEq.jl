@@ -39,7 +39,8 @@ Using the **Matrix Discretization algorithm** proposed by [Prof Igor Podlubny](h
   year={1998}
 }
 """
-function solve(leftparameters, leftorders, right, h, T, ::FODEMatrixDiscrete)
+function solve(prob::MultiTermsFODEProblem, h, T, ::FODEMatrixDiscrete)
+    leftparameters, leftorders, right = prob.parameters, prob.orders, prob.rightfun
     N = Int64(floor(T/h))
     highestorder = Int64(findmax(ceil.(leftorders))[1])
     rows = collect(1:highestorder)
