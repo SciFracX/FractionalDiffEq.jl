@@ -1,10 +1,17 @@
 import FractionalDiffEq.FractionalDiffEqAlgorithm
+using SpecialFunctions
 
 struct G2Direct <: FractionalDiffEqAlgorithm end
 
+"""
+!!! info "Order of the problem"
+    Please note the `L2Direct` method can only used for the 
+"""
+struct L2Direct <: FractionalDiffEqAlgorithm end
+
 function G2cₙⱼ(n, α, j)
     if j == 0
-        return gamma(n-1-α)/(gamma(-α)*gamma(n))*(α^2/8-α/4)
+        return gamma(n-1-α)/(gamma(-α)*gamma(n))*(α^2/8 - α/4)
     elseif j == 1
         return gamma(n-2-α)/(gamma(-α)*gamma(n))*((1-α/2+α^2/8)*n+α^2/8-α/4-2)
     elseif 2 ≤ j ≤ n-1
@@ -20,32 +27,65 @@ end
 
 function solve(f, α, u0, T, h, ::G2Direct)
     n = Int64(floor(T/h))
+    y = zeros(n+1)
 
-
-    y = zeros(n)
-    temp = zero(Float64)
     y[1]=u0
-    for i in range(1, n-1, step=1)
-        
-
-
-        for j in range(1, n-1, step=1)
-            temp += G2cₙⱼ(n, α, j)*y[i]
+    for i in range(1, n, step=1)
+        temp = zero(Float64)
+        for j in range(1, n+1, step=1)
+            temp += G2cₙⱼ(n, α, j-1)*y[i]
         end
 
-        y[i+1] = h^α/G2cₙⱼ(n+1, α, n)*f(i*h, y[i]) - 1/G2cₙⱼ(n+1, α, n)*temp
+        y[i+1] = h^α/G2cₙⱼ(n, α, i)*f(i*h, y[i]) - 1/G2cₙⱼ(n, α, i)*temp
     end
     
     return y
 end
 
+function solve(f, α, u0, T, h, ::L2Direct)
+    n = Int64(floor(T/h))
 
-function L2cₙⱼ(n, α, j)
-    if j == 0
-        return 1
+    y = zeros(n+1)
+
+    y[1]=u0
+    for i in range(1, n-1, step=1)
+        temp = zero(Float64)
+        for j in range(1, i, step=1)
+            temp += L2cₙⱼ(n, α, j-1)*y[i]
+        end
+
+        y[i+1] = h^α/L2cₙⱼ(n, α, i-1)*f(i*h, y[i]) - 1/L2cₙⱼ(n, α, i-1)*temp
     end
+    
+    return y
 end
-
-function bⱼ(n, α, j)
+function L2cₙⱼ(n, α, j)
+    temp = zero(Float64)
+    if j == 0
+        temp = bⱼ(α-1, n-1)
+    elseif j == 1
+        temp = -2*bⱼ(α-1, n-1) + bⱼ(α-1, n-2)
+    elseif 2 ≤ j ≤ n-1
+        temp = bⱼ(α-1, n-j+1)-2*bⱼ(α-1, n-j) + bⱼ(α-1, n-j-1)
+    elseif j == n
+        temp = 2^(2-α)-3
+    elseif j == n+1
+        temp = 1
+    else
+        temp = 0
+    end
+    return temp/gamma(3-α)
+end
+function bⱼ(α, j)
     return (j+1)^(1-α)-j^(1-α)
 end
+#=
+h=0.5
+T=5
+fun(x, y) = 1 - y
+result = solve(fun, 0.5, 0, T, h, G2Direct())
+tspan=collect(0:h:T)
+
+using Plots
+plot(tspan, result)
+=#
