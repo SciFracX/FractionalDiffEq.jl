@@ -3,8 +3,8 @@ using Test
 
 @testset "Test Diethelm PECE algorithms" begin
     fun(x, y) = 1-y
-    prob = SingleTermFODEProblem(fun, 1.8, 0.01)
-    result = solve(prob, 0, 5, PECE())
+    prob = SingleTermFODEProblem(fun, 1.8, 0, 5)
+    result = solve(prob, 0.01, PECE())
     tspan = collect(0:0.01:5)
 
     target = []
@@ -24,8 +24,8 @@ end
         push!(target, i^0.5*mittleff(0.5, 1.5,-i^0.5))
     end
 
-
-    result = solve([1, 1], [0.5, 0], 1, 0.01, 5, FODEMatrixDiscrete())
+    singleprob = MultiTermsFODEProblem([1, 1], [0.5, 0], 1)
+    result = solve(singleprob, 0.01, 5, FODEMatrixDiscrete())
 
     @test isapprox(result, target; atol=1)
 
@@ -40,8 +40,8 @@ end
         push!(yatarget, i^1.8*mittleff(1.8,2.8,-i^1.8))
     end
 
-
-    yaresult = solve([1, 1], [1.8, 0], 1, 0.01, 20, FODEMatrixDiscrete())
+    highsingleprob = MultiTermsFODEProblem([1, 1], [1.8, 0], 1)
+    yaresult = solve(highsingleprob, 0.01, 20, FODEMatrixDiscrete())
 
     @test isapprox(yaresult, yatarget; atol=1)
 
@@ -50,10 +50,10 @@ end
 @testset "Test Closed Form method" begin
     t=collect(0:0.002:10);
 
-    u = sin.(t.^2);
+    rightfun(x) = sin(x)
 
-    prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], [30 90], [1 0.3])
+    prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], rightfun, [30 90], [1 0.3])
 
-    result=solve(prob, u, t, ClosedForm())
+    result=solve(prob, t, ClosedForm())
 
 end
