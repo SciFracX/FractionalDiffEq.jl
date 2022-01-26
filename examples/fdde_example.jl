@@ -1,3 +1,5 @@
+using FractionalDiffEq
+
 function ϕ(x)
     if x == 0
         return 19.00001
@@ -6,16 +8,16 @@ function ϕ(x)
     end
 end
 
-function f(t, y, v)
-    return 3.5*y*(1-v/19)
+function f(t, y, ϕ)
+    return 3.5*y*(1-ϕ/19)
 end
 
 h=0.05
 α=0.97
 τ=0.8
 T=56
-fddeprob = FDDEProblem(f, α, τ)
+fddeprob = FDDEProblem(f, ϕ, α, τ)
 V, y = solve(fddeprob, T, h, DelayPECE())
 
-using Plots, SpecialFunctions
+using Plots
 plot(V, y)

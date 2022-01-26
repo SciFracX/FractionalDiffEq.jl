@@ -15,7 +15,7 @@ function solve(f, α, x0, h, tn, ::NonLinearAlg, L0=1e10)
     z = zeros(n, m)
     x1 = copy(x0) #Here we pass the value of x0 to x1. Honestly, I kept finding this bug for almost a whole night😅
 
-
+    # All of the min(m, L0+1) is to set the memory effect.
     W = zeros(n, min(m, L0+1)) #Initializing W a n*m matrix
 
     for i = 1:n

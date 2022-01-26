@@ -85,6 +85,8 @@ end
 
 """
     FDDEProblem(f, ϕ, α, τ)
+
+Construct a fractional delayed differential equation peoblem.
 """
 struct FDDEProblem <: FDEProblem
     f

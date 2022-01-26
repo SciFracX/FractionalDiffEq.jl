@@ -1,5 +1,4 @@
 import FractionalDiffEq.FractionalDiffEqAlgorithm
-
 struct DelayPECE <: FractionalDiffEqAlgorithm end
 
 function solve(FDDE::FDDEProblem, T, h, ::DelayPECE)
@@ -13,27 +12,27 @@ function solve(FDDE::FDDEProblem, T, h, ::DelayPECE)
     for n in 1:maxn-1
         yp[n+1]=0
         for j =1:n
-            yp[n+1]=yp[n+1]+b(j-1, n-1, α)*f(t[j], y[j], v(j, τ, h, y, yp))
+            yp[n+1]=yp[n+1]+b(j-1, n-1, α, h)*f(t[j], y[j], v(ϕ, j, τ, h, y, yp))
         end
         yp[n+1]=yp[n+1]/gamma(α)+ϕ(0)
 
         y[n+1]=0
 
         for j=1:n
-            y[n+1]=y[n+1]+a(j-1, n-1, α)*f(t[j], y[j], v(j, τ, h, y, yp))
+            y[n+1]=y[n+1]+a(j-1, n-1, α, h)*f(t[j], y[j], v(ϕ, j, τ, h, y, yp))
         end
 
-        y[n+1]=y[n+1]/gamma(α)+h^α*f(t[n+1], yp[n+1], v(n+1, τ, h, y, yp))/gamma(α+2)+ϕ(0)
+        y[n+1]=y[n+1]/gamma(α)+h^α*f(t[n+1], yp[n+1], v(ϕ, n+1, τ, h, y, yp))/gamma(α+2)+ϕ(0)
     end
 
     V = copy(t)
     for n=1:maxn-1
-        V[n] = v(n, τ, h, y, yp)
+        V[n] = v(ϕ, n, τ, h, y, yp)
     end
     return V, y
 end
 
-function a(j, n, α)
+function a(j, n, α, h)
     if j == n+1
         result = 1
     elseif j == 0
@@ -44,11 +43,11 @@ function a(j, n, α)
     return result*h^α / (α * (α + 1))
 end
 
-function b(j, n, α)
+function b(j, n, α, h)
     return h^α/α*((n-j+1)^α - (n-j)^α)
 end
 
-function v(n, τ, h, y, yp)
+function v(ϕ, n, τ, h, y, yp)
     if τ >= (n-1)*h
         return ϕ((n-1)*h-τ)
     else

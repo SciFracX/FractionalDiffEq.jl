@@ -17,8 +17,8 @@
 import QuadGK: quadgk
 
 function ourquadgk(f, a, b)
-    (res, _) = quadgk(f, a, b; order=17)
-    return res
+    (result, _) = quadgk(f, a, b; order=17)
+    return result
 end
 
 function P(α, β, ϵ, ϕ, z)
