@@ -35,8 +35,6 @@
   </a>
 </p>
 
-> See our talk on JuliaCN 2021 Winter Conf: [Slide](https://julia-cn-conf2021.vercel.app/1), [YouTube](https://www.youtube.com/watch?v=oVvrW7EgEwg), [BiliBili](https://www.bilibili.com/video/BV1vY411W7Dw?p=18)
-
 # Installation
 
 If you have already installed Julia, you can install FractionalDiffEq.jl in REPL using Julia package manager:
