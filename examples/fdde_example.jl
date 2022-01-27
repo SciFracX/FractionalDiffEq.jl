@@ -20,4 +20,4 @@ fddeprob = FDDEProblem(f, ϕ, α, τ)
 V, y = solve(fddeprob, T, h, DelayPECE())
 
 using Plots
-plot(y, V)
+plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
