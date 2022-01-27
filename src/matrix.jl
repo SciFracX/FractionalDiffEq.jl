@@ -19,11 +19,13 @@ struct FODEMatrixDiscrete <: FractionalDiffEqAlgorithm end
 """
 Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional partial differential equations to simple algebra system and solve the system.
 
+```tex
 @article{2009,
    title={Matrix approach to discrete fractional calculus II: Partial fractional differential equations},
    DOI={10.1016/j.jcp.2009.01.014},
    author={Podlubny, Igor and Chechkin, Aleksei and Skovranek, Tomas and Chen, YangQuan and Vinagre Jara, Blas M.},
 }
+```
 """
 struct FPDEMatrixDiscrete <: FractionalDiffEqAlgorithm end
 

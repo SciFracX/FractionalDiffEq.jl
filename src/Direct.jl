@@ -3,6 +3,14 @@ using SpecialFunctions
 
 """
 G2 Direct algorithm for fractional ordinary differential equations
+
+```tex
+@inproceedings{Guo2015FractionalPD,
+  title={Fractional Partial Differential Equations and their Numerical Solutions},
+  author={Boling Guo and Xueke Pu and Feng-Hui Huang},
+  year={2015}
+}
+```
 """
 struct G2Direct <: FractionalDiffEqAlgorithm end
 

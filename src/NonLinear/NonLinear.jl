@@ -2,6 +2,10 @@
     solve(f, α, x0, h, t, NonLinearAlg)
     
 Non linear algorithm for nonlinear fractional differential equations.
+
+### References
+
+Dingyu Xue, Northeastern University, China ISBN:9787030543981
 """
 struct NonLinearAlg <: FractionalDiffEqAlgorithm end
 
