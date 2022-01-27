@@ -29,10 +29,10 @@ function solve(FDDE::FDDEProblem, T, h, ::DelayPI)
     h_al = h^α
 
     y0 = ϕ(t0)
-    y = zeros(length(y0), N+1)
+    y = zeros(N+1)
 
-    f = zeros(length(y0), N+1)
-    y[:, 1] .= y0
+    f = zeros(N+1)
+    y[1] = y0
 
     for n = 1:N
         tnm1 = t[n]
@@ -52,12 +52,12 @@ function solve(FDDE::FDDEProblem, T, h, ::DelayPI)
             end
         end
 
-        f[:, n] = g(tnm1, y[:, n], y_nm1_tau)
+        f[n] = g(tnm1, y[n], y_nm1_tau)
         f_mem = 0
         for j = 0:n-1
-            f_mem = f_mem .+ f[:, j+1]*b[n-j+1]
+            f_mem = f_mem + f[j+1]*b[n-j+1]
         end
-        y[:, n+1] = y0 .+ h_al*f_mem
+        y[n+1] = y0 + h_al*f_mem
     end
     return y
 end
