@@ -19,11 +19,9 @@ function solve(f, α, x0, h, tf, ::GLWithMemory)
 
     hα=h^α[1]
 
-    n = Int64(tf/h+1)
+    n = Int64(floor(tf/h)+1)
     x, y, z = zeros(n), zeros(n), zeros(n)
     x[1], y[1], z[1]= x0[1], x0[2], x0[3]
-
-    x1 = copy(x0)
 
     Cα = zeros(n)
     Cα[1] = 1
@@ -41,9 +39,9 @@ function solve(f, α, x0, h, tf, ::GLWithMemory)
             sum3 += Cα[j+1]*z[k-j]
         end
 
-            x[k]=hα*f((k-1)*h, x[k-1], y[k-1], z[k-1], 1) - sum1
-            y[k]=hα*f((k-1)*h, x[k-1], y[k-1], z[k-1], 2) - sum2
-            z[k]=hα*f((k-1)*h, x[k-1], y[k-1], z[k-1], 3) - sum3
+        x[k]=hα*f((k-1)*h, x[k-1], y[k-1], z[k-1], 1) - sum1
+        y[k]=hα*f((k-1)*h, x[k-1], y[k-1], z[k-1], 2) - sum2
+        z[k]=hα*f((k-1)*h, x[k-1], y[k-1], z[k-1], 3) - sum3
     end
     return x, y, z
 end
