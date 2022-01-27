@@ -19,6 +19,7 @@ makedocs(;
         "Fractional DDE" => "fdde.md",
         "Detailed Models" => "models.md",
         "Examples" => "example.md",
+        "Algorithms" => "algorithms.md",
         "Auxiliary Functions" => "auxiliary.md",
         "Comparison" => "comparison.md",
         "FractionalDiffEq APIs" => "APIs.md"

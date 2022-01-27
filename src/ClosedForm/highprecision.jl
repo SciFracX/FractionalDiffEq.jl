@@ -2,7 +2,9 @@ import FractionalDiffEq.FractionalDiffEqAlgorithm
 
 struct ClosedFormHighPercision <: FractionalDiffEqAlgorithm end
 
-function solve(a, na, b, nb, u, t, p, ::ClosedFormHighPercision)
+function solve(prob::MultiTermsFODEProblem, t, p, ::ClosedFormHighPercision)
+    a, na, rightfun, b, nb =  prob.parameters, prob.orders, prob.rightfun, prob.rparameters, prob.rorders
+    u = rightfun.(t)
     h = t[2]-t[1]
     n = length(t)
     na = na[:]

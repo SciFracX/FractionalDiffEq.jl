@@ -33,7 +33,7 @@ export FDEProblem, FPDEProblem, FDDEProblem
 
 export SingleTermFODEProblem, MultiTermsFODEProblem
 
-export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete, ClosedForm, ClosedFormHankelM, G2Direct
+export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, G2Direct
 
 export DelayPECE, DelayPI
 
