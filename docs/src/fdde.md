@@ -12,9 +12,9 @@ D^\alpha_ty(t)=f(t,\ y(t),\ y(t-\tau)),\quad t\geq\xi
 y(t)=\phi(t),\quad t\in[\xi-\tau,\ \xi]
 ```
 
-While only given the initial condition is not enough to solve the delayed differential equations, a history function ``\phi(t)`` must be provided to describe the history of the system(``\phi(t) should be a continuous function``).
+While only given the initial condition is not enough to solve the delayed differential equations, a history function ``\phi(t)`` must be provided to describe the history of the system(``\phi(t)`` should be a continuous function).
 
-All we need to do is to pass the function ``f(t, y(t), y(t-tau))``, and history function ``\phi(t)`` to the ```FDDEProblem``` and choose an algorithm to solve problem:
+All we need to do is to pass the function ``f(t,\ y(t),\ y(t-tau))``, and history function ``\phi(t)`` to the ```FDDEProblem``` and choose an algorithm to solve problem:
 
 ```julia
 using FractionalDiffEq
@@ -39,7 +39,7 @@ fddeprob = FDDEProblem(f, ϕ, α, τ)
 V, y = solve(fddeprob, T, h, DelayPECE())
 
 using Plots
-plot(V, y)
+plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 ```
 
 ![Delayed](./assets/fdde_example.png)

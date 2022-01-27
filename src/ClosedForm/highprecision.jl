@@ -1,5 +1,8 @@
 import FractionalDiffEq.FractionalDiffEqAlgorithm
 
+"""
+Closed form high precision algorithms for multi term ordinary differential equations
+"""
 struct ClosedFormHighPercision <: FractionalDiffEqAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, t, p, ::ClosedFormHighPercision)

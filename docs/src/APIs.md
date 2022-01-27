@@ -37,24 +37,3 @@ FractionalDiffEq.SingleTermFODEProblem
 FractionalDiffEq.MultiTermsFODEProblem
 FractionalDiffEq.FPDEProblem
 ```
-
-### Detailed types
-
-```@docs
-FractionalDiffEq.PECE
-```
-
-```@docs
-FractionalDiffEq.FODEMatrixDiscrete
-FractionalDiffEq.FPDEMatrixDiscrete
-```
-
-## Some models
-
-```@docs
-FractionalDiffEq.bagleytorvik
-```
-
-```@docs
-FractionalDiffEq.diffusion
-```
