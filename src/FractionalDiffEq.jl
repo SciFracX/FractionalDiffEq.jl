@@ -8,7 +8,7 @@ include("ClosedForm/hankelmatrix.jl")
 include("ClosedForm/ClosedForm.jl")
 include("ClosedForm/highprecision.jl")
 
-#include("GLWithMemory.jl")
+include("GL/GLWithMemory.jl")
 include("Direct.jl")
 
 include("NonLinear/NonLinear.jl")
@@ -34,6 +34,8 @@ export FDEProblem, FPDEProblem, FDDEProblem
 export SingleTermFODEProblem, MultiTermsFODEProblem
 
 export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, G2Direct
+
+export GLWithMemory
 
 export DelayPECE, DelayPI
 
