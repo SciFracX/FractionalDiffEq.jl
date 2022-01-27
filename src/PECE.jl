@@ -96,6 +96,9 @@ struct FDDEProblem <: FDEProblem
     t0::Union{Number, Nothing}
 end
 
+#=FDDEProblem constructor=#
+FDDEProblem(f, ϕ, α, τ) = FDDEProblem(f, ϕ, α, τ, nothing)
+
 
 """
     solve(FODEProblem, PECE())
