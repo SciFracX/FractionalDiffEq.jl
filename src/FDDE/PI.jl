@@ -19,7 +19,8 @@ import FractionalDiffEq: FractionalDiffEqAlgorithm, solve
 """
 struct DelayPI <: FractionalDiffEqAlgorithm end
 
-function solve(g, α, τ, t0, T, ϕ, h, ::DelayPI)
+function solve(FDDE::FDDEProblem, T, h, ::DelayPI)
+    g, ϕ, α, τ, t0 = FDDE.f, FDDE.ϕ, FDDE.α, FDDE.τ, FDDE.t0
     N = Int64(ceil((T-t0)/h))
     t = t0 .+ h*collect(0:1:N)
 
@@ -60,23 +61,3 @@ function solve(g, α, τ, t0, T, ϕ, h, ::DelayPI)
     end
     return y
 end
-#=
-function ϕ(x)
-    if x == 0
-        return 19.00001
-    else
-        return 19.0
-    end
-end
-
-function f(t, y, ϕ)
-    return 3.5*y*(1-ϕ/19)
-end
-
-prob = FDDEProblem(f, ϕ, 0.97, 0.8)
-
-result = solve(f, 0.97, 0.8, 0, 56, ϕ, 0.05, DelayPI())
-using Plots
-tspan = collect(0:0.05:56)
-plot(tspan, result[:])
-=#

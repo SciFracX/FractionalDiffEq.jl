@@ -93,6 +93,7 @@ struct FDDEProblem <: FDEProblem
     ϕ
     α
     τ
+    t0::Union{Number, Nothing}
 end
 
 
