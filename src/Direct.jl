@@ -5,7 +5,7 @@ struct G2Direct <: FractionalDiffEqAlgorithm end
 
 """
 !!! info "Order of the problem"
-    Please note the `L2Direct` method can only used for the 
+    Please note the `L2Direct` method can only used for ``0 \\leq α \\leq 1``.
 """
 struct L2Direct <: FractionalDiffEqAlgorithm end
 

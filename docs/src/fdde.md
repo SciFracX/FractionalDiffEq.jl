@@ -5,16 +5,16 @@ In real world systems, delay is very often encountered in many practical systems
 The delayed fractional differential equations has the general form:
 
 ```math
-D^\alpha_ty(t)=f(t,\ y(t),\ y(t-\tau)),\quad t\geq0
+D^\alpha_ty(t)=f(t,\ y(t),\ y(t-\tau)),\quad t\geq\xi
 ```
 
 ```math
-y(t)=\phi(t),\quad t\leq0
+y(t)=\phi(t),\quad t\in[\xi-\tau,\ \xi]
 ```
 
-While only given the initial condition is not enough to solve the delayed differential equations, a history function ``\phi(t)`` must be provided to describe the history of the system.
+While only given the initial condition is not enough to solve the delayed differential equations, a history function ``\phi(t)`` must be provided to describe the history of the system(``\phi(t) should be a continuous function``).
 
-All we need to do is describe the function ``f(t, y(t), y(t-tau))``, and history function ``\phi(t)`` to the ```FDDEProblem``` and choose an algorithm to solve the problem:
+All we need to do is to pass the function ``f(t, y(t), y(t-tau))``, and history function ``\phi(t)`` to the ```FDDEProblem``` and choose an algorithm to solve problem:
 
 ```julia
 using FractionalDiffEq

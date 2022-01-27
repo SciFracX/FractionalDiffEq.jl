@@ -12,9 +12,13 @@ include("ClosedForm/highprecision.jl")
 include("Direct.jl")
 
 include("NonLinear/NonLinear.jl")
-include("FDDE/DelayPECE.jl")
 include("NonLinear/Qi.jl")
 
+# Fractional delay differential equations
+include("FDDE/DelayPECE.jl")
+include("FDDE/PI.jl")
+
+# Auxiliary functions
 include("mlfun.jl")
 
 
@@ -31,7 +35,7 @@ export SingleTermFODEProblem, MultiTermsFODEProblem
 
 export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete, ClosedForm, ClosedFormHankelM, G2Direct
 
-export DelayPECE
+export DelayPECE, DelayPI
 
 # Export some api to construct the equation
 export RieszMatrix, omega, meshgrid
