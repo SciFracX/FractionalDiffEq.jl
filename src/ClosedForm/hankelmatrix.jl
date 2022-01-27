@@ -1,5 +1,3 @@
-using SpecialMatrices
-
 import FractionalDiffEq.FractionalDiffEqAlgorithm
 
 """
@@ -13,8 +11,10 @@ struct ClosedFormHankelM <: FractionalDiffEqAlgorithm end
 
 Use Closed-Form Hankel matrix solution to obtain numerical solution at zero initial condition.
 """
-function solve(a, na, b, nb, u, t, ::ClosedFormHankelM)
+function solve(prob::MultiTermsFODEProblem, t, ::ClosedFormHankelM)
+    a, na, rightfun, b, nb = prob.parameters, prob.orders, prob.rightfun, prob.rparameters, prob.rorders
     h=t[2]-t[1]
+    u = rightfun.(t)
     u=u[:]
     A, B = 0, 0
 
