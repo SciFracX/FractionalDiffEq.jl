@@ -15,9 +15,8 @@ doi={10.1109/MOCAST.2019.8742063}}
 struct GL <: FractionalDiffEqAlgorithm end
 
 # Some points are a little big
-function solve(prob::SingleTermFODEProblem, u0, T, ::GL)
-    f, α, h = prob.f, prob.α, prob.h
-    N = Int64(floor(T/h))
+function solve(f, α, h, u0, T, ::GL)
+    N = Int64(floor(T/h)+1)
 
     c = zeros(N)
 
@@ -45,3 +44,15 @@ function Cq(r, c, k)
     end
     return temp
 end
+
+#=
+h=0.01
+T=20
+rightfun(y)=1-y
+
+result = solve(rightfun, 1.8, h, 0, T)
+tspan = collect(0:h:T)
+
+using Plots
+plot(tspan, -result)
+=#
