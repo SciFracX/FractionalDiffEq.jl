@@ -24,7 +24,7 @@ include("mlfun.jl")
 
 
 
-export mittleff
+export mittleff, mittlefferr, mittleffderiv
 
 export FractionalDiffEqAlgorithm
 

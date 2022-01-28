@@ -14,7 +14,7 @@ Let's see if we abstract the Chua system into a fractional differential equation
 
 ```math
 \begin{cases}
-D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x+1|-|x-1|)]\\
+D^{\alpha_1}x=10.725\{y-1.7802x-[0.1927(|x+1|-|x-1|)]\}\\
 D^{\alpha_2}y=x-y+z\\
 D^{\alpha_3}z=-10.593y-0.268z
 \end{cases}
@@ -60,7 +60,7 @@ plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)
 
 Cheers!🎉🎉🎉
 
-It is noteworthy that in the reference book Fractional Calculus and Fractional-order Control[^1], the computing time is almost 20 minutes to solve this problem in [FOTF toolbox](https://www.mathworks.com/matlabcentral/fileexchange/60874-fotf-toolbox), in my own computer, the computing time of FOTF toolbox is **1499.940487** seconds while in FractionalDiffEq.jl, the computing time has a speedup of about two times, only cost 567.260306 seconds!!
+It is noteworthy that in the reference book Fractional Calculus and Fractional-order Control[^1], the computing time is almost 20 minutes to solve this problem in [FOTF toolbox](https://www.mathworks.com/matlabcentral/fileexchange/60874-fotf-toolbox), in my own computer, the computing time of FOTF toolbox is **1499.940487** seconds while in FractionalDiffEq.jl, the computing time has a speedup of about two times, only cost **567.260306** seconds!!
 
 ### Short memory effect in FDE
 

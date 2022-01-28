@@ -12,7 +12,13 @@ end
     @test isapprox(omega(5, 0.5), [1.0; -0.5; -0.125; -0.0625; -0.0390625; -0.02734375]; atol=1e-5)
 end
 
+#FIXME: Add array type tests
 @testset "Test Mittag Leffler function" begin
     @test isapprox(mittleff(1, 2, 1), exp(1)-1; atol=1e-5)
     @test isapprox(mittleff(2, 2, 1), sinh(1); atol=1e-5)
+    @test isapprox(mittlefferr(1, 1, 1, 1), 2.718281828459045; atol=1e-5)
+    @test isapprox(mittlefferr(1, 1, 1), 2.718281828459045; atol=1e-5)
+
+    @test isapprox(mittleffderiv(1, 1, 1), 2.718281828459045; atol=1e-5)
+    @test isapprox(mittleffderiv(1, 1), 2.718281828459045; atol=1e-5)
 end

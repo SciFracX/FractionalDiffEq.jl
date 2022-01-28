@@ -140,7 +140,7 @@ mittlefferr(α, z, ρ) = mittlefferr(α, 1, z, ρ)
 """
     mittlefferr(α,β,z,ρ)
 
-Compute the Mittag-Leffler function at `z` for parameters `α,β` with
+Compute the Mittag-Leffler function at `z` for parameters `α, β` with
 accuracy `ρ`.
 """
 function mittlefferr(α, β, z, ρ::Real)
@@ -229,7 +229,7 @@ function _mittleff(α, β, z, ρ)
 end
 
 """
-    mittleffderiv(α,β,z)
+    mittleffderiv(α, β, z)
 
 Compute the derivative of the Mittag-Leffler function at `z` for parameters `α, β`.
 """

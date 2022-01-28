@@ -2,11 +2,11 @@ using FractionalDiffEq
 using Plots
 
 function chua(t, x, k)
-    a=10.725
-    b=10.593
-    c=0.268
-    m0=-1.1726
-    m1=-0.7872
+    a = 10.725
+    b = 10.593
+    c = 0.268
+    m0 = -1.1726
+    m1 = -0.7872
 
     if k == 1
         f = m1*x[1]+0.5*(m0-m1)*(abs(x[1]+1)-abs(x[1]-1))
