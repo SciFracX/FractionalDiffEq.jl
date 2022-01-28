@@ -201,6 +201,8 @@ function bagleytorvik(p1, p2, p3, right, T, h)
     N = Int64(floor(T/h)+1)
     equation = p1*D(N, 2, h) + p2*D(N, 1.5, h)+p3*(zeros(N, N)+I)
     equation = eliminator(N, [1,2])*equation*eliminator(N, [1,2])'
+
+    rows = collect(1:2)
     
     if typeof(right) <: Number
         rightside = eliminator(N, rows)*right*ones(N)
