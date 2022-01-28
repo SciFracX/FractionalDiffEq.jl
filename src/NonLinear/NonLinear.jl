@@ -1,3 +1,5 @@
+import FractionalDiffEq: FractionalDiffEqAlgorithm, solve
+
 """
     solve(f, α, x0, h, t, NonLinearAlg)
     
