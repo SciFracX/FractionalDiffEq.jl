@@ -24,8 +24,9 @@ end
 alpha = [0.93, 0.99, 0.92];
 x0 = [0.2; -0.1; 0.1];
 h = 0.001;
+prob = SystemOfFDEProblem(chua, alpha, x0)
 tn = 500;
-result = solve(chua, alpha, x0, h, tn, NonLinearAlg(), 10000)
+result = solve(prob, h, tn, NonLinearAlg(), 10000)
 
 gr()
 plot(result[:, 1], result[:, 2], title="Chua System with Short Memory Effect", legend=:bottomright)

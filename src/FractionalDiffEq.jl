@@ -31,7 +31,7 @@ export FractionalDiffEqAlgorithm
 # Export detailed problem types
 export FDEProblem, FPDEProblem, FDDEProblem
 
-export SingleTermFODEProblem, MultiTermsFODEProblem
+export SingleTermFODEProblem, MultiTermsFODEProblem, SystemOfFDEProblem
 
 export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, G2Direct
 

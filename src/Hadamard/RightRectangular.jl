@@ -1,8 +1,8 @@
-import FractionalDiffEq: SingleTermFODEProblem, FractionalDiffEqAlgorithm
-using SpecialFunctions
+import FractionalDiffEq: SingleTermFODEProblem, FractionalDiffEqAlgorithm, solve
+
 struct HadamardRRect <: FractionalDiffEqAlgorithm end
 
-function testsolve(f, α, h, u0, a, b, ::HadamardRRect)
+function solve(f, α, h, u0, a, b, ::HadamardRRect)
     N = Int64(floor((b-a)/h))
     y = zeros(N+1)
     leftsum = zero(Float64)
@@ -30,7 +30,7 @@ end
 #=
 fun(x, y) = 1.2435388561830991*log(x)^1.4
 
-result=testsolve(fun, 0.3, 0.01, 0, 1, 2, HadamardRRect())
+result=solve(fun, 0.3, 0.01, 0, 1, 2, HadamardRRect())
 tspan=collect(1:0.01:2)
 analyticalfun(x)=log(x)^1.7
 analytical = analyticalfun.(tspan)

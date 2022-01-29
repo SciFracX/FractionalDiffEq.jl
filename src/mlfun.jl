@@ -163,7 +163,7 @@ Compute the Mittag-Leffler function at `z` for parameters `α, β`.
 mittleff(α, β, z) = _mittleff(α, β, float(z))
 mittleff(α, β, z::Union{Integer,Complex{T}}) where {T<:Integer} = mittleff(α, β, float(z))
 
-#mittleff(α, β, z) = _mittlefferr(α,β,z,myeps(z))
+#mittleff(α, β, z) = _mittlefferr(α, β, z, myeps(z))
 
 """
     mittleff(α, z)

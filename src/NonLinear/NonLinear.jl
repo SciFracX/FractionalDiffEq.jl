@@ -1,4 +1,15 @@
-import FractionalDiffEq: FractionalDiffEqAlgorithm, solve
+import FractionalDiffEq: FractionalDiffEqAlgorithm, solve, FDEProblem
+
+"""
+    SystemOfFDEProblem(f, α, x0)
+
+Define system of fractional differential equations
+"""
+struct SystemOfFDEProblem <: FDEProblem
+    f
+    α
+    x0
+end
 
 """
     solve(f, α, x0, h, t, NonLinearAlg)
@@ -11,7 +22,8 @@ Dingyu Xue, Northeastern University, China ISBN:9787030543981
 """
 struct NonLinearAlg <: FractionalDiffEqAlgorithm end
 
-function solve(f, α, x0, h, tn, ::NonLinearAlg, L0=1e10)    
+function solve(prob::SystemOfFDEProblem, h, tn, ::NonLinearAlg, L0=1e10)
+    f, α, x0 = prob.f, prob.α, prob.x0
     n = length(x0)
     m = Int64(round(tn/h)+1)
     g = genfun(1)
