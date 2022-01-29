@@ -16,11 +16,11 @@ abstract type FDEProblem end
 Define a multi-terms fractional ordinary differential equation.
 """
 struct MultiTermsFODEProblem <: FDEProblem
-    parameters
-    orders
-    rightfun
-    rparameters::Union{Matrix, Nothing}
-    rorders::Union{Matrix, Nothing}
+    parameters::AbstractArray
+    orders::AbstractArray
+    rightfun::Union{Function, Number}
+    rparameters::Union{AbstractArray, Nothing}
+    rorders::Union{AbstractArray, Nothing}
 end
 
 #=MultiTermsFODEProblem constructor=#
@@ -34,8 +34,8 @@ MultiTermsFODEProblem(parameters, orders, rightfun) = MultiTermsFODEProblem(para
 Define a single term fractional ordinary differential equation, there are only one term in this problem.
 """
 struct SingleTermFODEProblem <: FDEProblem
-    f
-    α
+    f::Function
+    α::Float64
     u0
     T
 end
@@ -68,12 +68,11 @@ struct PECE <: FractionalDiffEqAlgorithm end
 
 
 
-
-
 """
 
     FPDEProblem(α, β, T, M, N)
 
+Define fractional order partial differential equations problem
 """
 struct FPDEProblem <: FDEProblem
     α
@@ -108,7 +107,7 @@ After define the FDEProblem, use **PECE(Predict-Evaluate-Correct-Evaluate) algor
 function solve(FODE::SingleTermFODEProblem, h, ::PECE)
     f, α, u0, T = FODE.f, FODE.α, FODE.u0, FODE.T
     N = Int64(floor(T/h))
-    y = zeros(N+1)
+    y = zeros(N+1) # Initialize the solution array
     leftsum = zero(Float64)
     l = floor(α)
 
