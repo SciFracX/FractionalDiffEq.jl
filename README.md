@@ -157,11 +157,12 @@ function chua(t, x, k)
     end
 end
 
-alpha = [0.93, 0.99, 0.92];
+α = [0.93, 0.99, 0.92];
 x0 = [0.2; -0.1; 0.1];
-h = 0.01;
+h = 0.001;
+prob = SystemOfFDEProblem(chua, α, x0)
 tn = 200;
-result = solve(chua, alpha, x0, h, tn, NonLinearAlg())
+result = solve(prob, h, tn, NonLinearAlg())
 
 gr()
 plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)
@@ -218,10 +219,10 @@ s="\$ODE\\ Example\$"
 
 T = 30
 h = 0.05
-tspan = collect(0.05:h:T)
+tspan = collect(h:h:T)
 
 f(x) = 1/2*(-exp(-x)-sin(x)-cos(x)+2)
-target =f .(tspan)
+target =f.(tspan)
 
 rightfun(x) = sin(x)
 prob = MultiTermsFODEProblem([1, 1], [2, 1], rightfun)

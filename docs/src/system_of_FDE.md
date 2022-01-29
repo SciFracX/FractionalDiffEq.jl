@@ -46,10 +46,10 @@ function chua(t, x, k)
     end
 end
 
-alpha = [0.93, 0.99, 0.92];
+α = [0.93, 0.99, 0.92];
 x0 = [0.2; -0.1; 0.1];
 h = 0.001;
-prob = SystemOfFDEProblem(chua, alpha, x0)
+prob = SystemOfFDEProblem(chua, α, x0)
 tn = 200;
 result = solve(prob, h, tn, NonLinearAlg())
 
