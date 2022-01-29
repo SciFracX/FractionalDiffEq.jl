@@ -24,30 +24,33 @@ include("mlfun.jl")
 
 
 
-export mittleff, mittlefferr, mittleffderiv
-
 export FractionalDiffEqAlgorithm
 
-# Export detailed problem types
-export FDEProblem, FPDEProblem, FDDEProblem
+# Export general types
+export solve, FDEProblem, FPDEProblem, FDDEProblem
 
+# Detailed problem types
 export SingleTermFODEProblem, MultiTermsFODEProblem, SystemOfFDEProblem
 
-export PECE, FODEMatrixDiscrete, FPDEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, G2Direct
+# FODE solvers
+export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, G2Direct
 
-export GLWithMemory
+# FPDE solvers
+export FPDEMatrixDiscrete
 
+# System of FDE solvers
+export NonLinearAlg, GLWithMemory
+
+# FDDE solvers
 export DelayPECE, DelayPI
 
 # Export some api to construct the equation
 export RieszMatrix, omega, meshgrid
 
 # Export some special equtions
-export bagleytorvik
-export diffusion
+export bagleytorvik, diffusion
 
-export NonLinearAlg
-
-export solve, FDEProblem, FODEProblem, FPDEProblem
+# Auxiliary functions
+export mittleff, mittlefferr, mittleffderiv
 
 end
