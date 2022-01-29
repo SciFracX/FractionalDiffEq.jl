@@ -6,9 +6,9 @@ import FractionalDiffEq: FractionalDiffEqAlgorithm, solve, FDEProblem
 Define system of fractional differential equations
 """
 struct SystemOfFDEProblem <: FDEProblem
-    f
-    α
-    x0
+    f::Function
+    α::AbstractArray
+    x0::AbstractArray
 end
 
 """
