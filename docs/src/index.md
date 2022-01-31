@@ -39,10 +39,12 @@ pkg> add FractionalDiffEq#master
 
 * Detailed models supporting, such as Bagley Torvik equations, Relaxation Oscillation equations and Diffusion equations many more.
 
-
+<!-->
 > See our SciFracX 2021 Winter Report in JuliaCN Conference:
 
 [![conf2021](assets/conf2021.png)](https://www.youtube.com/watch?v=oVvrW7EgEwg)
+
+-->
 
 ## Roadmap
 
