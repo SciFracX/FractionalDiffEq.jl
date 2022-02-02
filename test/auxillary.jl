@@ -15,6 +15,7 @@ end
 @testset "Test distributed order utils function" begin
     @test isapprox(DOB(x->6*x*(1-x), [0, 1], 0.1, 1, 0.1), [3.547014602981364]; atol=1e-5)
     @test isapprox(DOF(x->6*x*(1-x), [0, 1], 0.1, 1, 0.1), [-3.547014602981364]; atol=1e-5)
+    @test isapprox(DORANORT(x->6*x*(1-x), [0, 1], 0.1, 1, 0.1), [2.120468497843435]; atol=1e-5)
 end
 
 #FIXME: Add array type tests

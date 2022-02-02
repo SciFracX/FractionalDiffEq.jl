@@ -57,6 +57,6 @@ export bagleytorvik, diffusion
 export mittleff, mittlefferr, mittleffderiv
 
 # Distributed order auxiliary SpecialFunctions
-export DOB, DOF
+export DOB, DOF, DORANORT
 
 end
