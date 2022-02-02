@@ -6,7 +6,7 @@ function DOB(ϕ, alpharange, alphastep, tN, tstep)
 
     result = zeros(tN, tN)
 
-    phi = ϕ.(alf)
+    phi = ϕ.(alphas)
 
     for k=1:alphacount
         result = result .+ phi[k]*alphastep*D(tN, alphas[k], tstep)
@@ -20,7 +20,7 @@ function DOF(ϕ, alpharange, alphastep, tN, tstep)
 
     result = zeros(tN, tN)
 
-    phi = ϕ.(alf)
+    phi = ϕ.(alphas)
 
     for k=1:alphacount
         result = result .+ phi[k]*alphastep*F(tN, alphas[k], tstep)
