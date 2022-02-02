@@ -12,6 +12,11 @@ end
     @test isapprox(omega(5, 0.5), [1.0; -0.5; -0.125; -0.0625; -0.0390625; -0.02734375]; atol=1e-5)
 end
 
+@testset "Test distributed order utils function" begin
+    @test isapprox(DOB(x->6*x*(1-x), [0, 1], 0.1, 1, 0.1), [3.547014602981364]; atol=1e-5)
+    @test isapprox(DOF(x->6*x*(1-x), [0, 1], 0.1, 1, 0.1), [-3.547014602981364]; atol=1e-5)
+end
+
 #FIXME: Add array type tests
 @testset "Test Mittag Leffler function" begin
     @test isapprox(mittleff(1, 2, 1), exp(1)-1; atol=1e-5)

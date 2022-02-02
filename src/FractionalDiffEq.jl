@@ -18,6 +18,9 @@ include("NonLinear/Qi.jl")
 include("FDDE/DelayPECE.jl")
 include("FDDE/PI.jl")
 
+# Distributed order differential equations
+include("DistributedOrder/utils.jl")
+
 # Auxiliary functions
 include("mlfun.jl")
 
@@ -52,5 +55,8 @@ export bagleytorvik, diffusion
 
 # Auxiliary functions
 export mittleff, mittlefferr, mittleffderiv
+
+# Distributed order auxiliary SpecialFunctions
+export DOB, DOF
 
 end
