@@ -1,4 +1,4 @@
-import FractionalDiffEq: D, F
+import FractionalDiffEq: FDEProblem, FractionalDiffEqAlgorithm, D, F, eliminator
 
 """
 ```tex

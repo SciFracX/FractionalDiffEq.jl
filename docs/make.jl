@@ -17,6 +17,7 @@ makedocs(;
         "System of FDE" => "system_of_FDE.md",
         "Fractional PDE" => "fpde.md",
         "Fractional DDE" => "fdde.md",
+        "DODE" => "dode.md",
         "Detailed Models" => "models.md",
         "Examples" => "example.md",
         "Algorithms" => "algorithms.md",
