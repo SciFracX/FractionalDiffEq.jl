@@ -12,9 +12,21 @@ We can write the general form of distributed order differential equations as:
 \int_0^m \mathscr{A}(r,\ D_*^r u(t))dr = f(t)
 ```
 
+Similar with what we have learned about single-term and multi-term fractional differential equations in linear fractional differential equations, we can also write the single-term distributed order differential equations:
+
+```math
+D_*^ru(t)=f(t,\ u(t))
+```
+
+And multi-term distributed order differential equations
+
+```math
+\sum_{i=1}^k \gamma_i D_*^{r_i}u(t) = f(t,\ u(t))
+```
+
 ## Distributed Order Relaxation
 
 
 
 !!! tip
-    Please see [Distributed-Order Dynamic Systems](https://link.springer.com/book/10.1007/978-1-4471-2852-6) for more 
+    Please see [Distributed-Order Dynamic Systems](https://link.springer.com/book/10.1007/978-1-4471-2852-6) for systematic introduction and knowledge.
