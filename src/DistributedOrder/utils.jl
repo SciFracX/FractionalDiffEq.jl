@@ -1,5 +1,15 @@
 import FractionalDiffEq: D, F
 
+"""
+```tex
+@inproceedings{Jiao2012DistributedOrderDS,
+  title={Distributed-Order Dynamic Systems - Stability, Simulation, Applications and Perspectives},
+  author={Zhuang Jiao and Yang Quan Chen and Igor Podlubny},
+  booktitle={Springer Briefs in Electrical and Computer Engineering},
+  year={2012}
+}
+```
+"""
 function DOB(ϕ, alpharange, alphastep, tN, tstep)
     alphas = collect(alpharange[1]:alphastep:alpharange[2])
     alphacount = length(alphas)
