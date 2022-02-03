@@ -26,7 +26,30 @@ And multi-term distributed order differential equations
 
 ## Distributed Order Relaxation
 
+The distributed order relaxation equation is similar with fractional relaxation equation, only the order is changed to a distributed function:
 
+```math
+{_0D_t^{\omega(\alpha)} u(t)}+bu(t)=f(t),\quad x(0)=1
+```
+
+With distribution of orders ``\alpha``: ``\omega(\alpha)=6\alpha(1-\alpha)``
+
+By using the ```DOMatrixDiscrete``` method to solve this problem:
+
+```julia
+using FractionalDiffEq, Plots, LaTeXStrings
+
+s = "\$Distributed\\ Order\\ Relaxation\$"
+
+h = 0.01
+t = collect(0:h:5)
+result = solve(x->6*x*(1-x), t, h, 0.1, DOMatrixDiscrete())
+
+using Plots
+plot(t, result, title=s)
+```
+
+![dorelaxation](./assets/dorelaxation.png)
 
 !!! tip
     Please see [Distributed-Order Dynamic Systems](https://link.springer.com/book/10.1007/978-1-4471-2852-6) for systematic introduction and knowledge.
