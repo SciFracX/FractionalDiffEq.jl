@@ -20,6 +20,7 @@ include("FDDE/PI.jl")
 
 # Distributed order differential equations
 include("DistributedOrder/utils.jl")
+include("DistributedOrder/matrix.jl")
 
 # Auxiliary functions
 include("mlfun.jl")
@@ -44,6 +45,9 @@ export NonLinearAlg, GLWithMemory
 
 # FDDE solvers
 export DelayPECE, DelayPI
+
+# DODE solvers
+export DOMatrixDiscrete
 
 # Export some api to construct the equation
 export RieszMatrix, omega, meshgrid
