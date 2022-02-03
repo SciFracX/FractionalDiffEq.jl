@@ -1,6 +1,19 @@
-import FractionalDiffEq: FractionalDiffEqAlgorithm, solve, eliminator, DOB
+import FractionalDiffEq: FractionalDiffEqAlgorithm, solve, eliminator, DOB, FDEProblem
 
 using LinearAlgebra
+
+"""
+    SingleTermDODEProblem(ω, t, h, B, rightfun)
+
+Define a single term distributed order differential equation problem.
+"""
+struct SingleTermDODEProblem <: FDEProblem
+    ω
+    t
+    h
+    B
+    rightfun
+end
 
 """
 
