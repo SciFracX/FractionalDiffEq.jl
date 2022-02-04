@@ -24,7 +24,7 @@ E_\alpha(z)=E_{\alpha,\ 1}(z)
 And also the three-parametric Mittag Leffler function:
 
 ```math
-E_{\alpha, \beta}^\gamma(z)=\sum_{k=0}^{\infty}\frac{(\gamma)_k}{k!\Gamma(\alpha k+\beta)}
+E_{\alpha,\ \beta}^\gamma(z)=\sum_{k=0}^{\infty}\frac{(\gamma)_k}{k!\Gamma(\alpha k+\beta)}
 ```
 
 Here ``(\gamma)_k=\frac{\Gamma(\gamma+k)}{\Gamma(\gamma)}`` is the [Pochhammer symbol](https://en.wikipedia.org/wiki/Falling_and_rising_factorials).

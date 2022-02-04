@@ -268,3 +268,64 @@ end
 Compute mittleffderiv(α,1,z)
 """
 mittleffderiv(α, z) = mittleffderiv(α, 1, z)
+
+
+function mittleff(z, alpha, beta, gamma)
+
+end
+
+function OptimalParam_RU(t, phi_s_star_j, pj, log_epsilon)
+    sq_phi_s_star_j = sqrt(phi_s_star_j)
+    if phi_s_star_j > 0
+        phibar_star_j = phi_s_star_j*1.01
+    else
+    phibar_star_j = 0.01
+    end
+    sq_phibar_star_j = sqrt(phibar_star_j)
+    
+    f_min=1
+    f_max=10
+    f_tar=5
+    
+    stop=0
+    sq_muj=0
+    A=0
+    Nj=0
+    while stop==0
+        phi_t = phibar_star_j*t
+        log_eps_phi_t = log_epsilon/phi_t
+        Nj=Complex(ceil(real(phi_t/pi*(1-3*log_eps_phi_t/2+sqrt(Complex(1-2*log_eps_phi_t))))), ceil(imag(phi_t/pi*(1-3*log_eps_phi_t/2+sqrt(Complex(1-2*log_eps_phi_t))))))
+        A=pi*Nj/phi_t
+        sq_muj = sq_phibar_star_j*abs(4-A)/abs(7-sqrt(1+12*A))
+        fbar=((sq_phibar_star_j-sq_phi_s_star_j)/sq_muj)^(-pj)
+        stop=(pj<1e-14) || (f_min<fbar && fbar<f_max)
+        if stop==0
+            sq_phibar_star_j = f_tar^(-1/pj)*sq_muj+sq_phi_s_star_j
+            phibar_star_j=sq_phibar_star_j^2
+        end
+    end
+    muj=sq_muj^2
+    hj=(-3*A-2+2*sqrt(1+12*A))/(4-A)/Nj
+    
+    log_eps=log(eps())
+    threshold = (log_epsilon-log_eps)/t
+    if muj>threshold
+        if abs(pj)<1e-14
+            Q=0
+        else
+            Q=f_tar^(-1/pj)*sqrt(muj)
+        end
+        phibar_star_j=(Q+sqrt(phi_s_star_j))^2
+        if phibar_star_j<threshold
+            w=sqrt(log_eps/(log_eps-log_epsilon))
+            u=sqrt(-phibar_star_j*t/log_eps)
+            muj = threshold
+            Nj=ceil(w*log_epsilon/2/pi/(u*w-1))
+            hj=sqrt(log_eps/(log_eps-log_epsilon))/Nj
+        else
+            Nj=+Inf
+            hj=0
+        end
+    end
+    return muj, hj, Nj
+end
