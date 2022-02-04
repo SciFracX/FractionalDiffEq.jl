@@ -329,3 +329,85 @@ function OptimalParam_RU(t, phi_s_star_j, pj, log_epsilon)
     end
     return muj, hj, Nj
 end
+
+function OptimalParam_RB(t, phi_s_star_j, phi_s_star_j1, pj, qj, log_epsilon)
+    log_eps = -36.043653389117154
+    fac = 1.01 ;
+    conservative_error_analysis = 0 ;
+    
+    f_max = exp(log_epsilon - log_eps) ;
+    
+    sq_phi_star_j = sqrt(phi_s_star_j) ;
+    threshold = 2*sqrt((log_epsilon - log_eps)/t) ;
+    sq_phi_star_j1 = min(sqrt(phi_s_star_j1), threshold - sq_phi_star_j) ;
+    
+    if pj < 1.0e-14 && qj < 1.0e-14
+        sq_phibar_star_j = sq_phi_star_j ;
+        sq_phibar_star_j1 = sq_phi_star_j1 ;
+        adm_region = 1 ;
+    end
+    
+    if pj < 1.0e-14 && qj >= 1.0e-14
+        sq_phibar_star_j = sq_phi_star_j ;
+        if sq_phi_star_j > 0
+            f_min = fac*(sq_phi_star_j/(sq_phi_star_j1-sq_phi_star_j))^qj ;
+        else
+            f_min = fac ;
+        end
+        if f_min < f_max
+            f_bar = f_min + f_min/f_max*(f_max-f_min) ;
+            fq = f_bar^(-1/qj) ;
+            sq_phibar_star_j1 = (2*sq_phi_star_j1-fq*sq_phi_star_j)/(2+fq) ;
+            adm_region = 1 ;
+        else
+            adm_region = 0 ;
+        end
+    end
+    
+    if pj >= 1.0e-14 && qj < 1.0e-14
+        sq_phibar_star_j1 = sq_phi_star_j1 ;
+        f_min = fac*(sq_phi_star_j1/(sq_phi_star_j1-sq_phi_star_j))^pj ;
+        if f_min < f_max
+            f_bar = f_min + f_min/f_max*(f_max-f_min) ;
+            fp = f_bar^(-1/pj) ;
+            sq_phibar_star_j = (2*sq_phi_star_j+fp*sq_phi_star_j1)/(2-fp) ;
+            adm_region = 1 ;
+        else
+            adm_region = 0 ;
+        end
+    end
+    
+    if pj >= 1.0e-14 && qj >= 1.0e-14
+        f_min = fac*(sq_phi_star_j+sq_phi_star_j1)/(sq_phi_star_j1-sq_phi_star_j)^max(pj,qj) ;
+        if f_min < f_max
+            f_min = max(f_min,1.5) ;
+            f_bar = f_min + f_min/f_max*(f_max-f_min) ;
+            fp = f_bar^(-1/pj) ;
+            fq = f_bar^(-1/qj) ;
+            if conservative_error_analysis==0
+                w = -phi_s_star_j1*t/log_epsilon ;
+            else
+                w = -2*phi_s_star_j1*t/(log_epsilon-phi_s_star_j1*t) ;
+            end
+            den = 2+w - (1+w)*fp + fq ;
+            sq_phibar_star_j = ((2+w+fq)*sq_phi_star_j + fp*sq_phi_star_j1)/den ;
+            sq_phibar_star_j1 = (-(1+w)*fq*sq_phi_star_j + (2+w-(1+w)*fp)*sq_phi_star_j1)/den ;
+            adm_region = 1 ;
+        else
+            adm_region = 0 ;
+        end
+    end
+    if adm_region==1
+        log_epsilon = log_epsilon  - log(f_bar) ;
+        if conservative_error_analysis==0
+            w = -sq_phibar_star_j1^2*t/log_epsilon ;
+        else
+            w = -2*sq_phibar_star_j1^2*t/(log_epsilon-sq_phibar_star_j1^2*t) ;
+        end
+        muj = (((1+w)*sq_phibar_star_j + sq_phibar_star_j1)/(2+w))^2 ;
+        hj = -2*pi/log_epsilon*(sq_phibar_star_j1-sq_phibar_star_j)/((1+w)*sq_phibar_star_j + sq_phibar_star_j1) ;
+        Nj = ceil(sqrt(1-log_epsilon/t/muj)/hj) ;
+    else
+        muj = 0 ; hj = 0 ; Nj = +Inf ;
+    end
+end
