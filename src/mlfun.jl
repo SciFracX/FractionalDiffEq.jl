@@ -509,49 +509,50 @@ end
 
 
 function mlds(z,al,be,k)
-    max_gamma_arg = 171.624 ;
-    Jmax = floor((max_gamma_arg - be)/al) ;
-    G = gamma(al*(0:Jmax)+be) ;
-    jj = k : Jmax ;
-    f = ones(size(jj)) ;
+    max_gamma_arg = 171.624
+    Jmax = Int64(floor((max_gamma_arg - be)/al))
+    G = gamma.(al.*(collect(0:Jmax)).+be)
+    jj = collect(k:Jmax)
+    f = ones(size(jj))
     for l = 1 : k
-        f = f.*(jj-l+1) ;
+        f = f.*(jj.-l.+1)
     end
-    c = f./G(k+1:Jmax+1) ;
-    E = zeros(size(z)) ; Err_Round = zeros(size(z)) ;
-    Err_Round1 = Err_Round ; Err_Round2 = Err_Round ;
+    c = f./G[k+1:Jmax+1]
+    E = zeros(size(z)) ; Err_Round = zeros(size(z))
+    Err_Round1 = copy(Err_Round)
+    Err_Round2 = copy(Err_Round)
     for n = 1 : length(z)
-        if abs(z(n)) < eps
-            E[n] = factorial(k)/G(k+1) ;
+        if abs(z[n]) < eps()
+            E[n] = factorial(k)/G[k+1]
         else
-            sum_arg = c.*z(n).^(jj-k) ;
-            abs_sum_arg = abs.(sum_arg) ;
-            i_abs_sum_arg = abs_sum_arg > eps/2 ;
+            sum_arg = c.*z[n].^(jj.-k)
+            abs_sum_arg = abs.(sum_arg)
+            i_abs_sum_arg = abs_sum_arg .> eps()/2
             if any(i_abs_sum_arg) == 0
                 i_abs_sum_arg[1] = 1
             end
             abs_sum_arg = abs_sum_arg[i_abs_sum_arg]
             sum_arg = sum_arg[i_abs_sum_arg]
-            #[abs_sum_arg,i_abs_sum_arg] = sort(abs_sum_arg) ;
             i_abs_sum_arg = sortperm(abs_sum_arg)
             abs_sum_arg = sort(abs_sum_arg)
             sum_arg = sum_arg[i_abs_sum_arg]
             if length(sum_arg) == 1
-                E[n] = sum_arg ;
+                E[n] = sum_arg
             else
                 S = cumsum(sum_arg)
                 S = S[2:end]
                 E[n] = S[end]
             end
-            J = length(sum_arg) - 1 ;
-            JJ = [ J , J:-1:1] ;
-            Err_Round1[n] = sum(JJ.*abs_sum_arg)*eps ;
+            J = length(sum_arg) - 1
+            JJ = [J; collect(J:-1:1)]
+            Err_Round1[n] = sum(JJ.*abs_sum_arg)*eps()
             if length(sum_arg) == 1
                 Err_Round2[n] = Err_Round1[n]
             else
-                Err_Round2[n] = sum(abs(S))*eps ;
+                Err_Round2[n] = sum(abs.(S))*eps()
             end
-            Err_Round[n] = exp((log(Err_Round1(n))+log(Err_Round2(n)))/2) ;
+            Err_Round[n] = exp((log(Err_Round1[n])+log(Err_Round2[n]))/2)
         end
     end
+    return E, Err_Round
 end
