@@ -51,5 +51,5 @@ plot(t, result, title=s)
 
 ![dorelaxation](./assets/dorelaxation.png)
 
-!!! tip
-    Please see [Distributed-Order Dynamic Systems](https://link.springer.com/book/10.1007/978-1-4471-2852-6) for systematic introduction and knowledge.
+
+> Please see [Distributed-Order Dynamic Systems](https://link.springer.com/book/10.1007/978-1-4471-2852-6) for systematic introduction and knowledge.

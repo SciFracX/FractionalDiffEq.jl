@@ -33,3 +33,9 @@ FractionalDiffEq.DelayPI
 ```@docs
 FractionalDiffEq.NonLinearAlg
 ```
+
+## Distributed Order Differential Equations
+
+```@docs
+FractionalDiffEq.DOMatrixDiscrete
+```

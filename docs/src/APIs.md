@@ -37,4 +37,5 @@ FractionalDiffEq.SingleTermFODEProblem
 FractionalDiffEq.MultiTermsFODEProblem
 FractionalDiffEq.FPDEProblem
 FractionalDiffEq.SystemOfFDEProblem
+FractionalDiffEq.SingleTermDODEProblem
 ```
