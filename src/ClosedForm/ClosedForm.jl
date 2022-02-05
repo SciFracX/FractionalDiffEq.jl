@@ -53,7 +53,5 @@ function solve(prob::MultiTermsFODEProblem, t, ::ClosedForm)
         y[i] = (W[1:i, (nA+1):end]*D1)'*y1[i:-1:1]
     end
 
-    tspan = collect(0:h:t[end])
-
-    return (tspan, y)
+    return y
 end
