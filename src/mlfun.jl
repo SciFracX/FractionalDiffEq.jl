@@ -1,4 +1,4 @@
-## This code implements algorithms in
+## Classical and two-parametric Mittag Leffler function algorithms is in
 ## Rudolfo Gorenflo, Joulia Loutchko and Yuri Loutchko,
 ## *Computation of the Mittag-Leffler function and its derivative*,  Fract. Calc. Appl. Anal, **(2002)**
 """
@@ -10,9 +10,8 @@
     pages = {2002}
 }
 """
-# Classical and Two-Parametric Mittag Leffler function is modified from [John Lapeyre](https://github.com/jlapeyre)'s [MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl)
-# Since Mittag Leffler functions is widely used in Fractional Differential Equation, so we decided to has the Mittag Leffler function build in.
-# Credits go to John🙂, bugs are mine.
+# Classical and Two-Parametric Mittag Leffler function is modified from [John Lapeyre](https://github.com/jlapeyre)'s [MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl) module.
+# Since Mittag Leffler functions is widely used in Fractional Differential Equations, so we decided to has the Mittag Leffler function build in.
 
 import QuadGK: quadgk
 
@@ -175,7 +174,7 @@ mittleff(α, z) = _mittleff(α,1,z)
 
 mittleff(α, vec::Vector) = map(x -> mittleff(α, 1, x), vec)
 mittleff(α, β, vec::Vector) = map(x -> mittleff(α, β, x), vec)
-
+mittleff(α, β, γ, vec::Vector) = map(x -> mittleff(α, β, γ, x), vec)
 
 function _mittleff_special_beta_one(α,z)
     z == 0 && return one(z)
