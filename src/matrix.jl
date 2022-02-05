@@ -65,7 +65,10 @@ function solve(prob::MultiTermsFODEProblem, h, T, ::FODEMatrixDiscrete)
     end
 
     result = equation\rightside
-    return vcat(zeros(highestorder), result)
+    result = vcat(zeros(highestorder), result)
+    tspan = collect(h:h:T)
+
+    return (tspan, result)
 end
 
 

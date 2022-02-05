@@ -122,7 +122,9 @@ function solve(FODE::SingleTermFODEProblem, h, ::PECE)
         y[n+1] = leftsum + h^α/gamma(α+2)*(f((n+1)*h, predictor(f, y, α, n, h, u0, T)) + right(f, y, α, n, h))
     end
 
-    return y
+    tspan = collect(0:h:T)
+
+    return (tspan, y)
 end
 
 function right(f, y, α, n, h)
