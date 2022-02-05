@@ -34,6 +34,10 @@ end
 
     @test isapprox(mittleffderiv(1, 1, 1/3), 1.39561242508609; atol=1e-5)
     @test isapprox(mittleffderiv(2, 2, 1), 0.18393972058572117; atol=1e-5)
+
+    @test isapprox(mittleff(1, 2, 1, 1), 1.7182818284590438; atol=1e-5)
+    @test isapprox(mittleff(2, 2, 1, 1), 1.1752011936438016; atol=1e-3)
+    @test isapprox(mittleff(2.1, 2, 1, 1), 1.1527981788744044; atol=1e-4)
 end
 
 @testset "Test meshgrid" begin
