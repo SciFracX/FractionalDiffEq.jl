@@ -10,7 +10,7 @@
     pages = {2002}
 }
 """
-# This MittagLeffler function is modified from [John Lapeyre](https://github.com/jlapeyre)'s [MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl)
+# Classical and Two-Parametric Mittag Leffler function is modified from [John Lapeyre](https://github.com/jlapeyre)'s [MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl)
 # Since Mittag Leffler functions is widely used in Fractional Differential Equation, so we decided to has the Mittag Leffler function build in.
 # Credits go to John🙂, bugs are mine.
 
@@ -273,6 +273,23 @@ mittleffderiv(α, z) = mittleffderiv(α, 1, z)
     mittleff(α, β, γ, z)
 
 Compute three-parametric mittleff(α, β, γ, z).
+
+```tex
+@article{2015,
+   title={Numerical Evaluation of Two and Three Parameter Mittag-Leffler Functions},
+   volume={53},
+   ISSN={1095-7170},
+   url={http://dx.doi.org/10.1137/140971191},
+   DOI={10.1137/140971191},
+   number={3},
+   journal={SIAM Journal on Numerical Analysis},
+   publisher={Society for Industrial & Applied Mathematics (SIAM)},
+   author={Garrappa, Roberto},
+   year={2015},
+   month={Jan},
+   pages={1350–1369}
+}
+```
 """
 function mittleff(alpha, beta, gamma, z)
     log_epsilon = log(10^(-15))
@@ -304,8 +321,8 @@ function LTIversion(t, lambda, alpha, beta, gama, log_epsilon)
     s_star = [0; s_star] ;
     phi_s_star = [0; phi_s_star] ;
     J1 = length(s_star) ; J = J1 - 1 ;
-    p = [ max(0,-2*(alpha*gama-beta+1)) ; ones(J)*gama ]  ;
-    q = [ ones(J)*gama ; +Inf] ;
+    p = [max(0,-2*(alpha*gama-beta+1)) ; ones(J)*gama]  ;
+    q = [ones(J)*gama ; +Inf] ;
     phi_s_star = [phi_s_star; +Inf] ;
     admissible_regions = findall((phi_s_star[1:end-1] .< (log_epsilon - log(eps()))/t) .& (phi_s_star[1:end-1] .< phi_s_star[2:end])) ;
     JJ1 = admissible_regions[end] ;
@@ -476,7 +493,7 @@ function OptimalParam_RB(t, phi_s_star_j, phi_s_star_j1, pj, qj, log_epsilon)
         end
     end
     if adm_region==1
-        log_epsilon = log_epsilon  - log(f_bar) ;
+        log_epsilon = log_epsilon - log(f_bar) ;
         if conservative_error_analysis==0
             w = -sq_phibar_star_j1^2*t/log_epsilon ;
         else

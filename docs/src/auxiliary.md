@@ -4,13 +4,11 @@ There are some build-in auxiliary functions in FractionalDiffEq.jl.
 
 ## Mittag Leffler function
 
-!!! info
-    The mittag leffler function is adapted from [MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl) implemented by [John Lapeyre](https://github.com/jlapeyre). We built in the mittag leffler function and added a few more functionalities.
-
+> For more intreresting topics and applications about Mittag Leffler function, we recommend you to read [Mittag-Leffler Functions, Related Topics and Applications](https://link.springer.com/book/10.1007/978-3-662-43930-2)
 
 Being called "The Queen Function of the Fractional Calculus, Mittag Leffler play an important role in fractional order computing and modeling. Here, we classify the Mittag Leffler function into three types:
 
-### Classical Mittag Leffler function(Single-parametric version)
+### Classical Mittag Leffler function(Single-Parametric version)
 
 The [mittag leffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function) is defined by Gösta Magnus Mittag-Leffler by a power series as:
 
@@ -38,21 +36,19 @@ Here ``(\gamma)_k=\frac{\Gamma(\gamma+k)}{\Gamma(\gamma)}`` is the [Pochhammer s
 
 In FractionalDiffEq.jl, you can compute the mittag leffler function by calling:
 
-```julia-repl
-julia> mittleff(α, β, z)
+```julia
 julia> mittleff(α, z)
+julia> mittleff(α, β, z)
+julia> mittleff(α, β, γ, z)
 ```
 
-Different order single parameter plot(``0<\alpha<1``):
+Different order classical Mittag Leffler function plot(``0<\alpha<1``):
 
 ![MittLeff](./assets/mittlefffun.png)
 
 And also ``1<\alpha<2``:
 
 ![MittagLeffler](./assets/mittlefffunhigh.png)
-
-For more interesting topics and applications about Mittag Leffler function, we recommend you to read [Mittag-Leffler Functions, Related Topics and Applications](https://link.springer.com/book/10.1007/978-3-662-61550-8)
-
 
 ### The generalized ``\alpha`` exponential function
 
