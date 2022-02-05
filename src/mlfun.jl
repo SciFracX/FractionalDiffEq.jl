@@ -269,15 +269,19 @@ Compute mittleffderiv(α,1,z)
 """
 mittleffderiv(α, z) = mittleffderiv(α, 1, z)
 
+"""
+    mittleff(α, β, γ, z)
 
-function mittleff(alpha, beta, gama, z)
+Compute three-parametric mittleff(α, β, γ, z).
+"""
+function mittleff(alpha, beta, gamma, z)
     log_epsilon = log(10^(-15))
 
     E=0;
     if abs(z) < 1e-15
         E=1/gamma(beta)
     else
-        E=LTIversion(1, z, alpha, beta, gama, log_epsilon)
+        E=LTIversion(1, z, alpha, beta, gamma, log_epsilon)
     end
     return E
 end
@@ -287,7 +291,7 @@ function LTIversion(t, lambda, alpha, beta, gama, log_epsilon)
     kmin = ceil(-alpha/2 - theta/2/pi) ;
     kmax = floor(alpha/2 - theta/2/pi) ;
     k_vett = collect(kmin : kmax) ;
-    s_star = abs(lambda)^(1/alpha) * exp.(1*im*(theta.+2*k_vett*pi)/alpha) ;
+    s_star = abs(lambda)^(1/alpha) * exp.(im*(theta.+2*k_vett*pi)/alpha) ;
 
     phi_s_star = (real(s_star).+ abs.(s_star))/2 ;
     index_s_star = sortperm(phi_s_star)
@@ -312,9 +316,7 @@ function LTIversion(t, lambda, alpha, beta, gama, log_epsilon)
 
     while find_region==0
         for j1 = admissible_regions
-            muj=0
-            hj=0
-            Nj=0
+            muj=0; hj=0; Nj=0
             if j1 < J1
                 j1=Int64(j1)
                 (muj,hj,Nj) = OptimalParam_RB(t, phi_s_star[j1], phi_s_star[j1+1], p[j1], q[j1], log_epsilon) ;
@@ -339,13 +341,12 @@ function LTIversion(t, lambda, alpha, beta, gama, log_epsilon)
     zexp = exp.(z*t) ;
     F = z.^(alpha*gama-beta)./(z.^alpha .- lambda).^gama.*zd ;
     S = zexp.*F ;
-    Integral = h*sum(S)/2/pi/(1*im) ;
+    Integral = h*sum(S)/2/pi/im ;
 
     ss_star = s_star[(iN[1]+1):end] ;
     Residues = sum(1/alpha*(ss_star).^(1-beta).*exp.(t*ss_star)) ;
 
     E = Integral + Residues ;
-    #E = Residues ;
     if isreal(lambda) 
         E = real(E) ;
     end
