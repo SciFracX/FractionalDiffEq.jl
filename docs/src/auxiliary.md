@@ -21,7 +21,7 @@ E_\alpha(z)=\sum_{k=0}^{\infty}\frac{z^k}{\Gamma(\alpha k+1)},\ (\alpha\in\mathb
 The two-parametric Mittag Leffler function as the generalization of the classical Mittag Leffler function :
 
 ```math
-E_{\alpha,\ \beta}(z)=\sum_{k=0}^{\infty}\frac{z^k}{\Gamma(\alpha k+\beta)},\ (Re(\alpha)>0,\ \beta\in\mathbb{C})
+E_{\alpha,\ \beta}(z)=\sum_{k=0}^{\infty}\frac{z^k}{\Gamma(\alpha k+\beta)},\ (\mathfrak{Re}(\alpha)>0,\ \beta\in\mathbb{C})
 ```
 
 ### Three-Parametric Mittag Leffler function
@@ -29,7 +29,7 @@ E_{\alpha,\ \beta}(z)=\sum_{k=0}^{\infty}\frac{z^k}{\Gamma(\alpha k+\beta)},\ (R
 And also the three-parametric Mittag Leffler function:
 
 ```math
-E_{\alpha,\ \beta}^\gamma(z)=\sum_{k=0}^{\infty}\frac{(\gamma)_k}{k!\Gamma(\alpha k+\beta)},\ (Re(\alpha)>0,\ Re(\beta)>0,\ \gamma\in\mathbb{C})
+E_{\alpha,\ \beta}^\gamma(z)=\sum_{k=0}^{\infty}\frac{(\gamma)_k}{k!\Gamma(\alpha k+\beta)},\ (\mathfrak{Re}(\alpha)>0,\ \mathfrak{Re}(\beta)>0,\ \gamma\in\mathbb{C})
 ```
 
 Here ``(\gamma)_k=\frac{\Gamma(\gamma+k)}{\Gamma(\gamma)}`` is the [Pochhammer symbol](https://en.wikipedia.org/wiki/Falling_and_rising_factorials).

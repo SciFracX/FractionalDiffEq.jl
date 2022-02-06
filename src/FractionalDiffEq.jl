@@ -1,6 +1,6 @@
 module FractionalDiffEq
 
-using LinearAlgebra, SpecialFunctions, InvertedIndices, QuadGK, SpecialMatrices
+using LinearAlgebra, SpecialFunctions, InvertedIndices, QuadGK, SpecialMatrices, Polynomials
 
 include("PECE.jl")
 include("matrix.jl")

@@ -556,3 +556,38 @@ function mlds(z,al,be,k)
     end
     return E, Err_Round
 end
+
+function mldr(t,s,alpha,beta,k)
+    omega = zeros(k+2)
+    omega[1] = 1
+    jj = collect(0:k)
+    p = (alpha.-jj)
+    pr = 1
+    for j = 1:k+1
+        pr = pr*p[j] ;
+        omega[j+1] = pr/factorial(j) ;
+    end
+    Hk = zeros(k+1) ; Hk[1] = 1 ;
+    for j = 1 : k
+        ll = collect(1:j)
+        Hk[j+1] = -1 ./alpha.*sum(omega[ll.+2].*(k.*ll./j.+1).*Hk[j.-ll.+1])  ;
+    end
+    ck = zeros(k+1)
+    for j = 0:k
+        temp = 0
+        for l = 0 : k-j
+            if l == 0
+                p = 1 ;
+            else
+                ll = 0:l-1 ;
+                p = prod(alpha.-beta.-ll) ;
+            end
+            temp = temp .+ p*Hk[k-j-l+1]./factorial(l) ;
+        end
+        ck[j+1] = temp/factorial(j) ;
+    end
+    tep = Polynomial(ck)
+    result=tep.(s)
+    R = 1 ./alpha^(k+1)*exp.(t.*s).*(s//1)^(1-alpha.*k.-beta).*result
+    return R
+end
