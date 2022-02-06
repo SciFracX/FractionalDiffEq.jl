@@ -592,6 +592,18 @@ function mldr(t,s,alpha,beta,k)
     return R
 end
 #=
+"""
+```tex
+@article{Garrappa2018ComputingTM,
+  title={Computing the Matrix Mittag-Leffler Function with Applications to Fractional Calculus},
+  author={Roberto Garrappa and Marina Popolizio},
+  journal={Journal of Scientific Computing},
+  year={2018},
+  volume={77},
+  pages={129-153}
+}
+```
+"""
 function mldlt(z,alpha,beta,k)
     log_epsilon = log(10^(-15)) ; 
     E = zeros(size(z)) ;  

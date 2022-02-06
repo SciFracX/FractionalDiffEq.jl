@@ -13,17 +13,17 @@ makedocs(;
     pages=[
         "FractionalDiffEq.jl" => "index.md",
         "Get Started" => "get_started.md",
-        "Multi-term FDE" => "multiterm.md",
-        "System of FDE" => "system_of_FDE.md",
-        "Fractional PDE" => "fpde.md",
-        "Fractional DDE" => "fdde.md",
+        "Multi-term Fractional Differential Equations" => "multiterm.md",
+        "System of Fractional Differential Equations" => "system_of_FDE.md",
+        "Fractional Partial Differential Equations" => "fpde.md",
+        "Fractional Delay Differential Equations" => "fdde.md",
         "Distributed Order Differential Equations" => "dode.md",
         "Detailed Models" => "models.md",
         "Examples" => "example.md",
         "Algorithms" => "algorithms.md",
         "Auxiliary Functions" => "auxiliary.md",
         "Comparison" => "comparison.md",
-        "FractionalDiffEq APIs" => "APIs.md"
+        "FractionalDiffEq.jl APIs" => "APIs.md"
     ],
 )
 
