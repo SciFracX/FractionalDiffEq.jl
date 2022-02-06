@@ -591,7 +591,7 @@ function mldr(t,s,alpha,beta,k)
     R = 1 ./alpha^(k+1)*exp.(t.*s).*(s//1)^(1-alpha.*k.-beta).*result
     return R
 end
-
+#=
 function mldlt(z,alpha,beta,k)
     log_epsilon = log(10^(-15)) ; 
     E = zeros(size(z)) ;  
@@ -648,7 +648,8 @@ end
 
 function mittleff(A, alpha, beta)
     fun(z, k) = mld(z, alpha, beta, k)
-    E=(A)
+    E=funm(A)
 end
 #FIXME: Didn't see any matrix function support in Julia😟.
 # Yingbo has a implementation: https://github.com/YingboMa/Funm.jl
+=#
