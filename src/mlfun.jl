@@ -591,3 +591,64 @@ function mldr(t,s,alpha,beta,k)
     R = 1 ./alpha^(k+1)*exp.(t.*s).*(s//1)^(1-alpha.*k.-beta).*result
     return R
 end
+
+function mldlt(z,alpha,beta,k)
+    log_epsilon = log(10^(-15)) ; 
+    E = zeros(size(z)) ;  
+    for j = 1 : length(z)
+        if abs(z[j] < 1.0e-14)
+            E[j] = factorial(k)/gamma(alpha*k+beta)
+        else
+            E[j] = LTIversion(1,z[j],alpha,beta,k,log_epsilon) ;
+        end
+        if isreal(z[j])
+            E[j] = real(E[j])
+        end 
+    end
+    return E
+end
+
+function mld(z, alpha, beta, k)
+    Ek = zeros(size(z))
+    tau = 1.0e-14 ; 
+    max_gamma_arg = 171.624 ;
+    Jmax = floor((max_gamma_arg - beta)/alpha) ;
+    z_abs_max = (tau*gamma(alpha*Jmax+beta)/prod(Jmax.-collect(0:k-1))).^(1/(Jmax-k)) ;
+    i_z_se = abs.(z).<z_abs_max ;
+    z_se = z[i_z_se] ;
+    E_se = zeros(size(z)) ; Err_Round = zeros(size(z)) ; e = ones(size(z)) ;
+    (E_se[i_z_se], Err_Round[i_z_se]) = mlds(z_se,alpha,beta,k) ;
+    i_z_se_accept = (Err_Round./(e.+abs.(E_se)) .< tau) .& ~(E_se==0)  ;
+    Ek[i_z_se_accept] = E_se[i_z_se_accept]
+    i_ze_lt = .!i_z_se_accept ;
+    if k <= 3
+        p = 0 
+    elseif k <= 7
+        p = 1
+    else
+        p = 2
+    end 
+    c = zeros(k-p+1, k-p+1) ;
+    c[1, 1] = 1 ;
+    for kk = 1 : k-p
+        c[kk+1,1] = (1-alpha*(kk-1)-beta)*c[kk,1]
+        for j = 1 : kk-1
+            c[kk+1,j+1] = c[kk,j] + (j+1-alpha*(kk-1)-beta)*c[kk,j+1]
+        end
+        c[kk+1,kk+1] = 1 ;
+    end
+    for j = 0 : k-p
+        if abs(c[k-p+1,j+1]) > 1.0e-14
+            Ek[i_ze_lt] = Ek[i_ze_lt] .+ c[k-p+1,j+1]*mldlt(z[i_ze_lt], alpha, (k-p)*alpha+beta-j, p) ;
+        end
+    end
+    Ek[i_ze_lt] = Ek[i_ze_lt]./alpha^(k-p) ;
+    return Ek
+end
+
+function mittleff(A, alpha, beta)
+    fun(z, k) = mld(z, alpha, beta, k)
+    E=(A)
+end
+#FIXME: Didn't see any matrix function support in Julia😟.
+# Yingbo has a implementation: https://github.com/YingboMa/Funm.jl
