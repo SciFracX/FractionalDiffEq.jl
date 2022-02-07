@@ -1,5 +1,3 @@
-import FractionalDiffEq: FractionalDiffEqAlgorithm, solve
-
 """
 ```tex
 @article{2020,

@@ -1,5 +1,3 @@
-import FractionalDiffEq: FractionalDiffEqAlgorithm, solve
-
 """
 ```tex
 @INPROCEEDINGS{8742063,  

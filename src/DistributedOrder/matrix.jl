@@ -1,6 +1,3 @@
-import FractionalDiffEq: FractionalDiffEqAlgorithm, solve, eliminator, DOB, FDEProblem
-
-using LinearAlgebra
 #=
 """
     SingleTermDODEProblem(ω, t, h, B, rightfun)

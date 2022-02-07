@@ -1,5 +1,3 @@
-import FractionalDiffEq: FractionalDiffEqAlgorithm, solve, FDEProblem
-
 """
     SystemOfFDEProblem(f, α, x0)
 

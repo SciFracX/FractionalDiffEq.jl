@@ -1,5 +1,3 @@
-import FractionalDiffEq.FractionalDiffEqAlgorithm
-
 # Algorithms extending
 
 """

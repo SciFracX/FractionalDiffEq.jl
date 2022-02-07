@@ -1,5 +1,3 @@
-import FractionalDiffEq: SingleTermFODEProblem, FractionalDiffEqAlgorithm, solve
-
 struct HadamardRRect <: FractionalDiffEqAlgorithm end
 
 function solve(f, α, h, u0, a, b, ::HadamardRRect)

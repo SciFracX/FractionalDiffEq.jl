@@ -1,5 +1,3 @@
-import FractionalDiffEq: FractionalDiffEqAlgorithm, solve, FDDEProblem
-
 """
     solve(FDDE::FDDEProblem, T, h, DelayPECE())
 

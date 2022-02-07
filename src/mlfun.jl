@@ -13,8 +13,6 @@
 # Classical and Two-Parametric Mittag Leffler function is modified from [John Lapeyre](https://github.com/jlapeyre)'s [MittagLeffler.jl](https://github.com/jlapeyre/MittagLeffler.jl) module.
 # Since Mittag Leffler functions is widely used in Fractional Differential Equations, so we decided to has the Mittag Leffler function build in.
 
-import QuadGK: quadgk
-
 function ourquadgk(f, a, b)
     (result, _) = quadgk(f, a, b; order=17)
     return result

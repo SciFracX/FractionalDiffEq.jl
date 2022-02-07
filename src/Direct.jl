@@ -1,6 +1,3 @@
-import FractionalDiffEq.FractionalDiffEqAlgorithm
-using SpecialFunctions
-
 """
 G2 Direct algorithm for fractional ordinary differential equations
 

@@ -1,5 +1,3 @@
-import FractionalDiffEq: FractionalDiffEqAlgorithm, SingleTermFODEProblem, solve
-
 """
 Grunwald Letnikov method for fractional ordinary differential equations
 

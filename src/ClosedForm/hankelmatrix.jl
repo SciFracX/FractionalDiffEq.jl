@@ -1,5 +1,3 @@
-import FractionalDiffEq.FractionalDiffEqAlgorithm
-
 """
 Closed Form algorithm based on Hankel Matrix.
 """

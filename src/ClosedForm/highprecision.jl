@@ -1,5 +1,3 @@
-import FractionalDiffEq.FractionalDiffEqAlgorithm
-
 """
 Closed form high precision algorithms for multi term ordinary differential equations
 """

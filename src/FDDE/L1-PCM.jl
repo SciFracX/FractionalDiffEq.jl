@@ -1,5 +1,3 @@
-import FractionalDiffEq: FractionalDiffEqAlgorithm, solve
-
 #https://link.springer.com/content/pdf/10.1007/s40314-019-0951-0.pdf
 
 struct  L1_PCM <: FractionalDiffEqAlgorithm end
