@@ -69,7 +69,6 @@ struct PECE <: FractionalDiffEqAlgorithm end
 
 
 """
-
     FPDEProblem(α, β, T, M, N)
 
 Define fractional order partial differential equations problem

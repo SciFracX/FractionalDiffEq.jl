@@ -21,7 +21,7 @@ makedocs(;
         "Detailed Models" => "models.md",
         "Examples" => "example.md",
         "Algorithms" => "algorithms.md",
-        "Auxiliary Functions" => "auxiliary.md",
+        "Mittag Leffler Function" => "mittagleffler.md",
         "Comparison" => "comparison.md",
         "FractionalDiffEq.jl APIs" => "APIs.md"
     ],

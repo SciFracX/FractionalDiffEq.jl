@@ -26,7 +26,7 @@ E_{\alpha,\ \beta}(z)=\sum_{k=0}^{\infty}\frac{z^k}{\Gamma(\alpha k+\beta)},\ (\
 
 ### Three-Parametric Mittag Leffler function
 
-And also the three-parametric Mittag Leffler function:
+FractionalDiffEq.jl also support the three-parametric Mittag Leffler function:
 
 ```math
 E_{\alpha,\ \beta}^\gamma(z)=\sum_{k=0}^{\infty}\frac{(\gamma)_k}{k!\Gamma(\alpha k+\beta)},\ (\mathfrak{Re}(\alpha)>0,\ \mathfrak{Re}(\beta)>0,\ \gamma\in\mathbb{C})
@@ -42,6 +42,21 @@ julia> mittleff(α, β, z)
 julia> mittleff(α, β, γ, z)
 ```
 
+Also, you can compute the derivative of the Mittag Leffler function by calling:
+
+```julia
+julia> mittleffderiv(α, β, z)
+```
+
+To compute Mittag Leffler function error:
+
+```julia
+julia> mittlefferr(α, z, ρ)
+julia> mittlefferr(α, β, z, ρ)
+```
+
+Here, ```ρ``` is the targeting accuracy.
+
 Different order classical Mittag Leffler function plot(``0<\alpha<1``):
 
 ![MittLeff](./assets/mittlefffun.png)
@@ -49,11 +64,3 @@ Different order classical Mittag Leffler function plot(``0<\alpha<1``):
 And also ``1<\alpha<2``:
 
 ![MittagLeffler](./assets/mittlefffunhigh.png)
-
-### The generalized ``\alpha`` exponential function
-
-The generalized ``\alpha`` exponential function ``e_\alpha^{\lambda z}`` is defined as:
-
-```math
-e_\alpha^{\lambda z}=z^{\alpha-1}E_{\alpha,\ \alpha}(\lambda z^\alpha)=\sum_{k=0}^{\infty}\frac{\lambda^k z^{\alpha(k-1)}}{\Gamma(\alpha(k+1))}\quad (z,\ \lambda\in\mathbb{C},\ \mathfrak{Re}(\alpha)>0)
-```
