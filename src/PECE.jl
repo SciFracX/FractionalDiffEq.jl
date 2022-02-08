@@ -11,6 +11,8 @@ General parent type for all kinds of problems in FractionalDiffEq.jl.
 abstract type FDEProblem end
 
 """
+    MultiTermsFODEProblem(parameters, orders, rightfun)
+
     MultiTermsFODEProblem(parameters, orders, rparameters, rorders)
 
 Define a multi-terms fractional ordinary differential equation.
@@ -48,11 +50,17 @@ abstract type FractionalDiffEqAlgorithm end
 
 
 """
+# Usage
+
+    solve(prob::SingleTermFODEProblem, h, PECE())
+
 Predict-Evaluate-Correct-Evaluate algorithm.
 
 For more details, please refer to [Predictor-Corrector algorithms](https://en.wikipedia.org/wiki/Predictor%E2%80%93corrector_method)
 
 This PECE algorithm is taken from Diethelm's paper.
+
+### References
 
 ```tex
 @article{
@@ -98,11 +106,6 @@ end
 FDDEProblem(f, ϕ, α, τ) = FDDEProblem(f, ϕ, α, τ, nothing)
 
 
-"""
-    solve(FODEProblem, PECE())
-
-After define the FDEProblem, use **PECE(Predict-Evaluate-Correct-Evaluate) algorithm** to computing the Fractional Differential Equation
-"""
 function solve(FODE::SingleTermFODEProblem, h, ::PECE)
     f, α, u0, T = FODE.f, FODE.α, FODE.u0, FODE.T
     N = Int64(floor(T/h))

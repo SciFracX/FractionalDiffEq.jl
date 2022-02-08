@@ -1,5 +1,10 @@
 """
+# Usage
+    solve(prob::MultiTermsFODEProblem, h, T, FODEMatrixDiscrete())
+
 Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional ordinary differential equations to simple algebra system and solve the system.
+
+### References
 
 ```tex
 @inproceedings{Podlubny2000MATRIXAT,
@@ -13,6 +18,8 @@ struct FODEMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 
 """
+    solve(α, β, T, M, N, FPDEMatrixDiscrete())
+
 Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional partial differential equations to simple algebra system and solve the system.
 
 ```tex
@@ -26,19 +33,7 @@ Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matri
 struct FPDEMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 
-"""
-    solve(equation, right, h, T, MatrixDiscrete())
 
-Using the **Matrix Discretization algorithm** proposed by [Prof Igor Podlubny](http://people.tuke.sk/igor.podlubny/index.html) to obtain the numerical solution.
-
-## References
-
-@inproceedings{Podlubny1998FractionalDE,
-  title={Fractional differential equations},
-  author={Igor Podlubny},
-  year={1998}
-}
-"""
 function solve(prob::MultiTermsFODEProblem, h, T, ::FODEMatrixDiscrete)
     leftparameters, leftorders, right = prob.parameters, prob.orders, prob.rightfun
     N = Int64(floor(T/h))
@@ -90,41 +85,12 @@ function omega(n, α)
     end
     
     return omega
-
 end
 
 """
     D(N, α, h)
 
-Using D function to construct left hand equations.
-
-### Example
-
-Suppose we have a equation:
-
-```math
-y''(t)+D^{frac{3}{2}}_t y(t)=1
-```
-
-To represent the left side equation, use ``D(size, order, step)`` to construct the derivative part.
-
-```julia-repl
-equation=D(100, 2, 0.01)+D(100, 3/2, 0.01)
-```
-
-Then the right side can be constructed like:
-
-```julia-repl
-right = ones(N)
-```
-
-After we construct both sides, all we need to do is:
-
-```julia-repl
-solve(equation, right, h, T)
-```
-
-And then we can get the numerical approximation.
+Using D function to construct left hand side equations.
 
 !!! info
     Here ```N``` is the size of discrete matrix.
@@ -177,6 +143,7 @@ function RieszMatrix(α, N, h)
 
     return result
 end
+
 function B(N, p)
     result = zeros(N, N)
     temp = omega(N, p)
@@ -215,12 +182,6 @@ function bagleytorvik(p1, p2, p3, right, T, h)
 end
 
 
-"""
-
-    solve(α, β, T, M, N, FPDEMatrixDiscrete())
-
-When using the Martix 
-"""
 function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
     h = T/(M-1)
     τ = h^2/6
@@ -249,7 +210,6 @@ function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
     # Boundry conditions
     U = [zeros(1, columns); U; zeros(1, columns)]
     result = [zeros(M) U]
-
 
     return result
 end

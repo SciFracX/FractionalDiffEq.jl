@@ -1,7 +1,11 @@
 """
+# Usage
+
     solve(FDDE::FDDEProblem, T, h, DelayPECE())
 
 Using the delayed predictor-corrector method to solve the delayed fractional differential equation problem.
+
+### References
 
 ```tex
 @article{Wang2013ANM,
