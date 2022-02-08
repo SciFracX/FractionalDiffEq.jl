@@ -57,13 +57,13 @@ function solve(prob::DODEProblem, ::DOMatrixDiscrete)
 
     equation += ω.*DOB(ϕ, interval, 0.01, N, h)
 
-    F = eliminator(N, rows)*rightfun.(t)
+    F = eliminator(N, rows)*rightfun.(tspan)
     M = eliminator(N, rows)*equation*eliminator(N, 1)'
 
     Y = M\F
 
     Y0 = [0; Y]
-    return Y0.+1
+    return Y0
 end
 
 #=
