@@ -1,4 +1,3 @@
-#=
 """
     SingleTermDODEProblem(ω, t, h, B, rightfun)
 
@@ -13,6 +12,11 @@ struct SingleTermDODEProblem <: FDEProblem
 end
 
 """
+# Usage
+
+    solve()
+
+Use distributed order strip matrix algorithm to solve distriubted order problem.
 
 ### References
 
@@ -26,8 +30,8 @@ end
 ```
 """
 struct DOMatrixDiscrete <: FractionalDiffEqAlgorithm end
-=#
-function testsolve(ω, t, h, fun)
+
+function solve(ω, t, h, fun, ::DOMatrixDiscrete)
     N = length(t)
     M = zeros(N, N)
 

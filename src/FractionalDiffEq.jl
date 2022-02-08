@@ -27,7 +27,7 @@ include("FDDE/PI.jl")
 include("DistributedOrder/utils.jl")
 include("DistributedOrder/matrix.jl")
 
-# Auxiliary functions
+# Mittag Leffler function
 include("mlfun.jl")
 
 

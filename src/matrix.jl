@@ -96,6 +96,7 @@ Using D function to construct left hand side equations.
     Here ```N``` is the size of discrete matrix.
 """
 function D(N, α, h)
+    α == 0 ? (return zeros(N, N) + I) : nothing
     result = zeros(N, N)
     temp = omega(N, α)
 

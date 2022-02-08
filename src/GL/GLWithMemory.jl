@@ -10,7 +10,6 @@ doi={10.1109/MOCAST.2019.8742063}}
 
 Python version by https://github.com/DClementeL/Grunwald_Letnikov
 """
-
 struct GLWithMemory <: FractionalDiffEqAlgorithm end
 
 function solve(f, α, x0, h, tf, ::GLWithMemory)

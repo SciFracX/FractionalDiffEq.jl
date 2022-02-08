@@ -105,7 +105,11 @@ end
 #=FDDEProblem constructor=#
 FDDEProblem(f, ϕ, α, τ) = FDDEProblem(f, ϕ, α, τ, nothing)
 
+"""
+    solve(problem, args... Alg())
 
+Generalproblem solving API for solving FDE problems.
+"""
 function solve(FODE::SingleTermFODEProblem, h, ::PECE)
     f, α, u0, T = FODE.f, FODE.α, FODE.u0, FODE.T
     N = Int64(floor(T/h))
