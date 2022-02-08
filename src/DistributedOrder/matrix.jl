@@ -3,7 +3,7 @@
 
 Define a single term distributed order differential equation problem.
 """
-struct SingleTermDODEProblem <: FDEProblem
+struct DODEProblem <: FDEProblem
     parameters::AbstractArray
     orders::AbstractArray
     interval
@@ -35,7 +35,7 @@ struct DOMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 isfunction(x) = isa(x, Function) ? true : false
 
-function solve(prob::SingleTermDODEProblem, ::DOMatrixDiscrete)
+function solve(prob::DODEProblem, ::DOMatrixDiscrete)
     parameters, orders, interval, tspan, h, rightfun = prob.parameters, prob.orders, prob.interval, prob.tspan, prob.h, prob.rightfun
     N = length(tspan)  
     DOid = findall(isfunction, orders)
@@ -44,6 +44,9 @@ function solve(prob::SingleTermDODEProblem, ::DOMatrixDiscrete)
     modifiedorders = deleteat!(orders, DOid)
     modifiedparameters = deleteat!(parameters, DOid)
 
+    highestorder = Int64(findmax(ceil.(modifiedorders))[1])
+    rows=collect(1:highestorder)
+
     equation = zeros(N, N)
 
     for (i, j) in zip(modifiedparameters, modifiedorders)
@@ -51,21 +54,23 @@ function solve(prob::SingleTermDODEProblem, ::DOMatrixDiscrete)
     end
 
     equation += ω.*DOB(ϕ, interval, 0.01, N, h)
-    F = rightfun.(t)
-    M = eliminator(N, 1)*equation*eliminator(N, 1)'
 
-    F = eliminator(N, 1)*F
+    F = rightfun.(t)
+    M = eliminator(N, rows)*equation*eliminator(N, 1)'
+
+    F = eliminator(N, rows)*F
 
     Y = M\F
 
     Y0 = [0; Y]
     return Y0.+1
 end
-
+#=
 h = 0.01; t = collect(h:h:5);
-fun(t)=sin(t)
-prob = SingleTermDODEProblem([1, 1], [x->6*x*(1-x), 0], [0, 1], t, h, fun)
+fun(t)=cos(t)
+prob = DODEProblem([1, 1, 2, 3], [x->6*x*(1-x), 0, 1, 0.5], [0, 1], t, h, fun)
 
 result = solve(prob, DOMatrixDiscrete())
 using Plots
 plot(t, result)
+=#
