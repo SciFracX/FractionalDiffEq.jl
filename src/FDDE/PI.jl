@@ -1,17 +1,21 @@
 """
+# Usage
+
+    solve(FDDE::FDDEProblem, T, h, DelayPI())
+
+Use explicit rectangular product integration algorithm to solve an FDDE problem.
+
+### References
+
 ```tex
 @article{2020,
    title={On initial conditions for fractional delay differential equations},
-   volume={90},
    ISSN={1007-5704},
    url={http://dx.doi.org/10.1016/j.cnsns.2020.105359},
    DOI={10.1016/j.cnsns.2020.105359},
    journal={Communications in Nonlinear Science and Numerical Simulation},
-   publisher={Elsevier BV},
    author={Garrappa, Roberto and Kaslik, Eva},
    year={2020},
-   month={Nov},
-   pages={105359}
 }
 ```
 """

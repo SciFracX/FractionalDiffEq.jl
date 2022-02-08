@@ -1,14 +1,13 @@
 """
-Closed Form algorithm based on Hankel Matrix.
+# Usage
+
+    solve(parameters, order, lparameters, lorders, u, t)
+
+Use Closed-Form Hankel matrix algorithm to obtain numerical solution at zero initial condition.
 """
 struct ClosedFormHankelM <: FractionalDiffEqAlgorithm end
 
 
-"""
-    solve(parameters, order, lparameters, lorders, u, t)
-
-Use Closed-Form Hankel matrix solution to obtain numerical solution at zero initial condition.
-"""
 function solve(prob::MultiTermsFODEProblem, t, ::ClosedFormHankelM)
     a, na, rightfun, b, nb = prob.parameters, prob.orders, prob.rightfun, prob.rparameters, prob.rorders
     h=t[2]-t[1]
@@ -83,5 +82,4 @@ function newhankel(v)
     end
 
     return hankelm
-
 end

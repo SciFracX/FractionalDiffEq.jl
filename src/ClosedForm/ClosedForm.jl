@@ -1,7 +1,11 @@
 # Algorithms extending
 
 """
-Closed Form solution algorithm.
+# Usage
+
+    solve(prob::MultiTermsFODEProblem, t, ClosedForm())
+
+Use Closed-Form solution to obtain numerical solution at zero initial condition.
 
 ## Reference:
 
@@ -11,11 +15,6 @@ ISBN:9787030543981
 struct ClosedForm <: FractionalDiffEqAlgorithm end
 
 
-"""
-    solve(parameters, order, lparameters, lorders, u, t)
-
-Use Closed-Form solution to obtain numerical solution at zero initial condition.
-"""
 function solve(prob::MultiTermsFODEProblem, t, ::ClosedForm)
     parameters, orders, rightfun, rparameters, rorders = prob.parameters, prob.orders, prob.rightfun, prob.rparameters, prob.rorders
     h = t[2]-t[1]

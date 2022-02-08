@@ -10,9 +10,11 @@ struct SystemOfFDEProblem <: FDEProblem
 end
 
 """
-    solve(f, α, x0, h, t, NonLinearAlg)
-    
-Non linear algorithm for nonlinear fractional differential equations.
+# Usage
+
+    solve(f, α, x0, h, t, NonLinearAlg())
+
+Nonlinear algorithm for nonlinear fractional differential equations.
 
 ### References
 
@@ -29,7 +31,7 @@ function solve(prob::SystemOfFDEProblem, h, tn, ::NonLinearAlg, L0=1e10)
     x0 = x0[:]
     ha = h.^α
     z = zeros(n, m)
-    x1 = copy(x0) #Here we pass the value of x0 to x1. Honestly, I kept finding this bug for almost a whole night😅
+    x1 = copy(x0) # Here we pass the value of x0 to x1. Honestly, I kept finding this bug for almost a whole night😅
 
     # All of the min(m, L0+1) is to set the memory effect.
     W = zeros(n, min(m, L0+1)) #Initializing W a n*m matrix
@@ -37,7 +39,6 @@ function solve(prob::SystemOfFDEProblem, h, tn, ::NonLinearAlg, L0=1e10)
     for i = 1:n
         W[i, :] = getvec(α[i], min(m, L0+1), g)
     end
-
 
     for k = 2:m
         tk = (k-1)*h
@@ -49,6 +50,7 @@ function solve(prob::SystemOfFDEProblem, h, tn, ::NonLinearAlg, L0=1e10)
     end
 
     result = (z + repeat(x0, 1, m))'
+    
     return result
 
 end
