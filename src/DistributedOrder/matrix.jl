@@ -37,8 +37,10 @@ isfunction(x) = isa(x, Function) ? true : false
 
 function solve(prob::DODEProblem, ::DOMatrixDiscrete)
     parameters, orders, interval, tspan, h, rightfun = prob.parameters, prob.orders, prob.interval, prob.tspan, prob.h, prob.rightfun
-    N = length(tspan)  
+    N = length(tspan)
+    # find the index of the distributed order
     DOid = findall(isfunction, orders)
+
     ϕ = orders[DOid][1]
     ω = parameters[DOid][1]
     modifiedorders = deleteat!(orders, DOid)
@@ -55,10 +57,7 @@ function solve(prob::DODEProblem, ::DOMatrixDiscrete)
 
     equation += ω.*DOB(ϕ, interval, 0.01, N, h)
 
-
     F = eliminator(N, rows)*rightfun.(t)
-
-
     M = eliminator(N, rows)*equation*eliminator(N, 1)'
 
     Y = M\F
@@ -69,8 +68,8 @@ end
 
 #=
 h = 0.01; t = collect(h:h:5);
-fun(t)=cos(t)
-prob = DODEProblem([1, 1, 2, 3], [x->6*x*(1-x), 0, 1, 0.5], [0, 1], t, h, fun)
+fun(t)=1
+prob = DODEProblem([1, 0.1], [x->6*x*(1-x), 0], [0, 1], t, h, fun)
 
 result = solve(prob, DOMatrixDiscrete())
 using Plots

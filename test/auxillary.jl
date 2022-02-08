@@ -45,3 +45,7 @@ end
     isapprox(a, [0 1; 0 1]; atol=1e-2)
     isapprox(b, [0 0; 1 1]; atol=1e-2)
 end
+
+@testset "Test isFunction" begin
+    @test isfunction(x->x)==true
+end
