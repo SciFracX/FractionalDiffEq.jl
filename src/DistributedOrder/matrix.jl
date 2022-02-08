@@ -4,11 +4,14 @@
 Define a single term distributed order differential equation problem.
 """
 struct SingleTermDODEProblem <: FDEProblem
-    ω
-    t
-    h
+    parameters::AbstractArray
+    orders::AbstractArray
+    ω::Function
+    interval
+    tspan
+    h::Float64
     B
-    rightfun
+    rightfun::Function
 end
 
 """
@@ -31,14 +34,16 @@ Use distributed order strip matrix algorithm to solve distriubted order problem.
 """
 struct DOMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
-function solve(ω, t, h, fun, ::DOMatrixDiscrete)
-    N = length(t)
-    M = zeros(N, N)
+isfunction(x) = isa(x, Function) ? true : false
 
-    M = DOB(ω, [0, 1], 0.01, N, h)
-    F = fun.(t)
+function testsolve(M, t, h, B, rightfun)
+    N = length(t)
+    F = rightfun.(t)
 
     M = eliminator(N, 1)*M*eliminator(N, 1)'
+    
+    if typeof(rightfun) <: Number
+
     F = eliminator(N, 1)*F
 
     Y = M\F
@@ -47,11 +52,12 @@ function solve(ω, t, h, fun, ::DOMatrixDiscrete)
 
     return Y0.+1
 end
-
 #=
-h = 0.01; t = collect(0:h:5)
+h = 0.01; t = collect(h:h:5);
+#prob = SingleTermDODEProblem(x->6*x(1-x), [0, 1], t, h, 1, fun)
 fun(t)=sin(t)
-result=testsolve(x->6*x*(1-x), t, h, fun)
+equation = DOB(x->6*x*(1-x), [0, 1], 0.01, 500, h) + D(500, 0, 0.01);
+result=testsolve(equation, t, h, 1, fun);
 using Plots
 plot(t, result)
 =#
