@@ -55,16 +55,18 @@ function solve(prob::DODEProblem, ::DOMatrixDiscrete)
 
     equation += ω.*DOB(ϕ, interval, 0.01, N, h)
 
-    F = rightfun.(t)
-    M = eliminator(N, rows)*equation*eliminator(N, 1)'
 
-    F = eliminator(N, rows)*F
+    F = eliminator(N, rows)*rightfun.(t)
+
+
+    M = eliminator(N, rows)*equation*eliminator(N, 1)'
 
     Y = M\F
 
     Y0 = [0; Y]
     return Y0.+1
 end
+
 #=
 h = 0.01; t = collect(h:h:5);
 fun(t)=cos(t)
