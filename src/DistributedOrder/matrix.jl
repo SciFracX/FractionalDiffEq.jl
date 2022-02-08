@@ -41,8 +41,6 @@ function testsolve(M, t, h, B, rightfun)
     F = rightfun.(t)
 
     M = eliminator(N, 1)*M*eliminator(N, 1)'
-    
-    if typeof(rightfun) <: Number
 
     F = eliminator(N, 1)*F
 
