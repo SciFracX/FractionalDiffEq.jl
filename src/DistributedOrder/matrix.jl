@@ -6,18 +6,16 @@ Define a single term distributed order differential equation problem.
 struct SingleTermDODEProblem <: FDEProblem
     parameters::AbstractArray
     orders::AbstractArray
-    ω::Function
     interval
     tspan
     h::Float64
-    B
     rightfun::Function
 end
 
 """
 # Usage
 
-    solve()
+    solve(prob, DOMatrixDiscrete())
 
 Use distributed order strip matrix algorithm to solve distriubted order problem.
 
@@ -34,28 +32,40 @@ Use distributed order strip matrix algorithm to solve distriubted order problem.
 """
 struct DOMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
+
 isfunction(x) = isa(x, Function) ? true : false
 
-function testsolve(M, t, h, B, rightfun)
-    N = length(t)
-    F = rightfun.(t)
+function solve(prob::SingleTermDODEProblem, ::DOMatrixDiscrete)
+    parameters, orders, interval, tspan, h, rightfun = prob.parameters, prob.orders, prob.interval, prob.tspan, prob.h, prob.rightfun
+    N = length(tspan)  
+    DOid = findall(isfunction, orders)
+    ϕ = orders[DOid][1]
+    ω = parameters[DOid][1]
+    modifiedorders = deleteat!(orders, DOid)
+    modifiedparameters = deleteat!(parameters, DOid)
 
-    M = eliminator(N, 1)*M*eliminator(N, 1)'
+    equation = zeros(N, N)
+
+    for (i, j) in zip(modifiedparameters, modifiedorders)
+        equation += i*D(N, j, h)
+    end
+
+    equation += ω.*DOB(ϕ, interval, 0.01, N, h)
+    F = rightfun.(t)
+    M = eliminator(N, 1)*equation*eliminator(N, 1)'
 
     F = eliminator(N, 1)*F
 
     Y = M\F
 
     Y0 = [0; Y]
-
     return Y0.+1
 end
-#=
+
 h = 0.01; t = collect(h:h:5);
-#prob = SingleTermDODEProblem(x->6*x(1-x), [0, 1], t, h, 1, fun)
 fun(t)=sin(t)
-equation = DOB(x->6*x*(1-x), [0, 1], 0.01, 500, h) + D(500, 0, 0.01);
-result=testsolve(equation, t, h, 1, fun);
+prob = SingleTermDODEProblem([1, 1], [x->6*x*(1-x), 0], [0, 1], t, h, fun)
+
+result = solve(prob, DOMatrixDiscrete())
 using Plots
 plot(t, result)
-=#
