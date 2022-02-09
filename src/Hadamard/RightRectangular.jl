@@ -1,7 +1,7 @@
 struct HadamardRRect <: FractionalDiffEqAlgorithm end
 
 function solve(f, α, h, u0, a, b, ::HadamardRRect)
-    N = Int64(floor((b-a)/h))
+    N = floor(Int, (b-a)/h)
     y = zeros(N+1)
     leftsum = zero(Float64)
     y = zeros(N+1)

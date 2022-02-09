@@ -75,7 +75,7 @@ function choosesum(α, β, z, ρ)
     if abs(angle(z)) < pi*α/4 + 1//2 * min(pi, pi*α)
         return 1/α * z^((1-β)/α) * exp(z^(1/α)) - sum2(α, β, z, k0)
     else
-        return - sum2(α, β, z, k0)
+        return -sum2(α, β, z, k0)
     end
 end
 
@@ -303,68 +303,69 @@ function mittleff(alpha, beta, gamma, z)
 end
 
 function LTIversion(t, lambda, alpha, beta, gama, log_epsilon)
-    theta = angle(lambda) ;
-    kmin = ceil(-alpha/2 - theta/2/pi) ;
-    kmax = floor(alpha/2 - theta/2/pi) ;
-    k_vett = collect(kmin : kmax) ;
-    s_star = abs(lambda)^(1/alpha) * exp.(im*(theta.+2*k_vett*pi)/alpha) ;
+    theta = angle(lambda)
+    kmin = ceil(Int, -alpha/2 - theta/2/pi)
+    kmax = floor(Int, alpha/2 - theta/2/pi)
+    k_vett = collect(kmin : kmax)
+    s_star = abs(lambda)^(1/alpha) * exp.(im*(theta.+2*k_vett*pi)/alpha)
 
-    phi_s_star = (real(s_star).+ abs.(s_star))/2 ;
+    phi_s_star = (real(s_star).+ abs.(s_star))/2
     index_s_star = sortperm(phi_s_star)
     phi_s_star = sort(phi_s_star)
-    s_star = s_star[index_s_star] ;
-    index_save = phi_s_star .> 1e-15 ;
+    s_star = s_star[index_s_star]
+    index_save = phi_s_star .> 1e-15
 
-    s_star = s_star[index_save] ;
-    phi_s_star = phi_s_star[index_save];
-    s_star = [0; s_star] ;
-    phi_s_star = [0; phi_s_star] ;
-    J1 = length(s_star) ; J = J1 - 1 ;
-    p = [max(0,-2*(alpha*gama-beta+1)) ; ones(J)*gama]  ;
-    q = [ones(J)*gama ; +Inf] ;
-    phi_s_star = [phi_s_star; +Inf] ;
-    admissible_regions = findall((phi_s_star[1:end-1] .< (log_epsilon - log(eps()))/t) .& (phi_s_star[1:end-1] .< phi_s_star[2:end])) ;
-    JJ1 = admissible_regions[end] ;
-    mu_vett = ones(ComplexF64, JJ1)*Inf ;
-    N_vett = ones(ComplexF64, JJ1)*Inf ;
-    h_vett = ones(ComplexF64, JJ1)*Inf ;
-    find_region = 0 ;
+    s_star = s_star[index_save]
+    phi_s_star = phi_s_star[index_save]
+    s_star = [0; s_star]
+    phi_s_star = [0; phi_s_star]
+    J1 = length(s_star)
+    J = J1 - 1
+    p = [max(0,-2*(alpha*gama-beta+1)) ; ones(J)*gama]
+    q = [ones(J)*gama ; +Inf]
+    phi_s_star = [phi_s_star; +Inf]
+    admissible_regions = findall((phi_s_star[1:end-1] .< (log_epsilon - log(eps()))/t) .& (phi_s_star[1:end-1] .< phi_s_star[2:end]))
+    JJ1 = admissible_regions[end]
+    mu_vett = ones(ComplexF64, JJ1)*Inf
+    N_vett = ones(ComplexF64, JJ1)*Inf
+    h_vett = ones(ComplexF64, JJ1)*Inf
+    find_region = 0
 
     while find_region==0
         for j1 = admissible_regions
             muj=0; hj=0; Nj=0
             if j1 < J1
                 j1=Int64(j1)
-                (muj,hj,Nj) = OptimalParam_RB(t, phi_s_star[j1], phi_s_star[j1+1], p[j1], q[j1], log_epsilon) ;
+                (muj, hj, Nj) = OptimalParam_RB(t, phi_s_star[j1], phi_s_star[j1+1], p[j1], q[j1], log_epsilon) ;
             else
-                (muj,hj,Nj) = OptimalParam_RU(t,phi_s_star[j1],p[j1],log_epsilon) ;
+                (muj, hj, Nj) = OptimalParam_RU(t,phi_s_star[j1],p[j1],log_epsilon) ;
             end
-            mu_vett[j1] = muj ; h_vett[j1] = hj ; N_vett[j1] = Nj ;
+            mu_vett[j1] = muj; h_vett[j1] = hj; N_vett[j1] = Nj
         end
         if minimum(real.(N_vett[:])) > 200
-            log_epsilon = log_epsilon +log(10) ;
+            log_epsilon = log_epsilon +log(10)
         else
-            find_region = 1 ;
+            find_region = 1
         end
     end
 
-    (N, iN) = findmin(real.(N_vett)) ; mu = mu_vett[iN] ; h = h_vett[iN] ;
+    (N, iN) = findmin(real.(N_vett)); mu = mu_vett[iN]; h = h_vett[iN];
 
     k = collect(-N : N)
-    u = h.*k ;
-    z = mu*(1*im*u.+1).^2 ;
-    zd = -2*mu*u .+ 2*mu*1*im ;
-    zexp = exp.(z*t) ;
-    F = z.^(alpha*gama-beta)./(z.^alpha .- lambda).^gama.*zd ;
-    S = zexp.*F ;
-    Integral = h*sum(S)/2/pi/im ;
+    u = h.*k
+    z = mu*(1*im*u.+1).^2
+    zd = -2*mu*u .+ 2*mu*1*im
+    zexp = exp.(z*t)
+    F = z.^(alpha*gama-beta)./(z.^alpha .- lambda).^gama.*zd
+    S = zexp.*F
+    Integral = h*sum(S)/2/pi/im
 
-    ss_star = s_star[(iN[1]+1):end] ;
-    Residues = sum(1/alpha*(ss_star).^(1-beta).*exp.(t*ss_star)) ;
+    ss_star = s_star[(iN[1]+1):end]
+    Residues = sum(1/alpha*(ss_star).^(1-beta).*exp.(t*ss_star))
 
-    E = Integral + Residues ;
+    E = Integral + Residues
     if isreal(lambda) 
-        E = real(E) ;
+        E = real(E)
     end
 end
 
@@ -426,75 +427,75 @@ end
 
 function OptimalParam_RB(t, phi_s_star_j, phi_s_star_j1, pj, qj, log_epsilon)
     log_eps = -36.043653389117154
-    fac = 1.01 ;
-    conservative_error_analysis = 0 ;
+    fac = 1.01
+    conservative_error_analysis = 0
     
-    f_max = exp(log_epsilon - log_eps) ;
+    f_max = exp(log_epsilon - log_eps)
     
-    sq_phi_star_j = sqrt(phi_s_star_j) ;
-    threshold = 2*sqrt((log_epsilon - log_eps)/t) ;
-    sq_phi_star_j1 = min(sqrt(phi_s_star_j1), threshold - sq_phi_star_j) ;
+    sq_phi_star_j = sqrt(phi_s_star_j)
+    threshold = 2*sqrt((log_epsilon - log_eps)/t)
+    sq_phi_star_j1 = min(sqrt(phi_s_star_j1), threshold - sq_phi_star_j)
     
     if pj < 1.0e-14 && qj < 1.0e-14
-        sq_phibar_star_j = sq_phi_star_j ;
-        sq_phibar_star_j1 = sq_phi_star_j1 ;
-        adm_region = 1 ;
+        sq_phibar_star_j = sq_phi_star_j
+        sq_phibar_star_j1 = sq_phi_star_j1
+        adm_region = 1
     end
     
     if pj < 1.0e-14 && qj >= 1.0e-14
-        sq_phibar_star_j = sq_phi_star_j ;
+        sq_phibar_star_j = sq_phi_star_j
         if sq_phi_star_j > 0
             f_min = fac*(sq_phi_star_j/(sq_phi_star_j1-sq_phi_star_j))^qj ;
         else
-            f_min = fac ;
+            f_min = fac
         end
         if f_min < f_max
-            f_bar = f_min + f_min/f_max*(f_max-f_min) ;
-            fq = f_bar^(-1/qj) ;
+            f_bar = f_min + f_min/f_max*(f_max-f_min)
+            fq = f_bar^(-1/qj)
             sq_phibar_star_j1 = (2*sq_phi_star_j1-fq*sq_phi_star_j)/(2+fq) ;
-            adm_region = 1 ;
+            adm_region = 1
         else
             adm_region = 0 ;
         end
     end
     
     if pj >= 1.0e-14 && qj < 1.0e-14
-        sq_phibar_star_j1 = sq_phi_star_j1 ;
-        f_min = fac*(sq_phi_star_j1/(sq_phi_star_j1-sq_phi_star_j))^pj ;
+        sq_phibar_star_j1 = sq_phi_star_j1
+        f_min = fac*(sq_phi_star_j1/(sq_phi_star_j1-sq_phi_star_j))^pj
         if f_min < f_max
-            f_bar = f_min + f_min/f_max*(f_max-f_min) ;
-            fp = f_bar^(-1/pj) ;
-            sq_phibar_star_j = (2*sq_phi_star_j+fp*sq_phi_star_j1)/(2-fp) ;
-            adm_region = 1 ;
+            f_bar = f_min + f_min/f_max*(f_max-f_min)
+            fp = f_bar^(-1/pj)
+            sq_phibar_star_j = (2*sq_phi_star_j+fp*sq_phi_star_j1)/(2-fp)
+            adm_region = 1
         else
-            adm_region = 0 ;
+            adm_region = 0
         end
     end
     
     if pj >= 1.0e-14 && qj >= 1.0e-14
         f_min = fac*(sq_phi_star_j+sq_phi_star_j1)/(sq_phi_star_j1-sq_phi_star_j)^max(pj,qj) ;
         if f_min < f_max
-            f_min = max(f_min,1.5) ;
-            f_bar = f_min + f_min/f_max*(f_max-f_min) ;
-            fp = f_bar^(-1/pj) ;
-            fq = f_bar^(-1/qj) ;
+            f_min = max(f_min,1.5)
+            f_bar = f_min + f_min/f_max*(f_max-f_min)
+            fp = f_bar^(-1/pj)
+            fq = f_bar^(-1/qj)
             if conservative_error_analysis==0
-                w = -phi_s_star_j1*t/log_epsilon ;
+                w = -phi_s_star_j1*t/log_epsilon
             else
-                w = -2*phi_s_star_j1*t/(log_epsilon-phi_s_star_j1*t) ;
+                w = -2*phi_s_star_j1*t/(log_epsilon-phi_s_star_j1*t)
             end
-            den = 2+w - (1+w)*fp + fq ;
+            den = 2+w - (1+w)*fp + fq
             sq_phibar_star_j = ((2+w+fq)*sq_phi_star_j + fp*sq_phi_star_j1)/den ;
             sq_phibar_star_j1 = (-(1+w)*fq*sq_phi_star_j + (2+w-(1+w)*fp)*sq_phi_star_j1)/den ;
-            adm_region = 1 ;
+            adm_region = 1
         else
-            adm_region = 0 ;
+            adm_region = 0
         end
     end
     if adm_region==1
-        log_epsilon = log_epsilon - log(f_bar) ;
+        log_epsilon = log_epsilon - log(f_bar)
         if conservative_error_analysis==0
-            w = -sq_phibar_star_j1^2*t/log_epsilon ;
+            w = -sq_phibar_star_j1^2*t/log_epsilon
         else
             w = -2*sq_phibar_star_j1^2*t/(log_epsilon-sq_phibar_star_j1^2*t) ;
         end
@@ -502,7 +503,7 @@ function OptimalParam_RB(t, phi_s_star_j, phi_s_star_j1, pj, qj, log_epsilon)
         hj = -2*pi/log_epsilon*(sq_phibar_star_j1-sq_phibar_star_j)/((1+w)*sq_phibar_star_j + sq_phibar_star_j1) ;
         Nj = Complex(ceil(real(sqrt(Complex(1-log_epsilon/t/muj))/hj)), ceil(imag(sqrt(Complex(1-log_epsilon/t/muj))/hj)))
     else
-        muj = 0 ; hj = 0 ; Nj = +Inf ;
+        muj = 0 ; hj = 0 ; Nj = +Inf
     end
     return muj, hj, Nj
 end
@@ -510,7 +511,7 @@ end
 
 function mlds(z,al,be,k)
     max_gamma_arg = 171.624
-    Jmax = Int64(floor((max_gamma_arg - be)/al))
+    Jmax = floor(Int, (max_gamma_arg - be)/al)
     G = gamma.(al.*(collect(0:Jmax)).+be)
     jj = collect(k:Jmax)
     f = ones(size(jj))

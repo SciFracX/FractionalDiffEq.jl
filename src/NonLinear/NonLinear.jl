@@ -25,7 +25,7 @@ struct NonLinearAlg <: FractionalDiffEqAlgorithm end
 function solve(prob::SystemOfFDEProblem, h, tn, ::NonLinearAlg, L0=1e10)
     f, α, x0 = prob.f, prob.α, prob.x0
     n = length(x0)
-    m = Int64(round(tn/h)+1)
+    m = round(Int, tn/h)+1
     g = genfun(1)
     g = g[:]
     x0 = x0[:]

@@ -10,9 +10,9 @@ struct ClosedFormHankelM <: FractionalDiffEqAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, t, ::ClosedFormHankelM)
     a, na, rightfun, b, nb = prob.parameters, prob.orders, prob.rightfun, prob.rparameters, prob.rorders
-    h=t[2]-t[1]
+    h = t[2]-t[1]
     u = rightfun.(t)
-    u=u[:]
+    u = u[:]
     A, B = 0, 0
 
     g = genfun(1)

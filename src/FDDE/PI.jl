@@ -23,7 +23,7 @@ struct DelayPI <: FractionalDiffEqAlgorithm end
 
 function solve(FDDE::FDDEProblem, T, h, ::DelayPI)
     g, ϕ, α, τ, t0 = FDDE.f, FDDE.ϕ, FDDE.α, FDDE.τ, FDDE.t0
-    N = Int64(ceil((T-t0)/h))
+    N = ceil(Int, (T-t0)/h)
     t = t0 .+ h*collect(0:1:N)
 
     nn_al = collect(0:1:N).^α

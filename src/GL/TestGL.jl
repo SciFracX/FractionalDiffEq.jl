@@ -14,8 +14,7 @@ struct GL <: FractionalDiffEqAlgorithm end
 
 # Some points are a little big
 function solve(f, α, h, u0, T, ::GL)
-    N = Int64(floor(T/h)+1)
-
+    N = floor(Int, T/h)+1
     c = zeros(N)
 
     cp = 1

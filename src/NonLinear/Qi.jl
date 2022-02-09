@@ -31,7 +31,7 @@ end
 struct QiAlg <: FractionalDiffEqAlgorithm end
 =#
 function solve(parameters, orders, T, Y0, h)
-    n=Int64(floor(T/h))
+    n = floor(Int, T/h)
     q1=orders[1]
     q2=orders[2]
     q3=orders[3]

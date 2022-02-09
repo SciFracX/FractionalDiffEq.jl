@@ -13,7 +13,6 @@ function DOB(ϕ, alpharange, alphastep, tN, tstep)
     alphacount = length(alphas)
 
     result = zeros(tN, tN)
-
     phi = ϕ.(alphas)
 
     for k=1:alphacount

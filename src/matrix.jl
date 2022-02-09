@@ -36,7 +36,7 @@ struct FPDEMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, h, T, ::FODEMatrixDiscrete)
     leftparameters, leftorders, right = prob.parameters, prob.orders, prob.rightfun
-    N = Int64(floor(T/h))
+    N::Int64 = floor(Int, T/h)
     highestorder = Int64(findmax(ceil.(leftorders))[1])
     rows = collect(1:highestorder)
 
@@ -57,7 +57,6 @@ function solve(prob::MultiTermsFODEProblem, h, T, ::FODEMatrixDiscrete)
 
     result = equation\rightside
     result = vcat(zeros(highestorder), result)
-
 
     return result
 end
@@ -96,7 +95,7 @@ Using D function to construct left hand side equations.
     Here ```N``` is the size of discrete matrix.
 """
 function D(N, α, h)
-    α == 0 ? (return zeros(N, N) + I) : nothing
+    α == 0 ? (return zeros(N, N) + I) : nothing # When α=0, D is an identity matrix.
     result = zeros(N, N)
     temp = omega(N, α)
 
@@ -165,7 +164,7 @@ By specifying the parameters of Bagley Torvik Equation, we can use **bagleytorvi
     Please note that the parameter of fractional derivative part must not be 0
 """
 function bagleytorvik(p1, p2, p3, right, T, h)
-    N = Int64(floor(T/h)+1)
+    N = floor(Int, T/h)+1
     equation = p1*D(N, 2, h) + p2*D(N, 1.5, h)+p3*(zeros(N, N)+I)
     equation = eliminator(N, [1,2])*equation*eliminator(N, [1,2])'
 

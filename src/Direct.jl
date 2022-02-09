@@ -34,7 +34,7 @@ function G2cₙⱼ(n, α, j)
 end
 
 function solve(f, α, u0, T, h, ::G2Direct)
-    n = Int64(floor(T/h))
+    n = floor(Int, T/h)
     y = zeros(n+1)
 
     y[1]=u0
@@ -51,7 +51,7 @@ function solve(f, α, u0, T, h, ::G2Direct)
 end
 
 function solve(f, α, u0, T, h, ::L2Direct)
-    n = Int64(floor(T/h))
+    n = floor(Int, T/h)
 
     y = zeros(n+1)
 
