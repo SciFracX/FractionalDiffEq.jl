@@ -141,7 +141,7 @@ function right(f, y, α, n, h)
     return temp
 end
 
-function predictor(f, y, α::Float64, n::Int64, h, u0, T)
+function predictor(f, y, α::Float64, n::Int, h, u0, T)
     predict = 0
     leftsum = 0
 
