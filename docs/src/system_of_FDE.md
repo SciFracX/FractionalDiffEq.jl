@@ -112,7 +112,7 @@ D^\alpha x_3=x_1x_2-bx_3
 \end{cases}
 ```
 
-By abstract the mathematical model, and solve the equation system, we can get the phase portrait of the Qi chaotic system:
+By abstract the mathematical model, and solve the equation system:
 
 ```julia
 using FractionalDiffEq
@@ -137,6 +137,8 @@ x, y, z = solve(qi, alpha, x0, h, T, GLWithMemory())
 
 plot(x, y)
 ```
+
+We can get the phase portrait of the Qi chaotic system:
 
 ![GLWithMemory](./assets/qi.png)
 
