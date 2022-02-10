@@ -169,14 +169,14 @@ mittleff(α, β, z::Union{Integer,Complex{T}}) where {T<:Integer} = mittleff(α,
 
 Compute `mittleff(α, 1, z)`.
 """
-mittleff(α, z) = _mittleff(α,1,z)
+mittleff(α, z) = _mittleff(α, 1, z)
 #mittleff(α, z::Union{Integer,Complex{T}}) where {T<:Integer} = mittleff(α, float(z))
 
 mittleff(α, vec::Vector) = map(x -> mittleff(α, 1, x), vec)
 mittleff(α, β, vec::Vector) = map(x -> mittleff(α, β, x), vec)
 mittleff(α, β, γ, vec::Vector) = map(x -> mittleff(α, β, γ, x), vec)
 
-function _mittleff_special_beta_one(α,z)
+function _mittleff_special_beta_one(α, z)
     z == 0 && return one(z)
     if α == 1/2 && abs(z) < 10
         return exp(z^2) * erfc(-z)
@@ -293,7 +293,7 @@ Compute three-parametric mittleff(α, β, γ, z).
 function mittleff(alpha, beta, gamma, z)
     log_epsilon = log(10^(-15))
 
-    E=0;
+    E=0
     if abs(z) < 1e-15
         E=1/gamma(beta)
     else
@@ -343,7 +343,7 @@ function LTIversion(t, lambda, alpha, beta, gama, log_epsilon)
             mu_vett[j1] = muj; h_vett[j1] = hj; N_vett[j1] = Nj
         end
         if minimum(real.(N_vett[:])) > 200
-            log_epsilon = log_epsilon +log(10)
+            log_epsilon = log_epsilon + log(10)
         else
             find_region = 1
         end

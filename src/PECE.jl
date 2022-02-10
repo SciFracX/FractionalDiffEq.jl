@@ -135,7 +135,7 @@ function right(f, y, α, n, h)
     temp = zero(Float64)
 
     @fastmath @inbounds @simd for j = 0:n
-        temp += A(j, n, α)*f(j*h, y[Int64(j+1)])
+        temp += A(j, n, α)*f(j*h, y[j+1])
     end
 
     return temp
