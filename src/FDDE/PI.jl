@@ -41,8 +41,8 @@ function solve(FDDE::FDDEProblem, T, h, ::DelayPI)
         if tnm1 <= τ
             y_nm1_tau = ϕ(tnm1-τ)
         else
-            nm1_tau1 = Int64(floor((tnm1-τ)/h))
-            nm1_tau2 = Int64(ceil((tnm1-τ)/h))
+            nm1_tau1 = floor(Int, (tnm1-τ)/h)
+            nm1_tau2 = ceil(Int, (tnm1-τ)/h)
             if nm1_tau1 == nm1_tau2
                 y_nm1_tau = y[nm1_tau1+1]
             else

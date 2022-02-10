@@ -112,7 +112,7 @@ Generalproblem solving API for solving FDE problems.
 """
 function solve(FODE::SingleTermFODEProblem, h, ::PECE)
     f, α, u0, T = FODE.f, FODE.α, FODE.u0, FODE.T
-    N = floor(Int, T/h)
+    N = round(Int, T/h)
     y = zeros(N+1) # Initialize the solution array
     leftsum = zero(Float64)
     l = floor(α)

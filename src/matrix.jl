@@ -164,7 +164,7 @@ By specifying the parameters of Bagley Torvik Equation, we can use **bagleytorvi
     Please note that the parameter of fractional derivative part must not be 0
 """
 function bagleytorvik(p1, p2, p3, right, T, h)
-    N = floor(Int, T/h)+1
+    N = round(Int, T/h)+1
     equation = p1*D(N, 2, h) + p2*D(N, 1.5, h)+p3*(zeros(N, N)+I)
     equation = eliminator(N, [1,2])*equation*eliminator(N, [1,2])'
 
