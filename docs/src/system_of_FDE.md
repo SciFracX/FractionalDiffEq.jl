@@ -2,7 +2,9 @@
 
 Many "real life" situations are governed by a system of fractional differential equations.
 
-So here, we will look at an example: Chua circuit.
+##Fractional Order Chua System Example
+
+So here, we will look at an example: [Chua circuit](https://en.wikipedia.org/wiki/Chua%27s_circuit).
 
 The circuit diagram of the Chua system is shown below:
 
@@ -87,6 +89,56 @@ While in the reference[^1], using FOTF toolbox costs 228.5s to solve the problem
     1
     ```
     So I think the performance would be more impressive by using multi-threading and paralell computing.
+
+## Fractional Order Qi Chaotic System Example
+
+Since the Qi chaotic system is depicted as:
+
+```math
+\begin{cases}
+\dot{x_1}=a(x_1-x_2)+x_2x_3\\
+\dot{x_2}=cx_1-x_2-x_1x_3\\
+\dot{x_3}=x_1x_2-bx_3
+\end{cases}
+```
+
+We can also obtain the fractional order Qi chaotic system:
+
+```math
+\begin{cases}
+D^\alpha x_1=a(x_1-x_2)+x_2x_3\\
+D^\alpha x_2=cx_1-x_2-x_1x_3\\
+D^\alpha x_3=x_1x_2-bx_3
+\end{cases}
+```
+
+By abstract the mathematical model, and solve the equation system, we can get the phase portrait of the Qi chaotic system:
+
+```julia
+using FractionalDiffEq
+using Plots
+
+function qi(t, x, y, z, k)
+    a, b, c, d, r = 35, 8/3, 80, -1, 1
+    if k == 1
+        return -a*x+a*y+r*y*z
+    elseif k == 2
+        return c*x+d*y-x*z
+    elseif k == 3
+        return -b*z+x*y
+    end
+end
+
+alpha = [0.98, 0.98, 0.98]
+h=0.001
+T=50
+x0=[0.1, 0.2, 0.3]
+x, y, z = solve(qi, alpha, x0, h, T, GLWithMemory())
+
+plot(x, y)
+```
+
+![GLWithMemory](./assets/qi.png)
 
 
 [^1]: 分数阶微积分学与分数阶控制 薛定宇 ISBN:9787030543981 Page 208

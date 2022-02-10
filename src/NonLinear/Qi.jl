@@ -3,11 +3,7 @@
 Example: https://ieeexplore.ieee.org/abstract/document/5566025/
 =##=
 """
-# Qi System
-
-```math
-
-```
+# Fractional order Qi Chaotic System
 
 ```tex
 @INPROCEEDINGS{5566025,
@@ -30,7 +26,7 @@ end
 
 struct QiAlg <: FractionalDiffEqAlgorithm end
 =#
-function solve(parameters, orders, T, Y0, h)
+function testsolve(parameters, orders, T, Y0, h)
     n = floor(Int, T/h)
     q1=orders[1]
     q2=orders[2]
@@ -68,7 +64,6 @@ function solve(parameters, orders, T, Y0, h)
     z[1]=Y0[3]
 
 
-
     for i=2:n
         x[i]=(-a*x[i-1]+a*y[i-1]+r*y[i-1]*z[i-1])*h^q1 - memo(x, c1, i)
         y[i]=(c*x[i-1]+d*y[i-1]-x[i-1]*z[i-1])*h^q2 - memo(y, c2, i)
@@ -86,8 +81,7 @@ function memo(r, c, k)
 end
 
 #=
-
-x, y, z = testsolve([35, 8/3, 80, -1, 1], [0.96, 0.96, 0.96], 50, [0.1, 0.2, 0.3], 0.0001)
+x, y, z = testsolve([35, 8/3, 80, -1, 1], [0.96, 0.96, 0.96], 10, [0.1, 0.2, 0.3], 0.01)
 using Plots
 
 plot(x, y)

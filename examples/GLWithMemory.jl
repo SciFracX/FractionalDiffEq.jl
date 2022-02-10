@@ -2,7 +2,7 @@ h=0.005
 alpha = [0.99, 0.99, 0.99]
 x0 = [1, 0, 1]
 tf=30
-function testfun(t, x, y, z, k)
+function f(t, x, y, z, k)
     a, b, c = 10, 28, 8/3
     if k == 1
         return a*(y-x)
@@ -12,7 +12,7 @@ function testfun(t, x, y, z, k)
         return x*y-c*z
     end
 end
-x, y, z = solve(testfun, alpha, x0, h, tf, GLWithMemory())
+x, y, z = solve(f, alpha, x0, h, tf, GLWithMemory())
 
 using Plots
 plot(x, y)
