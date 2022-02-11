@@ -165,7 +165,7 @@ By specifying the parameters of Bagley Torvik Equation, we can use **bagleytorvi
 """
 function bagleytorvik(p1, p2, p3, right, T, h)
     N = round(Int, T/h)+1
-    equation = p1*D(N, 2, h) + p2*D(N, 1.5, h)+p3*(zeros(N, N)+I)
+    equation = p1*D(N, 2, h) + p2*D(N, 1.5, h)+p3*I(N)
     equation = eliminator(N, [1,2])*equation*eliminator(N, [1,2])'
 
     rows = collect(1:2)
@@ -187,15 +187,15 @@ function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
     τ = h^2/6
     
     # Construct the time partial derivative matrix
-    TMatrix = kron(D(N-1, α, τ)', zeros(M, M) + I)
+    TMatrix = kron(D(N-1, α, τ)', I(M))
 
     # Construct the spatial partial derivative matrix
-    SMatrix = kron(zeros(N-1, N-1) + I, RieszMatrix(β, M, h))
+    SMatrix = kron(I(N-1), RieszMatrix(β, M, h))
 
     system = TMatrix-SMatrix
 
     # Handling boundary conditions
-    BMatrix = kron(zeros(N-1, N-1) + I, eliminator(M, [1, M]))
+    BMatrix = kron(I(N-1), eliminator(M, [1, M]))
     system = system*BMatrix'
 
     left = BMatrix*system
