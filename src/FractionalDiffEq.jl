@@ -55,7 +55,7 @@ export DelayPECE, DelayPI
 export DOMatrixDiscrete
 
 # Export some api to construct the equation
-export RieszMatrix, omega, meshgrid
+export eliminator, RieszMatrix, omega, meshgrid
 
 # Export some special equtions
 export bagleytorvik, diffusion

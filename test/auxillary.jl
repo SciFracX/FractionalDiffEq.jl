@@ -3,6 +3,10 @@
 using FractionalDiffEq
 using Test
 
+@testset "Test eliminator" begin
+    @test isapprox(eliminator(3, 2), [1.0 0.0 0.0; 0.0 0.0 1.0]; atol=1e-5)
+end
+
 @testset "Test Riesz Matrix" begin
     @test isapprox(RieszMatrix(0.5, 3, 0.01), [-5.0 4.375 -0.3125; 4.375 -5.0 4.375; -0.3125 4.375 -5.0]; atol=0.00001)
 end

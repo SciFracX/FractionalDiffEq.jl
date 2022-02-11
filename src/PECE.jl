@@ -106,6 +106,17 @@ end
 FDDEProblem(f, ϕ, α, τ) = FDDEProblem(f, ϕ, α, τ, nothing)
 
 """
+    FODESystem(f, α, x0)
+
+Define system of fractional differential equations
+"""
+struct FODESystem <: FDEProblem
+    f::Function
+    α::AbstractArray
+    x0::AbstractArray
+end
+
+"""
     solve(problem, args... Alg())
 
 Generalproblem solving API for solving FDE problems.
