@@ -68,7 +68,7 @@ end
 Compute the eliminator matrix Sₖ by omiting n-th row
 """
 function eliminator(n, row)
-    temp = zeros(n, n) + I
+    temp = I(n)
     return temp[Not(row), :]
 end
 

@@ -3,7 +3,7 @@
 
 Define system of fractional differential equations
 """
-struct SystemOfFDEProblem <: FDEProblem
+struct FODESystem <: FDEProblem
     f::Function
     α::AbstractArray
     x0::AbstractArray
@@ -22,7 +22,7 @@ Dingyu Xue, Northeastern University, China ISBN:9787030543981
 """
 struct NonLinearAlg <: FractionalDiffEqAlgorithm end
 
-function solve(prob::SystemOfFDEProblem, h, tn, ::NonLinearAlg, L0=1e10)
+function solve(prob::FODESystem, h, tn, ::NonLinearAlg, L0=1e10)
     f, α, x0 = prob.f, prob.α, prob.x0
     n = length(x0)
     m = round(Int, tn/h)+1

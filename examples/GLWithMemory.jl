@@ -12,7 +12,8 @@ function f(t, x, y, z, k)
         return x*y-c*z
     end
 end
-x, y, z = solve(f, alpha, x0, h, tf, GLWithMemory())
+prob = FODESystem(f, alpha, x0)
+x, y, z = solve(prob, h, tf, GLWithMemory())
 
 using Plots
 plot(x, y)

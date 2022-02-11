@@ -12,8 +12,8 @@ Python version by https://github.com/DClementeL/Grunwald_Letnikov
 """
 struct GLWithMemory <: FractionalDiffEqAlgorithm end
 
-function solve(f, α, x0, h, tf, ::GLWithMemory)
-
+function solve(prob::FODESystem, h, tf, ::GLWithMemory)
+    f, α, x0 = prob.f, prob.α, prob.x0
     hα=h^α[1]
 
     n = Int64(floor(tf/h)+1)

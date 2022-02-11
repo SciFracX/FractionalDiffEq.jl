@@ -16,6 +16,7 @@ alpha = [0.98, 0.98, 0.98]
 h=0.001
 T=50
 x0=[0.1, 0.2, 0.3]
-x, y, z = solve(qi, alpha, x0, h, T, GLWithMemory())
+prob=FODESystem(qi, alpha, x0)
+x, y, z = solve(prob, h, T, GLWithMemory())
 
 plot(x, y)
