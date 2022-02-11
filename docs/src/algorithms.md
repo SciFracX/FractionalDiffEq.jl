@@ -33,6 +33,7 @@ FractionalDiffEq.DelayPI
 ```@docs
 FractionalDiffEq.NonLinearAlg
 FractionalDiffEq.GLWithMemory
+FractionalDiffEq.ModifiedTrap
 ```
 
 ## Distributed Order Differential Equations

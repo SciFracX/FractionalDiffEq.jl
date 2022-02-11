@@ -58,6 +58,28 @@ end
 
 end
 
+@testset "Test GLWithMemory algorithm" begin
+    h=0.5
+    alpha = [0.99, 0.99, 0.99]
+    x0 = [1, 0, 1]
+    tf=1
+    function f(t, x, y, z, k)
+        a, b, c = 10, 28, 8/3
+        if k == 1
+            return a*(y-x)
+        elseif k == 2
+            return x*(b-z)-y
+        elseif k == 3
+            return x*y-c*z
+        end
+    end
+    prob = FODESystem(f, alpha, x0)
+    x, y, z = solve(prob, h, tf, GLWithMemory())
+    @test x≈[1.0, -4.044777750283594, 84.80744193501619]
+    @test y≈[0.0, 13.593899925765704, -51.12509457411144]
+    @test z≈[1.0, -0.3526074000756252, -27.554093040332816]
+end
+
 @testset "Test FPDEMatrixDiscrete" begin
     @test isapprox(solve(0.5, 0.5, 3, 2, 2, FPDEMatrixDiscrete()), [0 0; 0 0]; atol=1e-2)
 end
