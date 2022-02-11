@@ -28,5 +28,4 @@ prob = FODESystem(chua, α, x0)
 tn = 200;
 result = solve(prob, h, tn, NonLinearAlg())
 
-gr()
 plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)

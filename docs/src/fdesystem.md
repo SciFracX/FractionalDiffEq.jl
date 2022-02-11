@@ -2,7 +2,7 @@
 
 Many "real life" situations are governed by a system of fractional differential equations.
 
-##Fractional Order Chua System Example
+## Fractional Order Chua System Example
 
 So here, we will look at an example: [Chua circuit](https://en.wikipedia.org/wiki/Chua%27s_circuit).
 
@@ -55,7 +55,6 @@ prob = FODESystem(chua, α, x0)
 tn = 200;
 result = solve(prob, h, tn, NonLinearAlg())
 
-gr()
 plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)
 ```
 
@@ -75,7 +74,7 @@ To further elaborate, we can look at how the short memory affects the simulation
 By using the same code above, but set ``t_n=500`` and memory length as ``L_0=10000`` to see the model more comprehensively but reduce the computing cost same time:
 
 ```julia
-result = solve(chua, alpha, x0, h, tn, NonLinearAlg(), 10000)
+result = solve(prob, h, tn, NonLinearAlg(), 10000)
 ```
 
 ![Chua_short_memory](./assets/chua_short_memory.png)
@@ -130,9 +129,9 @@ function qi(t, x, y, z, k)
 end
 
 alpha = [0.98, 0.98, 0.98]
-h=0.001
-T=50
-x0=[0.1, 0.2, 0.3]
+h = 0.001
+T = 50
+x0 = [0.1, 0.2, 0.3]
 prob = FODESystem(qi, alpha, x0)
 x, y, z = solve(prob, h, T, GLWithMemory())
 
