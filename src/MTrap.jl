@@ -1,4 +1,17 @@
 using SpecialFunctions
+"""
+Modified trapezoidal algorithms for system of fractional differential equations.
+
+```tex
+@Article{math8101675,
+AUTHOR = {Zabidi, Nur Amirah and Abdul Majid, Zanariah and Kilicman, Adem and Rabiei, Faranak},
+TITLE = {Numerical Solutions of Fractional Differential Equations by Using Fractional Explicit Adams Method},
+DOI = {10.3390/math8101675}
+}
+```
+"""
+#struct ModifiedTrap <: FractionalDiffEqAlgorithm end
+
 
 function testsolve(f, α, x0, h, T)
     equationsize = length(x0)
@@ -58,4 +71,25 @@ result = testsolve(test, [0.99, 0.99, 0.99], [1, 0, 0], h, 1)
 using Plots
 
 plot(tspan, result[2, :])
+=#
+#=
+function qi(t, x, y, z, k)
+    a, b, c, d, r = 35, 8/3, 80, -1, 1
+    if k == 1
+        return -a*x+a*y+r*y*z
+    elseif k == 2
+        return c*x+d*y-x*z
+    elseif k == 3
+        return -b*z+x*y
+    end
+end
+
+alpha = [0.98, 0.98, 0.98]
+h=0.01
+T=50
+x0=[0.1, 0.2, 0.3]
+#prob=FODESystem(qi, alpha, x0)
+result = testsolve(qi, alpha, x0, h, T)
+using Plots
+plot(result[1, :], result[2, :])
 =#

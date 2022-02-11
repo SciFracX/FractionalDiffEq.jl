@@ -1,18 +1,8 @@
 # Get Start
 
-## What is Fractional Differential Equations?
+We would use the simple example -- [Relaxation Oscillation Process](https://encyclopediaofmath.org/wiki/Relaxation_oscillation) example to show you how to use FractionalDiffEq.jl🙂
 
-While the Ordinary Differential Equations and Partial Differential Equations are widely used in enormous areas and play important roles in their theoretical analysis, someone may asks, ODE and PDE are enough for nowadays modeling, has FDE any usage in our life?
-
-Well, fractional differential equation can be seen as the generalization of ODE and PDE. In our daily life, models usually are better described in fractional differential equations.
-
-A special applying case for fractional differential equations is viscoelasticity, which researches the property of a subject with both [Viscosity](https://en.wikipedia.org/wiki/Viscosity) and [Elasticity](https://en.wikipedia.org/wiki/Elasticity_(physics)). 
-
-And also the CRONE controller and $PI^\lambda D^\mu$ controller deploy fractional derivative to better describe the system. 
-
-## A simple example —— Relaxation Oscillation Equation
-
-Let's see a simple model involving fractional differential equations: [Relaxation Oscillation Process](https://encyclopediaofmath.org/wiki/Relaxation_oscillation)
+The mathematical model of the Relaxation Oscillation can be abstracted as IVP:
 
 ```math
 D^{1.8}y(t)+y(t)=1,\ (t>0)
@@ -22,30 +12,71 @@ D^{1.8}y(t)+y(t)=1,\ (t>0)
 y^{(k)}(0)=0
 ```
 
-We can solve the Relaxation Oscillation Equation using FractionalDiffEq.jl:
+While we can know the analytical solution of this equation is:
+
+```math
+u(t)=t^{1.8}E_{1.8,\ 2.8}(-t^{1.8})
+```
+
+We can solve this problem by the following code using FractionalDiffEq.jl:
 
 ```julia
-using FractionalDiffEq, Plots, LaTeXStrings
+using FractionalDiffEq
+using Plots, LaTeXStrings
 
-s="\$D^{0.5}y(x)=1-y,\\ y(0)=0\$"
+# Analytical solution
+analytical(x) = x.^1.8 .*mittleff(1.8, 2.8, -x.^1.8)
 
+s="\$D^{1.8}y(x)=1-y(x),\\ y(0)=0\$"
+
+# Numerical solution
 fun(x, y) = 1-y
-prob = SingleTermFODEProblem(fun, 0.5, 0, 5)
-result = solve(prob, 0.01, PECE())
-tspan = collect(0:0.01:5)
+h=0.01;T=20;u0=0
+prob = SingleTermFODEProblem(fun, 1.8, u0, T)
+result = solve(prob, h, T, PECE())
+tspan = collect(0:0.01:20)
+target = analytical(tspan)
 
-plot(tspan, result, title=s, linewidth=2, legend=:bottomright)
+plot(tspan, result, title=s, linewidth=5, label="Numerical", legend=:bottomright)
+plot!(tspan, target, lw=3, ls=:dash, label="Analytical")
 ```
 
 By plotting the numerical result, we can get the approximation result:
 
-![Relaxation Oscillation](./assets/simple_example.png)
+![Relaxation Oscillation](./assets/example.png)
 
-## FDE with specific initial value
+To provide users a simple way to solve fractional differential equations, we follow the design pattern of [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl)
 
-While the former examples we only use the zero initial value problem, here, we can look at some problems with non-zero examples.
+## Step 1: Defining a Problem
 
-## Some Algorithms explanation:
+First, we need to specify the problem we want to solve. Just by passing the parameter —— describing function, order, step size and time span:
 
-As a matter of fact, to solve a fractional differential equations is to solve a volterra integral equation:
+```julia
+using FractionalDiffEq
 
+fun(x, y) = 1-y
+prob = SingleTermFODEProblem(fun, 1.8, 0.01, 20)
+```
+
+The ```SingleTermFODEProblem``` is a class of fractional differential equation, describing equations with ``D^{\alpha}u=f(t, u)`` pattern.
+
+## Step 2: Solving a Problem
+
+After defining a problem, we can solve it by calling the ```solve``` function:
+
+```julia
+result = solve(prob, h, T, Alg())
+```
+
+Note that there are different algorithms for differential fractional differential equations, such as FODE, FPDE, FDDE, we need to choose a properiate algorithm for specific problem. For all the algorithms, please refer to [algorithms documentation](https://scifracx.org/FractionalDiffEq.jl/dev/algorithms/).
+
+## Step3 : Analyzing the Solution
+
+Simpli call plot:
+
+```julia
+using Plots
+plot(tspan, result)
+```
+
+![Relaxation Oscillation](./assets/example.png)

@@ -8,6 +8,10 @@ Hello there👋!
 
 FractionalDiffEq.jl is a Julia package aiming at solving Fractional Differential Equations using high performance numerical methods.
 
+While the Ordinary Differential Equations and Partial Differential Equations are widely used in enormous areas and play important roles in their theoretical analysis, someone may asks, ODE and PDE are enough for nowadays modeling, has FDE any usage in our life?
+
+Well, fractional differential equation can be seen as the generalization of ODE and PDE. In our daily life, models usually are better described in fractional differential equations.
+
 ```@contents
 Pages = ["index.md"]
 ```
