@@ -9,6 +9,7 @@ using Polynomials
 
 include("PECE.jl")
 include("matrix.jl")
+include("MTrap.jl")
 include("ClosedForm/hankelmatrix.jl")
 include("ClosedForm/ClosedForm.jl")
 include("ClosedForm/highprecision.jl")
@@ -46,7 +47,7 @@ export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPe
 export FPDEMatrixDiscrete
 
 # System of FDE solvers
-export NonLinearAlg, GLWithMemory
+export NonLinearAlg, GLWithMemory, ModifiedTrap
 
 # FDDE solvers
 export DelayPECE, DelayPI

@@ -1,4 +1,3 @@
-using SpecialFunctions
 """
 Modified trapezoidal algorithms for system of fractional differential equations.
 
@@ -10,10 +9,10 @@ DOI = {10.3390/math8101675}
 }
 ```
 """
-#struct ModifiedTrap <: FractionalDiffEqAlgorithm end
+struct ModifiedTrap <: FractionalDiffEqAlgorithm end
 
 
-function testsolve(f, α, x0, h, T)
+function testsolve(f, α, x0, h, T, ::ModifiedTrap)
     equationsize = length(x0)
     N = Int64(floor(T/h))
     x = zeros(equationsize, N)
