@@ -18,7 +18,6 @@ include("GL/GLWithMemory.jl")
 include("Direct.jl")
 
 include("NonLinear/NonLinear.jl")
-include("NonLinear/Qi.jl")
 
 # Fractional delay differential equations
 include("FDDE/DelayPECE.jl")
