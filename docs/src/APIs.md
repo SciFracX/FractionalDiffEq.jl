@@ -33,9 +33,8 @@ FractionalDiffEq.FractionalDiffEqAlgorithm
 ## Problem types
 
 ```@docs
-FractionalDiffEq.SingleTermFODEProblem
-FractionalDiffEq.MultiTermsFODEProblem
-FractionalDiffEq.FPDEProblem
-FractionalDiffEq.SystemOfFDEProblem
-FractionalDiffEq.DODEProblem
+
+
+
+
 ```

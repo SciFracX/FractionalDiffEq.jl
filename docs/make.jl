@@ -19,11 +19,10 @@ makedocs(;
         "Fractional Delay Differential Equations" => "fdde.md",
         "Distributed Order Differential Equations" => "dode.md",
         "Detailed Models" => "models.md",
-        "Examples" => "example.md",
+        "Problems" => "problems.md",
         "Algorithms" => "algorithms.md",
         "Mittag Leffler Function" => "mittagleffler.md",
-        "Comparison" => "comparison.md",
-        "FractionalDiffEq.jl APIs" => "APIs.md"
+        "Comparison" => "comparison.md"
     ],
 )
 
