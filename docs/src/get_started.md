@@ -58,7 +58,7 @@ fun(x, y) = 1-y
 prob = SingleTermFODEProblem(fun, 1.8, 0.01, 20)
 ```
 
-The ```SingleTermFODEProblem``` is a class of fractional differential equation, describing equations with ``D^{\alpha}u=f(t, u)`` pattern. For other patterns of fractional differential equation, please refer to 
+The ```SingleTermFODEProblem``` is a class of fractional differential equation, describing equations with ``D^{\alpha}u=f(t, u)`` pattern. For other patterns of fractional differential equation, please refer to [Problem types](@ref problems)
 
 ## Step 2: Solving a Problem
 
@@ -68,11 +68,11 @@ After defining a problem, we can solve it by calling the ```solve``` function:
 result = solve(prob, h, T, Alg())
 ```
 
-Note that there are different algorithms for differential fractional differential equations, such as FODE, FPDE, FDDE, we need to choose a properiate algorithm for specific problem. For all the algorithms, please refer to [algorithms documentation](https://scifracx.org/FractionalDiffEq.jl/dev/algorithms/).
+Note that there are different algorithms for differential fractional differential equations, such as FODE, FPDE, FDDE, we need to choose a properiate algorithm for specific problem. For all the algorithms, please refer to [algorithms documentation](@ref algorithms).
 
 ## Step3 : Analyzing the Solution
 
-Simply call plot:
+Simply call plot to visualize the solution:
 
 ```julia
 using Plots
