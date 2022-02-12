@@ -1,4 +1,10 @@
 """
+#Usage
+
+    solve(prob::FODESystem, h, T, GLWithMemory())
+
+### Reference
+
 ```tex
 @INPROCEEDINGS{8742063,  
 author={Clemente-López, D. and Muñoz-Pacheco, J. M. and Félix-Beltrán, O. G. and Volos, C.},  
