@@ -43,3 +43,78 @@ plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 ```
 
 ![Delayed](./assets/fdde_example.png)
+
+## FDDE with matrix form
+
+FractionalDiffEq.jl is also capable of solving the fractional delayed differential equations with matrix form:
+
+```math
+D_{t_0}^\alpha\textbf{x}(t)=\textbf{A}(t)\textbf{x}(t)+\textbf{B}(t)\textbf{x}(t-\tau)+\textbf{f}(t)
+```
+
+We explain the usage of algorithm by using a example:
+
+```math
+D_{t_0}^\alpha\left(\begin{array}\\
+           x_{1}(t) \\
+           x_{2}(t) \\
+           x_{3}(t) \\
+           x_{4}(t)
+         \end{array}\right)=\begin{pmatrix}
+    0  & 0 & 1 & 0 \\
+    0  & 0 & 0 & 1 \\
+    0  & -2 & 0 & 0 \\
+    -2 & 0 & 0 & 0
+\end{pmatrix}\left(\begin{array}\\
+           x_{1}(t) \\
+           x_{2}(t) \\
+           x_{3}(t) \\
+           x_{4}(t)
+         \end{array}\right)+\begin{pmatrix}
+    0  & 0 & 0 & 0 \\
+    0  & 0 & 0 & 0 \\
+    -2  & 0 & 0 & 0 \\
+    0 & -2 & 0 & 0
+\end{pmatrix}\left(\begin{array}\\
+           x_{1}(t-\tau) \\
+           x_{2}(t-\tau) \\
+           x_{3}(t-\tau) \\
+           x_{4}(t-\tau)
+         \end{array}\right)
+```
+
+With initial condition:
+
+```math
+\textbf{x}_0(t)=\left(\begin{array}\\
+           \sin(t)\cos(t) \\
+           \sin(t)\cos(t) \\
+           \cos^2(t)-\sin^2(t) \\
+           \cos^2(t)-\sin^2(t)
+         \end{array}\right)
+```
+
+By use the ```MatrixForm``` method in FractionalDiffEq.jl:
+
+```julia
+limit=100
+t0=0
+T=70
+tau=3.1416
+h=0.01
+alpha=0.4
+function x0(t)
+    return [sin(t)*cos(t); sin(t)*cos(t); cos(t)^2-sin(t)^2; cos(t)^2-sin(t)^2]
+end
+A=[0 0 1 0; 0 0 0 1; 0 -2 0 0; -2 0 0 0]
+B=[0 0 0 0; 0 0 0 0 ;-2 0 0 0; 0 -2 0 0]
+f=[0; 0; 0; 0]
+
+result=solve(limit, t0, T, tau, h, alpha, x0, A, B, f, MatrixForm())
+
+using Plots
+
+plot(result[1, :], result[3, :])
+```
+
+![Matrix Form](./assets/fdde_matrix.png)
