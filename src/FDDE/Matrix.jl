@@ -1,3 +1,12 @@
+"""
+# Usage
+
+    solve(limit, t0, T, tau, h, alpha, x0, A, B, f, MatrixForm())
+
+### Reference
+
+https://github.com/mandresik/system-of-linear-fractional-differential-delayed-equations
+"""
 struct MatrixForm <: FractionalDiffEqAlgorithm end
 
 function solve(limit, t0, T, tau, h, alpha, x0, A, B, f, ::MatrixForm)
