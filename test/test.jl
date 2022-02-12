@@ -120,6 +120,44 @@ end
     @test result≈[19.00001, 19.00001, 19.00001, 18.99999190949352, 18.99997456359874]
 end
 
+@testset "Test Nonlinear method" begin
+    using FractionalDiffEq
+
+    function chua(t, x, k)
+        a = 10.725
+        b = 10.593
+        c = 0.268
+        m0 = -1.1726
+        m1 = -0.7872
+
+        if k == 1
+            f = m1*x[1]+0.5*(m0-m1)*(abs(x[1]+1)-abs(x[1]-1))
+            y = a*(x[2]-x[1]-f)
+            return y
+        elseif k == 2
+            y = x[1]-x[2]+x[3]
+            return y
+        elseif k == 3
+            y = -b*x[2]-c*x[3]
+            return y
+        end
+    end
+
+    α = [0.93, 0.99, 0.92];
+    x0 = [0.2; -0.1; 0.1];
+    h = 0.1;
+    prob = FODESystem(chua, α, x0)
+    tn = 0.5;
+    result = solve(prob, h, tn, NonLinearAlg())
+
+    @test isapprox(result, [0.2 -0.1 0.1
+    0.11749    -0.0675115   0.182758       
+    0.063749   -0.0357031   0.215719       
+    0.0394769  -0.00641779  0.210729       
+    0.0458196   0.019928    0.175057       
+    0.0843858   0.0438356   0.113762]; atol=1e-3)
+end
+
 @testset "Test FPDEMatrixDiscrete" begin
     @test isapprox(solve(0.5, 0.5, 3, 2, 2, FPDEMatrixDiscrete()), [0 0; 0 0]; atol=1e-2)
 end

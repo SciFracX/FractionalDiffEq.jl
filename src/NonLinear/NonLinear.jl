@@ -22,11 +22,12 @@ function solve(prob::FODESystem, h, tn, ::NonLinearAlg, L0=1e10)
     z = zeros(n, m)
     x1 = copy(x0) # Here we pass the value of x0 to x1. Honestly, I kept finding this bug for almost a whole night😅
 
+
     # All of the min(m, L0+1) is to set the memory effect.
-    W = zeros(n, min(m, L0+1)) #Initializing W a n*m matrix
+    W = zeros(n, Int64(min(m, L0+1))) #Initializing W a n*m matrix
 
     for i = 1:n
-        W[i, :] = getvec(α[i], min(m, L0+1), g)
+        W[i, :] = getvec(α[i], Int64(min(m, L0+1)), g)
     end
 
     for k = 2:m
