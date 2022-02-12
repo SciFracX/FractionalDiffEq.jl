@@ -22,6 +22,7 @@ include("NonLinear/NonLinear.jl")
 # Fractional delay differential equations
 include("FDDE/DelayPECE.jl")
 include("FDDE/PI.jl")
+include("FDDE/Matrix.jl")
 
 # Distributed order differential equations
 include("DistributedOrder/utils.jl")
@@ -49,7 +50,7 @@ export FPDEMatrixDiscrete
 export NonLinearAlg, GLWithMemory, ModifiedTrap
 
 # FDDE solvers
-export DelayPECE, DelayPI
+export DelayPECE, DelayPI, MatrixForm
 
 # DODE solvers
 export DOMatrixDiscrete
