@@ -104,6 +104,22 @@ end
     @test y≈[19.00001, 19.00001, 37.274176448220274]
 end
 
+@testset "Test DelayPI method" begin
+    function ϕ(x)
+        if x == 0
+            return 19.00001
+        else
+            return 19.0
+        end
+    end
+    function f(t, y, ϕ)
+        return 3.5*y*(1-ϕ/19)
+    end
+    prob = FDDEProblem(f, ϕ, 0.97, 0.8, 0)
+    result = solve(prob, 2, 0.5, DelayPI())
+    @test result≈[19.00001, 19.00001, 19.00001, 18.99999190949352, 18.99997456359874]
+end
+
 @testset "Test FPDEMatrixDiscrete" begin
     @test isapprox(solve(0.5, 0.5, 3, 2, 2, FPDEMatrixDiscrete()), [0 0; 0 0]; atol=1e-2)
 end
