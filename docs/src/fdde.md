@@ -44,9 +44,9 @@ plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 
 ![Delayed](./assets/fdde_example.png)
 
-## FDDE with matrix form
+## System of FDDE
 
-FractionalDiffEq.jl is also capable of solving the fractional delayed differential equations with matrix form:
+FractionalDiffEq.jl is also capable of solving system of fractional delayed differential equations with matrix form:
 
 ```math
 D_{t_0}^\alpha\textbf{x}(t)=\textbf{A}(t)\textbf{x}(t)+\textbf{B}(t)\textbf{x}(t-\tau)+\textbf{f}(t)
@@ -54,15 +54,23 @@ D_{t_0}^\alpha\textbf{x}(t)=\textbf{A}(t)\textbf{x}(t)+\textbf{B}(t)\textbf{x}(t
 
 We explain the usage of algorithm by using an example:
 
-``
-D_{t_0}^\alpha\left(\begin{array}\\x_{1}(t)\\x_{2}(t)\\x_{3}(t)\\x_{4}(t)\end{array}\right)=\begin{pmatrix}0  & 0 & 1 & 0 \\0  & 0 & 0 & 1 \\0  & -2 & 0 & 0 \\-2 & 0 & 0 & 0 \end{pmatrix}\left(\begin{array}\\x_{1}(t) \\x_{2}(t) \\x_{3}(t) \\x_{4}(t)\end{array}\right)+\begin{pmatrix}0  & 0 & 0 & 0 \\0  & 0 & 0 & 0 \\-2  & 0 & 0 & 0 \\0 & -2 & 0 & 0\end{pmatrix}\left(\begin{array}\\x_{1}(t-\tau) \\x_{2}(t-\tau) \\x_{3}(t-\tau) \\x_{4}(t-\tau)\end{array}\right)
-``
+```math
+\textbf{x}(t)=\left(\begin{array}\\x_{1}(t)\\x_{2}(t)\\x_{3}(t)\\x_{4}(t)\end{array}\right)
+```
+
+```math
+\textbf{A}=\begin{pmatrix} 0  & 0 & 1 & 0 \\0  & 0 & 0 & 1 \\0  & -2 & 0 & 0 \\-2 & 0 & 0 & 0 \end{pmatrix}
+```
+
+```math
+\textbf{B}=\begin{pmatrix}0  & 0 & 0 & 0 \\0  & 0 & 0 & 0 \\-2  & 0 & 0 & 0 \\0 & -2 & 0 & 0\end{pmatrix}
+```
 
 With initial condition:
 
-``
+```math
 \textbf{x}_0(t)=\left(\begin{array}\\\sin(t)\cos(t) \\\sin(t)\cos(t)\\\cos^2(t)-\sin^2(t) \\\cos^2(t)-\sin^2(t)\end{array}\right)
-``
+```
 
 By using the ```MatrixForm``` method in FractionalDiffEq.jl:
 
