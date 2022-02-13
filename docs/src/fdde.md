@@ -56,11 +56,20 @@ We explain the usage of algorithm by using an example:
 
 ```math
 
-\textbf{x}(t)=\left( \begin{array}\\ x_{1}(t) \\ x_{2}(t) \\ x_{3}(t) \\ x_{4}(t) \end{array} \right)
+\textbf{x}(t)=\begin{pmatrix} x_{1}(t) \\ x_{2}(t) \\ x_{3}(t) \\ x_{4}(t) \end{pmatrix}
+
+```
+
+```math
 
 \textbf{A}=\begin{pmatrix} 0 & 0 & 1 & 0 \\ 0  & 0 & 0 & 1 \\ 0  & -2 & 0 & 0 \\ -2 & 0 & 0 & 0 \end{pmatrix}
 
+```
+
+```math
+
 \textbf{B}=\begin{pmatrix} 0 & 0 & 0 & 0 \\ 0  & 0 & 0 & 0 \\ -2 & 0 & 0 & 0 \\ 0 & -2 & 0 & 0 \end{pmatrix}
+
 ```
 
 With initial condition:
