@@ -55,15 +55,15 @@ D_{t_0}^\alpha\textbf{x}(t)=\textbf{A}(t)\textbf{x}(t)+\textbf{B}(t)\textbf{x}(t
 We explain the usage of algorithm by using an example:
 
 ```math
-\textbf{x}(t)=\left(\begin{array}\\x_{1}(t)\\x_{2}(t)\\x_{3}(t)\\x_{4}(t)\end{array}\right)
+\textbf{x}(t)=\left(\\begin{array}\\x_{1}(t)\\x_{2}(t)\\x_{3}(t)\\x_{4}(t)\end{array}\\right)
 ```
 
 ```math
-\textbf{A}=\begin{pmatrix} 0  & 0 & 1 & 0 \\0  & 0 & 0 & 1 \\0  & -2 & 0 & 0 \\-2 & 0 & 0 & 0 \end{pmatrix}
+\textbf{A}=\\begin{pmatrix} 0  & 0 & 1 & 0 \\0  & 0 & 0 & 1 \\0  & -2 & 0 & 0 \\-2 & 0 & 0 & 0 \\end{pmatrix}
 ```
 
 ```math
-\textbf{B}=\begin{pmatrix}0  & 0 & 0 & 0 \\0  & 0 & 0 & 0 \\-2  & 0 & 0 & 0 \\0 & -2 & 0 & 0\end{pmatrix}
+\textbf{B}=\\begin{pmatrix}0  & 0 & 0 & 0 \\0  & 0 & 0 & 0 \\-2  & 0 & 0 & 0 \\0 & -2 & 0 & 0\\end{pmatrix}
 ```
 
 With initial condition:
@@ -87,11 +87,9 @@ end
 A=[0 0 1 0; 0 0 0 1; 0 -2 0 0; -2 0 0 0]
 B=[0 0 0 0; 0 0 0 0 ;-2 0 0 0; 0 -2 0 0]
 f=[0; 0; 0; 0]
-
 result=solve(limit, t0, T, tau, h, alpha, x0, A, B, f, MatrixForm())
 
 using Plots
-
 plot(result[1, :], result[3, :])
 ```
 
