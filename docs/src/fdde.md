@@ -55,7 +55,7 @@ D_{t_0}^\alpha\textbf{x}(t)=\textbf{A}(t)\textbf{x}(t)+\textbf{B}(t)\textbf{x}(t
 We explain the usage of algorithm by using an example:
 
 ```math
-\textbf{x}(t)=\left(\\begin{array}\\x_{1}(t)\\x_{2}(t)\\x_{3}(t)\\x_{4}(t)\end{array}\\right)
+\textbf{x}(t)=\left( \begin{array}\\ x_{1}(t) \\ x_{2}(t) \\ x_{3}(t) \\ x_{4}(t) \end{array} \right)
 ```
 
 ```math
@@ -69,7 +69,7 @@ We explain the usage of algorithm by using an example:
 With initial condition:
 
 ```math
-\textbf{x}_0(t)=\left(\begin{array} \\ \sin(t)\cos(t) \\ \sin(t)\cos(t) \\ \cos^2(t)-\sin^2(t) \\ \cos^2(t)-\sin^2(t)\end{array} \right)
+\textbf{x}_0(t)=\begin{pmatrix} \sin(t)\cos(t) \\ \sin(t)\cos(t) \\ \cos^2(t)-\sin^2(t) \\ \cos^2(t)-\sin^2(t) \end{pmatrix}
 ```
 
 By using the ```MatrixForm``` method in FractionalDiffEq.jl:
