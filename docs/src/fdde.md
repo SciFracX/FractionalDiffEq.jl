@@ -58,19 +58,19 @@ We explain the usage of algorithm by using an example:
 \textbf{x}(t)=\left(\\begin{array}\\x_{1}(t)\\x_{2}(t)\\x_{3}(t)\\x_{4}(t)\end{array}\\right)
 ```
 
-``
-\textbf{A}=\\begin{pmatrix} 0  & 0 & 1 & 0 \\0  & 0 & 0 & 1 \\0  & -2 & 0 & 0 \\-2 & 0 & 0 & 0 \\end{pmatrix}
-``
+```math
+\textbf{A}=\begin{pmatrix} 0 & 0 & 1 & 0 \\ 0  & 0 & 0 & 1 \\ 0  & -2 & 0 & 0 \\ -2 & 0 & 0 & 0 \end{pmatrix}
+```
 
-``
-\\textbf{B}=\\begin{pmatrix}0  & 0 & 0 & 0 \\0  & 0 & 0 & 0 \\-2  & 0 & 0 & 0 \\0 & -2 & 0 & 0\\end{pmatrix}
-``
+```math
+\textbf{B}=\begin{pmatrix} 0 & 0 & 0 & 0 \\ 0  & 0 & 0 & 0 \\ -2 & 0 & 0 & 0 \\ 0 & -2 & 0 & 0 \end{pmatrix}
+```
 
 With initial condition:
 
-``
-\textbf{x}_0(t)=\left(\begin{array}\\ \sin(t)\cos(t) \\ \sin(t)\cos(t) \\ \cos^2(t)-\sin^2(t) \\ \cos^2(t)-\sin^2(t)\end{array}\right)
-``
+```math
+\textbf{x}_0(t)=\left(\begin{array} \\ \sin(t)\cos(t) \\ \sin(t)\cos(t) \\ \cos^2(t)-\sin^2(t) \\ \cos^2(t)-\sin^2(t)\end{array} \right)
+```
 
 By using the ```MatrixForm``` method in FractionalDiffEq.jl:
 
