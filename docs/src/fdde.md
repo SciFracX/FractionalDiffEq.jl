@@ -78,7 +78,7 @@ With initial condition:
 \textbf{x}_0(t)=\begin{pmatrix} \sin(t)\cos(t) \\ \sin(t)\cos(t) \\ \cos^2(t)-\sin^2(t) \\ \cos^2(t)-\sin^2(t) \end{pmatrix}
 ```
 
-By using the ```MatrixForm``` method for FDDE in FractionalDiffEq.jl:
+By using the ```MatrixForm``` method for FDDE in FractionalDiffEq.jl and plot the phase portrait:
 
 ```julia
 limit=100
