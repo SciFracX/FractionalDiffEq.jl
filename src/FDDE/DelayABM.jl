@@ -1,15 +1,31 @@
+"""
+    solve(f, ϕ, α, τ, T, h, DelayABM())
+
+Use the Adams-Bashforth-Moulton method to solve fractional delayed differential equations.
+
+### References
+
+```tex
+@inproceedings{Bhalekar2011APS,
+  title={A PREDICTOR-CORRECTOR SCHEME FOR SOLVING NONLINEAR DELAY DIFFERENTIAL EQUATIONS OF FRACTIONAL ORDER},
+  author={Sachin Bhalekar and Varsha Daftardar-Gejji},
+  year={2011}
+}
+```
+"""
 struct DelayABM <: FractionalDiffEqAlgorithm end
 #FIXME: Theer are still some improvments
 
-function solve(f, α, tau, T, h, ::DelayABM)
+function solve(f, α, τ, T, h, ::DelayABM)
     N = Int64(T/h)
-    Ndelay = Int64(tau/h)
+    Ndelay = Int64(τ/h)
     x1 = zeros(Ndelay+N+1)
     x = zeros(Ndelay+N+1)
     x1[Ndelay+N+1] = 0
     
     x[Ndelay+N+1] = 0
 
+    # History function handling
     x[1:Ndelay]=0.5*ones(Ndelay)
     
     x0=copy(x[Ndelay])
@@ -29,7 +45,7 @@ function solve(f, α, tau, T, h, ::DelayABM)
             
             N1=N1+((n-j+1)^α-(n-j)^α)*f(0, x[j], x[Ndelay+j]);  
         end
-        x1[Ndelay+n+1]=x0+h^α*N1/(gamma(α)*α)
+        x1[Ndelay+n+1] = x0+h^α*N1/(gamma(α)*α)
         
         x[Ndelay+n+1]=x0+h^α*(f(0, x[n+1], x[Ndelay+n+1])+M1)/gamma(α+2)
     end

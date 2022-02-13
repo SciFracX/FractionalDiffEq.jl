@@ -27,6 +27,7 @@ FractionalDiffEq.FPDEMatrixDiscrete
 FractionalDiffEq.DelayPECE
 FractionalDiffEq.DelayPI
 FractionalDiffEq.MatrixForm
+FractionalDiffEq.DelayABM
 ```
 
 ## Systems of Fractional Differential Equations
