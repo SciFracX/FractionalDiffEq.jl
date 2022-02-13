@@ -166,7 +166,3 @@ end
 @testset "Test FPDEMatrixDiscrete" begin
     @test isapprox(solve(0.5, 0.5, 3, 2, 2, FPDEMatrixDiscrete()), [0 0; 0 0]; atol=1e-2)
 end
-
-@testset "Test Bagley Torvik equation" begin
-    @test isapprox(bagleytorvik(1, 1, 1, 1, 1, 0.5), [0; 0; 0.12773958089728293]; atol=1e-2)
-end
