@@ -63,7 +63,16 @@ end
 
 end
 
-@testset "Test GLWithMemory algorithm" begin
+@testset "Test ClosedFormHankelM method" begin
+    t = collect(0:0.5:1);
+    rightfun(x)=sin(x^2)
+    prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], rightfun, [30 90], [1 0.3])
+    result = solve(prob, t, ClosedFormHankelM())
+
+    @test result≈[0.0; 0.08402140107687359; 0.3754974742112727]
+end
+
+@testset "Test GLWithMemory method" begin
     h=0.5
     alpha = [0.99, 0.99, 0.99]
     x0 = [1, 0, 1]

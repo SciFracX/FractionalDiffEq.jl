@@ -51,5 +51,6 @@ end
 end
 
 @testset "Test isFunction" begin
-    @test isfunction(x->x)==true
+    @test isFunction(x->x)==true
+    @test isFunction("Hello")==false
 end

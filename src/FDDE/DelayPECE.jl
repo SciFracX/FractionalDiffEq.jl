@@ -70,7 +70,7 @@ function v(ϕ, n, τ, h, y, yp)
     if τ >= (n-1)*h
         return ϕ((n-1)*h-τ)
     else
-        m = Int64(floor(τ/h))
+        m = floor(Int, τ/h)
         delta = m-τ/h
 
         if m>1

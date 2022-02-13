@@ -40,7 +40,7 @@ function solve(prob::MultiTermsFODEProblem, t, ::ClosedForm)
     end
 
     @fastmath @inbounds @simd for i=2:nT
-        A=y1[i-1:-1:1]'*W[2:i, 1:nA]
+        A = y1[i-1:-1:1]'*W[2:i, 1:nA]
         y1[i] = (u[i]-sum(A.*parameters./(h.^orders)))/D
     end
 

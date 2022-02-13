@@ -13,8 +13,8 @@ struct ModifiedTrap <: FractionalDiffEqAlgorithm end
 
 
 function testsolve(f, α, x0, h, T, ::ModifiedTrap)
-    equationsize = length(x0)
-    N = Int64(floor(T/h))
+    equationsize = length(α)
+    N = floor(Int, T/h)
     x = zeros(equationsize, N)
 
     # Initial conditions
