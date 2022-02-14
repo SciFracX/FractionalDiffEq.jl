@@ -45,4 +45,28 @@ plot(XX, YY, U, st=:surface)
 
 ![Diffusion](./assets/diffusion.png)
 
-## Time fractional differential equations
+## Time fractional diffusion equation
+
+When we are modeling our problems, **time fractional derivative** maybe more suitable for our model, which changes the diffusion equation to **Diffusion equation with time fractional derivative**
+
+```math
+^C_0D^\alpha_tu=\kappa\frac{\partial^2u}{\partial x^2}
+```
+Here, ``\kappa`` is the [diffusion coefficient](https://en.wikipedia.org/wiki/Mass_diffusivity)
+
+```julia
+using FractionalDiffEq
+
+K = 1
+fdorder = 1.9
+dx = pi/20
+dt = 0.01
+n = 2
+xStart = 0
+xEnd = pi
+
+using Plots
+plotlyjs()
+U=solve(fdorder, dx, dt, xStart, xEnd, n, K, CaputoDiscretizationEX())
+plot(x, t, U, st=:surface)
+```
