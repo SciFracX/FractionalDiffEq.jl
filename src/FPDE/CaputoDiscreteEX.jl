@@ -1,5 +1,8 @@
 """
-    solve()
+    solve(α, dx, dt, xStart, xEnd, n, κ, CaputoDiscretizationEX())
+
+!!! tip
+    Here, if we set ``0<\\alpha\\leq 1``, the equation is the fractional diffusion equation or subdiffusion equation, whereas for ``1<\\alpha\\leq 2``, the equation is the fractional diffusion-wave equation.
 
 Use explicit Caputo discretization method
 
@@ -20,11 +23,11 @@ Matlab version: https://github.com/awstown/Fractional-Derivative
 """
 struct CaputoDiscretizationEX <: FractionalDiffEqAlgorithm end
 
-function solve(fdorder, dx, dt, xStart, xEnd, n, K, ::CaputoDiscretizationEX)
+function solve(α, dx, dt, xStart, xEnd, n, κ, ::CaputoDiscretizationEX)
     x = collect(0:dx:xEnd)
     t = collect(0:dt:n)
-    S = K*((dt^fdorder)/(dx^2))
-    S_bar = gamma(3-fdorder) * S
+    S = κ*((dt^α)/(dx^2))
+    S_bar = gamma(3-α) * S
         
 
     U = zeros(Int64(n/dt + 1), round(Int, (xEnd - xStart)/dx + 1))
@@ -35,7 +38,7 @@ function solve(fdorder, dx, dt, xStart, xEnd, n, K, ::CaputoDiscretizationEX)
     U[1, :] = sin.(x)
 
     k = collect(1:length(t)-2)
-    bOfK = bbcoeff(k, fdorder)
+    bOfK = bbcoeff(k, α)
     test = Float64[]
 
     for m = 1:(length(t)- 1)
@@ -47,13 +50,13 @@ end
 
 
 
-function bbcoeff(k, fdorder)
+function bbcoeff(k, α)
     c = zeros(length(k))
     for i=1:length(k)
         if maximum(k) < 2
-            @. c = (k+1)^(1-fdorder) - k^(1-fdorder);
+            @. c = (k+1)^(1-α) - k^(1-α);
         else
-            @. c = (k+1)^(2-fdorder) - k^(2-fdorder);
+            @. c = (k+1)^(2-α) - k^(2-α);
         end
     end
     return c
