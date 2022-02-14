@@ -23,8 +23,8 @@ struct CaputoDiscretizationEX <: FractionalDiffEqAlgorithm end
 function solve(fdorder, dx, dt, xStart, xEnd, n, K, ::CaputoDiscretizationEX)
     x = collect(0:dx:xEnd)
     t = collect(0:dt:n)
-    S = K * ((dt^fdorder)/(dx^2))
-    S_bar = gamma(3 - fdorder) * S
+    S = K*((dt^fdorder)/(dx^2))
+    S_bar = gamma(3-fdorder) * S
         
 
     U = zeros(Int64(n/dt + 1), round(Int, (xEnd - xStart)/dx + 1))
@@ -66,10 +66,10 @@ function nextStep(U, m, S_bar, diff, bOfK )
     row_center = U[m, 2:end-1]
     
     if m < 2
-        Uspatial = row_center .+ S_bar.*(row_left - 2*row_center + row_right)
+        Uspatial = row_center + S_bar*(row_left - 2*row_center + row_right)
     else
         row_below  = U[m-1, 2:end-1]
-        Uspatial = 2 .*row_center .- row_below .+ S_bar.*(row_left .- 2*row_center .+ row_right);
+        Uspatial = 2 * row_center - row_below + S_bar*(row_left - 2*row_center + row_right)
     end
 
     if m > 2
