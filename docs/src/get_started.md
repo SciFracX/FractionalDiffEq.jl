@@ -58,7 +58,7 @@ fun(x, y) = 1-y
 prob = SingleTermFODEProblem(fun, 1.8, 0.01, 20)
 ```
 
-The ```SingleTermFODEProblem``` is a class of fractional differential equation, describing equations with ``D^{\alpha}u=f(t, u)`` pattern. For other patterns of fractional differential equation, please refer to [Problem types](@ref problems)
+The ```SingleTermFODEProblem``` is a class of fractional differential equation, describing equations with ``D^{\alpha}u=f(t, u)`` pattern. For other patterns and classes of fractional differential equation, please refer to [Problem types](@ref problems)
 
 ## Step 2: Solving a Problem
 

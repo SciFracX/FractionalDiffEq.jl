@@ -52,6 +52,11 @@ When we are modeling our problems, **time fractional derivative** maybe more sui
 ```math
 ^C_0D^\alpha_tu=\kappa\frac{\partial^2u}{\partial x^2}
 ```
+
+```math
+y(0,t) = 0, \quad y(1,t) = 0 \qquad  \quad y(x,0) = \sin(x)
+```
+
 Here, ``\kappa`` is the [diffusion coefficient](https://en.wikipedia.org/wiki/Mass_diffusivity)
 
 ```julia
