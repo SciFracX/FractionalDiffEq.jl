@@ -14,9 +14,9 @@ Use the Adams-Bashforth-Moulton method to solve fractional delayed differential 
 ```
 """
 struct DelayABM <: FractionalDiffEqAlgorithm end
-#FIXME: Theer are still some improvments
+#FIXME: There are still some improvments
 
-function solve(f, α, τ, T, h, ::DelayABM)
+function solve(f, ϕ, α, τ, T, h, ::DelayABM)
     N = Int64(T/h)
     Ndelay = Int64(τ/h)
     x1 = zeros(Ndelay+N+1)
@@ -26,7 +26,7 @@ function solve(f, α, τ, T, h, ::DelayABM)
     x[Ndelay+N+1] = 0
 
     # History function handling
-    x[1:Ndelay]=0.5*ones(Ndelay)
+    x[1:Ndelay]=ϕ*ones(Ndelay)
     
     x0=copy(x[Ndelay])
     
