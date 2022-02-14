@@ -1,3 +1,23 @@
+"""
+    solve()
+
+Use explicit Caputo discretization method
+
+### References
+
+```tex
+@article{Murillo2011AnED,
+  title={An Explicit Difference Method for Solving Fractional Diffusion and Diffusion-Wave Equations in the Caputo Form},
+  author={Joaqu{\'i}n Quintana Murillo and Santos B. Yuste},
+  journal={Journal of Computational and Nonlinear Dynamics},
+  year={2011},
+  volume={6},
+  pages={021014}
+}
+```
+
+Matlab version: https://github.com/awstown/Fractional-Derivative
+"""
 struct CaputoDiscretizationEX <: FractionalDiffEqAlgorithm end
 
 function solve(fdorder, dx, dt, xStart, xEnd, n, K, ::CaputoDiscretizationEX)
