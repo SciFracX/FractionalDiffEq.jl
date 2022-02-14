@@ -62,11 +62,7 @@ end
     xEnd = pi
 
     U=solve(fdorder, dx, dt, xStart, xEnd, n, K, CaputoDiscretizationEX())
-    @test U≈[ 0.0  1.0  1.22465e-16
-    0.0   0.793379    0.0
-    0.0   0.43766     0.0
-    0.0   0.00221205  0.0
-    0.0  -0.42797     0.0]
+    @test isapprox(U, [ 0.0  1.0  1.22465e-16; 0.0   0.793379    0.0; 0.0   0.43766     0.0; 0.0   0.00221205  0.0; 0.0 -0.42797 0.0]; atol=1e-3)
 end
 
 @testset "Test Closed Form method" begin
