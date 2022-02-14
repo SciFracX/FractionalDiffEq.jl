@@ -52,6 +52,23 @@ end
     @test result ≈ [0.0  0.0; 0.0  0.0644409; 0.0  0.0]
 end
 
+@testset "Test CaputoDiscretizationEX method" begin
+    K = 1
+    fdorder = 1.9
+    dx = pi/2
+    dt = 0.5
+    n = 2
+    xStart = 0
+    xEnd = pi
+
+    U=solve(fdorder, dx, dt, xStart, xEnd, n, K, CaputoDiscretizationEX())
+    @test U≈[ 0.0  1.0  1.22465e-16
+    0.0   0.793379    0.0
+    0.0   0.43766     0.0
+    0.0   0.00221205  0.0
+    0.0  -0.42797     0.0]
+end
+
 @testset "Test Closed Form method" begin
     t=collect(0:0.002:10);
 
@@ -170,8 +187,4 @@ end
     0.0394769  -0.00641779  0.210729       
     0.0458196   0.019928    0.175057       
     0.0843858   0.0438356   0.113762]; atol=1e-3)
-end
-
-@testset "Test FPDEMatrixDiscrete" begin
-    @test isapprox(solve(0.5, 0.5, 3, 2, 2, FPDEMatrixDiscrete()), [0 0; 0 0]; atol=1e-2)
 end

@@ -1,7 +1,7 @@
 using FractionalDiffEq
 using Plots
 
-result = solve(0.7, 1.8, 1, 3, 2, FPDEMatrixDiscrete())
+result = solve(0.7, 1.8, 21, 148, 2, FPDEMatrixDiscrete())
 
 XX, YY = meshgrid(0.05^2/6 .*(0:147), 0:0.05:1)
 

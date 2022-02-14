@@ -19,6 +19,9 @@ include("Direct.jl")
 
 include("NonLinear/NonLinear.jl")
 
+# Fractional partial differential equations
+include("FPDE/CaputoDiscreteEX.jl")
+
 # Fractional delay differential equations
 include("FDDE/DelayPECE.jl")
 include("FDDE/PI.jl")
@@ -45,7 +48,7 @@ export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, G2Direct
 
 # FPDE solvers
-export FPDEMatrixDiscrete
+export FPDEMatrixDiscrete, CaputoDiscretizationEX
 
 # System of FDE solvers
 export NonLinearAlg, GLWithMemory, ModifiedTrap
