@@ -67,6 +67,8 @@ xEnd = pi
 
 using Plots
 plotlyjs()
-U=solve(fdorder, dx, dt, xStart, xEnd, n, K, CaputoDiscretizationEX())
+U=solve(fdorder, dx, dt, xStart, xEnd, n, K, FiniteDiffEx())
 plot(x, t, U, st=:surface)
 ```
+
+![DiffusionEx](./assets/finitediffex.png)

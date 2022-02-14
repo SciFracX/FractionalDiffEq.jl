@@ -21,18 +21,18 @@ Use explicit Caputo discretization method
 
 Matlab version: https://github.com/awstown/Fractional-Derivative
 """
-struct CaputoDiscretizationEX <: FractionalDiffEqAlgorithm end
+struct FiniteDiffEx <: FractionalDiffEqAlgorithm end
 
-function solve(α, dx, dt, xStart, xEnd, n, κ, ::CaputoDiscretizationEX)
+function solve(α, dx, dt, xStart, xEnd, n, κ, ::FiniteDiffEx)
     x = collect(0:dx:xEnd)
     t = collect(0:dt:n)
     S = κ*((dt^α)/(dx^2))
-    S_bar = gamma(3-α) * S
+    S_bar = gamma(3-α)*S
         
 
     U = zeros(Int64(n/dt + 1), round(Int, (xEnd - xStart)/dx + 1))
 
-    # Boundry conditions handling
+    #FIXME: Boundry conditions handling
     U[:, 1] .= 0
     U[:, end] .= 0
     U[1, :] = sin.(x)

@@ -10,5 +10,5 @@ xEnd = pi
 
 using Plots
 plotlyjs()
-U=solve(fdorder, dx, dt, xStart, xEnd, n, K, CaputoDiscretizationEX())
-plot(x, t, U, st=:surface)
+U=solve(fdorder, dx, dt, xStart, xEnd, n, K, FiniteDiffEx())
+plt=plot(x, t, U, st=:surface)
