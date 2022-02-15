@@ -44,7 +44,7 @@ plot(XX, YY, U, st=:surface)
 ```
 
 ```@raw html
-<object type="text/html" data="./assets/diffusion.html" style="width:100%;height:450px;"></object>
+<div type="text/html" data="./assets/diffusion.html" style="width:100%;height:450px;"></div>
 ```
 
 ## Time fractional diffusion equation
