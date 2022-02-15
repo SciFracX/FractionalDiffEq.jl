@@ -19,28 +19,22 @@ y(0,t) = 0, \quad y(1,t) = 0 \qquad  \quad y(x,0) = 0
 We can use the ```FPDEMatrixDiscrete``` algorithm to solve this problem:
 
 ```julia
-using FractionalDiffEq
-using Plots
+using FractionalDiffEq, Plots
 
-tmp = solve(0.7, 1.8, 1, 21, 148, FPDEMatrixDiscrete())
+α = 0.7
+β = 1.8
+κ = 1
+T = 2
+m = 21
+n = 148
 
-
-
-YS = reshape(tmp, 19, 147)
-YS = reverse(YS, dims=2)
-U = YS
-
-
-rows, columns = size(U)
-
-U = [zeros(1, columns); U; zeros(1, columns)]
-U=[zeros(1, 21)' U]
+result = solve(α, β, κ, T, m, n, FPDEMatrixDiscrete())
 
 XX, YY = meshgrid(0.05^2/6 .*(0:147), 0:0.05:1)
 
-plotly()
+plotlyjs()
 
-plot(XX, YY, U, st=:surface)
+plot(XX, YY, result, st=:surface)
 ```
 
 ![Diffusion](./assets/diffusion.png)

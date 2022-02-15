@@ -19,7 +19,7 @@ struct FODEMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 
 """
-    solve(α, β, T, M, N, FPDEMatrixDiscrete())
+    solve(α, β, κ, T, M, N, FPDEMatrixDiscrete())
 
 Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional partial differential equations to simple algebra system and solve the system.
 
@@ -183,7 +183,7 @@ function bagleytorvik(p1, p2, p3, right, T, h)
 end
 
 
-function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
+function solve(α, β, κ, T, M, N, ::FPDEMatrixDiscrete)
     h = T/(M-1)
     τ = h^2/6
     
@@ -193,7 +193,7 @@ function solve(α, β, T, M, N, ::FPDEMatrixDiscrete)
     # Construct the spatial partial derivative matrix
     SMatrix = kron(zeros(N-1, N-1) + I, RieszMatrix(β, M, h))
 
-    system = TMatrix-SMatrix
+    system = TMatrix - κ.*SMatrix
 
     # Handling boundary conditions
     BMatrix = kron(zeros(N-1, N-1) + I, eliminator(M, [1, M]))

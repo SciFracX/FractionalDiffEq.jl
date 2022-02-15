@@ -48,7 +48,7 @@ end
 end
 
 @testset "Test Matrix discrete method for FPDE" begin
-    result = solve(0.7, 1.8, 1, 3, 2, FPDEMatrixDiscrete())
+    result = solve(0.7, 1.8, 1, 1, 3, 2, FPDEMatrixDiscrete())
     @test result ≈ [0.0  0.0; 0.0  0.0644409; 0.0  0.0]
 end
 
