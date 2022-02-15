@@ -78,7 +78,6 @@ end
     @test isapprox(U, [ 0.0 1.0 1.22465e-16; 0.0   0.238076  0.0; 0.0   0.687879  0.0; 0.0  -1.60198   0.0; 0.0   2.33802   0.0]; atol=1e-3)
 end
 
-
 @testset "Test Closed Form method" begin
     t=collect(0:0.002:10);
 

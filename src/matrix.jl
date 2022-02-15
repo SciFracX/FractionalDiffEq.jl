@@ -1,5 +1,6 @@
 """
 # Usage
+
     solve(prob::MultiTermsFODEProblem, h, T, FODEMatrixDiscrete())
 
 Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional ordinary differential equations to simple algebra system and solve the system.

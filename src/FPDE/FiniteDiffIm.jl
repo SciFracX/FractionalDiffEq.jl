@@ -1,5 +1,5 @@
 """
-    solve()
+    solve(α, dx, dt, xStart, xEnd, n, κ, FiniteDiffIm())
 
 Use implicit finite difference to discrete equations.
 
@@ -15,8 +15,11 @@ Use implicit finite difference to discrete equations.
   pages={1138-1145}
 }
 ```
+
+Matlab version: https://github.com/awstown/Fractional-Derivative
 """
 struct FiniteDiffIm <: FractionalDiffEqAlgorithm end
+
 
 function solve(α, dx, dt, xStart, xEnd, n, κ, ::FiniteDiffIm)
     x = collect(0:dx:xEnd)
@@ -35,7 +38,6 @@ function solve(α, dx, dt, xStart, xEnd, n, κ, ::FiniteDiffIm)
     A1 = diagm((1+2*r)*ones(length(x)-2))
     A2 = diagm(1 => -r*ones(length(x)-3))
     A3 = diagm(-1 => -r*ones(length(x)-3))
-
     A = A1 + A2 + A3
 
 

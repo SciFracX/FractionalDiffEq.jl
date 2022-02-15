@@ -1,5 +1,5 @@
 """
-    solve(α, dx, dt, xStart, xEnd, n, κ, CaputoDiscretizationEX())
+    solve(α, dx, dt, xStart, xEnd, n, κ, FiniteDiffEx())
 
 !!! tip
     Here, if we set ``0<\\alpha\\leq 1``, the equation is the fractional diffusion equation or subdiffusion equation, whereas for ``1<\\alpha\\leq 2``, the equation is the fractional diffusion-wave equation.
