@@ -7,6 +7,8 @@ dt = 0.01
 n = 2
 xStart = 0
 xEnd = pi
+x = collect(0:dx:xEnd)
+t = collect(0:dt:n)
 
 using Plots
 plotlyjs()

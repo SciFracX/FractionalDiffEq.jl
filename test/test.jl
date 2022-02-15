@@ -65,6 +65,23 @@ end
     @test isapprox(U, [ 0.0  1.0  1.22465e-16; 0.0   0.793379    0.0; 0.0   0.43766     0.0; 0.0   0.00221205  0.0; 0.0 -0.42797 0.0]; atol=1e-3)
 end
 
+@testset "Test FiniteDiffIm method" begin
+    K = 1
+    α = 0.5
+    dx = pi/2
+    dt = 0.5
+    n = 2
+    xStart = 0;
+    xEnd = pi    
+    x = collect(0:dx:xEnd)
+    t = collect(0:dt:n)
+    
+    U=solve(fdorder, dx, dt, xStart, xEnd, n, K, FiniteDiffEx())
+
+    @test isapprox(U, [0.0   1.0   1.22465e-16; 0.0   0.793379    0.0; 0.0   0.43766     0.0; 0.0   0.00221205  0.0; 0.0  -0.42797     0.0]; atol=1e-3)
+end
+
+
 @testset "Test Closed Form method" begin
     t=collect(0:0.002:10);
 

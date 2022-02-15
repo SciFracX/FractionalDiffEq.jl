@@ -21,6 +21,7 @@ include("NonLinear/NonLinear.jl")
 
 # Fractional partial differential equations
 include("FPDE/FiniteDiffEx.jl")
+include("FPDE/FiniteDiffIm.jl")
 
 # Fractional delay differential equations
 include("FDDE/DelayPECE.jl")
