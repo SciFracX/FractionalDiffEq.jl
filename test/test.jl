@@ -71,14 +71,11 @@ end
     dx = pi/2
     dt = 0.5
     n = 2
-    xStart = 0;
-    xEnd = pi    
-    x = collect(0:dx:xEnd)
-    t = collect(0:dt:n)
-    
-    U=solve(fdorder, dx, dt, xStart, xEnd, n, K, FiniteDiffEx())
+    xStart = 0
+    xEnd = pi
 
-    @test isapprox(U, [0.0   1.0   1.22465e-16; 0.0   0.793379    0.0; 0.0   0.43766     0.0; 0.0   0.00221205  0.0; 0.0  -0.42797     0.0]; atol=1e-3)
+    U=solve(α, dx, dt, xStart, xEnd, n, K, FiniteDiffEx())
+    @test isapprox(U, [ 0.0 1.0 1.22465e-16; 0.0   0.238076  0.0; 0.0   0.687879  0.0; 0.0  -1.60198   0.0; 0.0   2.33802   0.0]; atol=1e-3)
 end
 
 
