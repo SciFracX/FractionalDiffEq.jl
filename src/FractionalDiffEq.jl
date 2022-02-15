@@ -49,7 +49,7 @@ export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, G2Direct
 
 # FPDE solvers
-export FPDEMatrixDiscrete, FiniteDiffEx
+export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm
 
 # System of FDE solvers
 export NonLinearAlg, GLWithMemory, ModifiedTrap

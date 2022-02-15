@@ -1,3 +1,21 @@
+"""
+    solve()
+
+Use implicit finite difference to discrete equations.
+
+### References
+
+```tex
+@article{Murio2008ImplicitFD,
+  title={Implicit finite difference approximation for time fractional diffusion equations},
+  author={Diego A. Murio},
+  journal={Comput. Math. Appl.},
+  year={2008},
+  volume={56},
+  pages={1138-1145}
+}
+```
+"""
 struct FiniteDiffIm <: FractionalDiffEqAlgorithm end
 
 function solve(α, dx, dt, xStart, xEnd, n, κ, ::FiniteDiffIm)
@@ -6,6 +24,7 @@ function solve(α, dx, dt, xStart, xEnd, n, κ, ::FiniteDiffIm)
 
     U = zeros(Int64(n/dt + 1), Int64((xEnd - xStart)/dx + 1))
 
+    #FIXME: Boundry conditions handling
     U[:, 1] .= 0
     U[:, end] .= 0
 
