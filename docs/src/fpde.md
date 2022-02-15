@@ -43,9 +43,7 @@ plotly()
 plot(XX, YY, U, st=:surface)
 ```
 
-```@raw html
-<div type="text/html" data="./assets/diffusion.html" style="width:100%; height:800px;"></div>
-```
+![Diffusion](./assets/diffusion.png)
 
 ## Time fractional diffusion equation
 
