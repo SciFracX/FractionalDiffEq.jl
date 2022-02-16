@@ -10,8 +10,8 @@ s="\$D^{1.8}y(x)=1-y(x),\\ y(0)=0\$"
 
 # Numerical solution
 fun(x, y) = 1-y
-prob = SingleTermFODEProblem(fun, 1.8, 0.01)
-result = solve(prob, 0, 20, PECE())
+prob = SingleTermFODEProblem(fun, 1.8, 0, 20)
+result = solve(prob, 0.01, PECE())
 tspan = collect(0:0.01:20)
 target = analytical(tspan)
 

@@ -33,7 +33,7 @@ s="\$D^{1.8}y(x)=1-y(x),\\ y(0)=0\$"
 fun(x, y) = 1-y
 h=0.01;T=20;u0=0
 prob = SingleTermFODEProblem(fun, 1.8, u0, T)
-result = solve(prob, h, T, PECE())
+result = solve(prob, h, PECE())
 tspan = collect(0:0.01:20)
 target = analytical(tspan)
 
