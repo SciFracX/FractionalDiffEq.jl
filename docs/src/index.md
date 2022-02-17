@@ -39,7 +39,7 @@ pkg> add FractionalDiffEq#master
 
 * Benefit from the advancing features of JuliaLang, FractionalDiffEq.jl has impressive performance and high speed, help the model more efficient and robust.
 
-* Capable of solving both linear and nonlinear fractional differential equations. Including fractional ordinary differential equations, fractional partial differential equations and fractional delayed differential equations.
+* Capable of solving both linear and nonlinear fractional differential equations. Including fractional ordinary differential equations, fractional partial differential equations, fractional delayed differential equations, distributed order differential equations and system of fractional differential equations.
 
 * Detailed models supporting, such as Bagley Torvik equations, Relaxation Oscillation equations and Diffusion equations many more.
 

@@ -30,7 +30,7 @@ E_{\alpha,\ \beta}^\gamma(z)=\sum_{k=0}^{\infty}\frac{(\gamma)_k}{k!\Gamma(\alph
 
 Here ``(\gamma)_k=\frac{\Gamma(\gamma+k)}{\Gamma(\gamma)}`` is the [Pochhammer symbol](https://en.wikipedia.org/wiki/Falling_and_rising_factorials).
 
-In FractionalDiffEq.jl, you can compute the Mittag Leffler function by calling:
+In FractionalDiffEq.jl, you can compute the three types of Mittag Leffler functions by calling:
 
 ```julia-repl
 julia> mittleff(α, z)

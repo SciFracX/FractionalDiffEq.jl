@@ -211,7 +211,7 @@ function _mittleff0(α, β, z)
         zc = isreal(z) && z < 0 ? complex(z) : z
         α == 2 && return sinh(sqrt(zc))/sqrt(zc)
     end
-    1 < α && return mittleffsum(α,β,z)
+    1 < α && return mittleffsum(α, β, z)
     ρ = myeps(z)
     return _mittleff_slow_with_eps(α, β, z, ρ)
 end

@@ -72,9 +72,10 @@ So we can use FractionalDiffEq.jl to solve the problem:
 
 ```julia
 fun(x, y) = 1-y
-prob = SingleTermFODEProblem(fun, 0.5, 0, 5)
-result = solve(prob, 0.001, PECE())
-tspan = collect(0:0.001:5)
+u0=0;T=5;h=0.001
+prob = SingleTermFODEProblem(fun, 0.5, u0, T)
+result = solve(prob, h, PECE())
+tspan = collect(0:h:T)
 ```
 
 And if you plot the result, you can see the result of the fractional differential equation:
@@ -103,14 +104,10 @@ using Plots, LaTeXStrings
 
 s="\$ A\\ complicated\\ example \$"
 
-T = 30
-h = 0.05
+T=30;h=0.05
 tspan = collect(0.05:h:T)
-
 rightfun(x) = 172/125*cos(4/5*x)
-
-prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 1], rightfun)
-
+prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 1], rightfun) #pass the parameters vector and the orders vector
 result = solve(prob, h, T, FODEMatrixDiscrete())
 plot(tspan, result, title=s, legend=:bottomright)
 ```
