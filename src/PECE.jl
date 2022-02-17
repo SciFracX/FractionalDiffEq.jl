@@ -1,5 +1,3 @@
-import FractionalDiffEq: FDEProblem, SingleTermFODEProblem, MultiTermsFODEProblem
-
 using SpecialFunctions
 
 
