@@ -48,7 +48,7 @@ function solve(limit, t0, T, tau, h, alpha, x0, A, B, f, ::MatrixForm)
         Mt = zeros(var_num, cols*length(t))
 
         for j=1:length(t)
-            Mt[:, cols*j-cols+1:cols*j]=M
+            Mt[:, (cols*j-cols+1):(cols*j)]=M
         end
 
         if risk_index != zeros(var_num, 1)

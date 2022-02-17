@@ -42,7 +42,7 @@ function solve(α, dx, dt, xStart, xEnd, n, κ, ::FiniteDiffEx)
     test = Float64[]
 
     for m = 1:(length(t)- 1)
-        # It is from 2 to end - 1 because of the B.C.
+        # It is from 2 to end - 1 because of the boundry conditions
         U[m+1, 2:end-1], diff = nextStep(U, m, S_bar, test, bOfK);
     end
     return U
@@ -63,7 +63,7 @@ function bbcoeff(k, α)
 end
 
 # Compute values for each time step
-function nextStep(U, m, S_bar, diff, bOfK )
+function nextStep(U, m, S_bar, diff, bOfK)
     row_left   = U[m, 1:end-2]
     row_right  = U[m, 3:end]
     row_center = U[m, 2:end-1]
@@ -94,6 +94,5 @@ function nextStep(U, m, S_bar, diff, bOfK )
     else
         Unext = Uspatial
     end
-
     return Unext, diff
 end
