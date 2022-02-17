@@ -117,7 +117,7 @@ struct FODESystem <: FDEProblem
 end
 
 """
-    solve(problem, args... Alg())
+    solve(problem, args..., Alg())
 
 Generalproblem solving API for solving FDE problems.
 """
@@ -169,7 +169,7 @@ function predictor(f, y, α::Float64, n::Int, h, u0, T)
         predict += B(j, n, α, h)*f(j*h, y[j+1])
     end
 
-    return leftsum + predict
+    return leftsum + h^α/α*predict
 end
 
 
@@ -184,5 +184,5 @@ function A(j, n, α)
 end
 
 function B(j, n, α, h)
-    return h^α/α*((n + 1 - j)^α - (n - j)^α)
+    return ((n + 1 - j)^α - (n - j)^α) # Moved the h^α/α to the end of predictor: return leftsum + h^α/α*predict
 end

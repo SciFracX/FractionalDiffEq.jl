@@ -171,11 +171,7 @@ function bagleytorvik(p1, p2, p3, right, T, h)
 
     rows = collect(1:2)
     
-    if typeof(right) <: Number
-        rightside = eliminator(N, rows)*right*ones(N)
-    else
-        rightside = eliminator(N, rows)*right.(collect(h:h:T))
-    end
+    typeof(right) <: Number ? rightside = eliminator(N, rows)*right*ones(N) : rightside = eliminator(N, rows)*right.(collect(h:h:T))
     
     result = equation\rightside
 

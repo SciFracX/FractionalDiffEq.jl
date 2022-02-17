@@ -290,15 +290,9 @@ Compute three-parametric mittleff(α, β, γ, z).
 }
 ```
 """
-function mittleff(alpha, beta, gamma, z)
+function mittleff(α, β, γ, z)
     log_epsilon = log(10^(-15))
-
-    E=0
-    if abs(z) < 1e-15
-        E=1/gamma(beta)
-    else
-        E=LTIversion(1, z, alpha, beta, gamma, log_epsilon)
-    end
+    abs(z) < 1e-15 ? E=1/gamma(β) : E=LTIversion(1, z, α, β, γ, log_epsilon)
     return E
 end
 
@@ -306,7 +300,7 @@ function LTIversion(t, lambda, alpha, beta, gama, log_epsilon)
     theta = angle(lambda)
     kmin = ceil(Int, -alpha/2 - theta/2/pi)
     kmax = floor(Int, alpha/2 - theta/2/pi)
-    k_vett = collect(kmin : kmax)
+    k_vett = collect(kmin:kmax)
     s_star = abs(lambda)^(1/alpha) * exp.(im*(theta.+2*k_vett*pi)/alpha)
 
     phi_s_star = (real(s_star).+ abs.(s_star))/2
@@ -371,11 +365,7 @@ end
 
 function OptimalParam_RU(t, phi_s_star_j, pj, log_epsilon)
     sq_phi_s_star_j = sqrt(phi_s_star_j)
-    if phi_s_star_j > 0
-        phibar_star_j = phi_s_star_j*1.01
-    else
-    phibar_star_j = 0.01
-    end
+    phi_s_star_j > 0 ? phibar_star_j = phi_s_star_j*1.01 : phibar_star_j = 0.01
     sq_phibar_star_j = sqrt(phibar_star_j)
     
     f_min=1
@@ -386,6 +376,7 @@ function OptimalParam_RU(t, phi_s_star_j, pj, log_epsilon)
     sq_muj=0
     A=0
     Nj=0
+    
     while stop==0
         phi_t = phibar_star_j*t
         log_eps_phi_t = log_epsilon/phi_t
@@ -405,12 +396,8 @@ function OptimalParam_RU(t, phi_s_star_j, pj, log_epsilon)
     log_eps=log(eps())
     threshold = (log_epsilon-log_eps)/t
     if muj>threshold
-        if abs(pj)<1e-14
-            Q=0
-        else
-            Q=f_tar^(-1/pj)*sqrt(muj)
-        end
-        phibar_star_j=(Q+sqrt(phi_s_star_j))^2
+        abs(pj)<1e-14 ? Q=0 : Q=f_tar^(-1/pj)*sqrt(muj)
+        phibar_star_j = (Q+sqrt(phi_s_star_j))^2
         if phibar_star_j<threshold
             w=sqrt(log_eps/(log_eps-log_epsilon))
             u=sqrt(-phibar_star_j*t/log_eps)
@@ -434,7 +421,7 @@ function OptimalParam_RB(t, phi_s_star_j, phi_s_star_j1, pj, qj, log_epsilon)
     
     sq_phi_star_j = sqrt(phi_s_star_j)
     threshold = 2*sqrt((log_epsilon - log_eps)/t)
-    sq_phi_star_j1 = min(sqrt(phi_s_star_j1), threshold - sq_phi_star_j)
+    sq_phi_star_j1 = min(sqrt(phi_s_star_j1), threshold-sq_phi_star_j)
     
     if pj < 1.0e-14 && qj < 1.0e-14
         sq_phibar_star_j = sq_phi_star_j
@@ -444,18 +431,14 @@ function OptimalParam_RB(t, phi_s_star_j, phi_s_star_j1, pj, qj, log_epsilon)
     
     if pj < 1.0e-14 && qj >= 1.0e-14
         sq_phibar_star_j = sq_phi_star_j
-        if sq_phi_star_j > 0
-            f_min = fac*(sq_phi_star_j/(sq_phi_star_j1-sq_phi_star_j))^qj ;
-        else
-            f_min = fac
-        end
+        sq_phi_star_j > 0 ? f_min = fac*(sq_phi_star_j/(sq_phi_star_j1-sq_phi_star_j))^qj : f_min = fac
         if f_min < f_max
             f_bar = f_min + f_min/f_max*(f_max-f_min)
             fq = f_bar^(-1/qj)
-            sq_phibar_star_j1 = (2*sq_phi_star_j1-fq*sq_phi_star_j)/(2+fq) ;
+            sq_phibar_star_j1 = (2*sq_phi_star_j1-fq*sq_phi_star_j)/(2+fq)
             adm_region = 1
         else
-            adm_region = 0 ;
+            adm_region = 0
         end
     end
     
@@ -479,14 +462,10 @@ function OptimalParam_RB(t, phi_s_star_j, phi_s_star_j1, pj, qj, log_epsilon)
             f_bar = f_min + f_min/f_max*(f_max-f_min)
             fp = f_bar^(-1/pj)
             fq = f_bar^(-1/qj)
-            if conservative_error_analysis==0
-                w = -phi_s_star_j1*t/log_epsilon
-            else
-                w = -2*phi_s_star_j1*t/(log_epsilon-phi_s_star_j1*t)
-            end
+            conservative_error_analysis==0 ? w = -phi_s_star_j1*t/log_epsilon : w = -2*phi_s_star_j1*t/(log_epsilon-phi_s_star_j1*t)
             den = 2+w - (1+w)*fp + fq
-            sq_phibar_star_j = ((2+w+fq)*sq_phi_star_j + fp*sq_phi_star_j1)/den ;
-            sq_phibar_star_j1 = (-(1+w)*fq*sq_phi_star_j + (2+w-(1+w)*fp)*sq_phi_star_j1)/den ;
+            sq_phibar_star_j = ((2+w+fq)*sq_phi_star_j + fp*sq_phi_star_j1)/den
+            sq_phibar_star_j1 = (-(1+w)*fq*sq_phi_star_j + (2+w-(1+w)*fp)*sq_phi_star_j1)/den
             adm_region = 1
         else
             adm_region = 0
@@ -494,16 +473,12 @@ function OptimalParam_RB(t, phi_s_star_j, phi_s_star_j1, pj, qj, log_epsilon)
     end
     if adm_region==1
         log_epsilon = log_epsilon - log(f_bar)
-        if conservative_error_analysis==0
-            w = -sq_phibar_star_j1^2*t/log_epsilon
-        else
-            w = -2*sq_phibar_star_j1^2*t/(log_epsilon-sq_phibar_star_j1^2*t) ;
-        end
-        muj = (((1+w)*sq_phibar_star_j + sq_phibar_star_j1)/(2+w))^2 ;
-        hj = -2*pi/log_epsilon*(sq_phibar_star_j1-sq_phibar_star_j)/((1+w)*sq_phibar_star_j + sq_phibar_star_j1) ;
+        conservative_error_analysis==0 ? w = -sq_phibar_star_j1^2*t/log_epsilon : w = -2*sq_phibar_star_j1^2*t/(log_epsilon-sq_phibar_star_j1^2*t)
+        muj = (((1+w)*sq_phibar_star_j + sq_phibar_star_j1)/(2+w))^2
+        hj = -2*pi/log_epsilon*(sq_phibar_star_j1-sq_phibar_star_j)/((1+w)*sq_phibar_star_j + sq_phibar_star_j1)
         Nj = Complex(ceil(real(sqrt(Complex(1-log_epsilon/t/muj))/hj)), ceil(imag(sqrt(Complex(1-log_epsilon/t/muj))/hj)))
     else
-        muj = 0 ; hj = 0 ; Nj = +Inf
+        muj = 0; hj = 0; Nj = +Inf
     end
     return muj, hj, Nj
 end
@@ -519,7 +494,8 @@ function mlds(z,al,be,k)
         f = f.*(jj.-l.+1)
     end
     c = f./G[k+1:Jmax+1]
-    E = zeros(size(z)) ; Err_Round = zeros(size(z))
+    E = zeros(size(z))
+    Err_Round = zeros(size(z))
     Err_Round1 = copy(Err_Round)
     Err_Round2 = copy(Err_Round)
     for n = 1 : length(z)
@@ -547,49 +523,45 @@ function mlds(z,al,be,k)
             J = length(sum_arg) - 1
             JJ = [J; collect(J:-1:1)]
             Err_Round1[n] = sum(JJ.*abs_sum_arg)*eps()
-            if length(sum_arg) == 1
-                Err_Round2[n] = Err_Round1[n]
-            else
-                Err_Round2[n] = sum(abs.(S))*eps()
-            end
+            length(sum_arg)==1 ? Err_Round2[n] = Err_Round1[n] : Err_Round2[n] = sum(abs.(S))*eps()
             Err_Round[n] = exp((log(Err_Round1[n])+log(Err_Round2[n]))/2)
         end
     end
     return E, Err_Round
 end
 
-function mldr(t,s,alpha,beta,k)
+function mldr(t, s, α, β, k)
     omega = zeros(k+2)
     omega[1] = 1
     jj = collect(0:k)
-    p = (alpha.-jj)
+    p = (α.-jj)
     pr = 1
     for j = 1:k+1
-        pr = pr*p[j] ;
-        omega[j+1] = pr/factorial(j) ;
+        pr = pr*p[j]
+        omega[j+1] = pr/factorial(j)
     end
-    Hk = zeros(k+1) ; Hk[1] = 1 ;
-    for j = 1 : k
+    Hk = zeros(k+1) Hk[1] = 1
+    for j = 1:k
         ll = collect(1:j)
-        Hk[j+1] = -1 ./alpha.*sum(omega[ll.+2].*(k.*ll./j.+1).*Hk[j.-ll.+1])  ;
+        Hk[j+1] = -1 ./α.*sum(omega[ll.+2].*(k.*ll./j.+1).*Hk[j.-ll.+1])
     end
     ck = zeros(k+1)
     for j = 0:k
         temp = 0
         for l = 0 : k-j
             if l == 0
-                p = 1 ;
+                p = 1
             else
-                ll = 0:l-1 ;
-                p = prod(alpha.-beta.-ll) ;
+                ll = 0:l-1
+                p = prod(α.-β.-ll)
             end
-            temp = temp .+ p*Hk[k-j-l+1]./factorial(l) ;
+            temp = temp .+ p*Hk[k-j-l+1]./factorial(l)
         end
-        ck[j+1] = temp/factorial(j) ;
+        ck[j+1] = temp/factorial(j)
     end
     tep = Polynomial(ck)
-    result=tep.(s)
-    R = 1 ./alpha^(k+1)*exp.(t.*s).*(s//1)^(1-alpha.*k.-beta).*result
+    result = tep.(s)
+    R = 1 ./α^(k+1)*exp.(t.*s).*(s//1)^(1-α.*k.-β).*result
     return R
 end
 #=
