@@ -42,7 +42,7 @@ function solve(f, ϕ, α, τ, T, h, ::DelayABM)
 
         for j=1:n   
             M1 = M1+((n-j+2)^(α+1)+(n-j)^(α+1)-2*(n-j+1)^(α+1))*f(0, x[j], x[Ndelay+j])
-            N1 = N1+((n-j+1)^α-(n-j)^α)*f(0, x[j], x[Ndelay+j]);  
+            N1 = N1+((n-j+1)^α-(n-j)^α)*f(0, x[j], x[Ndelay+j])
         end
         x1[Ndelay+n+1] = x0+h^α*N1/(gamma(α)*α)
         x[Ndelay+n+1] = x0+h^α*(f(0, x[n+1], x[Ndelay+n+1])+M1)/gamma(α+2)

@@ -51,9 +51,7 @@ function solve(α, dx, dt, xStart, xEnd, n, κ, ::FiniteDiffIm)
     for k = 1:length(V[:, 1])-1
         V[k+1, :] = A \ ImNextStep(V, U[1, 2:end-1], k, b_j, c_j)'
     end
-
     U[2:end, 2:end-1] = V
-
     return U
 end
 

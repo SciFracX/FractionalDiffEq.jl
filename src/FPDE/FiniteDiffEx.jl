@@ -43,7 +43,7 @@ function solve(α, dx, dt, xStart, xEnd, n, κ, ::FiniteDiffEx)
 
     for m = 1:(length(t)- 1)
         # It is from 2 to end - 1 because of the boundry conditions
-        U[m+1, 2:end-1], diff = nextStep(U, m, S_bar, test, bOfK);
+        U[m+1, 2:end-1], diff = nextStep(U, m, S_bar, test, bOfK)
     end
     return U
 end
@@ -54,9 +54,9 @@ function bbcoeff(k, α)
     c = zeros(length(k))
     for i=1:length(k)
         if maximum(k) < 2
-            @. c = (k+1)^(1-α) - k^(1-α);
+            @. c = (k+1)^(1-α) - k^(1-α)
         else
-            @. c = (k+1)^(2-α) - k^(2-α);
+            @. c = (k+1)^(2-α) - k^(2-α)
         end
     end
     return c
