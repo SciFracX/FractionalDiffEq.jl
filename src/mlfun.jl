@@ -292,6 +292,7 @@ Compute three-parametric mittleff(α, β, γ, z).
 """
 function mittleff(α, β, γ, z)
     log_epsilon = log(10^(-15))
+    E=0
     abs(z) < 1e-15 ? E=1/gamma(β) : E=LTIversion(1, z, α, β, γ, log_epsilon)
     return E
 end
@@ -376,7 +377,7 @@ function OptimalParam_RU(t, phi_s_star_j, pj, log_epsilon)
     sq_muj=0
     A=0
     Nj=0
-    
+
     while stop==0
         phi_t = phibar_star_j*t
         log_eps_phi_t = log_epsilon/phi_t
@@ -540,7 +541,8 @@ function mldr(t, s, α, β, k)
         pr = pr*p[j]
         omega[j+1] = pr/factorial(j)
     end
-    Hk = zeros(k+1) Hk[1] = 1
+    Hk = zeros(k+1)
+    Hk[1] = 1
     for j = 1:k
         ll = collect(1:j)
         Hk[j+1] = -1 ./α.*sum(omega[ll.+2].*(k.*ll./j.+1).*Hk[j.-ll.+1])
