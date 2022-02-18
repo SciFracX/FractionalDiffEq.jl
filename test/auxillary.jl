@@ -57,11 +57,9 @@ end
 
 @testset "FLMM Weihgts function" begin
     a, b, c = Weights(0.5, 2)
-    @test a ≈ [0.816497  0.544331  0.408248]
-    @test b ≈ [-0.816497  -0.396913  -0.333742     
-    0.0        0.393173   0.370502     
-   -0.408248  -0.228708  -0.210067]
-   @test c ≈ 2
+    @test isapprox(a, [0.816497  0.544331  0.408248]; atol=1e-4)
+    @test isapprox(b, [-0.816497  -0.396913  -0.333742; 0.0 0.393173 0.370502; -0.408248  -0.228708  -0.210067]; atol=1e-4)
+   @test isapprox(c, 2; atol=1e-4)
 end
 
 @testset "Test FastConv" begin

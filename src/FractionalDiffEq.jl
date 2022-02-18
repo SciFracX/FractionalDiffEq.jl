@@ -6,6 +6,7 @@ using InvertedIndices
 using QuadGK
 using SpecialMatrices
 using Polynomials
+using FFTW
 
 include("PECE.jl")
 include("matrix.jl")
