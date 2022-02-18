@@ -10,6 +10,7 @@ using Polynomials
 include("PECE.jl")
 include("matrix.jl")
 include("MTrap.jl")
+include("FLMM.jl")
 include("ClosedForm/hankelmatrix.jl")
 include("ClosedForm/ClosedForm.jl")
 include("ClosedForm/highprecision.jl")
@@ -71,5 +72,8 @@ export mittleff, mittlefferr, mittleffderiv
 
 # Distributed order auxiliary SpecialFunctions
 export DOB, DOF, DORANORT, isFunction
+
+# Export auxillary functions for FLMM
+export ourfft, ourifft, Weights, FastConv
 
 end
