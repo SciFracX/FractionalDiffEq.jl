@@ -142,5 +142,36 @@ We can get the phase portrait of the Qi chaotic system:
 
 ![GLWithMemory](./assets/qi.png)
 
+Let's see if want to study the fractional order Lorenz system, FractionalDiffEq.jl is definitely a good tool for you!
+
+```julia
+using FractionalDiffEq
+
+function lorenz(t, x, y, z, k)
+    a=40
+    b=3
+    c=10
+    d=15
+    if k==1
+        return a*(y-x)
+    elseif k==2
+        return c*x-x*z+d*y
+    elseif k==3
+        return x*y-b*z
+    end
+end
+
+α0 = [0.96, 0.96, 0.96]
+x0 = [1, 2, 3]
+h=0.001
+prob=FODESystem(lorenz, α0, x0)
+T=20
+x, y, z=solve(prob, h, T, GLWithMemory())
+using Plots
+plot(x, z)
+```
+
+![Lorenz](./assets/lorenz.png)
+
 
 [^1]: 分数阶微积分学与分数阶控制 薛定宇 ISBN:9787030543981 Page 208
