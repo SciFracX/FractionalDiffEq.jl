@@ -14,6 +14,7 @@ SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 SpecialMatrices = "928aab9d-ef52-54ac-8ca1-acd7ca42c160"
 
 [compat]
+FFTW = "1"
 FractionalCalculus = "0.1.5, 0.2"
 InvertedIndices = "1.1"
 Polynomials = "2.0.24"
