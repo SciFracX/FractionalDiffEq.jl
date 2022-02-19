@@ -20,6 +20,7 @@ include("GL/GLWithMemory.jl")
 include("Direct.jl")
 
 include("NonLinear/NonLinear.jl")
+include("NonLinear/LorenzADM.jl")
 
 # Fractional partial differential equations
 include("FPDE/FiniteDiffEx.jl")
@@ -54,7 +55,7 @@ export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPe
 export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm
 
 # System of FDE solvers
-export NonLinearAlg, GLWithMemory, ModifiedTrap
+export NonLinearAlg, GLWithMemory, ModifiedTrap, LorenzADM
 
 # FDDE solvers
 export DelayPECE, DelayPI, MatrixForm, DelayABM
@@ -65,8 +66,8 @@ export DOMatrixDiscrete
 # Export some api to construct the equation
 export eliminator, RieszMatrix, omega, meshgrid
 
-# Export some special equtions
-export bagleytorvik, diffusion
+# Export some special models
+export bagleytorvik, diffusion, FractionalLorenz
 
 # Auxiliary functions
 export mittleff, mittlefferr, mittleffderiv

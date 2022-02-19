@@ -154,7 +154,7 @@ D^\alpha x_3=x_1x_2-bx_3
 \end{cases}
 ```
 
-With order ``\alpha=0.96`` and initial value ``\textbf{x_0}=[1, 2, 3]``
+With order ``\alpha=0.96`` and initial value ``x_0=[1, 2, 3]``
 
 ```julia
 using FractionalDiffEq
