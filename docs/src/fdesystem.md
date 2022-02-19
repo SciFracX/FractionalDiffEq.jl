@@ -142,7 +142,19 @@ We can get the phase portrait of the Qi chaotic system:
 
 ![GLWithMemory](./assets/qi.png)
 
+## Fractional Order Lorenz System
+
 Let's see if want to study the fractional order Lorenz system, FractionalDiffEq.jl is definitely a good tool for you!
+
+```math
+\begin{cases}
+D^\alpha x_1=a(x_2-x_1)\\
+D^\alpha x_2=cx_1-x_2x_3+dx_2\\
+D^\alpha x_3=x_1x_2-bx_3
+\end{cases}
+```
+
+With order ``\alpha=0.96`` and initial value ``\textbf{x_0}=[1, 2, 3]``
 
 ```julia
 using FractionalDiffEq
