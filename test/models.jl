@@ -12,7 +12,8 @@ end
     q=0.96
     h=0.5
     T=1
-    prob = FractionalLorenz(a, b, c, d, q)
+    x0=[1, 2, 3]
+    prob = FractionalLorenz(a, b, c, d, q, x0)
     x, y, z = solve(prob, h, T, LorenzADM())
     @test isapprox(x, [1.0, 25685.227909653906, -8.14836468585539e22])
     @test isapprox(y, [2.0, 2778.844648448374, -3.1218405233973532e25])

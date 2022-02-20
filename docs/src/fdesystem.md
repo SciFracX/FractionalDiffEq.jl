@@ -181,6 +181,16 @@ T=20
 x, y, z=solve(prob, h, T, GLWithMemory())
 using Plots
 plot(x, z)
+
+####################################
+# Or use the detailed model in FractionalDiffEq.jl
+
+a=40; b=3; c=10; d=15
+prob = FractionalLorenz(a, b, c, d, 0.96)
+x, y, z = solve(prob, h, T, LorenzADM())
+
+using Plots
+plot(x, z)
 ```
 
 ![Lorenz](./assets/lorenz.png)

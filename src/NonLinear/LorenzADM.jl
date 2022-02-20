@@ -4,20 +4,19 @@ struct FractionalLorenz
     c
     d
     α
+    x0
 end
 
 struct LorenzADM <: FractionalDiffEqAlgorithm end
 
 function solve(FL::FractionalLorenz, h, T, ::LorenzADM)
-    a, b, c, d, q = FL.a, FL.b, FL.c, FL.d, FL.α
+    @unpack a, b, c, d, α, x0 = FL
     N=round(Int, T/h)
 
     #k1, k2, k3 = zeros(n+1, 7), zeros(n+1, 7), zeros(n+1, 7)
     x1, x2, x3 = zeros(N+1), zeros(N+1), zeros(N+1)
 
-    x1[1]=1
-    x2[1]=2
-    x3[1]=3
+    x1[1], x2[1], x3[1] = x0
 
     k=zeros(3, 7)
     for n=1:N
