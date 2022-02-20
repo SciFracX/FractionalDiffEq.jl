@@ -7,6 +7,7 @@ using QuadGK
 using SpecialMatrices
 using Polynomials
 using FFTW
+using UnPack
 
 include("PECE.jl")
 include("matrix.jl")

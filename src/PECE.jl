@@ -119,8 +119,8 @@ end
 
 Generalproblem solving API for solving FDE problems.
 """
-function solve(FODE::SingleTermFODEProblem, h, ::PECE)
-    f, α, u0, T = FODE.f, FODE.α, FODE.u0, FODE.T
+function solve(FODE::SingleTermFODEProblem, h::Float64, ::PECE)
+    @unpack f, α, u0, T = FODE
     N = round(Int, T/h)
     y = zeros(N+1) # Initialize the solution array
     leftsum = zero(Float64)
@@ -140,7 +140,7 @@ function solve(FODE::SingleTermFODEProblem, h, ::PECE)
     return y
 end
 
-function right(f, y, α, n, h)
+function right(f, y, α, n, h::Float64)
     temp = zero(Float64)
 
     @fastmath @inbounds @simd for j = 0:n
@@ -150,7 +150,7 @@ function right(f, y, α, n, h)
     return temp
 end
 
-function predictor(f, y, α::Float64, n::Int, h, u0, T)
+function predictor(f, y, α::Float64, n::Integer, h::Float64, u0, T)
     predict = 0
     leftsum = 0
 

@@ -22,7 +22,7 @@ Use explicit rectangular product integration algorithm to solve an FDDE problem.
 struct DelayPI <: FractionalDiffEqAlgorithm end
 
 function solve(FDDE::FDDEProblem, T, h, ::DelayPI)
-    g, ϕ, α, τ, t0 = FDDE.f, FDDE.ϕ, FDDE.α, FDDE.τ, FDDE.t0
+    f, ϕ, α, τ, t0 = FDDE.f, FDDE.ϕ, FDDE.α, FDDE.τ, FDDE.t0
     N = ceil(Int, (T-t0)/h)
     t = t0 .+ h*collect(0:1:N)
 
@@ -33,7 +33,7 @@ function solve(FDDE::FDDEProblem, T, h, ::DelayPI)
     y0 = ϕ(t0)
     y = zeros(N+1)
 
-    f = zeros(N+1)
+    g = zeros(N+1)
     y[1] = y0
 
     for n = 1:N
@@ -54,10 +54,10 @@ function solve(FDDE::FDDEProblem, T, h, ::DelayPI)
             end
         end
 
-        f[n] = g(tnm1, y[n], y_nm1_tau)
+        g[n] = f(tnm1, y[n], y_nm1_tau)
         f_mem = 0
         for j = 0:n-1
-            f_mem = f_mem + f[j+1]*b[n-j+1]
+            f_mem = f_mem + g[j+1]*b[n-j+1]
         end
         y[n+1] = y0 + h_al*f_mem
     end

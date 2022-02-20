@@ -36,24 +36,24 @@ struct FPDEMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 
 function solve(prob::MultiTermsFODEProblem, h, T, ::FODEMatrixDiscrete)
-    leftparameters, leftorders, right = prob.parameters, prob.orders, prob.rightfun
+    @unpack parameters, orders, rightfun = prob
     N::Int64 = floor(Int, T/h)
-    highestorder = Int64(findmax(ceil.(leftorders))[1])
+    highestorder = Int64(findmax(ceil.(orders))[1])
     rows = collect(1:highestorder)
 
     equation = zeros(N, N)
 
-    for (i, j) in zip(leftparameters, leftorders)
+    for (i, j) in zip(parameters, orders)
         equation += i*D(N, j, h)
     end
 
 
     equation = eliminator(N, rows)*equation*eliminator(N, rows)'
 
-    if typeof(right) <: Number
-        rightside = eliminator(N, rows)*right*ones(N)
+    if typeof(rightfun) <: Number
+        rightside = eliminator(N, rows)*rightfun*ones(N)
     else
-        rightside = eliminator(N, rows)*right.(collect(h:h:T))
+        rightside = eliminator(N, rows)*rightfun.(collect(h:h:T))
     end
 
     result = equation\rightside

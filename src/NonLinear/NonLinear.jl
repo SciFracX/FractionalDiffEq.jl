@@ -12,7 +12,7 @@ Dingyu Xue, Northeastern University, China ISBN:9787030543981
 struct NonLinearAlg <: FractionalDiffEqAlgorithm end
 
 function solve(prob::FODESystem, h, tn, ::NonLinearAlg, L0=1e10)
-    f, α, x0 = prob.f, prob.α, prob.x0
+    @unpack f, α, x0 = prob
     n = length(x0)
     m = round(Int, tn/h)+1
     g = genfun(1)

@@ -21,7 +21,7 @@ Using the delayed predictor-corrector method to solve the delayed fractional dif
 struct DelayPECE <: FractionalDiffEqAlgorithm end
 
 function solve(FDDE::FDDEProblem, T, h, ::DelayPECE)
-    f, ϕ, α, τ = FDDE.f, FDDE.ϕ, FDDE.α, FDDE.τ
+    @unpack f, ϕ, α, τ = FDDE
     t = collect(0:h:T)
     maxn = size(t, 1)
     yp = collect(0:h:T+h)
