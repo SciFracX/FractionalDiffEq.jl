@@ -16,7 +16,7 @@ struct ClosedForm <: FractionalDiffEqAlgorithm end
 
 
 function solve(prob::MultiTermsFODEProblem, t, ::ClosedForm)
-    parameters, orders, rightfun, rparameters, rorders = prob.parameters, prob.orders, prob.rightfun, prob.rparameters, prob.rorders
+    @unpack parameters, orders, rightfun, rparameters, rorders = prob
     h = t[2]-t[1]
     D = sum(parameters./(h.^orders))
     nT = length(t)

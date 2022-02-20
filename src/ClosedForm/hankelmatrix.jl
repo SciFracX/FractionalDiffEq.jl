@@ -9,7 +9,7 @@ struct ClosedFormHankelM <: FractionalDiffEqAlgorithm end
 
 
 function solve(prob::MultiTermsFODEProblem, t, ::ClosedFormHankelM)
-    a, na, rightfun, b, nb = prob.parameters, prob.orders, prob.rightfun, prob.rparameters, prob.rorders
+    @unpack parameters, orders, rightfun, rparameters, rorders = prob
     h = t[2]-t[1]
     u = rightfun.(t)
     u = u[:]
@@ -17,14 +17,14 @@ function solve(prob::MultiTermsFODEProblem, t, ::ClosedFormHankelM)
 
     g = genfun(1)
     nt = length(t)
-    n = length(a)
-    m = length(b)
+    n = length(parameters)
+    m = length(rparameters)
     for i=1:n
-        A = A .+ getvec(na[i], nt, g)*a[i]/(h^na[i])
+        A = A .+ getvec(orders[i], nt, g)*parameters[i]/(h^orders[i])
     end
 
     for i=1:m
-        B = B .+ getvec(nb[i], nt, g)*b[i]/(h^nb[i])
+        B = B .+ getvec(rorders[i], nt, g)*rparameters[i]/(h^rorders[i])
     end
 
     A = rotl90(newhankel(A[end:-1:1]))

@@ -8,13 +8,14 @@ Closed form high precision algorithms for multi term ordinary differential equat
 struct ClosedFormHighPercision <: FractionalDiffEqAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, t, p, ::ClosedFormHighPercision)
-    a, na, rightfun, b, nb =  prob.parameters, prob.orders, prob.rightfun, prob.rparameters, prob.rorders
+    @unpack parameters, orders, rightfun, rparameters, rorders =  prob
     u = rightfun.(t)
     h = t[2]-t[1]
     n = length(t)
-    na = na[:]
-    nb = nb[:]
-    b = b[:]
+    na = orders[:]
+    nb = rorders[:]
+    a = parameters[:]
+    b = rparameters[:]
     vec = [na; nb]
     u = u[:]
     g = genfun(p)
