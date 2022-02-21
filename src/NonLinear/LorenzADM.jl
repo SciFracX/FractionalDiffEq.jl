@@ -7,6 +7,20 @@ struct FractionalLorenz
     x0
 end
 
+"""
+
+### References
+
+```tex
+@article{He2017DynamicsOT,
+  title={Dynamics of the Fractional-order Lorenz System Based on Adomian Decomposition Method and Its DSP Implementation},
+  author={Shaobo He and Kehui Sun and Huihai Wang},
+  journal={IEEE/CAA Journal of Automatica Sinica},
+  year={2017},
+  pages={0-0}
+}
+```
+"""
 struct LorenzADM <: FractionalDiffEqAlgorithm end
 
 function solve(FL::FractionalLorenz, h, T, ::LorenzADM)
