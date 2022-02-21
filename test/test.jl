@@ -219,3 +219,11 @@ end
     0.96017   0.283662  -0.653644  -0.989992  -0.416147   0.540302  1.0  0.932342  0.60134
     0.96017   0.283662  -0.653644  -0.989992  -0.416147   0.540302  1.0  0.932342  0.60134]; atol=1e-4)
 end
+
+@testset "Test Distributed Order Matrix method" begin    
+    h = 0.5; t = collect(h:h:1);
+    fun(t)=-0.1
+    prob = DODEProblem([1, 0.1], [x->6*x*(1-x), 0], [0, 1], t, h, fun)
+    result = solve(prob, DOMatrixDiscrete())
+    @test isapprox(result, [0; -0.06531153193179398]; atol=1e-3)
+end
