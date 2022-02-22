@@ -37,6 +37,9 @@ include("FDDE/DelayABM.jl")
 include("DistributedOrder/utils.jl")
 include("DistributedOrder/matrix.jl")
 
+# Fractional Differences equations
+include("FractionalDifferences/PECE.jl")
+
 # Mittag Leffler function
 include("mlfun.jl")
 
@@ -63,6 +66,9 @@ export DelayPECE, DelayPI, MatrixForm, DelayABM
 
 # DODE solvers
 export DOMatrixDiscrete
+
+# Fractional Differences Equations solvers
+export PECEDifference
 
 # Export some api to construct the equation
 export eliminator, RieszMatrix, omega, meshgrid
