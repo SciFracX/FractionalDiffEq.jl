@@ -39,7 +39,7 @@ function solve(fun, α, x0, T, h, ::PECEDifference)
             temp = a[i+1-j]*fun(x[j])
         end
         temp = temp/gamma(α)
-        x[i] = x0+temp+a[1]*(x0+temp)/gamma(α)
+        x[i] = x0 + temp+a[1]*(x0+temp)/gamma(α)
         t[i] = i
     end
 
