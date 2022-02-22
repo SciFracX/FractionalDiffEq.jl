@@ -45,3 +45,9 @@ FractionalDiffEq.ModifiedTrap
 ```@docs
 FractionalDiffEq.DOMatrixDiscrete
 ```
+
+## Fractional Differences Equations
+
+```@docs
+FractionalDiffEq.PECEDifference
+```
