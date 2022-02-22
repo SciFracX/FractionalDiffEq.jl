@@ -15,6 +15,7 @@ SpecialMatrices = "928aab9d-ef52-54ac-8ca1-acd7ca42c160"
 UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
 
 [compat]
+FFTW = "1.0.0"
 FractionalCalculus = "0.1.5, 0.2"
 InvertedIndices = "1.1"
 Polynomials = "2.0.24"
