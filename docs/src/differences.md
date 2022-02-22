@@ -2,6 +2,18 @@
 
 There are also some solvers can be used to solve Fractional Differences Equations in FractionalDiffEq.jl.
 
+Fractional Differences Equations has the form:
+
+```math
+\Delta^{\alpha}x(t)=f(t+\alpha,\ x(t+\alpha))
+```
+
+With initial condition:
+
+```math
+x(0)=x0
+```
+
 Let's see an example here, we have a fractional differences equation with initial condition:
 
 ```math
