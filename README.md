@@ -232,12 +232,15 @@ plot!(tspan, target, lw=3,ls=:dash,label="ODE Analytical Solution!")
 
 ![ODE Example](docs/src/assets/ode_example.png)
 
-## Road map
+# Available Solvers
+
+For more performant solvers, please refer to the [FractionalDiffEq.jl Solvers](https://scifracx.org/FractionalDiffEq.jl/dev/algorithms/) page.
+# Road map
 
 * More performant algorithms
 * Better docs
 * More interesting ideas~
 
-## Contributing
+# Contributing
 
 If you are interested in Fractional Differential Equations and Julia, welcome to raise an issue or file a Pull Request!!
