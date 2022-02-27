@@ -43,12 +43,6 @@ If you have already installed Julia, you can install FractionalDiffEq.jl in REPL
 pkg> add FractionalDiffEq
 ```
 
-Or if you want to experience the latest version of FractionalDiffEq.jl:
-
-```julia
-pkg> add FractionalDiffEq#master
-```
-
 # Quick start
 
 ### An easy example
