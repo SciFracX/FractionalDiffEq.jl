@@ -21,6 +21,7 @@ FractionalDiffEq.G2Direct
 FractionalDiffEq.FPDEMatrixDiscrete
 FractionalDiffEq.FiniteDiffEx
 FractionalDiffEq.FiniteDiffIm
+FractionalDiffEq.ADV_DIF
 ```
 
 ## Fractional Delay Differential Equatinos

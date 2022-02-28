@@ -1,12 +1,22 @@
+"""
+### References
+
+```tex
+C.P. Li, R.F. Wu, H.F.  Ding. High-order approximation to Caputo derivatives and Caputo-type advection-diffusion equations (I). Communications in Applied and Industrial Mathematics, 2014, 6(2), e-536: 1-32.  DOI: 10.1685/journal.caim.536.
+J.X. Cao, C.P. Li, Y.Q. Chen. High-order approximation to Caputo derivatives and Caputo-type advection-diffusion equations (II). Fractional Calculus and Applied Analysis, 2015, 18(3): 735-761.
+H.F. Li, J.X. Cao, C.P. Li. High-order approximation to Caputo derivatives and Caputo-type advection-diffusion equations (III).submitted.
+```
+"""
 struct ADV_DIF <: FractionalDiffEqAlgorithm end
 
 function solve(order::Int64, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, flt, ::ADV_DIF)
-    h=X/i;gm=T/N
+    h=X/i
+    gm=T/N
     miu=h^2*gm^(-α)/gamma(1-α)
     u = zeros(i-1, N+1)
 
     for i2=1:i-1
-        u[i2, 1]=fx0(X*(i2)/i)
+        u[i2, 1]=fx0(X*i2/i)
     end
 
     f = zeros(i-1, N)
@@ -17,7 +27,7 @@ function solve(order::Int64, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, flt,
         end
     end
 
-    H=zeros(i-1,N)
+    H=zeros(i-1, N)
     for i7 = 1:N
         q1 = [i7/N α]
         q2 = [T*(i7)/N α]
