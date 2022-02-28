@@ -1,4 +1,4 @@
-using FractionalDiffEq
+using FractionalDiffEq, SpecialFunctions
 using Test
 
 @testset "Test Diethelm PECE algorithms" begin
@@ -76,6 +76,46 @@ end
 
     U=solve(α, dx, dt, xStart, xEnd, n, K, FiniteDiffEx())
     @test isapprox(U, [ 0.0 1.0 1.22465e-16; 0.0   0.238076  0.0; 0.0   0.687879  0.0; 0.0  -1.60198   0.0; 0.0   2.33802   0.0]; atol=1e-3)
+end
+
+@testset "Test Caputo Discrete for Advection Diffusion equation" begin
+    fx0(x) = 0
+    function fgz(q)
+        x = q[1, 2];t=q[1, 1];a=q[1, 3]
+        f = exp(x)*t^(6-a)/gamma(7-a)*720
+        return f
+    end
+    function f0t(k)
+        x=k[1, 1]
+        a=k[1, 2]
+        f=x^6
+        return f
+    end
+    function flt(k)
+        x = k[1,1];a=k[1,2]
+        f = exp(1)*x^6
+        return f
+    end
+    result = solve(3, 0.5, 1, 2, 1, 20, 1, 1, fx0, fgz, f0t, flt, ADV_DIF())
+    @test isapprox(result, [0.0  0.0171843  1.06757
+    0.0  0.0187449  1.1369
+    0.0  0.0203056  1.20805
+    0.0  0.0218648  1.2811
+    0.0  0.0234204  1.35608
+    0.0  0.0249696  1.43307
+    0.0  0.0265091  1.51209
+    0.0  0.028035   1.59319
+    0.0  0.0295425  1.67637
+    0.0  0.0310258  1.76166
+    0.0  0.0324786  1.84904
+    0.0  0.0338932  1.93849
+    0.0  0.0352607  2.02997
+    0.0  0.0365713  2.12342
+    0.0  0.0378133  2.21874
+    0.0  0.0389738  2.31582
+    0.0  0.0400378  2.41452
+    0.0  0.0409888  2.51465
+    0.0  0.0418076  2.61599]; atol=1e-3)
 end
 
 @testset "Test Closed Form method" begin

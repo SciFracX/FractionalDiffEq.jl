@@ -1,7 +1,6 @@
 using FractionalDiffEq, Plots, SpecialFunctions
 
 fx0(x) = 0
-
 function fgz(q)
     x = q[1, 2];t=q[1, 1];a=q[1, 3]
     f = exp(x)*t^(6-a)/gamma(7-a)*720

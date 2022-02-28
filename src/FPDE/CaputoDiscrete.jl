@@ -18,7 +18,7 @@ function solve(order::Int64, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, flt,
     end
 
     H=zeros(i-1,N)
-    for i7=1:N
+    for i7 = 1:N
         q1 = [i7/N α]
         q2 = [T*(i7)/N α]
         H[1, i7] = (κ+v*h/2)*f0t(q1)
