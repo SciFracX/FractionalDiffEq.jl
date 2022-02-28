@@ -1,4 +1,4 @@
-using FractionalDiffEq, Plots
+using FractionalDiffEq, Plots, SpecialFunctions
 
 fx0(x) = 0
 
@@ -21,7 +21,7 @@ function flt(k)
     return f
 end
 
-result = adn([3 0.5 1 20 1 20 1 1], fx0, fgz, f0t, flt, ADV_DIF())
+result = solve(3, 0.5, 1, 20, 1, 20, 1, 1, fx0, fgz, f0t, flt, ADV_DIF())
 XX, YY = meshgrid(0.05^2/6 .*(0:21), 0:0.05:1)
 plotlyjs()
 plot(XX, YY, result, st=:surface)
