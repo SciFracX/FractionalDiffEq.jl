@@ -26,6 +26,7 @@ include("NonLinear/LorenzADM.jl")
 # Fractional partial differential equations
 include("FPDE/FiniteDiffEx.jl")
 include("FPDE/FiniteDiffIm.jl")
+include("FPDE/CaputoDiscrete.jl")
 
 # Fractional delay differential equations
 include("FDDE/DelayPECE.jl")
@@ -56,7 +57,7 @@ export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, G2Direct
 
 # FPDE solvers
-export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm
+export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF
 
 # System of FDE solvers
 export NonLinearAlg, GLWithMemory, ModifiedTrap, LorenzADM
