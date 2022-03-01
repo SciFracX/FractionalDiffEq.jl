@@ -22,7 +22,7 @@ function solve(order::Int64, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, flt,
     f = zeros(i-1, N)
     for i5=1:N
         for i6=1:i-1
-            q1=[T*(i5)/N X*(i6)/i α]
+            q1=[T*i5/N X*i6/i α]
             f[i6, i5]=fgz(q1)
         end
     end
@@ -36,20 +36,20 @@ function solve(order::Int64, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, flt,
     end
 
     for n=1:order-2
-        gp=[n n+1 α]
+        gp=[n, n+1, α]
         g1 = ones(1, n)
         g2=g1*wj(gp)
         g = zeros(n, 1)
         for i8=1:n
-            g[i8, 1]=g2[1,i8]
+            g[i8, 1]=g2[1, i8]
         end
         u1=zeros(i-1, n)
         for i9=1:n
             u1[:, i9] = u[:, i9]
         end
-        H1=-miu*(u1*g) + h^2*f[:, n]+H[:, n]
+        H1=-miu*u1*g + h^2*f[:, n]+H[:, n]
 
-        A=zeros(i-1,i-1)
+        A=zeros(i-1, i-1)
         for i10=1:i-1
             A[i10, i10]=miu*g2[1, n+1]+2*κ
             if i10>1
@@ -62,7 +62,7 @@ function solve(order::Int64, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, flt,
         u[:, n+1]=zg(A, H1)
     end
     for n=order-1:N
-        gp = [n order α]
+        gp = [n, order, α]
         g1 = ones(1, n)
         g2 = g1*wj(gp)
         g=zeros(n,1)
@@ -91,18 +91,18 @@ function solve(order::Int64, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, flt,
 end
 
 function wj(p)
-    n=Int64(p[1, 1])
-    r=Int64(p[1, 2])
-    a=p[1, 3]
+    n::Int = p[1]
+    r::Int = p[2]
+    a=p[3]
     A=zeros(n, n+1)
     for iw=1:r-2
         for jw=1:iw+1
-        A[iw, jw] = w([iw+1-jw iw+1 iw n a])
+        A[iw, jw] = w([iw+1-jw, iw+1, iw, n, a])
         end
     end
     for iw=r-1:n
         for jw=iw-r+2:iw+1
-        A[iw, jw]=w([iw+1-jw r iw n a])
+        A[iw, jw]=w([iw+1-jw, r, iw, n, a])
         end
     end
     return A
@@ -141,30 +141,34 @@ function zg(A, H)
 end
 
 function w(q)
-    i=Int64(q[1, 1]);r=Int64(q[1, 2]);j=q[1, 3];n=q[1, 4];a=q[1, 5]
+    i::Int=q[1]
+    r::Int=q[2]
+    j=q[3]
+    n=q[4]
+    a=q[5]
 
-    ar=ones(1, r-1)
-    br=ones(1, r-1)
+    ar=ones(r-1)
+    br=ones(r-1)
     for lj=1:r-2
-    jj=r-lj-1
-    kj=r-2
-    tj=i-1
-    aj=collect(Int64, 0:tj)
-    bj=collect(Int64, tj+2:kj+1)
-    cj=[aj; bj]
-    dj=collect(Int64, -1:tj-1)
-    ej=collect(Int64, tj+1:kj)
-    fj=[dj; ej]
-    yj = binomial.(cj, jj)
-    pj = binomial.(fj, jj)
-    sj=1
-    tj=1
-    for m=1:jj
-        sj = sj.*yj[:, m]
-        tj = tj.*pj[:, m]
-        ar[1, lj] = sum(sj)
-        br[1, lj] = sum(tj)
-    end
+        jj=r-lj-1
+        kj=r-2
+        tj=i-1
+        aj=collect(Int64, 0:tj)
+        bj=collect(Int64, tj+2:kj+1)
+        cj=[aj; bj]
+        dj=collect(Int64, -1:tj-1)
+        ej=collect(Int64, tj+1:kj)
+        fj=[dj; ej]
+        yj = binomial.(cj, jj)
+        pj = binomial.(fj, jj)
+        sj=1
+        tj=1
+        for m=1:jj
+            sj = sj.*yj[:, m]
+            tj = tj.*pj[:, m]
+            ar[lj] = sum(sj)
+            br[lj] = sum(tj)
+        end
     end
     s=0
     for l=1:r-1
@@ -173,7 +177,7 @@ function w(q)
             k=k/(m1-a)
         end
         k = k*factorial(l)
-        k = k*(ar[1, l]*((n-j)^(l-a))-br[1, l]*((n-j+1)^(l-a)))
+        k = k*(ar[l]*((n-j)^(l-a))-br[l]*((n-j+1)^(l-a)))
         s = s+k
     end
     s = s*((-1)^(i+1))/(factorial(i)*factorial(r-1-i))
