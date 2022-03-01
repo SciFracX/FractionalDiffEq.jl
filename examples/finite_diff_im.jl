@@ -9,8 +9,11 @@ xStart = 0;
 xEnd = pi    
 x = collect(0:dx:xEnd)
 t = collect(0:dt:n)
+u0t = 0
+uendt = 0
+u0(x) = sin(x)
 
-U=solve(α, dx, dt, xStart, xEnd, n, K, FiniteDiffEx())
+U=solve(α, dx, dt, xStart, xEnd, n, K, u0t, uendt, u0, FiniteDiffIm())
 
 using Plots
 

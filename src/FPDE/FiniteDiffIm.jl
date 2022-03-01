@@ -21,17 +21,17 @@ Matlab version: https://github.com/awstown/Fractional-Derivative
 struct FiniteDiffIm <: FractionalDiffEqAlgorithm end
 
 
-function solve(α, dx, dt, xStart, xEnd, n, κ, ::FiniteDiffIm)
+function solve(α, dx, dt, xStart, xEnd, n, κ, u0t, uendt, u0, ::FiniteDiffIm)
     x = collect(0:dx:xEnd)
     t = collect(0:dt:n)
 
     U = zeros(Int64(n/dt + 1), Int64((xEnd - xStart)/dx + 1))
 
     #FIXME: Boundry conditions handling
-    U[:, 1] .= 0
-    U[:, end] .= 0
+    U[:, 1] .= u0t
+    U[:, end] .= uendt
 
-    U[1, :] .= sin.(x)
+    U[1, :] .= u0.(x)
 
     mu = (dt^α)/(dx^2)
     r = mu * gamma(2-α)

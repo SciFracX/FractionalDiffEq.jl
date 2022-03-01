@@ -23,19 +23,18 @@ Matlab version: https://github.com/awstown/Fractional-Derivative
 """
 struct FiniteDiffEx <: FractionalDiffEqAlgorithm end
 
-function solve(α, dx, dt, xStart, xEnd, n, κ, ::FiniteDiffEx)
+function solve(α, dx, dt, xStart, xEnd, n, κ, u0t, uendt, u0, ::FiniteDiffEx)
     x = collect(0:dx:xEnd)
     t = collect(0:dt:n)
     S = κ*((dt^α)/(dx^2))
     S_bar = gamma(3-α)*S
-        
 
+    # Preallocate
     U = zeros(Int64(n/dt + 1), round(Int, (xEnd - xStart)/dx + 1))
 
-    #FIXME: Boundry conditions handling
-    U[:, 1] .= 0
-    U[:, end] .= 0
-    U[1, :] = sin.(x)
+    U[:, 1] .= u0t
+    U[:, end] .= uendt
+    U[1, :] = u0.(x)
 
     k = collect(1:length(t)-2)
     bOfK = bbcoeff(k, α)
@@ -82,7 +81,7 @@ function nextStep(U, m, S_bar, diff, bOfK)
             diff = [U[m, 2:end-1] .- 2 .*U[m-1, 2:end-1] .+ U[m-2, 2:end-1]; diff]
         end
         Utemporal = bOfK[1:length(diff[:, 1])]' * diff
-        Unext = Uspatial .- Utemporal;
+        Unext = Uspatial .- Utemporal
     elseif m > 1
         if length(diff) == 0
             diff = U[m, 2:end-1] .- U[m-1, 2:end-1]

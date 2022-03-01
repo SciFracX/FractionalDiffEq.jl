@@ -60,8 +60,11 @@ end
     n = 2
     xStart = 0
     xEnd = pi
+    u0t = 0
+    uendt = 0
+    u0(x) = sin(x)
 
-    U=solve(fdorder, dx, dt, xStart, xEnd, n, K, FiniteDiffEx())
+    U=solve(fdorder, dx, dt, xStart, xEnd, n, K, u0t, uendt, u0, FiniteDiffEx())
     @test isapprox(U, [ 0.0  1.0  1.22465e-16; 0.0   0.793379    0.0; 0.0   0.43766     0.0; 0.0   0.00221205  0.0; 0.0 -0.42797 0.0]; atol=1e-3)
 end
 
@@ -73,9 +76,16 @@ end
     n = 2
     xStart = 0
     xEnd = pi
+    u0t = 0
+    uendt = 0
+    u0(x) = sin(x)
 
-    U=solve(α, dx, dt, xStart, xEnd, n, K, FiniteDiffEx())
-    @test isapprox(U, [ 0.0 1.0 1.22465e-16; 0.0   0.238076  0.0; 0.0   0.687879  0.0; 0.0  -1.60198   0.0; 0.0   2.33802   0.0]; atol=1e-3)
+    U=solve(α, dx, dt, xStart, xEnd, n, K, u0t, uendt, u0, FiniteDiffIm())
+    @test isapprox(U, [ 0.0  1.0       1.22465e-16
+    0.0  0.663152  0.0
+    0.0  0.532299  0.0
+    0.0  0.459938  0.0
+    0.0  0.412321  0.0]; atol=1e-3)
 end
 
 @testset "Test Caputo Discrete for Advection Diffusion equation" begin

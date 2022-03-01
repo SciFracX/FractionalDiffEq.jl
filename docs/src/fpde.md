@@ -53,6 +53,14 @@ y(0,t) = 0, \quad y(1,t) = 0 \qquad  \quad y(x,0) = \sin(x)
 
 Here, ``\kappa`` is the [diffusion coefficient](https://en.wikipedia.org/wiki/Mass_diffusivity)
 
+The solution of this Diffusion equation is given[^1] as:
+
+```math
+u(x, t) = E_\alpha(-t^\alpha)\sin(x)
+```
+
+Here ``E_\alpha(-t^\alpha)`` is the Mittag Leffler function.
+
 ```julia
 using FractionalDiffEq
 
@@ -63,6 +71,9 @@ dt = 0.01
 n = 2
 xStart = 0
 xEnd = pi
+u0t = 0
+uendt = 0
+u0(x) = sin(x)
 
 using Plots
 plotlyjs()
@@ -71,3 +82,6 @@ plot(x, t, U, st=:surface)
 ```
 
 ![DiffusionEx](./assets/finitediffex.png)
+
+
+[^1]: [Exact solutions for time-fractional diffusion-wave equations by decomposition method](https://doi.org/10.1088/0031-8949%2F75%2F1%2F008)
