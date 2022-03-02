@@ -27,12 +27,6 @@ If you have already installed Julia, you can install FractionalDiffEq.jl in REPL
 pkg> add FractionalDiffEq
 ```
 
-Or if you want to experience the latest version of FractionalDiffEq.jl:
-
-```julia
-pkg> add FractionalDiffEq#master
-```
-
 ## Features
 
 * While most fractional differential equations solvers are implemented using Matlab, **FractionalDiffEq.jl** is totally driven by [Julia](https://julialang.org/) and licensed with [MIT License](https://en.wikipedia.org/wiki/MIT_License), ensuring its everlasting development and open source.
@@ -41,7 +35,7 @@ pkg> add FractionalDiffEq#master
 
 * Capable of solving both linear and nonlinear fractional differential equations. Including fractional ordinary differential equations, fractional partial differential equations, fractional delayed differential equations, distributed order differential equations, fractional differences equations and system of fractional differential equations.
 
-* Detailed models supporting, such as Bagley Torvik equations, Relaxation Oscillation equations and Diffusion equations many more.
+* Detailed models supporting, such as Lorenz system, Bagley Torvik equations, Relaxation Oscillation equations and Diffusion equations many more.
 
 ## Roadmap
 
@@ -52,7 +46,6 @@ pkg> add FractionalDiffEq#master
 * Connect with SciML ecosystem.
 
 * More interesting ideas~
-
 
 ## Contributing
 

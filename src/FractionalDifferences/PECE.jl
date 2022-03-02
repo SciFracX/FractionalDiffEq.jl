@@ -1,5 +1,7 @@
 """
-    solve()
+    solve(FDProb::FractionalDifferenceProblem, T, h, PECEDifference())
+
+Use the PECE algorithm to solve fractional difference equations
 
 ### References
 
