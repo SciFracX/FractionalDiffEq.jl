@@ -50,3 +50,9 @@ FractionalDiffEq.DODEProblem
 ```@docs
 FractionalDiffEq.FODESystem
 ```
+
+## Fractional Difference Problem
+
+```@docs
+FractionalDiffEq.FractionalDifferenceProblem
+```

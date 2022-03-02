@@ -18,7 +18,8 @@
 struct PECEDifference <: FractionalDiffEqAlgorithm end
 
 
-function solve(fun, α, x0, T, h, ::PECEDifference)
+function solve(FDProb::FractionalDifferenceProblem, T, h, ::PECEDifference)
+    @unpack fun, α, x0 = FDProb
     N = round(Int, T/h)
     b=zeros(N); a=zeros(N); x=zeros(N); t=zeros(N)
     t1=zeros(N+1); y=zeros(N+1)

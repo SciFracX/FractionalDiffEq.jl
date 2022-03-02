@@ -51,7 +51,7 @@ export FractionalDiffEqAlgorithm
 export solve, FDEProblem, FPDEProblem, FDDEProblem
 
 # Detailed problem types
-export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem
+export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FractionalDifferenceProblem
 
 # FODE solvers
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, G2Direct
@@ -70,6 +70,9 @@ export DOMatrixDiscrete
 
 # Fractional Differences Equations solvers
 export PECEDifference
+
+
+
 
 # Export some api to construct the equation
 export eliminator, RieszMatrix, omega, meshgrid

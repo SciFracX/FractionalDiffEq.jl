@@ -106,12 +106,23 @@ FDDEProblem(f, ϕ, α, τ) = FDDEProblem(f, ϕ, α, τ, nothing)
 """
     FODESystem(f, α, x0)
 
-Define system of fractional differential equations
+Define system of fractional differential equations problem.
 """
 struct FODESystem <: FDEProblem
     f::Function
     α::AbstractArray
     x0::AbstractArray
+end
+
+"""
+    FractionalDifferenceProblem(f, α, x0)
+
+Define fractional difference problems.
+"""
+struct FractionalDifferenceProblem
+    fun::Function
+    α
+    x0
 end
 
 """
