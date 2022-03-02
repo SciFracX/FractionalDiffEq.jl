@@ -25,7 +25,7 @@ function solve(limit, t0, T, tau, h, alpha, x0, A, B, f, ::MatrixForm)
     F = zeros(var_num, N)
     x0TP = x0(t0)
 
-    for i=1:index+1
+    @fastmath @inbounds @simd for i=1:index+1
         x[:, i] = x0(t[i])*[1; zeros(m-1, 1)]
     end
 
@@ -37,8 +37,8 @@ function solve(limit, t0, T, tau, h, alpha, x0, A, B, f, ::MatrixForm)
         col = 0
         M0 = copy(M)
 
-        for r=1:var_num
-            for s=1:cols
+        @fastmath @inbounds @simd for r=1:var_num
+            @fastmath @inbounds @simd for s=1:cols
                 if M0[r, s]==Inf || M0[r, s]==-Inf
                     risk_index = hcat(risk_index[:, 1:col], [r; s])
                     col = col+1
@@ -55,8 +55,8 @@ function solve(limit, t0, T, tau, h, alpha, x0, A, B, f, ::MatrixForm)
             risk_start_index = judgeeqsum(t, -1)
             inv_num = judgesum(t, 1)-judgeeqsum(t, -1)
             risks_num = size(risk_index, 2)
-            for j=1:inv_num
-                for k=1:risks_num
+            @fastmath @inbounds @simd for j=1:inv_num
+                @fastmath @inbounds @simd for k=1:risks_num
                     id = risk_start_index*cols + risk_index[2, k]+cols*(j-1)
                     if Mt[risk_index[1, k], id] > limit
                         Mt[risk_index[1, k], id] = limit
@@ -73,17 +73,17 @@ function solve(limit, t0, T, tau, h, alpha, x0, A, B, f, ::MatrixForm)
     Bt = function_values(B, limit)
     ft = function_values(f, limit)
 
-    for n=1:N
+    @fastmath @inbounds @simd for n=1:N
         col_num = size(A, 2)
         ind = col_num*(n+index)
         b[n] = (n+1)^alpha-n^alpha
         F[:, n] = At[:, ind-col_num+1:ind]*x[:, n+index] + Bt[:, ind-col_num+1:ind]*x[:,n]+ft[:, n+index]
         TP = zeros(var_num, 1)
-        for k=0:m-1
+        @fastmath @inbounds @simd for k=0:m-1
             TP += ((t[n+index+1]-t0)^k).*x0TP[:, k+1]./factorial(k)
         end
         sum = zeros(var_num, 1)
-        for j=1:n
+        @fastmath @inbounds @simd for j=1:n
             sum += b[n-j+1].*F[:, j]
         end
         x[:, n+index+1] = TP + h^alpha.*sum

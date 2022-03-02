@@ -55,9 +55,4 @@ function solve(α, dx, dt, xStart, xEnd, n, κ, u0t, uendt, u0, ::FiniteDiffIm)
     return U
 end
 
-function ImNextStep( V, U_0, k, b_j, c_j )    
-    nextRow = c_j[1:k]' * reverse(V[1:k, :], dims=1) .+ (b_j[k+1].*U_0)'
-    return nextRow
-end
-
-
+ImNextStep( V, U_0, k, b_j, c_j ) = c_j[1:k]' * reverse(V[1:k, :], dims=1) .+ (b_j[k+1].*U_0)'

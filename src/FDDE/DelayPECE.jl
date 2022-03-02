@@ -28,16 +28,16 @@ function solve(FDDE::FDDEProblem, T, h, ::DelayPECE)
     y = copy(t)
     y[1] = ϕ(0)
 
-    for n in 1:maxn-1
+    @fastmath @inbounds @simd for n in 1:maxn-1
         yp[n+1] = 0
-        for j = 1:n
+        @fastmath @inbounds @simd for j = 1:n
             yp[n+1] = yp[n+1]+b(j-1, n-1, α, h)*f(t[j], y[j], v(ϕ, j, τ, h, y, yp))
         end
         yp[n+1] = yp[n+1]/gamma(α)+ϕ(0)
 
         y[n+1] = 0
 
-        for j=1:n
+        @fastmath @inbounds @simd for j=1:n
             y[n+1] = y[n+1]+a(j-1, n-1, α, h)*f(t[j], y[j], v(ϕ, j, τ, h, y, yp))
         end
 
@@ -45,7 +45,7 @@ function solve(FDDE::FDDEProblem, T, h, ::DelayPECE)
     end
 
     V = copy(t)
-    for n = 1:maxn-1
+    @fastmath @inbounds @simd for n = 1:maxn-1
         V[n] = v(ϕ, n, τ, h, y, yp)
     end
     return V, y

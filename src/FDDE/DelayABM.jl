@@ -35,12 +35,12 @@ function solve(f, ϕ, α, τ, T, h, ::DelayABM)
 
     x[Ndelay+1] = x0 + h^α*(f(0, x[1], x[Ndelay+1]) + α*f(0, x[1], x0))/gamma(α+2)
     
-    for n=1:N 
+    @fastmath @inbounds @simd for n=1:N 
         M1=(n^(α+1)-(n-α)*(n+1)^α)*f(0, x[1], x0)
         
         N1=((n+1)^α-n^α)*f(0, x[1], x0)
 
-        for j=1:n   
+        @fastmath @inbounds @simd for j=1:n   
             M1 = M1+((n-j+2)^(α+1)+(n-j)^(α+1)-2*(n-j+1)^(α+1))*f(0, x[j], x[Ndelay+j])
             N1 = N1+((n-j+1)^α-(n-j)^α)*f(0, x[j], x[Ndelay+j])
         end
@@ -54,7 +54,7 @@ function solve(f, ϕ, α, τ, T, h, ::DelayABM)
     xresult[N-Ndelay+1]=0
     yresult[N-Ndelay+1]=0
     
-    for n=2*Ndelay+1:N+Ndelay+1  
+    @fastmath @inbounds @simd for n=2*Ndelay+1:N+Ndelay+1  
        xresult[n-2*Ndelay] = x[n]
        yresult[n-2*Ndelay] = x[n-Ndelay]
     end

@@ -29,14 +29,14 @@ function solve(prob::FODESystem, h, tf, ::GLWithMemory)
     Cα = zeros(n)
     Cα[1] = 1
 
-    for j in range(2, n, step=1)
+    @fastmath @inbounds @simd for j in range(2, n, step=1)
         Cα[j] = (1-(1+α[1])/(j-1))*Cα[j-1]
     end
 
-    for k in range(2, n, step=1)
+    @fastmath @inbounds @simd for k in range(2, n, step=1)
         sum1, sum2, sum3 = 0, 0, 0
 
-        for j in range(1, k-1, step=1)
+        @fastmath @inbounds @simd for j in range(1, k-1, step=1)
             sum1 += Cα[j+1]*x[k-j]
             sum2 += Cα[j+1]*y[k-j]
             sum3 += Cα[j+1]*z[k-j]

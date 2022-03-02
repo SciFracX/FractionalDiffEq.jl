@@ -25,9 +25,9 @@ function solve(FDProb::FractionalDifferenceProblem, T, h, ::PECEDifference)
     N = round(Int, T/h)
     b=zeros(N); a=zeros(N); x=zeros(N); t=zeros(N)
     t1=zeros(N+1); y=zeros(N+1)
-    for i=1:N
+    @fastmath @inbounds @simd for i=1:N
         k = 1
-        for j=1:N-i
+        @fastmath @inbounds @simd for j=1:N-i
             k = k*j
         end
         b[i] = gamma(N-i+α)/k
@@ -36,9 +36,9 @@ function solve(FDProb::FractionalDifferenceProblem, T, h, ::PECEDifference)
     x[1] = x0+a[1]*fun(x0)/gamma(α)
     t[1] = 1
 
-    for i=2:N
+    @fastmath @inbounds @simd for i=2:N
         temp = 0
-        for j=1:i-1
+        @fastmath @inbounds @simd for j=1:i-1
             temp = a[i+1-j]*fun(x[j])
         end
         temp = temp/gamma(α)
@@ -48,7 +48,7 @@ function solve(FDProb::FractionalDifferenceProblem, T, h, ::PECEDifference)
 
     y[1] = x0
     t1[1] = 0
-    for i = 1:N
+    @fastmath @inbounds @simd for i = 1:N
         y[i+1] = x[i]
         t1[i+1] = t[i]
     end

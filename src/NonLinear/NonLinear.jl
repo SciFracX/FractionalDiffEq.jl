@@ -27,14 +27,14 @@ function solve(prob::FODESystem, h, tn, ::NonLinearAlg, L0=1e10)
     SetMemoryEffect = Int64(min(m, L0+1))
     W = zeros(n, SetMemoryEffect) #Initializing W a n*m matrix
 
-    for i = 1:n
+    @fastmath @inbounds @simd for i = 1:n
         W[i, :] = getvec(α[i], SetMemoryEffect, g)
     end
 
-    for k = 2:m
+    @fastmath @inbounds @simd for k = 2:m
         tk = (k-1)*h
         L = min(Int64(k-1), Int64(L0))
-        for i = 1:n
+        @fastmath @inbounds @simd for i = 1:n
             x1[i] = f(tk, x1, i)*ha[i] - W[i, 2:L+1]'*z[i, k-1:-1:k-L] + x0[i]
         end
         z[:, k] = x1 - x0
@@ -59,19 +59,18 @@ function getvec(α, n, g)
     w = Float64[]
     push!(w, g[1]^α)
 
-    for m = 2:p
+    @fastmath @inbounds @simd for m = 2:p
         M = m-1
         dA = b/M
         temp = (-(g[2:m] .*collect((1-dA):-dA:(1-b))))' *w[M:-1:1]/g0
         push!(w, temp)
     end
 
-    for k = p+1:n
+    @fastmath @inbounds @simd for k = p+1:n
         M = k-1
         dA = b/M
         temp = (-(g[2:(p+1)] .*collect((1-dA):-dA:(1-p*dA))))' *w[M:-1:(k-p)]/g0
         push!(w, temp)
     end
-
     return w
 end
