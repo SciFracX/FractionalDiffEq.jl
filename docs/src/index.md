@@ -12,10 +12,6 @@ While the Ordinary Differential Equations and Partial Differential Equations are
 
 Well, fractional differential equation can be seen as the generalization of ODE and PDE. In our daily life, models usually are better described in fractional differential equations.
 
-```@contents
-Pages = ["index.md"]
-```
-
 !!! tip "Star Us"
 	If you think **FractionalDiffEq.jl** is useful, please [star us in GitHub](httpd://github.com/SciFracX/FractionalDiffEq.jl), it means a lot to us!
 
