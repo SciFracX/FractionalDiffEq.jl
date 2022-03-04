@@ -164,10 +164,10 @@ end
         end
     end
     prob = FODESystem(f, alpha, x0)
-    x, y, z = solve(prob, h, tf, GLWithMemory())
-    @test x≈[1.0, -4.044777750283594, 84.80744193501619]
-    @test y≈[0.0, 13.593899925765704, -51.12509457411144]
-    @test z≈[1.0, -0.3526074000756252, -27.554093040332816]
+    result = solve(prob, h, tf, GLWithMemory())
+    @test result ≈ [1.0 0.0 1.0
+    -4.04478 13.5939 -0.352607       
+    84.8074 -51.1251 -27.5541]
 end
 
 @testset "Test DelayPECE method" begin

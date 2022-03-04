@@ -22,29 +22,31 @@ function solve(prob::FODESystem, h, tf, ::GLWithMemory)
     @unpack f, α, x0 = prob
     hα=h^α[1]
 
-    n = Int64(floor(tf/h)+1)
-    x, y, z = zeros(n), zeros(n), zeros(n)
-    x[1], y[1], z[1]= x0[1], x0[2], x0[3]
+    n::Int64 = floor(Int64, tf/h)+1
 
+    # Initialize solution
+    result = zeros(n, length(x0))
+    result[1, :] = x0
+
+    # generating coefficients Cα
     Cα = zeros(n)
     Cα[1] = 1
-
     @fastmath @inbounds @simd for j in range(2, n, step=1)
         Cα[j] = (1-(1+α[1])/(j-1))*Cα[j-1]
     end
 
     @fastmath @inbounds @simd for k in range(2, n, step=1)
-        sum1, sum2, sum3 = 0, 0, 0
+        summation = zeros(length(x0))
 
         @fastmath @inbounds @simd for j in range(1, k-1, step=1)
-            sum1 += Cα[j+1]*x[k-j]
-            sum2 += Cα[j+1]*y[k-j]
-            sum3 += Cα[j+1]*z[k-j]
+            for i in eachindex(summation)
+                summation[i] += Cα[j+1]*result[k-j, i]
+            end
         end
 
-        x[k]=hα*f((k-1)*h, x[k-1], y[k-1], z[k-1], 1) - sum1
-        y[k]=hα*f((k-1)*h, x[k-1], y[k-1], z[k-1], 2) - sum2
-        z[k]=hα*f((k-1)*h, x[k-1], y[k-1], z[k-1], 3) - sum3
+        for i in range(1, length(x0), step=1)
+            result[k, i] = hα*f((k-1)*h, result[k-1, :]..., i) - summation[i]
+        end
     end
-    return x, y, z
+    return result
 end

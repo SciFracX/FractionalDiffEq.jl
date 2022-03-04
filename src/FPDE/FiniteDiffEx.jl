@@ -32,6 +32,7 @@ function solve(α, dx, dt, xStart, xEnd, n, κ, u0t, uendt, u0, ::FiniteDiffEx)
     # Preallocate
     U = zeros(Int64(n/dt + 1), round(Int, (xEnd - xStart)/dx + 1))
 
+    # Boundry conditions
     U[:, 1] .= u0t
     U[:, end] .= uendt
     U[1, :] = u0.(x)

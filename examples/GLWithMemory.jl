@@ -13,7 +13,7 @@ function f(t, x, y, z, k)
     end
 end
 prob = FODESystem(f, alpha, x0)
-x, y, z = solve(prob, h, tf, GLWithMemory())
+result = solve(prob, h, tf, GLWithMemory())
 
 using Plots
-plot(x, y)
+plot(result[:, 1], result[:, 2])

@@ -27,7 +27,7 @@ function solve(α, dx, dt, xStart, xEnd, n, κ, u0t, uendt, u0, ::FiniteDiffIm)
 
     U = zeros(Int64(n/dt + 1), Int64((xEnd - xStart)/dx + 1))
 
-    #FIXME: Boundry conditions handling
+    # Boundry conditions
     U[:, 1] .= u0t
     U[:, end] .= uendt
 
