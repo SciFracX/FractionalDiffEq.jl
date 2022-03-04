@@ -9,7 +9,7 @@ H.F. Li, J.X. Cao, C.P. Li. High-order approximation to Caputo derivatives and C
 """
 struct ADV_DIF <: FractionalDiffEqAlgorithm end
 
-function solve(order::Int64, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, flt, ::ADV_DIF)
+function solve(order::Integer, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, flt, ::ADV_DIF)
     h = X/i
     gm=T/N
     miu=h^2*gm^(-α)/gamma(1-α)
