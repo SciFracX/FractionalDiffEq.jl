@@ -165,9 +165,9 @@ end
     end
     prob = FODESystem(f, alpha, x0)
     result = solve(prob, h, tf, GLWithMemory())
-    @test result ≈ [1.0 0.0 1.0
+    @test isapprox(result, [1.0 0.0 1.0
     -4.04478 13.5939 -0.352607       
-    84.8074 -51.1251 -27.5541]
+    84.8074 -51.1251 -27.5541]; atol=1e-4)
 end
 
 @testset "Test DelayPECE method" begin

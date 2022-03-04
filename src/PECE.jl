@@ -143,7 +143,7 @@ function solve(FODE::SingleTermFODEProblem, h::Float64, ::PECE)
     elseif l == 1
         leftsum = u0 + T*u0
     end
-
+    
     @fastmath @inbounds @simd for n ∈ 0:N
         y[n+1] = leftsum + h^α/gamma(α+2)*(f((n+1)*h, predictor(f, y, α, n, h, u0, T)) + right(f, y, α, n, h))
     end

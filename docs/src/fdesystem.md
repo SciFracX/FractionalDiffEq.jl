@@ -173,9 +173,9 @@ end
 
 α0 = [0.96, 0.96, 0.96]
 x0 = [1, 2, 3]
-h=0.001
-prob=FODESystem(lorenz, α0, x0)
-T=20
+h = 0.001
+prob = FODESystem(lorenz, α0, x0)
+T = 20
 result = solve(prob, h, T, GLWithMemory())
 
 plot(result[:, 1], result[:, 3])
