@@ -25,8 +25,7 @@ D^{\alpha_3}z=-10.593y-0.268z
 Use the ```NonLinearAlg``` algorithm in FractionalDiffEq.jl to solve the Chua system and plot the result:
 
 ```julia
-using FractionalDiffEq
-using Plots
+using FractionalDiffEq, Plots
 
 function chua(t, x, k)
     a = 10.725
@@ -114,8 +113,7 @@ D^\alpha x_3=x_1x_2-bx_3
 By abstract the mathematical model, and solve the equation system:
 
 ```julia
-using FractionalDiffEq
-using Plots
+using FractionalDiffEq, Plots
 
 function qi(t, x, y, z, k)
     a, b, c, d, r = 35, 8/3, 80, -1, 1
@@ -133,9 +131,9 @@ h = 0.001
 T = 50
 x0 = [0.1, 0.2, 0.3]
 prob = FODESystem(qi, alpha, x0)
-x, y, z = solve(prob, h, T, GLWithMemory())
+result = solve(prob, h, T, GLWithMemory())
 
-plot(x, y)
+plot(result[:, 1], result[:, 2])
 ```
 
 We can get the phase portrait of the Qi chaotic system:
@@ -157,7 +155,7 @@ D^\alpha x_3=x_1x_2-bx_3
 With order ``\alpha=0.96`` and initial value ``x_0=[1, 2, 3]``
 
 ```julia
-using FractionalDiffEq
+using FractionalDiffEq, Plots
 
 function lorenz(t, x, y, z, k)
     a=40
@@ -178,9 +176,9 @@ x0 = [1, 2, 3]
 h=0.001
 prob=FODESystem(lorenz, α0, x0)
 T=20
-x, y, z=solve(prob, h, T, GLWithMemory())
-using Plots
-plot(x, z)
+result = solve(prob, h, T, GLWithMemory())
+
+plot(result[:, 1], result[:, 3])
 
 ####################################
 # Or use the detailed model in FractionalDiffEq.jl
@@ -189,7 +187,6 @@ a=40; b=3; c=10; d=15
 prob = FractionalLorenz(a, b, c, d, 0.96)
 x, y, z = solve(prob, h, T, LorenzADM())
 
-using Plots
 plot(x, z)
 ```
 
