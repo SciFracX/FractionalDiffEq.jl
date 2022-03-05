@@ -1,4 +1,6 @@
 """
+# Usage
+
     solve(α, dx, dt, xStart, xEnd, n, κ, FiniteDiffIm())
 
 Use implicit finite difference to discrete equations.

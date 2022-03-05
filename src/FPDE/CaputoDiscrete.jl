@@ -1,4 +1,8 @@
 """
+# Usage
+
+    solve(order, α, T, N, X, i, κ, v, fx0, fgz, f0t, flt, ADV_DIF())
+
 ### References
 
 ```tex

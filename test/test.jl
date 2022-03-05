@@ -259,7 +259,7 @@ end
         return [sin(t)*cos(t); sin(t)*cos(t); cos(t)^2-sin(t)^2; cos(t)^2-sin(t)^2]
     end
     A=[0 0 1 0; 0 0 0 1; 0 -2 0 0; -2 0 0 0]
-    B=[0 0 0 0; 0 0 0 0 ;-2 0 0 0; 0 -2 0 0]
+    B=[0 0 0 0; 0 0 0 0; -2 0 0 0; 0 -2 0 0]
     f=[0; 0; 0; 0]
     
     result=solve(limit, alpha, A, B, f, t0, testx0, T, tau, h, MatrixForm())

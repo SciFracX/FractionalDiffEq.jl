@@ -1,4 +1,6 @@
 """
+# Usage
+
     solve(α, dx, dt, xStart, xEnd, n, κ, FiniteDiffEx())
 
 !!! tip

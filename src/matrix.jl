@@ -19,6 +19,8 @@ struct FODEMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 
 """
+# Usage
+
     solve(α, β, κ, T, M, N, FPDEMatrixDiscrete())
 
 Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional partial differential equations to simple algebra system and solve the system.
