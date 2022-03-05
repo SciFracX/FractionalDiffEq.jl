@@ -1,7 +1,7 @@
 """
 # Usage
 
-    solve(limit, t0, T, tau, h, alpha, x0, A, B, f, MatrixForm())
+    solve(limit, alpha, A, B, f, t0, x0, T, tau, h, MatrixForm())
 
 ### Reference
 
@@ -9,7 +9,7 @@ https://github.com/mandresik/system-of-linear-fractional-differential-delayed-eq
 """
 struct MatrixForm <: FractionalDiffEqAlgorithm end
 
-function solve(limit, t0, T, tau, h, alpha, x0, A, B, f, ::MatrixForm)
+function solve(limit, alpha, A, B, f, t0, x0, T, tau, h, ::MatrixForm)
     var_num = length(A[:, 1])
     m = ceil(Int, alpha)
 
@@ -32,7 +32,7 @@ function solve(limit, t0, T, tau, h, alpha, x0, A, B, f, ::MatrixForm)
 
 
     function function_values(M, limit)
-        cols = size(M, 2)
+        cols::Int64 = size(M, 2)
         risk_index = zeros(var_num)
         col = 0
         M0 = copy(M)
@@ -41,14 +41,14 @@ function solve(limit, t0, T, tau, h, alpha, x0, A, B, f, ::MatrixForm)
             @fastmath @inbounds @simd for s=1:cols
                 if M0[r, s]==Inf || M0[r, s]==-Inf
                     risk_index = hcat(risk_index[:, 1:col], [r; s])
-                    col = col+1
+                    col += 1
                 end
             end
         end
         Mt = zeros(var_num, cols*length(t))
 
         for j=1:length(t)
-            Mt[:, (cols*j-cols+1):(cols*j)]=M
+            Mt[:, (cols*j-cols+1):(cols*j)] = M
         end
 
         if risk_index != zeros(var_num, 1)
@@ -57,11 +57,11 @@ function solve(limit, t0, T, tau, h, alpha, x0, A, B, f, ::MatrixForm)
             risks_num = size(risk_index, 2)
             @fastmath @inbounds @simd for j=1:inv_num
                 @fastmath @inbounds @simd for k=1:risks_num
-                    id = risk_start_index*cols + risk_index[2, k]+cols*(j-1)
+                    id = risk_start_index*cols + risk_index[2, k] + cols*(j-1)
                     if Mt[risk_index[1, k], id] > limit
                         Mt[risk_index[1, k], id] = limit
                     elseif Mt[risk_index[1, k], id] < -limit
-                        M[risk_index[1, k], id] = -limit;
+                        M[risk_index[1, k], id] = -limit
                     end
                 end
             end
@@ -77,7 +77,7 @@ function solve(limit, t0, T, tau, h, alpha, x0, A, B, f, ::MatrixForm)
         col_num = size(A, 2)
         ind = col_num*(n+index)
         b[n] = (n+1)^alpha-n^alpha
-        F[:, n] = At[:, ind-col_num+1:ind]*x[:, n+index] + Bt[:, ind-col_num+1:ind]*x[:,n]+ft[:, n+index]
+        F[:, n] = At[:, ind-col_num+1:ind]*x[:, n+index] + Bt[:, ind-col_num+1:ind]*x[:, n]+ft[:, n+index]
         TP = zeros(var_num, 1)
         @fastmath @inbounds @simd for k=0:m-1
             TP += ((t[n+index+1]-t0)^k).*x0TP[:, k+1]./factorial(k)
@@ -92,7 +92,7 @@ function solve(limit, t0, T, tau, h, alpha, x0, A, B, f, ::MatrixForm)
 end
 
 function judgesum(t, thres)
-    result=0
+    result = 0
     for i in t
         i < thres ? result+=i : continue
     end
@@ -100,7 +100,7 @@ function judgesum(t, thres)
 end
 
 function judgeeqsum(t, thres)
-    result=0
+    result = 0
     for i in t
         i <= thres ? result+=i : continue
     end

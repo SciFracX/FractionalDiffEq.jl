@@ -262,7 +262,7 @@ end
     B=[0 0 0 0; 0 0 0 0 ;-2 0 0 0; 0 -2 0 0]
     f=[0; 0; 0; 0]
     
-    result=solve(limit, t0, T, tau, h, alpha, testx0, A, B, f, MatrixForm())
+    result=solve(limit, alpha, A, B, f, t0, testx0, T, tau, h, MatrixForm())
 
     @test isapprox(result, [ 0.139708  0.479462   0.378401  -0.07056   -0.454649  -0.420735  0.0  0.242142  0.401838
     0.139708  0.479462   0.378401  -0.07056   -0.454649  -0.420735  0.0  0.242142  0.401838

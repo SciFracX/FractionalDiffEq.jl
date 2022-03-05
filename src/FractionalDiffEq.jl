@@ -30,7 +30,7 @@ include("FPDE/CaputoDiscrete.jl")
 
 # Fractional delay differential equations
 include("FDDE/DelayPECE.jl")
-include("FDDE/PI.jl")
+include("FDDE/DelayPI.jl")
 include("FDDE/Matrix.jl")
 include("FDDE/DelayABM.jl")
 

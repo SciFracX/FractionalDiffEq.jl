@@ -11,7 +11,7 @@ A=[0 0 1 0; 0 0 0 1; 0 -2 0 0; -2 0 0 0]
 B=[0 0 0 0; 0 0 0 0 ;-2 0 0 0; 0 -2 0 0]
 f=[0; 0; 0; 0]
 
-result=solve(limit, t0, T, tau, h, alpha, x0, A, B, f, MatrixForm())
+result=solve(limit, alpha, A, B, f, t0, x0, T, tau, h, MatrixForm())
 
 using Plots
 
