@@ -20,13 +20,13 @@ function solve(limit, alpha, A, B, f, t0, x0, T, tau, h, ::MatrixForm)
     index = length(temp)
     N = length(t)-index-1
 
-    x = zeros(var_num, length(t))
+    x = zeros(length(t), var_num)
     b = zeros(1, N)
     F = zeros(var_num, N)
     x0TP = x0(t0)
 
     @fastmath @inbounds @simd for i=1:index+1
-        x[:, i] = x0(t[i])*[1; zeros(m-1, 1)]
+        x[i, :] = x0(t[i])*[1; zeros(m-1, 1)]
     end
 
 
@@ -77,7 +77,7 @@ function solve(limit, alpha, A, B, f, t0, x0, T, tau, h, ::MatrixForm)
         col_num = size(A, 2)
         ind = col_num*(n+index)
         b[n] = (n+1)^alpha-n^alpha
-        F[:, n] = At[:, ind-col_num+1:ind]*x[:, n+index] + Bt[:, ind-col_num+1:ind]*x[:, n]+ft[:, n+index]
+        F[:, n] = At[:, ind-col_num+1:ind]*x[n+index, :] + Bt[:, ind-col_num+1:ind]*x[n, :]+ft[:, n+index]
         TP = zeros(var_num, 1)
         @fastmath @inbounds @simd for k=0:m-1
             TP += ((t[n+index+1]-t0)^k).*x0TP[:, k+1]./factorial(k)
@@ -86,9 +86,9 @@ function solve(limit, alpha, A, B, f, t0, x0, T, tau, h, ::MatrixForm)
         @fastmath @inbounds @simd for j=1:n
             sum += b[n-j+1].*F[:, j]
         end
-        x[:, n+index+1] = TP + h^alpha.*sum
+        x[n+index+1, :] = TP + h^alpha.*sum
     end
-    return x        
+    return x
 end
 
 function judgesum(t, thres)
