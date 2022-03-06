@@ -1,7 +1,7 @@
 module FractionalDiffEq
 
-using LinearAlgebra
-using SpecialFunctions
+using LinearAlgebra, SpecialFunctions
+using ApproxFun
 using InvertedIndices
 using QuadGK
 using SpecialMatrices
@@ -40,6 +40,10 @@ include("DistributedOrder/matrix.jl")
 
 # Fractional Differences equations
 include("FractionalDifferences/PECE.jl")
+
+# Fractional integral equations
+include("FIE/Qmat.jl")
+include("FIE/mycoeffs.jl")
 
 # Mittag Leffler function
 include("mlfun.jl")
