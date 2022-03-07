@@ -95,4 +95,6 @@ export DOB, DOF, DORANORT, isFunction
 # Export auxillary functions for FLMM
 export ourfft, ourifft, Weights, FastConv
 
+export myeval
+
 end
