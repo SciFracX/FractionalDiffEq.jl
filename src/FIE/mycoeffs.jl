@@ -1,4 +1,9 @@
 function mycoeffs(f, n, lam)
     F = Fun(f, Ultraspherical(lam))
-    return coefficients(F)[1:n]
+    m = coefficients(F)
+    if length(m) < n
+        return [m; zeros(n-length(m))]
+    else
+        return m[1:n]
+    end
 end

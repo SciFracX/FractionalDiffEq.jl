@@ -1,5 +1,3 @@
-using SparseArrays
-
 function Qmat(N, m, lam)
     # Integration matrix
     Q = 1
@@ -8,7 +6,7 @@ function Qmat(N, m, lam)
     end
     Q1 = Qmat1(N, lam)
     Q = Q*Q1
-    return Q
+    return Qmat05(N, lam)
 end
     
 function Qmat05(N, lam)

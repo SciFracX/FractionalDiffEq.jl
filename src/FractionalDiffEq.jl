@@ -1,6 +1,6 @@
 module FractionalDiffEq
 
-using LinearAlgebra, SpecialFunctions
+using LinearAlgebra, SpecialFunctions, SparseArrays
 using ApproxFun
 using InvertedIndices
 using QuadGK
@@ -44,6 +44,8 @@ include("FractionalDifferences/PECE.jl")
 # Fractional integral equations
 include("FIE/Qmat.jl")
 include("FIE/mycoeffs.jl")
+include("FIE/main.jl")
+include("FIE/evalresults.jl")
 
 # Mittag Leffler function
 include("mlfun.jl")
