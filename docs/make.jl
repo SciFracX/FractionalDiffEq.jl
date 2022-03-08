@@ -19,6 +19,7 @@ makedocs(;
         "Fractional Delay Differential Equations" => "fdde.md",
         "Distributed Order Differential Equations" => "dode.md",
         "Fractional Differences Equations" => "differences.md",
+        "Fractional Integral Equations" => "fie.md",
         "Detailed Models" => "models.md",
         "Problems" => "problems.md",
         "Algorithms" => "algorithms.md",

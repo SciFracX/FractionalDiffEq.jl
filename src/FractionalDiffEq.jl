@@ -77,7 +77,8 @@ export DOMatrixDiscrete
 # Fractional Differences Equations solvers
 export PECEDifference
 
-
+# Fractional Integral Equations solvers
+export SpectralUltraspherical
 
 
 # Export some api to construct the equation

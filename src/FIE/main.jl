@@ -1,4 +1,6 @@
-function solve(f, e, n)
+struct SpectralUltraspherical <: FractionalDiffEqAlgorithm end
+
+function solve(f, e, n, ::SpectralUltraspherical)
     # Initialize operators
     Z = spzeros(n, n)
     I1 = sparse(Matrix(I, n, n))

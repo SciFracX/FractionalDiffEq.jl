@@ -291,3 +291,17 @@ end
     t, y=solve(prob, T, h, PECEDifference())
     @test isapprox(y, [1.0, 2.5, 4.25, 5.125, 5.5625, 5.78125, 5.890625, 5.9453125, 5.97265625, 5.986328125, 5.9931640625]; atol=1e-3)
 end
+
+@testset "Test Fractional Integral Equations SpectralUltraspherical method" begin
+    fiee(x)=1+0*x
+    fief(x)=0*x
+    xx = LinRange(-1, 1, 5)
+    result=solve(fief, fiee, 20, SpectralUltraspherical())
+    sol=myeval(result, xx, 2)
+
+    @test isapprox(sol, [ 1.0
+    0.5231565837302468
+    0.42758357615580733
+    0.37316567427801584
+    0.3362040024463395]; atol=1e-3)
+end
