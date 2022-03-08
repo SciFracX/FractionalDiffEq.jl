@@ -52,3 +52,9 @@ FractionalDiffEq.DOMatrixDiscrete
 ```@docs
 FractionalDiffEq.PECEDifference
 ```
+
+### Fractional Integral Equations
+
+```@docs
+FractionalDiffEq.SpectralUltraspherical
+```

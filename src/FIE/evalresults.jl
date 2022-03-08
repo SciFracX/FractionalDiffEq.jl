@@ -35,7 +35,6 @@ function clenshawP(x, c)
 end
     
 function clenshawU(x, c)
-
     bk1 = 0*x
     bk2 = bk1
     N = size(c, 1)-1
