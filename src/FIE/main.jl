@@ -1,3 +1,21 @@
+"""
+# Usage
+
+    solve(f, e, n, SpectralUltraspherical())
+
+### References
+
+```tex
+@article{Hale2018AFA,
+  title={A Fast and Spectrally Convergent Algorithm for Rational-Order Fractional Integral and Differential Equations},
+  author={Nicholas Hale and Sheehan Olver},
+  journal={SIAM J. Sci. Comput.},
+  year={2018},
+  volume={40},
+  pages={A2456-A2491}
+}
+```
+"""
 struct SpectralUltraspherical <: FractionalDiffEqAlgorithm end
 
 function solve(f, e, n, ::SpectralUltraspherical)
