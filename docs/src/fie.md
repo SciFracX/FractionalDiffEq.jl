@@ -25,3 +25,5 @@ result=solve(f, e, 20, SpectralUltraspherical())
 sol=myeval(result, xx, 2)
 plot(xx, sol)
 ```
+
+![Second kind Abel IE](./assets/abelinteqexample.png)
