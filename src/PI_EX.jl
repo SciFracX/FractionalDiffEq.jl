@@ -1,4 +1,3 @@
-
 function PIEX(al,lam,f_fun,t0,T,y0,h)
     Q = length(al)
     al= sort(al)
@@ -58,13 +57,13 @@ function PIEX(al,lam,f_fun,t0,T,y0,h)
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
     end
-    
+
     if T < t[N+1]
         c = (T - t[N])/h
         t[N+1] = tfinal
         y[:, N+1] = (1-c)*y[:, N] + c*y[:, N+1]
     end
-    
+
     t = t[1:N+1] ; y = y[:, 1:N+1]
     return t, y
 end
@@ -72,29 +71,31 @@ end
 
 function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , bn, t0, problem_size, y0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, f_fun, lam_Q)
     
-    nxi = nx0 ; nxf = nx0 + L*r - 1
-    nyi = ny0 ; nyf = ny0 + L*r - 1
+    nxi = nx0
+    nxf = nx0 + L*r - 1
+    nyi = ny0
+    nyf = ny0 + L*r - 1
     is = 1
     s_nxi = zeros(N)
     s_nxf = zeros(N)
     s_nyi = zeros(N)
     s_nyf = zeros(N)
-    s_nxi[is] = nxi
-    s_nxf[is] = nxf
-    s_nyi[is] = nyi
-    s_nyf[is] = nyf
+    s_nxi[1] = nxi
+    s_nxf[1] = nxf
+    s_nyi[1] = nyi
+    s_nyf[1] = nyf
     
     i_triangolo = 0; stop = 0
-    while stop!==0
+    while stop!=0
         
-        stop = nxi+r-1 == nx0+L*r-1 | (nxi+r-1>=Nr-1)
+        stop = nxi+r-1 == nx0+L*r-1 || (nxi+r-1 >= Nr-1)
         
         zn = Quadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn, problem_size, Q) ;
         
         (y, fy) = Triangolo(nxi, nxi+r-1, t, y, fy, zn, N, bn, t0, problem_size, y0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, f_fun, lam_Q) ;
         i_triangolo = i_triangolo + 1
         
-        if ~stop
+        if stop!=0
             if nxi+r-1 == nxf
                 i_Delta = ff[i_triangolo]
                 Delta = i_Delta*r
@@ -116,7 +117,7 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , bn, t0, proble
         
     end
     return y, fy
-    end
+end
     
  
 function Quadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn,  problem_size, Q)
@@ -144,8 +145,7 @@ end
 function Triangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, y0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, f_fun, lam_Q)
 
     for n = nxi : min(N, nxf)
-        St = StartingTerm_Multi(t[n+1], t0, problem_size, y0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
-        Phi_n = St
+        Phi_n = StartingTerm_Multi(t[n+1], t0, problem_size, y0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
         if nxi == 1
             j_beg = 0
         else
@@ -231,5 +231,5 @@ function StartingTerm_Multi(t,t0, problem_size, y0, Q, m_Q, m_i, bet, lam_rat_i,
 end
 #=
 test(t, y)=172/125*cos(4/5*t)
-(t, y)=PIEX([3, 2.5, 2, 1, 0.5, 1], [1, 1/16, 4/5, 3/2, 1/25, 6/5], test, 0, 20, [0 0 0 0 0 0], 0.01)
+(t, y)=PIEX([3, 2.5, 2, 1, 0.5, 0], [1 1/16 4/5 3/2 1/25 6/5], test, 0, 20, [0 0 0 0 0 0], 0.01)
 =#
