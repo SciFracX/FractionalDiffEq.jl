@@ -296,7 +296,7 @@ end
     fiee(x)=1+0*x
     fief(x)=0*x
     xx = LinRange(-1, 1, 5)
-    sol=solve(fief, fiee, 20, SpectralUltraspherical())
+    sol=solve(fief, fiee, 20, xx, SpectralUltraspherical())
 
     @test isapprox(sol, [ 1.0
     0.5231565837302468
