@@ -12,7 +12,7 @@ using UnPack
 include("PECE.jl")
 include("matrix.jl")
 include("MTrap.jl")
-include("FLMM.jl")
+include("PI.jl")
 include("ClosedForm/hankelmatrix.jl")
 include("ClosedForm/ClosedForm.jl")
 include("ClosedForm/highprecision.jl")
@@ -59,6 +59,7 @@ export solve, FDEProblem, FPDEProblem, FDDEProblem
 export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FractionalDifferenceProblem
 
 # FODE solvers
+export PIEX, PIIM
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, G2Direct
 
 # FPDE solvers
