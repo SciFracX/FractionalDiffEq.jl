@@ -7,7 +7,7 @@ function Qmat(N, m, lam)
 end
 
 function Qmat05(N, lam)
-    # Half integral
+    # Half integral matrix
     if lam == 0.5
         v = (2/sqrt(pi)) ./ (2*collect(0:N-1).+1)
         Q = myspdiagm(spdiagm(0=>v, 1=>-v[2:end]), N)
@@ -19,7 +19,7 @@ function Qmat05(N, lam)
 end
     
 function Qmat1(N, lam)
-    # Full integral
+    # Full integral matrix
     if lam == 0.5
         v = 1 ./ (2*collect(0:N-1).+1)
         Q = myspdiagm(spdiagm(-1 => v, 1 => -v[2:end]), N)

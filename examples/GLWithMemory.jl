@@ -1,3 +1,4 @@
+using FractionalDiffEq
 h=0.005
 alpha = [0.99, 0.99, 0.99]
 x0 = [1, 0, 1]

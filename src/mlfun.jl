@@ -346,7 +346,7 @@ function LTIversion(t, lambda, alpha, beta, gama, log_epsilon)
 
     (N, iN) = findmin(real.(N_vett)); mu = mu_vett[iN]; h = h_vett[iN];
 
-    k = collect(-N : N)
+    k = collect(-N:N)
     u = h.*k
     z = mu*(1*im*u.+1).^2
     zd = -2*mu*u .+ 2*mu*1*im
@@ -386,12 +386,12 @@ function OptimalParam_RU(t, phi_s_star_j, pj, log_epsilon)
         sq_muj = sq_phibar_star_j*abs(4-A)/abs(7-sqrt(1+12*A))
         fbar=((sq_phibar_star_j-sq_phi_s_star_j)/sq_muj)^(-pj)
         stop=(pj<1e-14) || (f_min<fbar && fbar<f_max)
-        if stop==0
+        if stop == 0
             sq_phibar_star_j = f_tar^(-1/pj)*sq_muj+sq_phi_s_star_j
-            phibar_star_j=sq_phibar_star_j^2
+            phibar_star_j = sq_phibar_star_j^2
         end
     end
-    muj=sq_muj^2
+    muj = sq_muj^2
     hj=(-3*A-2+2*sqrt(1+12*A))/(4-A)/Nj
     
     log_eps=log(eps())

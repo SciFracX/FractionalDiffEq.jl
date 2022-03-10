@@ -45,7 +45,6 @@ include("FractionalDifferences/PECE.jl")
 include("FIE/Qmat.jl")
 include("FIE/mycoeffs.jl")
 include("FIE/main.jl")
-include("FIE/evalresults.jl")
 
 # Mittag Leffler function
 include("mlfun.jl")

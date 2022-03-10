@@ -3,6 +3,9 @@
 !!! warning "WIP"
     Supporting for fractional integral equatoins is still under heavy development.
 
+!!! info "Spectral method"
+    The algorithms we can use to solving Fractional Integration Equations are Spectral methods with help of [ApproxFun.jl](https://github.com/JuliaApproximation/ApproxFun.jl).
+
 The second-kind Abel integral equation:
 
 ```math
@@ -21,8 +24,7 @@ using FractionalDiffEq, Plots
 e(x)=1+0*x
 f(x)=0*x
 xx = LinRange(-1, 1, 100)
-result=solve(f, e, 20, SpectralUltraspherical())
-sol=myeval(result, xx, 2)
+sol = solve(f, e, 20, xx, SpectralUltraspherical())
 plot(xx, sol)
 ```
 
