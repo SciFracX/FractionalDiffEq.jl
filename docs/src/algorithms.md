@@ -13,8 +13,9 @@ FractionalDiffEq.ClosedForm
 FractionalDiffEq.ClosedFormHankelM
 FractionalDiffEq.ClosedFormHighPercision
 FractionalDiffEq.G2Direct
-FractionalDiffEq.PIEX
-FractionalDiffEq.PIIM
+FractionalDiffEq.PIEx
+FractionalDiffEq.PIIm
+FractionalDiffEq.PITrap
 ```
 
 ## Fractional Partial Differential Equations

@@ -307,7 +307,7 @@ end
 
 @testset "Test Product Integral Explicit method" begin
     fun(t, y)=1-y
-    sol=solve(fun, 0.5, 0, 5, 0.5, PIEX())
+    sol=solve(fun, 0.5, 0, 5, 0.5, PIEx())
 
     @test isapprox(sol, [ 0.0
     0.5840920370824765
@@ -323,7 +323,7 @@ end
 
 @testset "Test Product Integral Implicit method" begin
     fun(t, y)=1-y
-    sol=solve(fun, 0.5, 0, 1, 0.1, PIIM())
+    sol=solve(fun, 0.5, 0, 1, 0.1, PIIm())
 
     @test isapprox(sol, [ 0.0
     0.504626504404032
@@ -335,4 +335,20 @@ end
     0.6602762702077741
     0.6744705915156369
     0.6870025519994545]; atol=1e-4)
+end
+
+@testset "Test Product Integral Implicit Trapezoidal method" begin
+    fun(t, y)=1-y
+    sol=solve(fun, 0.5, 0, 1, 0.1, PITrap())
+
+    @test isapprox(sol, [0.0
+    0.504626504404032
+    0.5185925289496215
+    0.5467126570149609
+    0.571261200170596
+    0.5923262209457972
+    0.6105232343055992
+    0.6264159719331727
+    0.6404461835166287
+    0.652951997319657]; atol=1e-4)
 end

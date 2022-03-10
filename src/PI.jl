@@ -13,7 +13,7 @@
 }
 ```
 """
-struct PIEX <: FractionalDiffEqAlgorithm end
+struct PIEx <: FractionalDiffEqAlgorithm end
 
 """
 # Usage
@@ -30,9 +30,26 @@ struct PIEX <: FractionalDiffEqAlgorithm end
 }
 ```
 """
-struct PIIM <: FractionalDiffEqAlgorithm end
+struct PIIm <: FractionalDiffEqAlgorithm end
 
-function solve(f, α, u0, T, h, ::PIEX)
+"""
+# Usage
+
+    solve(f, α, u0, T, h, PITrap())
+
+### References
+
+```tex
+@inproceedings{Garrappa2018NumericalSO,
+  title={Numerical Solution of Fractional Differential Equations: A Survey and a Software Tutorial},
+  author={Roberto Garrappa},
+  year={2018}
+}
+```
+"""
+struct PITrap <: FractionalDiffEqAlgorithm end
+
+function solve(f, α, u0, T, h, ::PIEx)
     N::Int64 = T/h
     y = zeros(N)
 
@@ -47,7 +64,7 @@ function solve(f, α, u0, T, h, ::PIEX)
     return y
 end
 
-function solve(f, α, u0, T, h, ::PIIM)
+function solve(f, α, u0, T, h, ::PIIm)
     N::Int64 = T/h
     y = zeros(N)
 
@@ -62,10 +79,33 @@ function solve(f, α, u0, T, h, ::PIIM)
     return y
 end
 
+function solve(f, α, u0, T, h, ::PITrap)
+    N::Int64 = T/h
+    y = zeros(N)
+
+    y[1]=u0
+    for n in range(2, N, step=1)
+        middle=0
+        for j=1:n
+            middle += acoefficients(n-j, α)*f(j*h, y[j])
+        end
+        y[n] = u0 + h^α*(tacoefficients(n, α)+middle)
+    end
+    return y
+end
+
+function acoefficients(n, α)
+    if n == 0
+        return 1/gamma(α+2)
+    else
+        return ((n-1)^(α+1)-2*n^(α+1)+(n+1)^(α+1))/gamma(α+2)
+    end
+end
+
+function tacoefficients(n, α)
+    return ((n-1)^(α+1)-n^α*(n-α-1))/gamma(α+2)
+end
+
 function bcoefficients(n, α)
     return ((n+1)^α-n^α)/gamma(α+1)
 end
-
-
-fun(t, y)=1-y
-sol=solve(fun, 0.5, 0, 5, 0.5, PIEX())

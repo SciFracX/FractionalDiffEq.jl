@@ -59,7 +59,7 @@ export solve, FDEProblem, FPDEProblem, FDDEProblem
 export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FractionalDifferenceProblem
 
 # FODE solvers
-export PIEX, PIIM
+export PIEx, PIIm, PITrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, G2Direct
 
 # FPDE solvers
