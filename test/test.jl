@@ -307,7 +307,8 @@ end
 
 @testset "Test Product Integral Explicit method" begin
     fun(t, y)=1-y
-    sol=solve(fun, 0.5, 0, 5, 0.5, PIEx())
+    prob = SingleTermFODEProblem(fun, 0.5, 0, 5)
+    sol=solve(prob, 0.5, PIEx())
 
     @test isapprox(sol, [ 0.0
     0.5840920370824765
@@ -323,7 +324,8 @@ end
 
 @testset "Test Product Integral Implicit method" begin
     fun(t, y)=1-y
-    sol=solve(fun, 0.5, 0, 1, 0.1, PIIm())
+    prob = SingleTermFODEProblem(fun, 0.5, 0, 1)
+    sol=solve(prob, 0.1, PIIm())
 
     @test isapprox(sol, [ 0.0
     0.504626504404032
@@ -339,7 +341,8 @@ end
 
 @testset "Test Product Integral Implicit Trapezoidal method" begin
     fun(t, y)=1-y
-    sol=solve(fun, 0.5, 0, 1, 0.1, PITrap())
+    prob = SingleTermFODEProblem(fun, 0.5, 0, 1)
+    sol=solve(prob, 0.1, PITrap())
 
     @test isapprox(sol, [0.0
     0.504626504404032

@@ -126,7 +126,7 @@ struct FractionalDifferenceProblem
 end
 
 """
-    solve(problem, args..., Alg())
+    solve(problem::SingleTermFODEProblem, args..., Alg())
 
 Generalproblem solving API for solving FDE problems.
 """

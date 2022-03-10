@@ -1,7 +1,7 @@
 """
 # Usage
 
-    solve(f, α, u0, T, h, PIEX())
+    solve(prob::SingleTermFODEProblem, h, PIEX())
 
 ### References
 
@@ -18,7 +18,7 @@ struct PIEx <: FractionalDiffEqAlgorithm end
 """
 # Usage
 
-    solve(f, α, u0, T, h, PIEX())
+    solve(prob::SingleTermFODEProblem, h, PIEX())
 
 ### References
 
@@ -35,7 +35,7 @@ struct PIIm <: FractionalDiffEqAlgorithm end
 """
 # Usage
 
-    solve(f, α, u0, T, h, PITrap())
+    solve(prob::SingleTermFODEProblem, h, PITrap())
 
 ### References
 
@@ -49,7 +49,8 @@ struct PIIm <: FractionalDiffEqAlgorithm end
 """
 struct PITrap <: FractionalDiffEqAlgorithm end
 
-function solve(f, α, u0, T, h, ::PIEx)
+function solve(FODE::SingleTermFODEProblem, h, ::PIEx)
+    @unpack f, α, u0, T = FODE
     N::Int64 = T/h
     y = zeros(N)
 
@@ -64,7 +65,8 @@ function solve(f, α, u0, T, h, ::PIEx)
     return y
 end
 
-function solve(f, α, u0, T, h, ::PIIm)
+function solve(FODE::SingleTermFODEProblem, h, ::PIIm)
+    @unpack f, α, u0, T = FODE
     N::Int64 = T/h
     y = zeros(N)
 
@@ -79,11 +81,12 @@ function solve(f, α, u0, T, h, ::PIIm)
     return y
 end
 
-function solve(f, α, u0, T, h, ::PITrap)
+function solve(FODE::SingleTermFODEProblem, h, ::PITrap)
+    @unpack f, α, u0, T = FODE
     N::Int64 = T/h
     y = zeros(N)
+    y[1] = u0
 
-    y[1]=u0
     for n in range(2, N, step=1)
         middle=0
         for j=1:n
