@@ -1,3 +1,13 @@
+# Fractional Order Chaotic examples come from 
+#=
+@inproceedings{Petr2011FractionalOrderNS,
+title={Fractional-Order Nonlinear Systems: Modeling, Analysis and Simulation},
+author={Ivo Petr{\'a}{\vs}},
+year={2011}
+}
+=#
+#
+
 #=======Fractional Order Liu System=======#
 using FractionalDiffEq
 
