@@ -1,4 +1,6 @@
-using FractionalDiffEq, Documenter
+using FractionalDiffEq, Documenter, DemoCards, JSON
+
+ChaosGallery, postprocess_cb, ChaosGallery_assets = makedemos("ChaosGallery")
 
 makedocs(;
     modules=[FractionalDiffEq],
@@ -10,7 +12,7 @@ makedocs(;
         canonical="https://SciFracX.github.io/FractionalDiffEq.jl",
         assets=["assets/favicon.ico"],
     ),
-    pages=[
+    pages = [
         "FractionalDiffEq.jl" => "index.md",
         "Get Started" => "get_started.md",
         "Multi-term Fractional Differential Equations" => "multiterm.md",
@@ -20,6 +22,7 @@ makedocs(;
         "Distributed Order Differential Equations" => "dode.md",
         "Fractional Differences Equations" => "differences.md",
         "Fractional Integral Equations" => "fie.md",
+        ChaosGallery,
         "Detailed Models" => "models.md",
         "Problems" => "problems.md",
         "Algorithms" => "algorithms.md",
@@ -27,6 +30,8 @@ makedocs(;
         "Comparison" => "comparison.md"
     ],
 )
+
+postprocess_cb()
 
 deploydocs(;
     repo="github.com/SciFracX/FractionalDiffEq.jl",

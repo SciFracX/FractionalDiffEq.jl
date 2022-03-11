@@ -1,3 +1,4 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 FractionalDiffEq = "c7492dd8-6170-483b-af64-cefb6c377d9a"
+DemoCards = "311a05b2-6137-4a5a-b473-18580a3d38b5"
