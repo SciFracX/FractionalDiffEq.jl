@@ -25,4 +25,4 @@ plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Chen Sy
 
 ```
 
-![Chen](./assets/Chen.png)
+![Chen](./assets/ChenCover.png)
