@@ -1,6 +1,6 @@
 using FractionalDiffEq, Documenter, DemoCards, JSON
 
-ChaosGallery, postprocess_cb, ChaosGallery_assets = makedemos("src/ChaosGallery")
+ChaosGallery, postprocess_cb, ChaosGallery_assets = makedemos("ChaosGallery")
 
 makedocs(;
     modules=[FractionalDiffEq],
