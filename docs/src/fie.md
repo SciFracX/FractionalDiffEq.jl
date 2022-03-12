@@ -9,23 +9,26 @@
 The second-kind Abel integral equation:
 
 ```math
-u(x)+{_{-1}Q_x^{1/2}}u(x)=1
+u(x)+{_{-1}I_x^{1/2}}u(x)=1
 ```
 
-While the solution is
+While the analytical solution is
 
 ```math
 u(x)=e^{1+x}erfc(\sqrt{1+x})
 ```
 
-```julia
-using FractionalDiffEq, Plots
+To construct the problem, we can use ```FIEProblem``` to model our fractional integral problems and call an algorithm to solve the problem.
 
-e(x)=1+0*x
-f(x)=0*x
+```julia
+using FractionalDiffEq, Plots, SpecialFunctions
+analytical(x)=exp(1+x)*erfc(sqrt(1+x))
 xx = LinRange(-1, 1, 100)
-sol = solve(f, e, 20, xx, SpectralUltraspherical())
-plot(xx, sol)
+prob = FIEProblem([1, 1], [1, 0.5], 1)
+sol = solve(prob, 20, xx, SpectralUltraspherical())
+solanalytical = analytical.(xx)
+plot(xx, sol, title="Second kind Abel integral equation", label="Numerical")
+plot!(xx, solanalytical, ls=:dash, label="Analytical")
 ```
 
 ![Second kind Abel IE](./assets/abelinteqexample.png)

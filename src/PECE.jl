@@ -114,10 +114,22 @@ end
 
 Define fractional difference problems.
 """
-struct FractionalDifferenceProblem
+struct FractionalDifferenceProblem <: FDEProblem
     fun::Function
     α
     x0
+end
+
+
+"""
+    FIEProblem(parameters, orders, rightfun)
+
+Define fractional integral problems.
+"""
+struct FIEProblem <: FDEProblem
+    parameters::AbstractArray
+    orders::AbstractArray
+    rightfun::Union{Function, Number}
 end
 
 """

@@ -21,7 +21,6 @@ struct GLWithMemory <: FractionalDiffEqAlgorithm end
 function solve(prob::FODESystem, h, tf, ::GLWithMemory)
     @unpack f, α, x0 = prob
     hα=h^α[1]
-
     n::Int64 = floor(Int64, tf/h)+1
 
     # Initialize solution

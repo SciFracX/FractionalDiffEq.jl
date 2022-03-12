@@ -303,10 +303,9 @@ end
 end
 
 @testset "Test Fractional Integral Equations SpectralUltraspherical method" begin
-    fiee(x)=1+0*x
-    fief(x)=0*x
+    prob = FIEProblem([1, 1], [1, 0.5], 1)
     xx = LinRange(-1, 1, 5)
-    sol=solve(fief, fiee, 20, xx, SpectralUltraspherical())
+    sol=solve(prob, 20, xx, SpectralUltraspherical())
 
     @test isapprox(sol, [ 1.0
     0.5231565837302468
