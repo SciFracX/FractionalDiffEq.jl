@@ -15,8 +15,8 @@ struct ADV_DIF <: FractionalDiffEqAlgorithm end
 
 function solve(order::Integer, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, flt, ::ADV_DIF)
     h = X/i
-    gm=T/N
-    miu=h^2*gm^(-α)/gamma(1-α)
+    gm = T/N
+    miu = h^2*gm^(-α)/gamma(1-α)
     u = zeros(i-1, N+1)
 
     for i2=1:i-1
@@ -31,7 +31,7 @@ function solve(order::Integer, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, fl
         end
     end
 
-    H=zeros(i-1, N)
+    H = zeros(i-1, N)
     for i7 = 1:N
         q1 = [i7/N α]
         q2 = [T*(i7)/N α]
@@ -40,9 +40,8 @@ function solve(order::Integer, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, fl
     end
 
     for n=1:order-2
-        gp=[n, n+1, α]
         g1 = ones(1, n)
-        g2=g1*wj(gp)
+        g2=g1*wj(n, n+1, α)
         g = zeros(n, 1)
         for i8=1:n
             g[i8, 1]=g2[1, i8]
@@ -51,9 +50,9 @@ function solve(order::Integer, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, fl
         for i9=1:n
             u1[:, i9] = u[:, i9]
         end
-        H1=-miu*u1*g + h^2*f[:, n]+H[:, n]
+        H1 = -miu*u1*g + h^2*f[:, n]+H[:, n]
 
-        A=zeros(i-1, i-1)
+        A = zeros(i-1, i-1)
         for i10=1:i-1
             A[i10, i10]=miu*g2[1, n+1]+2*κ
             if i10>1
@@ -66,9 +65,8 @@ function solve(order::Integer, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, fl
         u[:, n+1]=zg(A, H1)
     end
     for n=order-1:N
-        gp = [n, order, α]
         g1 = ones(1, n)
-        g2 = g1*wj(gp)
+        g2 = g1*wj(n, order, α)
         g=zeros(n,1)
         for i8=1:n
             g[i8, 1]=g2[1, i8]
@@ -77,11 +75,11 @@ function solve(order::Integer, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, fl
         for i9=1:n
             u1[:,i9] = u[:, i9]
         end
-        H1=-miu*(u1*g)+h^2*f[:, n] + H[:, n]
+        H1=-miu*(u1*g) + h^2*f[:, n] + H[:, n]
 
         A=zeros(i-1,i-1)
         for i10=1:i-1
-            A[i10, i10]=miu*g2[1, n+1] + 2*κ
+            A[i10, i10] = miu*g2[1, n+1] + 2*κ
             if i10 !== 1
                 A[i10, i10-1] = -(κ+v*h/2)
             end
@@ -94,30 +92,27 @@ function solve(order::Integer, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, fl
     return u
 end
 
-function wj(p)
-    n::Int = p[1]
-    r::Int = p[2]
-    a=p[3]
-    A=zeros(n, n+1)
+function wj(n::Int64, r::Int64, a)
+    A = zeros(n, n+1)
     for iw=1:r-2
         for jw=1:iw+1
-        A[iw, jw] = w([iw+1-jw, iw+1, iw, n, a])
+        A[iw, jw] = w(iw+1-jw, iw+1, iw, n, a)
         end
     end
     for iw=r-1:n
         for jw=iw-r+2:iw+1
-        A[iw, jw]=w([iw+1-jw, r, iw, n, a])
+        A[iw, jw] = w(iw+1-jw, r, iw, n, a)
         end
     end
     return A
 end
 
 function zg(A, H)
-    i=length(H)
-    r=zeros(i)
-    l=zeros(i)
-    y=zeros(i)
-    U=zeros(i)
+    i = length(H)
+    r = zeros(i)
+    l = zeros(i)
+    y = zeros(i)
+    U = zeros(i)
     for t=1:i
         if t==1
             r[t] = A[1, 1]
@@ -144,13 +139,7 @@ function zg(A, H)
     return U
 end
 
-function w(q)
-    i::Int=q[1]
-    r::Int=q[2]
-    j=q[3]
-    n=q[4]
-    a=q[5]
-
+function w(i::Int64, r, j, n, a)
     ar=ones(r-1)
     br=ones(r-1)
     for lj=1:r-2

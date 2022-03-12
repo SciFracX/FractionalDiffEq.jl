@@ -130,13 +130,9 @@ end
 
 @testset "Test Closed Form method" begin
     t=collect(0:0.002:10);
-
     rightfun(x) = sin(x)
-
     prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], rightfun, [30 90], [1 0.3])
-
     result=solve(prob, t, ClosedForm())
-
 end
 
 @testset "Test ClosedFormHankelM method" begin
@@ -168,6 +164,24 @@ end
     @test isapprox(result, [1.0 0.0 1.0
     -4.04478 13.5939 -0.352607       
     84.8074 -51.1251 -27.5541]; atol=1e-4)
+end
+
+@testset "Test GL method" begin
+    fun(x, y) = 1-y
+    prob = SingleTermFODEProblem(fun, 0.5, 0, 1)
+    result = solve(prob, 0.1, GL())
+
+    @test isapprox(result, [0.0
+    0.31622776601683794
+    0.3743416490252569
+    0.42454983788325495
+    0.4608051796660425
+    0.4897286932245971
+    0.5136308879844076
+    0.5339402943673064
+    0.5515444532932976
+    0.5670394859746068
+    0.5808448788127054]; atol=1e-3)
 end
 
 @testset "Test DelayPECE method" begin

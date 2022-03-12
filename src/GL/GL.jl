@@ -1,32 +1,42 @@
+"""
+Grunwald Letnikov method for fractional ordinary differential equations
+
+```tex
+@INPROCEEDINGS{8742063,  
+author={Clemente-López, D. and Muñoz-Pacheco, J. M. and Félix-Beltrán, O. G. and Volos, C.},  
+booktitle={2019 8th International Conference on Modern Circuits and Systems Technologies (MOCAST)},   
+title={Efficient Computation of the Grünwald-Letnikov Method for ARM-Based Implementations of Fractional-Order Chaotic Systems},
+year={2019},   
+doi={10.1109/MOCAST.2019.8742063}}
+```
+"""
 struct GL <: FractionalDiffEqAlgorithm end
 
-# Need to be verified
-function solve(prob::SingleTermFODEProblem, T, b, ::GL)
-    f, α, h = prob.f, prob.α, prob.h
-    n = ceil(Int, T/h)
-    y = zeros(n)# Prelocate result
-    y[1] = 0
+function solve(FODE::SingleTermFODEProblem, h, ::GL)
+    @unpack f, α, u0, T = FODE
+    N = floor(Int, T/h)+1
+    c = zeros(N)
 
-    for k in range(2, n, step=1)
-        y[k]=-b*h^α*y[k-1]-middle(k, y, α)+h^α*f(h*k)
+    cp = 1
+    for j = 1:N
+        c[j] = (1-(1+α)/j)*cp
+        cp = c[j]
     end
 
+    # Initialization
+    y = zeros(N)
+    y[1] = u0
+
+    for i = 2:N
+        right = 0
+        for j=1:i-1
+            right += c[j]*y[i-j]
+        end
+        y[i] = f((i-1)*h, y[i-1])*h^α - right
+    end
     return y
 end
 
-function middle(k, y, α)
-    temp = 0
-
-    for j in range(1, k, step=1)
-        temp += coeff(α, j)*y[k-j+1]
-    end
-    return temp
-end
-#This can be computed using FFTW
-function coeff(α, k)
-    if k==0
-        return 1
-    else
-        return (1-(α+1)/k)*coeff(α, k-1)
-    end
-end
+fun(t, y) = 1-y
+prob = SingleTermFODEProblem(fun, 0.5, 0, 5)
+solve(prob, 0.01, GL())
