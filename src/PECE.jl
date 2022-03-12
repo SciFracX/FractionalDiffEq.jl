@@ -1,6 +1,3 @@
-using SpecialFunctions
-
-
 """
     FDEProblem
 
@@ -23,7 +20,7 @@ struct MultiTermsFODEProblem <: FDEProblem
     rorders::Union{AbstractArray, Nothing}
 end
 
-#=MultiTermsFODEProblem constructor=#
+#=MultiTermsFODEProblem constructor, dispatch for closedform problem=#
 MultiTermsFODEProblem(parameters, orders, rightfun) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing)
 
 
@@ -72,8 +69,6 @@ struct PECE <: FractionalDiffEqAlgorithm end
 #TODO: Use Richardson extrapolation to refine the PECE algorithms 
 
 
-
-
 """
     FPDEProblem(α, β, T, M, N)
 
@@ -93,10 +88,10 @@ end
 Construct a fractional delayed differential equation peoblem.
 """
 struct FDDEProblem <: FDEProblem
-    f
+    f::Function
     ϕ
     α
-    τ
+    τ::Number
     t0::Union{Number, Nothing}
 end
 
@@ -132,7 +127,7 @@ Generalproblem solving API for solving FDE problems.
 """
 function solve(FODE::SingleTermFODEProblem, h::Float64, ::PECE)
     @unpack f, α, u0, T = FODE
-    N = round(Int, T/h)
+    N::Int64 = round(Int, T/h)
     y = zeros(N+1) # Initialize the solution array
     leftsum = zero(Float64)
     l = floor(α)
@@ -147,7 +142,6 @@ function solve(FODE::SingleTermFODEProblem, h::Float64, ::PECE)
     @fastmath @inbounds @simd for n ∈ 0:N
         y[n+1] = leftsum + h^α/gamma(α+2)*(f((n+1)*h, predictor(f, y, α, n, h, u0, T)) + right(f, y, α, n, h))
     end
-
     return y
 end
 
@@ -175,7 +169,7 @@ function predictor(f, y, α::Float64, n::Integer, h::Float64, u0, T)
     end
 
     @fastmath @inbounds @simd for j ∈ 0:n
-        predict += B(j, n, α, h)*f(j*h, y[j+1])
+        predict += B(j, n, α)*f(j*h, y[j+1])
     end
 
     return leftsum + h^α/α*predict
@@ -192,6 +186,6 @@ function A(j, n, α)
     end
 end
 
-function B(j, n, α, h)
+function B(j, n, α)
     return ((n + 1 - j)^α - (n - j)^α) # Moved the h^α/α to the end of predictor: return leftsum + h^α/α*predict
 end

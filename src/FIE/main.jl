@@ -31,14 +31,14 @@ function solve(f, e, n, tspan, ::SpectralUltraspherical)
     rhs = [mycoeffs(e, n, 0.5); mycoeffs(f, n, 1)]
 
     idx = [collect(1:n)'; collect(n+1:2*n)']
-    idx=idx[:]
+    idx = idx[:]
     A = A[idx, idx]
 
     # Initialize solution
     u=zeros(size(A, 1))
     u[idx] = A\rhs
 
-    # Eval solution
+    # Evaluate solution
     sol = myeval(u, tspan, 2)
     return sol
 end

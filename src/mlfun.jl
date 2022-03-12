@@ -292,7 +292,7 @@ Compute three-parametric mittleff(α, β, γ, z).
 """
 function mittleff(α, β, γ, z)
     log_epsilon = log(10^(-15))
-    E=0
+    E = 0
     abs(z) < 1e-15 ? E=1/gamma(β) : E=LTIversion(1, z, α, β, γ, log_epsilon)
     return E
 end
@@ -381,8 +381,8 @@ function OptimalParam_RU(t, phi_s_star_j, pj, log_epsilon)
     while stop==0
         phi_t = phibar_star_j*t
         log_eps_phi_t = log_epsilon/phi_t
-        Nj=Complex(ceil(real(phi_t/pi*(1-3*log_eps_phi_t/2+sqrt(Complex(1-2*log_eps_phi_t))))), ceil(imag(phi_t/pi*(1-3*log_eps_phi_t/2+sqrt(Complex(1-2*log_eps_phi_t))))))
-        A=pi*Nj/phi_t
+        Nj = Complex(ceil(real(phi_t/pi*(1-3*log_eps_phi_t/2+sqrt(Complex(1-2*log_eps_phi_t))))), ceil(imag(phi_t/pi*(1-3*log_eps_phi_t/2+sqrt(Complex(1-2*log_eps_phi_t))))))
+        A = pi*Nj/phi_t
         sq_muj = sq_phibar_star_j*abs(4-A)/abs(7-sqrt(1+12*A))
         fbar=((sq_phibar_star_j-sq_phi_s_star_j)/sq_muj)^(-pj)
         stop=(pj<1e-14) || (f_min<fbar && fbar<f_max)
@@ -396,7 +396,7 @@ function OptimalParam_RU(t, phi_s_star_j, pj, log_epsilon)
     
     log_eps=log(eps())
     threshold = (log_epsilon-log_eps)/t
-    if muj>threshold
+    if muj > threshold
         abs(pj)<1e-14 ? Q=0 : Q=f_tar^(-1/pj)*sqrt(muj)
         phibar_star_j = (Q+sqrt(phi_s_star_j))^2
         if phibar_star_j<threshold
@@ -638,5 +638,5 @@ function mittleff(A, alpha, beta)
     E=funm(A)
 end
 #FIXME: Didn't see any matrix function support in Julia😟.
-# Yingbo has a implementation: https://github.com/YingboMa/Funm.jl
+# Yingbo has an implementation: https://github.com/YingboMa/Funm.jl
 =#

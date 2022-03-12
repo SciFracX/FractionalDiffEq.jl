@@ -43,7 +43,7 @@ end
 function aₖ(k, α)
     return (k+1)^(1-α)-k^(1-α)
 end
-
+#=
 f(t, u, H) = H - u + 0.2*t-0.11
 function H(t)
     if t<=0
@@ -52,8 +52,10 @@ function H(t)
         return 0
     end
 end
+
 using SpecialFunctions
 result=testsolve(f, 0.7, 0.1, 5, 0.01, H)
 tspan = collect(0.01:0.01:5)
 using Plots
 plot(tspan, result)
+=#
