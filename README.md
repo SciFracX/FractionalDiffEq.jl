@@ -66,7 +66,7 @@ So we can use FractionalDiffEq.jl to solve the problem:
 
 ```julia
 fun(x, y) = 1-y
-u0=0;T=5;h=0.001
+u0 = 0; T = 5; h = 0.001
 prob = SingleTermFODEProblem(fun, 0.5, u0, T)
 result = solve(prob, h, PECE())
 tspan = collect(0:h:T)
@@ -93,11 +93,7 @@ Let's see if the initial value problem like:
 </p>
 
 ```julia
-using FractionalDiffEq
-using Plots, LaTeXStrings
-
-s="\$ A\\ complicated\\ example \$"
-
+using FractionalDiffEq, Plots
 T=30;h=0.05
 tspan = collect(0.05:h:T)
 rightfun(x) = 172/125*cos(4/5*x)
@@ -125,9 +121,7 @@ Let's see if we have a Chua chaos system:
 By using the ```NonLinearAlg``` algorithms to solve this problem:
 
 ```julia
-using FractionalDiffEq
-using Plots
-
+using FractionalDiffEq, Plots
 function chua(t, x, k)
     a=10.725
     b=10.593
@@ -150,12 +144,9 @@ end
 
 α = [0.93, 0.99, 0.92];
 x0 = [0.2; -0.1; 0.1];
-h = 0.001;
 prob = SystemOfFDEProblem(chua, α, x0)
-tn = 200;
+tn = 200; h = 0.001;
 result = solve(prob, h, tn, NonLinearAlg())
-
-gr()
 plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)
 ```
 
@@ -203,24 +194,16 @@ FractionalDiffEq.jl is also able to solve ordinary differential equations~ Let's
 
 
 ```julia
-using FractionalDiffEq
-using Plots, LaTeXStrings
+using FractionalDiffEq, Plots
 
-s="\$ODE\\ Example\$"
-
-T = 30
-h = 0.05
+T = 30; h = 0.05
 tspan = collect(h:h:T)
-
 f(x) = 1/2*(-exp(-x)-sin(x)-cos(x)+2)
 target =f.(tspan)
-
 rightfun(x) = sin(x)
 prob = MultiTermsFODEProblem([1, 1], [2, 1], rightfun)
 result = solve(prob, h, T, FODEMatrixDiscrete())
-
 plot(tspan, result, title=s, legend=:bottomright, label="ODE Numerical Solution!")
-
 plot!(tspan, target, lw=3,ls=:dash,label="ODE Analytical Solution!")
 ```
 
