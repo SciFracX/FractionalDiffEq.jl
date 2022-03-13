@@ -51,7 +51,7 @@ struct PITrap <: FractionalDiffEqAlgorithm end
 
 function solve(FODE::SingleTermFODEProblem, h, ::PIEx)
     @unpack f, α, u0, T = FODE
-    N::Int64 = T/h
+    N::Int64 = round(T/h)
     y = zeros(N)
 
     y[1]=u0
@@ -67,7 +67,7 @@ end
 
 function solve(FODE::SingleTermFODEProblem, h, ::PIIm)
     @unpack f, α, u0, T = FODE
-    N::Int64 = T/h
+    N::Int64 = round(T/h)
     y = zeros(N)
 
     y[1]=u0
@@ -83,7 +83,7 @@ end
 
 function solve(FODE::SingleTermFODEProblem, h, ::PITrap)
     @unpack f, α, u0, T = FODE
-    N::Int64 = T/h
+    N::Int64 = round(T/h)
     y = zeros(N)
     y[1] = u0
 
