@@ -21,13 +21,10 @@ u(t)=t^{1.8}E_{1.8,\ 2.8}(-t^{1.8})
 We can solve this problem by the following code using FractionalDiffEq.jl:
 
 ```julia
-using FractionalDiffEq
-using Plots, LaTeXStrings
+using FractionalDiffEq, Plots
 
 # Analytical solution
 analytical(x) = x.^1.8 .*mittleff(1.8, 2.8, -x.^1.8)
-
-s="\$D^{1.8}y(x)=1-y(x),\\ y(0)=0\$"
 
 # Numerical solution
 fun(x, y) = 1-y
@@ -49,11 +46,10 @@ To provide users a simple way to solve fractional differential equations, we fol
 
 ## Step 1: Defining a Problem
 
-First, we need to specify the problem we want to solve. Just by passing the parameter —— describing function, order, step size and time span:
+First, we need to specify the problem we want to solve. Just by passing the parameters —— describing function, orders, step size and time span:
 
 ```julia
 using FractionalDiffEq
-
 fun(x, y) = 1-y
 prob = SingleTermFODEProblem(fun, 1.8, 0.01, 20)
 ```
@@ -68,7 +64,7 @@ After defining a problem, we can solve it by calling the ```solve``` function:
 result = solve(prob, h, T, Alg())
 ```
 
-Note that there are different algorithms for differential fractional differential equations, such as FODE, FPDE, FDDE, we need to choose a properiate algorithm for specific problem. For all the algorithms, please refer to [algorithms documentation](@ref algorithms).
+Note that there are different algorithms for differential fractional differential equations, such as FODE, FPDE, FDDE and FIE, we need to choose a properiate algorithm for specific problem. For all the algorithms, please refer to [algorithms documentation](@ref algorithms).
 
 ## Step3 : Analyzing the Solution
 

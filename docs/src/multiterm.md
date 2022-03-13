@@ -7,7 +7,7 @@ Let's see if we have an initial value problem with multiple terms derivative con
 All we need to do is passing the parameters and orders of the fractional ordinary differential equation to the API ```solve``` as two arrays.
 
 !!! warning "The parameters and orders array must have the same length"
-    When we are using ```FODEMatrixDiscrete``` to solve the problem, please note we should keep the parameters and orders array must have the same length.
+    When we are solving the multi-terms FDE problem, please note we should keep the parameters array and orders array have the same length.
 
 ## Detailed Usage
 
@@ -47,18 +47,13 @@ using Plots, LaTeXStrings
 
 s="\$ A\\ complicated\\ example \$"
 
-T = 30
-h = 0.05
+T = 30; h = 0.05
 tspan = collect(0.05:h:T)
-
 rightfun(x) = 172/125*cos(4/5*x)
-
 prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun)
-
 result = solve(prob, h, T, FODEMatrixDiscrete())
 plot(tspan, result, title=s, legend=:bottomright)
 ```
-
 
 By solving the equation and plotting the result, we can see its solution here:
 
