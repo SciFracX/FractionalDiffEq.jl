@@ -70,7 +70,7 @@ export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF
 export NonLinearAlg, GLWithMemory, ModifiedTrap, LorenzADM
 
 # FDDE solvers
-export DelayPECE, DelayPI, MatrixForm, DelayABM
+export DelayPECE, DelayPI, DelayABM, MatrixForm
 
 # DODE solvers
 export DOMatrixDiscrete
@@ -80,6 +80,7 @@ export PECEDifference
 
 # Fractional Integral Equations solvers
 export SpectralUltraspherical
+
 
 
 # Export some api to construct the equation
@@ -93,9 +94,6 @@ export mittleff, mittlefferr, mittleffderiv
 
 # Distributed order auxiliary SpecialFunctions
 export DOB, DOF, DORANORT, isFunction
-
-# Export auxillary functions for FLMM
-export ourfft, ourifft, Weights, FastConv
 
 export myeval
 

@@ -1,7 +1,7 @@
 """
 # Usage
 
-    solve(limit, alpha, A, B, f, t0, x0, T, tau, h, MatrixForm())
+    solve(limit, α, A, B, f, t0, x0, T, τ, h, MatrixForm())
 
 ### Reference
 
@@ -9,11 +9,11 @@ https://github.com/mandresik/system-of-linear-fractional-differential-delayed-eq
 """
 struct MatrixForm <: FractionalDiffEqAlgorithm end
 
-function solve(limit, alpha, A, B, f, t0, x0, T, tau, h, ::MatrixForm)
+function solve(limit, α, A, B, f, t0, x0, T, τ, h, ::MatrixForm)
     var_num = length(A[:, 1])
-    m = ceil(Int, alpha)
+    m = ceil(Int, α)
 
-    t_tau = t0-tau
+    t_tau = t0-τ
     temp = collect(t0-h:-h:t_tau)
     t = [temp[end:-1:1]; collect(t0:h:T)]
 
@@ -33,7 +33,7 @@ function solve(limit, alpha, A, B, f, t0, x0, T, tau, h, ::MatrixForm)
 
     function function_values(M, limit)
         cols::Int64 = size(M, 2)
-        risk_index = zeros(var_num)
+        risk_index = zeros(1, var_num)
         col = 0
         M0 = copy(M)
 
@@ -51,7 +51,7 @@ function solve(limit, alpha, A, B, f, t0, x0, T, tau, h, ::MatrixForm)
             Mt[:, (cols*j-cols+1):(cols*j)] = M
         end
 
-        if risk_index != zeros(var_num, 1)
+        if risk_index !== zeros(var_num, 1)
             risk_start_index = judgeeqsum(t, -1)
             inv_num = judgesum(t, 1)-judgeeqsum(t, -1)
             risks_num = size(risk_index, 2)
@@ -76,7 +76,7 @@ function solve(limit, alpha, A, B, f, t0, x0, T, tau, h, ::MatrixForm)
     @fastmath @inbounds @simd for n=1:N
         col_num = size(A, 2)
         ind = col_num*(n+index)
-        b[n] = (n+1)^alpha-n^alpha
+        b[n] = (n+1)^α-n^α
         F[:, n] = At[:, ind-col_num+1:ind]*x[n+index, :] + Bt[:, ind-col_num+1:ind]*x[n, :]+ft[:, n+index]
         TP = zeros(var_num, 1)
         @fastmath @inbounds @simd for k=0:m-1
@@ -86,7 +86,7 @@ function solve(limit, alpha, A, B, f, t0, x0, T, tau, h, ::MatrixForm)
         @fastmath @inbounds @simd for j=1:n
             sum += b[n-j+1].*F[:, j]
         end
-        x[n+index+1, :] = TP + h^alpha.*sum
+        x[n+index+1, :] = TP + h^α.*sum
     end
     return x
 end

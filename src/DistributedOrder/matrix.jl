@@ -1,18 +1,4 @@
 """
-    SingleTermDODEProblem(ω, t, h, B, rightfun)
-
-Define a single term distributed order differential equation problem.
-"""
-struct DODEProblem <: FDEProblem
-    parameters::AbstractArray
-    orders::AbstractArray
-    interval
-    tspan
-    h::Float64
-    rightfun::Function
-end
-
-"""
 # Usage
 
     solve(prob, DOMatrixDiscrete())
@@ -51,10 +37,12 @@ function solve(prob::DODEProblem, ::DOMatrixDiscrete)
 
     equation = zeros(N, N)
 
+    # Construct systems using matrices
     for (i, j) in zip(modifiedparameters, modifiedorders)
         equation += i*D(N, j, h)
     end
 
+    # Don't forget the distributed order term!
     equation += ω.*DOB(ϕ, interval, 0.01, N, h)
 
     F = eliminator(N, rows)*rightfun.(tspan)

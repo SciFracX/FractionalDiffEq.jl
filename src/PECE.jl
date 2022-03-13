@@ -1,14 +1,14 @@
 """
     FDEProblem
 
-General parent type for all kinds of problems in FractionalDiffEq.jl.
+General type for all kinds of problems in FractionalDiffEq.jl.
 """
 abstract type FDEProblem end
 
 """
     MultiTermsFODEProblem(parameters, orders, rightfun)
 
-    MultiTermsFODEProblem(parameters, orders, rparameters, rorders)
+    MultiTermsFODEProblem(parameters, orders, rightfun, rparameters, rorders)
 
 Define a multi-terms fractional ordinary differential equation.
 """
@@ -26,7 +26,7 @@ MultiTermsFODEProblem(parameters, orders, rightfun) = MultiTermsFODEProblem(para
 
 """
 
-    SingleTermFODEProblem(f, α, h)
+    SingleTermFODEProblem(f, α, u0, T)
 
 Define a single term fractional ordinary differential equation, there are only one term in this problem.
 """
@@ -44,30 +44,6 @@ Base type of FractionalDiffEq algorithms
 abstract type FractionalDiffEqAlgorithm end
 
 
-"""
-# Usage
-
-    solve(prob::SingleTermFODEProblem, h, PECE())
-
-Predict-Evaluate-Correct-Evaluate algorithm.
-
-For more details, please refer to [Predictor-Corrector algorithms](https://en.wikipedia.org/wiki/Predictor%E2%80%93corrector_method)
-
-This PECE algorithm is taken from Diethelm's paper.
-
-### References
-
-```tex
-@article{
-title={A predictor-corrector approach for the numerical solution of fractional differential equations},
-author={Diethelm, Kai and Ford, Neville J. and Freed, Alan D.}
-doi={https://doi.org/10.1023/A:1016592219341}
-}
-```
-"""
-struct PECE <: FractionalDiffEqAlgorithm end
-#TODO: Use Richardson extrapolation to refine the PECE algorithms 
-
 
 """
     FPDEProblem(α, β, T, M, N)
@@ -84,6 +60,7 @@ end
 
 """
     FDDEProblem(f, ϕ, α, τ)
+    FDDEProblem(f, ϕ, α, τ, t0)
 
 Construct a fractional delayed differential equation peoblem.
 """
@@ -110,6 +87,20 @@ struct FODESystem <: FDEProblem
 end
 
 """
+    DODEProblem(parameters, orders, interval, tspan, h, rightfun, rightfun)
+
+Define a single term distributed order differential equation problem.
+"""
+struct DODEProblem <: FDEProblem
+    parameters::AbstractArray
+    orders::AbstractArray
+    interval
+    tspan
+    h::Float64
+    rightfun::Function
+end
+
+"""
     FractionalDifferenceProblem(f, α, x0)
 
 Define fractional difference problems.
@@ -126,11 +117,39 @@ end
 
 Define fractional integral problems.
 """
-struct FIEProblem <: FDEProblem
+struct FIEProblem
     parameters::AbstractArray
     orders::AbstractArray
     rightfun::Union{Function, Number}
 end
+
+
+
+
+"""
+# Usage
+
+    solve(prob::SingleTermFODEProblem, h, PECE())
+
+Predict-Evaluate-Correct-Evaluate algorithm.
+
+For more details, please refer to [Predictor-Corrector algorithms](https://en.wikipedia.org/wiki/Predictor%E2%80%93corrector_method)
+
+This PECE algorithm is taken from Diethelm's paper.
+
+### References
+
+```tex
+@article{
+title={A predictor-corrector approach for the numerical solution of fractional differential equations},
+author={Diethelm, Kai and Ford, Neville J. and Freed, Alan D.}
+doi={https://doi.org/10.1023/A:1016592219341}
+}
+```
+"""
+struct PECE <: FractionalDiffEqAlgorithm end
+#TODO: Use Richardson extrapolation to refine the PECE algorithms 
+
 
 """
     solve(problem::SingleTermFODEProblem, args..., Alg())
