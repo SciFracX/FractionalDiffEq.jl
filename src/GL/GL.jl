@@ -36,7 +36,3 @@ function solve(FODE::SingleTermFODEProblem, h, ::GL)
     end
     return y
 end
-
-fun(t, y) = 1-y
-prob = SingleTermFODEProblem(fun, 0.5, 0, 5)
-solve(prob, 0.01, GL())

@@ -43,9 +43,15 @@ function solve(prob::FODESystem, h, tn, ::NonLinearAlg, L0=1e10)
     result = (z + repeat(x0, 1, m))'
     
     return result
-
 end
 
+"""
+P-th precision polynomial generate function
+
+```math
+g_p(z)=\\sum_{k=1}^p \\frac{1}{k}(1-z)^k
+```
+"""
 function genfun(p)
     a = collect(1:p+1)
     A = Vandermonde(a)'
