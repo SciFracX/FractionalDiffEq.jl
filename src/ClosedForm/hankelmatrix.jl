@@ -1,22 +1,22 @@
 """
 # Usage
 
-    solve(parameters, order, lparameters, lorders, u, t)
+    solve(prob::MultiTermsFODEProblem, ::ClosedFormHankelM)
 
 Use Closed-Form Hankel matrix algorithm to obtain numerical solution at zero initial condition.
 """
 struct ClosedFormHankelM <: FractionalDiffEqAlgorithm end
 
 
-function solve(prob::MultiTermsFODEProblem, t, ::ClosedFormHankelM)
-    @unpack parameters, orders, rightfun, rparameters, rorders = prob
-    h = t[2]-t[1]
-    u = rightfun.(t)
+function solve(prob::MultiTermsFODEProblem, ::ClosedFormHankelM)
+    @unpack parameters, orders, rightfun, rparameters, rorders, T = prob
+    h = T[2]-T[1]
+    u = rightfun.(T)
     u = u[:]
     A, B = 0, 0
 
     g = genfun(1)
-    nt = length(t)
+    nt = length(T)
     n = length(parameters)
     m = length(rparameters)
     for i=1:n

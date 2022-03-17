@@ -1,7 +1,7 @@
 """
 # Usage
 
-    solve(prob::MultiTermsFODEProblem, h, T, FODEMatrixDiscrete())
+    solve(prob::MultiTermsFODEProblem, h, FODEMatrixDiscrete())
 
 Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional ordinary differential equations to simple algebra system and solve the system.
 
@@ -37,8 +37,8 @@ struct FPDEMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 
 
-function solve(prob::MultiTermsFODEProblem, h, T, ::FODEMatrixDiscrete)
-    @unpack parameters, orders, rightfun = prob
+function solve(prob::MultiTermsFODEProblem, h, ::FODEMatrixDiscrete)
+    @unpack parameters, orders, rightfun, T = prob
     N::Int64 = floor(Int, T/h)
     highestorder = Int64(findmax(ceil.(orders))[1])
     rows = collect(1:highestorder)

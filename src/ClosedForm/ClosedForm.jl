@@ -3,7 +3,7 @@
 """
 # Usage
 
-    solve(prob::MultiTermsFODEProblem, t, ClosedForm())
+    solve(prob::MultiTermsFODEProblem, ClosedForm())
 
 Use Closed-Form solution to obtain numerical solution at zero initial condition.
 
@@ -15,12 +15,12 @@ ISBN:9787030543981
 struct ClosedForm <: FractionalDiffEqAlgorithm end
 
 
-function solve(prob::MultiTermsFODEProblem, t, ::ClosedForm)
-    @unpack parameters, orders, rightfun, rparameters, rorders = prob
-    h = t[2]-t[1]
+function solve(prob::MultiTermsFODEProblem, ::ClosedForm)
+    @unpack parameters, orders, rightfun, rparameters, rorders, T = prob
+    h = T[2]-T[1]
     D = sum(parameters./(h.^orders))
-    nT = length(t)
-    u = rightfun.(t)
+    nT = length(T)
+    u = rightfun.(T)
 
     #TODO: For small orders? e.g. if rparameters and rorders is Number???
     isa(rparameters, Number) && typeof(rorders) <: Number ? D1 = rparameters/h^rorders : D1 = rparameters[:]./h.^rorders[:]

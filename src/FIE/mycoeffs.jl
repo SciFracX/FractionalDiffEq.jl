@@ -1,3 +1,4 @@
+# Generate right hand coefficients
 function mycoeffs(f, n, lam)
     F = Fun(f, Ultraspherical(lam))
     m = coefficients(F)

@@ -24,8 +24,8 @@ end
         push!(target, i^0.5*mittleff(0.5, 1.5,-i^0.5))
     end
 
-    singleprob = MultiTermsFODEProblem([1, 1], [0.5, 0], 1)
-    result = solve(singleprob, 0.01, 5, FODEMatrixDiscrete())
+    singleprob = MultiTermsFODEProblem([1, 1], [0.5, 0], 1, 5)
+    result = solve(singleprob, 0.01, FODEMatrixDiscrete())
 
     @test isapprox(result, target; atol=1)
 
@@ -40,8 +40,8 @@ end
         push!(yatarget, i^1.8*mittleff(1.8,2.8,-i^1.8))
     end
 
-    highsingleprob = MultiTermsFODEProblem([1, 1], [1.8, 0], 1)
-    yaresult = solve(highsingleprob, 0.01, 20, FODEMatrixDiscrete())
+    highsingleprob = MultiTermsFODEProblem([1, 1], [1.8, 0], 1, 20)
+    yaresult = solve(highsingleprob, 0.01, FODEMatrixDiscrete())
 
     @test isapprox(yaresult, yatarget; atol=1)
 
@@ -131,15 +131,15 @@ end
 @testset "Test Closed Form method" begin
     t=collect(0:0.002:10);
     rightfun(x) = sin(x)
-    prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], rightfun, [30 90], [1 0.3])
-    result=solve(prob, t, ClosedForm())
+    prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], rightfun, [30 90], [1 0.3], t)
+    result=solve(prob, ClosedForm())
 end
 
 @testset "Test ClosedFormHankelM method" begin
     t = collect(0:0.5:1);
     rightfun(x)=sin(x^2)
-    prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], rightfun, [30 90], [1 0.3])
-    result = solve(prob, t, ClosedFormHankelM())
+    prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], rightfun, [30 90], [1 0.3], t)
+    result = solve(prob, ClosedFormHankelM())
 
     @test result≈[0.0; 0.08402140107687359; 0.3754974742112727]
 end

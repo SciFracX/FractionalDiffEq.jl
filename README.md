@@ -97,8 +97,8 @@ using FractionalDiffEq, Plots
 T=30;h=0.05
 tspan = collect(0.05:h:T)
 rightfun(x) = 172/125*cos(4/5*x)
-prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun) #pass the parameters vector and the orders vector
-result = solve(prob, h, T, FODEMatrixDiscrete())
+prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, T) #pass the parameters vector and the orders vector
+result = solve(prob, h, FODEMatrixDiscrete())
 plot(tspan, result, title=s, legend=:bottomright)
 ```
 
@@ -201,8 +201,8 @@ tspan = collect(h:h:T)
 f(x) = 1/2*(-exp(-x)-sin(x)-cos(x)+2)
 target =f.(tspan)
 rightfun(x) = sin(x)
-prob = MultiTermsFODEProblem([1, 1], [2, 1], rightfun)
-result = solve(prob, h, T, FODEMatrixDiscrete())
+prob = MultiTermsFODEProblem([1, 1], [2, 1], rightfun, T)
+result = solve(prob, h, FODEMatrixDiscrete())
 plot(tspan, result, title=s, legend=:bottomright, label="ODE Numerical Solution!")
 plot!(tspan, target, lw=3,ls=:dash,label="ODE Analytical Solution!")
 ```
