@@ -201,8 +201,8 @@ end
     α = 0.97
     τ = 0.8
     T = 1
-    fddeprob = FDDEProblem(f, ϕ, α, τ)
-    V, y = solve(fddeprob, T, h, DelayPECE())
+    fddeprob = FDDEProblem(f, ϕ, α, τ, T)
+    V, y = solve(fddeprob, h, DelayPECE())
 
     @test V≈[19.0, 19.0, 1.0]
     @test y≈[19.00001, 19.00001, 37.274176448220274]
@@ -219,16 +219,16 @@ end
     function f(t, y, ϕ)
         return 3.5*y*(1-ϕ/19)
     end
-    prob = FDDEProblem(f, ϕ, 0.97, 0.8, 0)
-    result = solve(prob, 2, 0.5, DelayPI())
+    prob = FDDEProblem(f, ϕ, 0.97, 0.8, 2, 0)
+    result = solve(prob, 0.5, DelayPI())
     @test result≈[19.00001, 19.00001, 19.00001, 18.99999190949352, 18.99997456359874]
 end
 
 @testset "Test DelayABM method" begin
     h=0.5; T=5; α=0.97; τ=2; q=0.5
     f(t, ϕ, y) = 2*ϕ/(1+ϕ^9.65)-y
-    prob = FDDEProblem(f, q, α, τ)
-    x, y=solve(prob, T, h, DelayABM())
+    prob = FDDEProblem(f, q, α, τ, T)
+    x, y=solve(prob, h, DelayABM())
 
     @test isapprox(x, [1.078559863692747, 1.175963999045738, 1.1661317460354588, 1.128481756921719, 1.0016061526083417, 0.7724564325042358, 0.5974978685646778]; atol=1e-3)
     @test isapprox(y, [0.8889787467894421, 0.9404487875504524, 0.9667449499617093, 0.9803311436135411, 1.078559863692747, 1.175963999045738, 1.1661317460354588]; atol=1e-3)

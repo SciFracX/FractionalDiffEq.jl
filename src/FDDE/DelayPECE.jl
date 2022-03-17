@@ -1,7 +1,7 @@
 """
 # Usage
 
-    solve(FDDE::FDDEProblem, T, h, DelayPECE())
+    solve(FDDE::FDDEProblem, h, DelayPECE())
 
 Using the delayed predictor-corrector method to solve the delayed fractional differential equation problem.
 
@@ -20,8 +20,8 @@ Using the delayed predictor-corrector method to solve the delayed fractional dif
 """
 struct DelayPECE <: FractionalDiffEqAlgorithm end
 
-function solve(FDDE::FDDEProblem, T, h, ::DelayPECE)
-    @unpack f, ϕ, α, τ = FDDE
+function solve(FDDE::FDDEProblem, h, ::DelayPECE)
+    @unpack f, ϕ, α, τ, T = FDDE
     t = collect(0:h:T)
     maxn = size(t, 1)
     yp = collect(0:h:T+h)

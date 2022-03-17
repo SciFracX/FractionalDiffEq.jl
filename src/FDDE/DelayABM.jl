@@ -1,5 +1,5 @@
 """
-    solve(FDDE::FDDEProblem, T, h, DelayABM())
+    solve(FDDE::FDDEProblem, h, DelayABM())
 
 Use the Adams-Bashforth-Moulton method to solve fractional delayed differential equations.
 
@@ -16,8 +16,8 @@ Use the Adams-Bashforth-Moulton method to solve fractional delayed differential 
 struct DelayABM <: FractionalDiffEqAlgorithm end
 #FIXME: There are still some improvments about initial condition
 
-function solve(FDDE::FDDEProblem, T, h, ::DelayABM)
-    @unpack f, ϕ, α, τ = FDDE
+function solve(FDDE::FDDEProblem, h, ::DelayABM)
+    @unpack f, ϕ, α, τ, T = FDDE
     N = Int64(T/h)
     Ndelay = Int64(τ/h)
     x1 = zeros(Ndelay+N+1)

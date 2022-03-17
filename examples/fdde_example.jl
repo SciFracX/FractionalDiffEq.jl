@@ -16,8 +16,8 @@ h = 0.05
 α = 0.97
 τ = 0.8
 T = 56
-fddeprob = FDDEProblem(f, ϕ, α, τ)
-V, y = solve(fddeprob, T, h, DelayPECE())
+fddeprob = FDDEProblem(f, ϕ, α, τ, T)
+V, y = solve(fddeprob, h, DelayPECE())
 
 using Plots
 plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
