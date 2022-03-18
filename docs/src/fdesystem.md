@@ -6,12 +6,6 @@ Many "real life" situations are governed by a system of fractional differential 
 
 So here, we will look at an example: [Chua circuit](https://en.wikipedia.org/wiki/Chua%27s_circuit).
 
-The circuit diagram of the Chua system is shown below:
-
-![Chua diode](./assets/chua_diode.svg)
-
-> Here, **``N_R``** is the [memoristor](https://en.wikipedia.org/wiki/Memristor), which is a non-linear electrical component relating electric charge and magnetic flux linkage.
-
 Let's see if we abstract the Chua system into a fractional differential equation system:
 
 ```math

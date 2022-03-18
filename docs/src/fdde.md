@@ -17,7 +17,7 @@ While only given the initial condition is not enough to solve the delayed differ
 All we need to do is to pass the function ``f(t,\ y(t),\ y(t-\tau))``, and history function ``\phi(t)`` to the ```FDDEProblem``` and choose an algorithm to solve problem:
 
 ```julia
-using FractionalDiffEq
+using FractionalDiffEq, Plots
 
 function ϕ(x)
     if x == 0
@@ -35,8 +35,6 @@ h = 0.05
 T = 56
 fddeprob = FDDEProblem(f, ϕ, α, τ, T)
 V, y = solve(fddeprob, h, DelayPECE())
-
-using Plots
 plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 ```
 

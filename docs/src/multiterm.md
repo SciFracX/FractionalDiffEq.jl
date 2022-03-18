@@ -42,17 +42,13 @@ y(0)=0,\ y'(0)=0,\ y''(0)=0
 Model this problem and solve the equation:
 
 ```julia
-using FractionalDiffEq
-using Plots, LaTeXStrings
-
-s="\$ A\\ complicated\\ example \$"
-
+using FractionalDiffEq, Plots
 T = 30; h = 0.05
 tspan = collect(0.05:h:T)
 rightfun(x) = 172/125*cos(4/5*x)
 prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, T)
 result = solve(prob, h, FODEMatrixDiscrete())
-plot(tspan, result, title=s, legend=:bottomright)
+plot(tspan, result, legend=:bottomright)
 ```
 
 By solving the equation and plotting the result, we can see its solution here:
