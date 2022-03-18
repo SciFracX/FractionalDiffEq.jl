@@ -27,9 +27,7 @@ function ϕ(x)
     end
 end
 
-function f(t, y, ϕ)
-    return 3.5*y*(1-ϕ/19)
-end
+f(t, y, ϕ) = 3.5*y*(1-ϕ/19)
 
 h = 0.05
 α = 0.97

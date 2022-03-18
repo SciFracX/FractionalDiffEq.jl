@@ -1,3 +1,19 @@
+"""
+Solve system of fractional delay differential equations.
+
+### References
+
+```tex
+@article{Yuan2013ChaosDA,
+  title={Chaos detection and parameter identification in fractional-order chaotic systems with delay},
+  author={Liguo Yuan and Qigui Yang and Caibin Zeng},
+  journal={Nonlinear Dynamics},
+  year={2013},
+  volume={73},
+  pages={439-448}
+}
+```
+"""
 struct DelayABMYuan <: FractionalDiffEqAlgorithm end
 
 function solve(f, α, τ, T, h, ::DelayABMYuan)

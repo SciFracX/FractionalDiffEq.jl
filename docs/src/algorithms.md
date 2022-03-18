@@ -33,6 +33,7 @@ FractionalDiffEq.DelayPECE
 FractionalDiffEq.DelayPI
 FractionalDiffEq.MatrixForm
 FractionalDiffEq.DelayABM
+FractionalDiffEq.DelayABMYuan
 ```
 
 ## Systems of Fractional Differential Equations
