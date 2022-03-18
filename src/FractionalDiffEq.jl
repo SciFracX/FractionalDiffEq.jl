@@ -34,6 +34,7 @@ include("FDDE/DelayPECE.jl")
 include("FDDE/DelayPI.jl")
 include("FDDE/Matrix.jl")
 include("FDDE/DelayABM.jl")
+include("FDDE/Yuan.jl")
 
 # Distributed order differential equations
 include("DistributedOrder/utils.jl")
@@ -70,7 +71,7 @@ export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF
 export NonLinearAlg, GLWithMemory, ModifiedTrap, LorenzADM
 
 # FDDE solvers
-export DelayPECE, DelayPI, DelayABM, MatrixForm
+export DelayPECE, DelayPI, DelayABM, DelayABMYuan, MatrixForm
 
 # DODE solvers
 export DOMatrixDiscrete
