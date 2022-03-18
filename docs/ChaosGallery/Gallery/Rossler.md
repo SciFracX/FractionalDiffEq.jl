@@ -1,5 +1,6 @@
 # Fractional Order Rossler System
 
+```julia
 using FractionalDiffEq
 
 h=0.005
@@ -21,5 +22,6 @@ result = solve(prob, h, tf, GLWithMemory())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Rossler System")
+```
 
 ![Rossler](./assets/Rossler.png)
