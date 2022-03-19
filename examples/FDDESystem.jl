@@ -1,5 +1,5 @@
 using FractionalDiffEq
-α=0.94; τ=0.9; T=1.4; h=0.1
+α=0.94; τ=0.009; T=3.4; h=0.0001
 function testf(x, y, z, xt, yt, zt, k)
     a=35
     b=3
@@ -15,4 +15,4 @@ end
 (x, y, z)=solve(testf, α, τ, T, h, DelayABMYuan())
 
 using Plots
-plot(x, y)
+plot3d(x, y, z, title="Fractional Order Chen Delayed System")
