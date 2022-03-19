@@ -51,12 +51,10 @@ D^{\alpha_3}z=x(t)y(t)-bz(t-\tau)
 ```
 
 ```julia
-using FractionalDiffEq
-α=0.94; τ=0.009; T=3.4; h=0.0001
-function testf(x, y, z, xt, yt, zt, k)
-    a=35
-    b=3
-    c=27
+using FractionalDiffEq, Plots
+α=[0.94, 0.94, 0.94]; ϕ=[0.2, 0, 0.5], τ=0.009; T=1.4; h=0.001
+function delaychen(x, y, z, xt, yt, zt, k)
+    a=35; b=3; c=27
     if k == 1
       return a*(y-xt)
     elseif k == 2
@@ -65,10 +63,8 @@ function testf(x, y, z, xt, yt, zt, k)
       return x*y-b*zt
     end
 end
-(x, y, z)=solve(testf, α, τ, T, h, DelayABMYuan())
-
-using Plots
-plot3d(x, y, z, title="Fractional Order Chen Delayed System")
+x=solve(delaychen, α, ϕ, τ, T, h, DelayABMYuan())
+plot(x[:, 1], x[:, 2], x[:, 3], title="Fractional Order Chen Delayed System")
 ```
 
 ![FOChen](./assets/fodelaychen.png)
