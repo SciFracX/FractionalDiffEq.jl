@@ -102,7 +102,7 @@ struct FODESystem <: FDEProblem
 end
 
 """
-    DODEProblem(parameters, orders, interval, tspan, h, rightfun, rightfun)
+    DODEProblem(parameters, orders, interval, tspan, h, rightfun)
 
 Define a single term distributed order differential equation problem.
 """

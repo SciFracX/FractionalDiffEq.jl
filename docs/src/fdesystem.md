@@ -120,13 +120,9 @@ function qi(t, x, y, z, k)
     end
 end
 
-alpha = [0.98, 0.98, 0.98]
-h = 0.001
-T = 50
-x0 = [0.1, 0.2, 0.3]
+alpha = [0.98, 0.98, 0.98]; h = 0.001; T = 50; x0 = [0.1, 0.2, 0.3]
 prob = FODESystem(qi, alpha, x0)
 result = solve(prob, h, T, GLWithMemory())
-
 plot(result[:, 1], result[:, 2])
 ```
 
