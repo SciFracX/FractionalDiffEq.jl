@@ -54,13 +54,9 @@ function qi(t, x, y, z, k)
     end
 end
 
-alpha = [0.98, 0.98, 0.98]
-h = 0.001
-T = 50
-x0 = [0.1, 0.2, 0.3]
+alpha = [0.98, 0.98, 0.98]; h = 0.001; T = 50; x0 = [0.1, 0.2, 0.3]
 prob = FODESystem(qi, alpha, x0)
 result = solve(prob, h, T, GLWithMemory())
-
 plot(result[:, 1], result[:, 2])</code></pre><p>We can get the phase portrait of the Qi chaotic system:</p><p><img src="../assets/qi.png" alt="GLWithMemory"/></p><h2 id="Fractional-Order-Lorenz-System"><a class="docs-heading-anchor" href="#Fractional-Order-Lorenz-System">Fractional Order Lorenz System</a><a id="Fractional-Order-Lorenz-System-1"></a><a class="docs-heading-anchor-permalink" href="#Fractional-Order-Lorenz-System" title="Permalink"></a></h2><p>Let&#39;s see if want to study the fractional order Lorenz system, FractionalDiffEq.jl is definitely a good tool for you!</p><p class="math-container">\[\begin{cases}
 D^\alpha x_1=a(x_2-x_1)\\
 D^\alpha x_2=cx_1-x_2x_3+dx_2\\
@@ -97,4 +93,4 @@ a=40; b=3; c=10; d=15
 prob = FractionalLorenz(a, b, c, d, 0.96)
 x, y, z = solve(prob, h, T, LorenzADM())
 
-plot(x, z)</code></pre><p><img src="../assets/lorenz.png" alt="Lorenz"/></p><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a>分数阶微积分学与分数阶控制 薛定宇 ISBN:9787030543981 Page 208</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../multiterm/">« Multi-term Fractional Differential Equations</a><a class="docs-footer-nextpage" href="../fpde/">Fractional Partial Differential Equations »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.15 on <span class="colophon-date" title="Sunday 20 March 2022 01:55">Sunday 20 March 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+plot(x, z)</code></pre><p><img src="../assets/lorenz.png" alt="Lorenz"/></p><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a>分数阶微积分学与分数阶控制 薛定宇 ISBN:9787030543981 Page 208</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../multiterm/">« Multi-term Fractional Differential Equations</a><a class="docs-footer-nextpage" href="../fpde/">Fractional Partial Differential Equations »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.15 on <span class="colophon-date" title="Sunday 20 March 2022 07:38">Sunday 20 March 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
