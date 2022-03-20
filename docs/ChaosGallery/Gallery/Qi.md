@@ -1,8 +1,7 @@
 # Fractional Order Qi System
 
 ```julia
-using FractionalDiffEq
-using Plots
+using FractionalDiffEq, Plots
 
 function qi(t, x, y, z, k)
     a, b, c, d, r = 35, 8/3, 80, -1, 1

@@ -21,8 +21,8 @@ struct DOMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 isFunction(x) = isa(x, Function) ? true : false
 
-function solve(prob::DODEProblem, ::DOMatrixDiscrete)
-    @unpack parameters, orders, interval, tspan, h, rightfun = prob
+function solve(prob::DODEProblem, h, ::DOMatrixDiscrete)
+    @unpack parameters, orders, interval, tspan, rightfun = prob
     N = length(tspan)
     # find the index of the distributed order
     DOid = findall(isFunction, orders)
