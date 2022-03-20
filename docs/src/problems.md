@@ -37,6 +37,7 @@ FractionalDiffEq.FPDEProblem
 
 ```@docs
 FractionalDiffEq.FDDEProblem
+FractionalDiffEq.FDDESystem
 ```
 
 ## DODEProblem

@@ -1,5 +1,7 @@
 using SpecialFunctions
 """
+  solve(FDDE::FDDESystem, h, DelayABMYuan())
+
 Solve system of fractional delay differential equations.
 
 ### References
@@ -17,7 +19,8 @@ Solve system of fractional delay differential equations.
 """
 struct DelayABMYuan <: FractionalDiffEqAlgorithm end
 
-function solve(f, ϕ, α, τ, T, h, ::DelayABMYuan)
+function solve(FDDESys::FDDESystem, h, ::DelayABMYuan)
+  @unpack f, ϕ, α, τ, T = FDDESys
   N = round(Int, T/h)
   Ndelay = round(Int, τ/h)
   m = length(ϕ)
