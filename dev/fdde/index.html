@@ -22,7 +22,7 @@ D^{\alpha_1}x=a(y(t)-x(t-\tau))\\
 D^{\alpha_2}y=(c-a)x(t-\tau)-x(t)z(t)+cy(t)\\
 D^{\alpha_3}z=x(t)y(t)-bz(t-\tau)
 \end{cases}\]</p><pre><code class="language-julia hljs">using FractionalDiffEq, Plots
-α=[0.94, 0.94, 0.94]; ϕ=[0.2, 0, 0.5], τ=0.009; T=1.4; h=0.001
+α=[0.94, 0.94, 0.94]; ϕ=[0.2, 0, 0.5]; τ=0.009; T=1.4; h=0.001
 function delaychen(x, y, z, xt, yt, zt, k)
     a=35; b=3; c=27
     if k == 1
@@ -33,7 +33,8 @@ function delaychen(x, y, z, xt, yt, zt, k)
       return x*y-b*zt
     end
 end
-x=solve(delaychen, α, ϕ, τ, T, h, DelayABMYuan())
+prob = FDDESystem(delaychen, ϕ, α, τ, T)
+x=solve(prob, h, DelayABMYuan())
 plot(x[:, 1], x[:, 2], x[:, 3], title=&quot;Fractional Order Chen Delayed System&quot;)</code></pre><p><img src="../assets/fodelaychen.png" alt="FOChen"/></p><p>FractionalDiffEq.jl is also capable of solving system of fractional delayed differential equations with matrix form:</p><p class="math-container">\[D_{t_0}^\alpha\textbf{x}(t)=\textbf{A}(t)\textbf{x}(t)+\textbf{B}(t)\textbf{x}(t-\tau)+\textbf{f}(t)\]</p><p>We explain the usage of algorithm by using an example:</p><p class="math-container">\[
 \textbf{x}(t)=\begin{pmatrix} x_{1}(t) \\ x_{2}(t) \\ x_{3}(t) \\ x_{4}(t) \end{pmatrix}
 \]</p><p class="math-container">\[
@@ -57,4 +58,4 @@ f=[0; 0; 0; 0]
 
 result=solve(limit, alpha, A, B, f, t0, x0, T, tau, h, MatrixForm())
 
-plot(result[:, 1], result[:, 3])</code></pre><p><img src="../assets/fdde_matrix.png" alt="Matrix Form"/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../fpde/">« Fractional Partial Differential Equations</a><a class="docs-footer-nextpage" href="../dode/">Distributed Order Differential Equations »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.15 on <span class="colophon-date" title="Saturday 19 March 2022 15:39">Saturday 19 March 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+plot(result[:, 1], result[:, 3])</code></pre><p><img src="../assets/fdde_matrix.png" alt="Matrix Form"/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../fpde/">« Fractional Partial Differential Equations</a><a class="docs-footer-nextpage" href="../dode/">Distributed Order Differential Equations »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.15 on <span class="colophon-date" title="Sunday 20 March 2022 01:55">Sunday 20 March 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
