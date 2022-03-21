@@ -23,7 +23,6 @@ makedocs(;
         "Fractional Differences Equations" => "differences.md",
         "Fractional Integral Equations" => "fie.md",
         ChaosGallery,
-        "Detailed Models" => "models.md",
         "Problems" => "problems.md",
         "Algorithms" => "algorithms.md",
         "Mittag Leffler Function" => "mittagleffler.md",
