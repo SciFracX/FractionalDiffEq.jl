@@ -1,5 +1,25 @@
 # Fractional Order Qi System
 
+Since the Qi chaotic system is depicted as:
+
+```math
+\begin{cases}
+\dot{x_1}=a(x_1-x_2)+x_2x_3\\
+\dot{x_2}=cx_1-x_2-x_1x_3\\
+\dot{x_3}=x_1x_2-bx_3
+\end{cases}
+```
+
+We can also obtain the fractional order Qi chaotic system:
+
+```math
+\begin{cases}
+D^\alpha x_1=a(x_1-x_2)+x_2x_3\\
+D^\alpha x_2=cx_1-x_2-x_1x_3\\
+D^\alpha x_3=x_1x_2-bx_3
+\end{cases}
+```
+
 ```julia
 using FractionalDiffEq, Plots
 
