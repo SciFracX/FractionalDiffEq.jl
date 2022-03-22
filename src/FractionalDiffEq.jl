@@ -8,6 +8,7 @@ using SpecialMatrices
 using Polynomials
 using FFTW
 using UnPack
+using LoopVectorization
 
 include("PECE.jl")
 include("matrix.jl")

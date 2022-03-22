@@ -57,7 +57,7 @@ function solve(FODE::SingleTermFODEProblem, h, ::PIEx)
     y[1]=u0
     for j in range(2, N, step=1)
         middle=0
-        for i=0:j-1
+        @turbo for i=0:j-1
             middle += bcoefficients(j-i, α)*f(i*h, y[i+1])
         end
         y[j] = u0 + middle*h^α

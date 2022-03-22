@@ -18,7 +18,7 @@ struct DelayABM <: FractionalDiffEqAlgorithm end
 
 function solve(FDDE::FDDEProblem, h, ::DelayABM)
     @unpack f, ϕ, α, τ, T = FDDE
-    N = round(Int, T/h)
+    N::Int = round(Int, T/h)
     Ndelay = round(Int, τ/h)
     x1 = zeros(Ndelay+N+1)
     x = zeros(Ndelay+N+1)

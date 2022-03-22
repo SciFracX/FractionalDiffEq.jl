@@ -52,7 +52,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::FODEMatrixDiscrete)
 
     equation = eliminator(N, rows)*equation*eliminator(N, rows)'
 
-    if typeof(rightfun) <: Number
+    if typeof(rightfun) <: Number # Handling right hand side
         rightside = eliminator(N, rows)*rightfun*ones(N)
     else
         rightside = eliminator(N, rows)*rightfun.(collect(h:h:T))

@@ -213,7 +213,7 @@ function predictor(f, y, α::Float64, n::Integer, h::Float64, u0, T)
         leftsum = u0 + T*u0
     end
 
-    @fastmath @inbounds @simd for j ∈ 0:n
+    @turbo for j ∈ 0:n
         predict += B(j, n, α)*f(j*h, y[j+1])
     end
 
@@ -231,6 +231,4 @@ function A(j, n, α)
     end
 end
 
-function B(j, n, α)
-    return ((n + 1 - j)^α - (n - j)^α) # Moved the h^α/α to the end of predictor: return leftsum + h^α/α*predict
-end
+B(j, n, α) = ((n + 1 - j)^α - (n - j)^α) # Moved the h^α/α to the end of predictor: return leftsum + h^α/α*predict
