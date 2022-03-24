@@ -7,17 +7,13 @@ h=0.005
 alpha = [0.97, 0.97, 0.96]
 x0 = [-0.2, 0.5, 0.2]
 tf=100
-function f(t, x, y, z, k)
+function Arneodo!(du, u, p, t)
     b1, b2, b3, b4 = -5.5, 3.5, 0.8, -1.0
-    if k == 1
-        return y
-    elseif k == 2
-        return z
-    elseif k == 3
-        return -b1*x-b2*y-b3*z+b4*x^3
-    end
+    du[1] = u[2]
+    du[2] = u[3]
+    du[3] = -b1*u[1]-b2*u[2]-b3*u[3]+b4*u[1]^3
 end
-prob = FODESystem(f, alpha, x0)
+prob = FODESystem(Arneodo!, alpha, x0)
 result = solve(prob, h, tf, GLWithMemory())
 
 using Plots

@@ -7,17 +7,13 @@ h=0.005
 alpha = [0.95, 0.95, 0.95]
 x0 = [1, 1.4, 1]
 tf=50
-function f(t, x, y, z, k)
+function LotkaVolterra!(du, u, p, t)
     a, b, c, d, e, p, s = 1, 1, 1, 1, 2, 3, 2.7
-    if k == 1
-        return a*x+e*x^2-b*x*y-s*z*x^2
-    elseif k == 2
-        return -c*y+d*x*y
-    elseif k == 3
-        return -p*z+s*z*x^2
-    end
+    du[1] = a*u[1]+e*u[1]^2-b*u[1]*u[2]-s*u[3]*u[1]^2
+    du[2] = -c*u[2]+d*u[1]*u[2]
+    du[3] = -p*u[3]+s*u[3]*u[1]^2
 end
-prob = FODESystem(f, alpha, x0)
+prob = FODESystem(LotkaVolterra!, alpha, x0)
 result = solve(prob, h, tf, GLWithMemory())
 
 using Plots

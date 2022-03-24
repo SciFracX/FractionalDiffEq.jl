@@ -46,9 +46,8 @@ function solve(prob::FODESystem, h, tf, ::GLWithMemory)
             end
         end
 
-        f(du, result[k-1, :], nothing, nothing)
+        f(du, result[k-1, :], nothing, (k-1)*h)
         for i in range(1, l, step=1)
-
             result[k, i] = hα*du[i] - summation[i]
         end
     end

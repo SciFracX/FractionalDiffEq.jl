@@ -7,15 +7,12 @@ h=0.005
 alpha = [1.2, 0.8]
 x0 = [0.2, -0.2]
 tf=60
-function f(t, x, y, k)
+function VanderPol!(du, u, p, t)
     ϵ = 1
-    if k == 1
-        return y
-    elseif k == 2
-        return -x-ϵ*(x^2-1)*y
-    end
+    du[1] = y
+    du[2] = -u[1]-ϵ*(u[1]^2-1)*u[2]
 end
-prob = FODESystem(f, alpha, x0)
+prob = FODESystem(VanderPol!, alpha, x0)
 result = solve(prob, h, tf, GLWithMemory())
 
 using Plots
