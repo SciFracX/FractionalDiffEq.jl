@@ -22,6 +22,7 @@ function solve(prob::FODESystem, h, tf, ::GLWithMemory)
     @unpack f, α, x0 = prob
     hα=h^α[1]
     n::Int64 = floor(Int64, tf/h)+1
+    l = length(x0)
 
     # Initialize solution
     result = zeros(n, length(x0))
@@ -34,6 +35,8 @@ function solve(prob::FODESystem, h, tf, ::GLWithMemory)
         Cα[j] = (1-(1+α[1])/(j-1))*Cα[j-1]
     end
 
+    du = zeros(l)
+
     @fastmath @inbounds @simd for k in range(2, n, step=1)
         summation = zeros(length(x0))
 
@@ -43,8 +46,10 @@ function solve(prob::FODESystem, h, tf, ::GLWithMemory)
             end
         end
 
-        for i in range(1, length(x0), step=1)
-            result[k, i] = hα*f((k-1)*h, result[k-1, :]..., i) - summation[i]
+        f(du, result[k-1, :], nothing, nothing)
+        for i in range(1, l, step=1)
+
+            result[k, i] = hα*du[i] - summation[i]
         end
     end
     return result

@@ -31,11 +31,14 @@ function solve(prob::FODESystem, h, tn, ::NonLinearAlg, L0=1e10)
         W[i, :] = getvec(α[i], SetMemoryEffect, g)
     end
 
+    du = zeros(n)
     @fastmath @inbounds @simd for k = 2:m
         tk = (k-1)*h
         L = min(Int64(k-1), Int64(L0))
+        f(du, x1, nothing, tk)
+
         @fastmath @inbounds @simd for i = 1:n
-            x1[i] = f(tk, x1, i)*ha[i] - W[i, 2:L+1]'*z[i, k-1:-1:k-L] + x0[i]
+            x1[i] = du[i]*ha[i] - W[i, 2:L+1]'*z[i, k-1:-1:k-L] + x0[i]
         end
         z[:, k] = x1 - x0
     end

@@ -145,24 +145,19 @@ end
 end
 
 @testset "Test GLWithMemory method" begin
-    h=0.5
+    h=0.5; tf=1
     alpha = [0.99, 0.99, 0.99]
     x0 = [1, 0, 1]
-    tf=1
-    function f(t, x, y, z, k)
+    function testf!(du, u, p, t)
         a, b, c = 10, 28, 8/3
-        if k == 1
-            return a*(y-x)
-        elseif k == 2
-            return x*(b-z)-y
-        elseif k == 3
-            return x*y-c*z
-        end
+        du[1] = a*(u[2]-u[1])
+        du[2] = u[1]*(b-u[3])-u[2]
+        du[3] = u[1]*u[2]-c*u[3]
     end
-    prob = FODESystem(f, alpha, x0)
+    prob = FODESystem(testf!, alpha, x0)
     result = solve(prob, h, tf, GLWithMemory())
     @test isapprox(result, [1.0 0.0 1.0
-    -4.04478 13.5939 -0.352607       
+    -4.04478 13.5939 -0.352607
     84.8074 -51.1251 -27.5541]; atol=1e-4)
 end
 
@@ -235,41 +230,28 @@ end
 end
 
 @testset "Test Nonlinear method" begin
-    using FractionalDiffEq
-
-    function chua(t, x, k)
-        a = 10.725
-        b = 10.593
+    function chua!(du, x, p, t)
+        a = 10.725; b = 10.593
         c = 0.268
         m0 = -1.1726
         m1 = -0.7872
-
-        if k == 1
-            f = m1*x[1]+0.5*(m0-m1)*(abs(x[1]+1)-abs(x[1]-1))
-            y = a*(x[2]-x[1]-f)
-            return y
-        elseif k == 2
-            y = x[1]-x[2]+x[3]
-            return y
-        elseif k == 3
-            y = -b*x[2]-c*x[3]
-            return y
-        end
+        du[1] = a*(x[2]-x[1]-(m1*x[1]+0.5*(m0-m1)*(abs(x[1]+1)-abs(x[1]-1))))
+        du[2] = x[1]-x[2]+x[3]
+        du[3] = -b*x[2]-c*x[3]
     end
-
     α = [0.93, 0.99, 0.92];
     x0 = [0.2; -0.1; 0.1];
     h = 0.1;
-    prob = FODESystem(chua, α, x0)
+    prob = FODESystem(chua!, α, x0)
     tn = 0.5;
     result = solve(prob, h, tn, NonLinearAlg())
 
-    @test isapprox(result, [0.2 -0.1 0.1
-    0.11749    -0.0675115   0.182758       
-    0.063749   -0.0357031   0.215719       
-    0.0394769  -0.00641779  0.210729       
-    0.0458196   0.019928    0.175057       
-    0.0843858   0.0438356   0.113762]; atol=1e-3)
+    @test isapprox(result, [ 0.2 -0.1 0.1
+    0.11749    -0.0590683  0.224134
+    0.074388   -0.018475   0.282208
+    0.0733938   0.0192931  0.286636
+    0.117483    0.0534393  0.246248
+    0.210073    0.0844175  0.168693]; atol=1e-3)
 end
 
 @testset "Test FDDE Matrix Form method" begin
