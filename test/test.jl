@@ -18,13 +18,14 @@ end
 
 @testset "Test Matrix discrete method" begin
     fun(x, y) = 1-y
+    u0 = [0, 0]
     tspan=collect(0.01:0.01:5)
     target = []
     for i in 0.01:0.01:5
         push!(target, i^0.5*mittleff(0.5, 1.5,-i^0.5))
     end
 
-    singleprob = MultiTermsFODEProblem([1, 1], [0.5, 0], 1, 5)
+    singleprob = MultiTermsFODEProblem([1, 1], [0.5, 0], 1, u0, 5)
     result = solve(singleprob, 0.01, FODEMatrixDiscrete())
 
     @test isapprox(result, target; atol=1)
@@ -40,7 +41,7 @@ end
         push!(yatarget, i^1.8*mittleff(1.8,2.8,-i^1.8))
     end
 
-    highsingleprob = MultiTermsFODEProblem([1, 1], [1.8, 0], 1, 20)
+    highsingleprob = MultiTermsFODEProblem([1, 1], [1.8, 0], 1, u0, 20)
     yaresult = solve(highsingleprob, 0.01, FODEMatrixDiscrete())
 
     @test isapprox(yaresult, yatarget; atol=1)
@@ -62,9 +63,9 @@ end
     xEnd = pi
     u0t = 0
     uendt = 0
-    u0(x) = sin(x)
+    u0f(x) = sin(x)
 
-    U=solve(fdorder, dx, dt, xStart, xEnd, n, K, u0t, uendt, u0, FiniteDiffEx())
+    U=solve(fdorder, dx, dt, xStart, xEnd, n, K, u0t, uendt, u0f, FiniteDiffEx())
     @test isapprox(U, [ 0.0  1.0  1.22465e-16; 0.0   0.793379    0.0; 0.0   0.43766     0.0; 0.0   0.00221205  0.0; 0.0 -0.42797 0.0]; atol=1e-3)
 end
 
@@ -78,9 +79,9 @@ end
     xEnd = pi
     u0t = 0
     uendt = 0
-    u0(x) = sin(x)
+    u0f(x) = sin(x)
 
-    U=solve(α, dx, dt, xStart, xEnd, n, K, u0t, uendt, u0, FiniteDiffIm())
+    U=solve(α, dx, dt, xStart, xEnd, n, K, u0t, uendt, u0f, FiniteDiffIm())
     @test isapprox(U, [ 0.0  1.0       1.22465e-16
     0.0  0.663152  0.0
     0.0  0.532299  0.0
@@ -130,15 +131,17 @@ end
 
 @testset "Test Closed Form method" begin
     t=collect(0:0.002:10);
+    u0 = [0, 0, 0, 0]
     rightfun(x) = sin(x)
-    prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], rightfun, [30 90], [1 0.3], t)
+    prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], rightfun, [30 90], [1 0.3], u0, t)
     result=solve(prob, ClosedForm())
 end
 
 @testset "Test ClosedFormHankelM method" begin
     t = collect(0:0.5:1);
+    u0 = [0, 0, 0, 0]
     rightfun(x)=sin(x^2)
-    prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], rightfun, [30 90], [1 0.3], t)
+    prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], rightfun, [30 90], [1 0.3], u0, t)
     result = solve(prob, ClosedFormHankelM())
 
     @test result≈[0.0; 0.08402140107687359; 0.3754974742112727]

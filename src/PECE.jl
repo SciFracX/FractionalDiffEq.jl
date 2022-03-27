@@ -6,9 +6,9 @@ General type for all kinds of problems in FractionalDiffEq.jl.
 abstract type FDEProblem end
 
 """
-    MultiTermsFODEProblem(parameters, orders, rightfun, T)
+    MultiTermsFODEProblem(parameters, orders, rightfun, u0, T)
 
-    MultiTermsFODEProblem(parameters, orders, rightfun, rparameters, rorders, T)
+    MultiTermsFODEProblem(parameters, orders, rightfun, rparameters, rorders, u0, T)
 
 Define a multi-terms fractional ordinary differential equation.
 """
@@ -18,11 +18,12 @@ struct MultiTermsFODEProblem <: FDEProblem
     rightfun::Union{Function, Number}
     rparameters::Union{AbstractArray, Nothing}
     rorders::Union{AbstractArray, Nothing}
+    u0::AbstractArray
     T
 end
 
 #=MultiTermsFODEProblem constructor, dispatch for closedform problem=#
-MultiTermsFODEProblem(parameters, orders, rightfun, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, T)
+MultiTermsFODEProblem(parameters, orders, rightfun, u0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, u0, T)
 
 
 """
