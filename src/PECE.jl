@@ -128,7 +128,7 @@ end
 
 
 """
-    FIEProblem(parameters, orders, rightfun)
+    FIEProblem(parameters, orders, rightfun, tspan)
 
 Define fractional integral problems.
 """
