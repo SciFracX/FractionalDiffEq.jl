@@ -136,6 +136,7 @@ struct FIEProblem
     parameters::AbstractArray
     orders::AbstractArray
     rightfun::Union{Function, Number}
+    tspan
 end
 
 

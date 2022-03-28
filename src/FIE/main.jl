@@ -18,8 +18,8 @@
 """
 struct SpectralUltraspherical <: FractionalDiffEqAlgorithm end
 
-function solve(FIE::FIEProblem, n, tspan, ::SpectralUltraspherical)
-  @unpack parameters, orders, rightfun = FIE
+function solve(FIE::FIEProblem, n, ::SpectralUltraspherical)
+  @unpack parameters, orders, rightfun, tspan = FIE
   # Initialize operators
   Z = spzeros(n, n)
   I1 = sparse(Matrix(I, n, n))

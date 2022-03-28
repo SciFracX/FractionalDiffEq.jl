@@ -12,7 +12,6 @@ using LoopVectorization
 
 include("PECE.jl")
 include("matrix.jl")
-include("MTrap.jl")
 include("PI.jl")
 include("ClosedForm/hankelmatrix.jl")
 include("ClosedForm/ClosedForm.jl")
@@ -69,7 +68,7 @@ export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPe
 export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF
 
 # System of FDE solvers
-export NonLinearAlg, GLWithMemory, ModifiedTrap, LorenzADM
+export NonLinearAlg, GLWithMemory, LorenzADM
 
 # FDDE solvers
 export DelayPECE, DelayPI, DelayABM, DelayABMYuan, MatrixForm
