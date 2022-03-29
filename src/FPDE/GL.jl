@@ -1,7 +1,9 @@
-
+"""
+Using Grunwald Letnikov discretization operator to discrete fractional operator.
+"""
 struct GLDiff <: FractionalDiffEqAlgorithm end
 
-function solve(alph, d, rightfun, M, N, initial_condition, left_boundry, right_boundry, ::GLDiff)
+function solve(α, d, rightfun, M, N, initial_condition, left_boundry, right_boundry, ::GLDiff)
     ue=zeros(M+1, N+1)
     u=copy(ue)
     D=zeros(M-1, 1)
@@ -21,8 +23,8 @@ function solve(alph, d, rightfun, M, N, initial_condition, left_boundry, right_b
     for i=1:M-1
         D[i, 1]=d(x[i+1])
     end
-    a=tau*D/(2*h^alph)
-    gg=g(M, alph)
+    a=tau*D/(2*h^α)
+    gg=g(M, α)
     for i=1:M-1
         for k=1:N-1
             if k <= i-1

@@ -24,6 +24,7 @@ FractionalDiffEq.FPDEMatrixDiscrete
 FractionalDiffEq.FiniteDiffEx
 FractionalDiffEq.FiniteDiffIm
 FractionalDiffEq.ADV_DIF
+FractionalDiffEq.GLDiff
 ```
 
 ## Fractional Delay Differential Equatinos
@@ -41,7 +42,6 @@ FractionalDiffEq.DelayABMYuan
 ```@docs
 FractionalDiffEq.NonLinearAlg
 FractionalDiffEq.GLWithMemory
-FractionalDiffEq.ModifiedTrap
 ```
 
 ## Distributed Order Differential Equations

@@ -74,7 +74,7 @@ While in the reference[^1], using FOTF toolbox costs 228.5s to solve the problem
     So I think the performance would be more impressive by using multi-threading and paralell computing.
 
 
-For more fractional order chaotic systems, please see [Gallery](https://scifracx.org/FractionalDiffEq.jl/dev/ChaosGallery/)😉
+For more fractional order chaotic systems, please see [Chaos Gallery](https://scifracx.org/FractionalDiffEq.jl/dev/ChaosGallery/)😉
 
 
 [^1]: 分数阶微积分学与分数阶控制 薛定宇 ISBN:9787030543981 Page 208
