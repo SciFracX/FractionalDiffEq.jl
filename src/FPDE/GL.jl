@@ -47,11 +47,11 @@ function solve(α, d, rightfun, M, N, initial_condition, left_boundry, right_bou
     return u
 end
 
-function g(M, alph)
-    gg_alph = zeros(M+1, 1)
-    gg_alph[1, 1]=1
+function g(M, α)
+    gg_alpha = zeros(M+1, 1)
+    gg_alpha[1, 1]=1
     for i=1:M
-        gg_alph[i+1, 1]=gamma(i-alph)/(gamma(-alph)*gamma(i+1))
+        gg_alpha[i+1, 1]=gamma(i-α)/(gamma(-α)*gamma(i+1))
     end
-    return gg_alph
+    return gg_alpha
 end
