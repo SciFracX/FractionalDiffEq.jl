@@ -6,7 +6,7 @@ Being called "The Queen Function of the Fractional Calculus", Mittag Leffler fun
 
 ### Classical Mittag Leffler function(Single-Parametric version)
 
-The [Mittag Leffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function) is defined by Gösta Magnus Mittag-Leffler by a power series as:
+The [Mittag Leffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function) is defined by [Gösta Magnus Mittag-Leffler](https://en.wikipedia.org/wiki/G%C3%B6sta_Mittag-Leffler) by a power series as:
 
 ```math
 E_\alpha(z)=\sum_{k=0}^{\infty}\frac{z^k}{\Gamma(\alpha k+1)},\ (\alpha\in\mathbb{C})

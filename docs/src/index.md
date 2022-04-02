@@ -9,7 +9,7 @@ Hello there👋!
 FractionalDiffEq.jl is a Julia package aiming at solving Fractional Differential Equations using high performance numerical methods.
 
 !!! tip "Star Us"
-	If you think **FractionalDiffEq.jl** is useful, please [star us in GitHub](httpd://github.com/SciFracX/FractionalDiffEq.jl), it means a lot to us!
+	If you think **FractionalDiffEq.jl** is useful, please [star us on GitHub](httpd://github.com/SciFracX/FractionalDiffEq.jl), it means a lot to us!
 
 ## Installation
 
