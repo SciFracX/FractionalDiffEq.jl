@@ -111,8 +111,8 @@ struct DODEProblem <: FDEProblem
     parameters::AbstractArray
     orders::AbstractArray
     interval
-    tspan
     rightfun::Function
+    tspan
 end
 
 """

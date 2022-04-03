@@ -9,6 +9,8 @@ using Polynomials
 using FFTW
 using UnPack
 using LoopVectorization
+using HypergeometricFunctions
+using ToeplitzMatrices
 
 include("PECE.jl")
 include("matrix.jl")
