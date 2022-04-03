@@ -1,5 +1,5 @@
 """
-First order IMEX solver for nonlinear FDEs
+IMEX_I First-order IMEX solver for a system of nonlinear FDEs
 
 ```tex
 @article{Zhou2020ImplicitexplicitTI,
@@ -12,15 +12,16 @@ First order IMEX solver for nonlinear FDEs
 }
 ```
 """
-struct IMEX_I <: FractionalDiffEqAlgorithm end
+struct IMEX_I_A <: FractionalDiffEqAlgorithm end
 
-function solve(Rfun, t0, T, y0, N, alpha, lambda, Mlu, sigma1, Mf, sigma2, Mu, sigma3, Me, sigma4, tol, epsil, ::IMEX_I)
+
+function solve(Rfun, t0, T, y0, N, alpha, lambda, Al, Mlu, sigma1, Mf, sigma2, Mu, sigma3, Me, sigma4, tol, epsil, ::IMEX_I_A)
     h=(T-t0)/N
     t=collect(t0:h:T)
     d=length(y0)
     N = Int64(N)
     y = zeros(Int64(N+1), d)
-    y[1, :] .= y0 # Handle the initial conditions
+    y[1, :] = y0 # Handle the initial conditions
     
     #  Computing A and B coefficients for history load, which involves 
     # the computation of hypergeometric functions 
@@ -56,11 +57,11 @@ function solve(Rfun, t0, T, y0, N, alpha, lambda, Mlu, sigma1, Mf, sigma2, Mu, s
        end
        rhs1 = zeros(N, Mlu)
        Flu=zeros(N, Mlu)
-       auxgamma = gamma(alpha+1)
+       #auxgamma = gamma(alpha+1)
        for k=1:Mlu
            Flu[1, k]=gamma(sigma1[k]+1)/gamma(sigma1[k]+alpha+1) - 1/gamma(alpha+1)
            for j=2:N
-               Flu[j, k]=(j-1)^sigma1(k)/auxgamma * HypergeometricFunctions._₂F₁(-sigma1[k], 1, alpha+1, -1/(j-1)) - j^sigma1[k]/auxgamma
+               Flu[j, k]=(j-1)^sigma1(k)/gamma(alpha+1) * HypergeometricFunctions._₂F₁(-sigma1[k], 1, alpha+1, -1/(j-1)) - j^sigma1[k]/auxgamma
            end
            rhs1[:, k]=Flu[:, k]
        end
@@ -109,13 +110,13 @@ function solve(Rfun, t0, T, y0, N, alpha, lambda, Mlu, sigma1, Mf, sigma2, Mu, s
            jaux = [((1:N-1).^sigma3[k]); zeros(N-1,1)]
            res = real.(ifft(fft(raux).*fft(jaux)))
            
-           auxgamma1 = gamma(alpha)*gamma(sigma3[k]-alpha+2)
-           auxgamma2 = gamma(1+sigma3[k])
+           auxgamma = gamma(1+sigma3(k))
+           auxgamma1 = gamma(alpha)*gamma(sigma3(k)-alpha+2)
            
            for j=2:N
-               FF3 = res[j-1, 1]/auxgamma
+               FF3 = res[j-1, 1]/(gamma(alpha)*gamma(2-alpha))
     
-               History[j, k] = -auxgamma2*j^(alpha-1)*((sigma3[k]-alpha+1)*(j)^(sigma3[k]-alpha+1)*beta_inc(sigma3(k)-alpha+1, alpha, (j-1)/j)*auxbeta)/auxgamma1 + (j-1)^sigma3[k] - FF3
+               History[j, k] = -auxgamma*j^(alpha-1)*((sigma3[k]-alpha+1)*(j)^(sigma3[k]-alpha+1)*beta_inc(sigma3(k)-alpha+1, alpha, (j-1)/j)*auxbeta)/auxgamma1 + (j-1)^sigma3[k] - FF3
     
            end
            rhs3[:, k]=History[:, k]
@@ -144,13 +145,14 @@ function solve(Rfun, t0, T, y0, N, alpha, lambda, Mlu, sigma1, Mf, sigma2, Mu, s
     
        A=zeros(N, 1)
        A[1]=1
-       A[2]=-1+(a[1, 1]-a[1, 2])/auxgamma
+       A[2]=-1+(a[1, 1]-a[1, 2])/(gamma(alpha)*gamma(2-alpha))
+       auxgamma = gamma(alpha)*gamma(2-alpha)
        for i=3:N
            A[i]=(a[i-1, 1]-2*a[i-1, 2]+a[i-1, 3])/auxgamma
        end
        
        # B1 is stored as a sparse matrix
-       B1col=h^alpha/gamma(alpha+1)*[1; zeros(N-1,1)]
+       B1col=h^alpha/gamma(alpha+1)*[1; zeros(N-1, 1)]
        A[1] = A[1] - lambda * B1col[1]
        
        # Sparse Toeplitz allocation
@@ -181,8 +183,8 @@ function solve(Rfun, t0, T, y0, N, alpha, lambda, Mlu, sigma1, Mf, sigma2, Mu, s
        # Picard iteration algorithm
        e=ones(N, d)                 # Residual vector
        F=zeros(N+1, d)              # no need for circulant embedding here
-       FC=zeros(N,d)               # Vector with correction terms
-       y1=kron(ones(N, 1), y[1, :])
+       FC=zeros(N, d)               # Vector with correction terms
+       y1=kron(ones(N), y[1, :]')
        auxgamma = gamma(alpha+1)
        countpicard = 0
     
@@ -195,11 +197,11 @@ function solve(Rfun, t0, T, y0, N, alpha, lambda, Mlu, sigma1, Mf, sigma2, Mu, s
            end
            
            # Vector with correction terms
-           FC[1:N, :]=lambda*h^alpha*Wlu[1:N, 1:Mlu]*(Y[2:Mlu+1, :] - y0) + h^alpha/auxgamma*We[1:N, 1:Me]*(F[2:Me+1, :]-F[1, :]) + h^alpha*Wf[1:N, 1:Mf]*(F[2:Mf+1, :]-F[1, :]) - Wu[1:N, 1:Mu]*(Y[2:Mu+1, :] - y0)
+           FC[1:N, :]=lambda*h^alpha*Wlu[1:N, 1:Mlu]*(Y[2:Mlu+1, :] - y0) + h^alpha*Wlu[1:N, 1:Mlu]*(Y[2:Mlu+1, :] - y0)*Al' + h^alpha/auxgamma*We[1:N, 1:Me]*(F[2:Me+1, :]-F[1, :]) + h^alpha*Wf[1:N, 1:Mf]*(F[2:Mf+1, :]-F[1, :]) - Wu[1:N, 1:Mu]*(Y[2:Mu+1, :] - y0)
            
            # Right-hand-side vector with sparse Toeplitz Matvec, vector of
            # initial conditions, and vector with correction terms
-           b = B1*F[2:end, :] + B2*F[2:end, :] + C + FC
+           b = B1*Y[2:N+1, :]*Al' + B1*F[2:end, :] + B2*F[2:end, :] + C + FC
     
            # FFT of rhs for fast inversion (Eq.4.8 from Zhou et al.)
            b1=fft(D.*b)
@@ -211,10 +213,10 @@ function solve(Rfun, t0, T, y0, N, alpha, lambda, Mlu, sigma1, Mf, sigma2, Mu, s
            y2=real(ifft(b11)./D)
     
            # Residual
-           e=y2-y1;
+           e=y2-y1
     
            # Update solution vector
-           y1=y2;
+           y1=y2
     
            countpicard = countpicard + 1
        end
@@ -251,9 +253,9 @@ function solve(Rfun, t0, T, y0, N, alpha, lambda, Mlu, sigma1, Mf, sigma2, Mu, s
        
        # Vector with initial conditions and force
        C=zeros(N, d)
-       C[1, :] .= y0 + h^alpha/gamma(alpha+1)*Rfun(t0, y0, alpha, lambda)
+       C[1, :] = y0[:] + h^alpha/gamma(alpha+1)*Rfun(t0, y0, alpha, lambda)
        for i=2:N
-           C[i, :] .= 1/auxgamma*y0*(a[i-1, 1]-a[i-1, 2])
+           C[i, :] = 1/auxgamma*y0*(a[i-1, 1]-a[i-1, 2])
        end
        
        # Diagonal matrix for fast inverse approximation
@@ -270,28 +272,28 @@ function solve(Rfun, t0, T, y0, N, alpha, lambda, Mlu, sigma1, Mf, sigma2, Mu, s
        #%%%% Picard iteration algorithm
        e=ones(N, d)       # Residual vector
        F=zeros(N+1, d)    #%%%% no need for circulant embedding here
-       y1=kron(ones(N, 1), y[1, :])
+       y1=kron(ones(N), y[1, :]')
        countpicard = 0
        while (norm(e)>tol)
     
-           Y=[y[1, :]; y1]   #%%%% initial iteration value set as initial condition
+           Y=[y[1, :]'; y1]   #%%%% initial iteration value set as initial condition
     
            for i=1:N+1
-               F[i, :]=Rfun(t[i], Y[i, :], alpha, lambda)
+               F[i, :] .= Rfun(t[i], Y[i, :]', alpha, lambda)
            end
            
            # Right-hand-side vector with sparse Toeplitz Matvec and vector of
            # initial conditions
-           b = B1*F[2:end, :] + B2*F[2:end, :] + C
+           b = B1*Y[2:N+1, :]*Al' + B1*F[2:end, :] + B2*F[2:end, :] + C
     
            # FFT of rhs for fast inversion (Eq.4.8 from Zhou et al.)
            b1=fft(D.*b)
     
            # diag(Lambda^-1)*(FN*D)*R
-           b11=b1./lmt;
+           b11=b1./lmt
     
            # Solution for current Picard iteration
-           y2=real(ifft(b11)./D);
+           y2=real(ifft(b11)./D)
     
            # Residual vector
            e=y2-y1;
@@ -312,37 +314,46 @@ function solve(Rfun, t0, T, y0, N, alpha, lambda, Mlu, sigma1, Mf, sigma2, Mu, s
 end
 #=
 t0 = 0;              # Initial time
-T  = 1;              # Final time
-y0 = 1;              # Initial condition  
-alpha = 0.2;         # Fractional order value
-epsil = 0.5*10^-8;   # Epsilon value for fast Topelitz inversion
-tol = 1e-7;          # Numerical tolerance for the Picard iteration (nonlinear cases)
+T  = 10;              # Final time
+y0 = [1 1 1];      # Initial condition   
+alpha = 0.3;         # Fractional order
+epsil = 0.5*10^(-8); # Epsilon value for fast Topelitz inversion
+tol = 5e-7;          # Numerical tolerance for the Picard iteration (nonlinear cases)
 
 Ntests = 5;          # Number of runs to be performed at different dt
-lambdamrho = -1;     # linear term coefficient (lambda <= 0)
-imex_type = 2;       # Type of IMEX solver (1 = first order, 2 = second order)
+lambdamrho = 0;      # linear term coefficient (lambda <= 0)
+imex_type = 1;       # Type of IMEX solver (1 = first order, 2 = second order)
 
 #% Correction terms %%
 
 # linear term
-Mlu =2;
-sigma1 = [1-alpha, 1, 3 * alpha, 4 * alpha, 5 * alpha];
+NCorr = 3
+
+# linear term
+Mlu = NCorr
+sigma1 = [2 * alpha, 1 + alpha, 5 * alpha, 2, 2 + alpha] .- alpha
 
 # force term
-Mf = 2;
-sigma2 = [1-alpha, 1, 3 * alpha, 4 * alpha, 5 * alpha];
+Mf = NCorr
+sigma2 = [2 * alpha, 1 + alpha, 5 * alpha, 2, 2 + alpha] .- alpha
 
 # history term
-Mu = 1;
-sigma3 = [1, 2 - alpha, 3 * alpha, 4 * alpha, 5 * alpha];
+Mu = NCorr
+sigma3 = [alpha, 2 * alpha, 1 + alpha, 5 * alpha, 2, 2 + alpha]
 
 # force term linearization
-Me = 2;
-sigma4 = [1-alpha, 1, 3 * alpha, 4 * alpha, 5 * alpha];
+Me = NCorr
+sigma4 = [2 * alpha, 1 + alpha, 5 * alpha, 2, 2 + alpha] .- alpha
 
-# Analytical solution powers
-Nterms = 4;
-sigma = [1, 2, 3, 4];
+a = [0.5, 0.8, 1, 1, 1, 1]
+# Powers
+sigma = [alpha, 2 * alpha, 1 + alpha, 5 * alpha, 2, 2 + alpha];
+
+
+# Coefficient matrix for linear system
+A = 0.001*[-1000    0    1;
+         -0.5 -0.8 -0.2;
+         1    0   -1];
 
 # Initializing arrays
 N     = zeros(Ntests, 1);    # Number of time steps
@@ -352,33 +363,41 @@ pErr  = zeros(Ntests, 1);    # Convergence rate array
 ctime = zeros(Ntests, 1);    # CPU time array
 #% Right-hand-side definition %%
 function fun_f1(t, y, alpha, lambda)
-
-    # Fabricated RHS from defined analytical solution
-    # Analytical solution powers
-    Nterms = 4;
-    sigma = [1, 2, 3, 4];  
-    # Coefficient from nonlinear term
-    rho = 0.1;
-                
-    # Fractional derivative of fabricated solution
-    dut = 0;    
-    for i=1:Nterms
-        dut = dut + (gamma(sigma[i]+1)/gamma(sigma[i]+1-alpha))*t^(sigma[i]-alpha)
-    end
+     
+    A = 0.001 .*[-1000   0   1 ;
+         -0.5 -0.8 -0.2 ;
+         1        0   -1];
+     
+    B = 0.01 .*[-0.6    0  0.2 ;
+         -0.1   -0.2    0 ;
+            0   -0.5 -0.8];
+        
+    sigma = [alpha, 2 * alpha, 1 + alpha, 5 * alpha, 2, 2 + alpha];
+    a = [0.5, 0.8, 1, 1, 1, 1]
     
-    # Linear term of fabricated solution
-    ut = 1;
-    for i=1:Nterms
-        ut = ut + t^sigma[i]
-    end
+    g1 = [a[1]*Gammak(sigma[1],alpha)*t^(sigma[1]-alpha) + a[2]*Gammak(sigma[2],alpha)*t^(sigma[2]-alpha);
+          a[3]*Gammak(sigma[3],alpha)*t^(sigma[3]-alpha) + a[4]*Gammak(sigma[4],alpha)*t^(sigma[4]-alpha);
+          a[5]*Gammak(sigma[5],alpha)*t^(sigma[5]-alpha) + a[6]*Gammak(sigma[6],alpha)*t^(sigma[6]-alpha)]
     
-    # Analytical RHS
-    ft = dut - lambda * ut + rho*ut^2
+    g2 = [a[1]*t^sigma[1] + a[2]*t^sigma[2] + 1;
+          a[3]*t^sigma[3] + a[4]*t^sigma[4] + 1;
+          a[5]*t^sigma[5] + a[6]*t^sigma[6] + 1];
+      
+    g = g1 - (A + B) * g2;
     
-    # Constructed RHS
-    f = -rho*y.^2 .+ ft
+    f = B*y' + g
     return f
+
 end
+
+# auxiliary function
+function Gammak(sigma, alpha)
+
+    Gk = gamma(sigma+1)/gamma(sigma+1-alpha)
+    return Gk
+end
+
+
 
 t=Any
 y11=Any
@@ -386,10 +405,10 @@ y11=Any
 for k=1:Ntests
         
     # Computing time-step size and number of time steps
-    dt[k] = 2.0^(-(5+k))
+    dt[k] = 2.0^(-(2+k))
     N[k]  = T/dt[k]
 
-    (t, y11) = IMEX_I(fun_f1, t0, T, y0, N[k],alpha,lambdamrho, Mlu,sigma1,Mf,sigma2,Mu,sigma3,Me, sigma4,tol,epsil);
+    (t, y11) = IMEX_I_A(fun_f1, t0, T, y0, N[k],alpha,lambdamrho, A, Mlu,sigma1,Mf,sigma2,Mu,sigma3,Me, sigma4,tol,epsil);
 #=
     # Evaluating known analytical solution
     y1 = y0*ones(1, size(y11,2));
@@ -401,9 +420,9 @@ for k=1:Ntests
 end
 
 # Printing the results
-Data_Fast = [N, dt, Err, pErr, ctime]
+#Data_Fast = [N, dt, Err, pErr, ctime]
 
 using Plots
 
-plot(t, y11)
+plot(t, y11[:, 1])
 =#

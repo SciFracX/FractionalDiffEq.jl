@@ -1,7 +1,7 @@
 """
 # Usage
 
-    solve(f, e, n, SpectralUltraspherical())
+    solve(prob::FIEProblem, n, SpectralUltraspherical())
 
 ### References
 
