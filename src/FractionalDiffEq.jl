@@ -21,6 +21,7 @@ include("ClosedForm/highprecision.jl")
 
 include("GL/GLWithMemory.jl")
 include("GL/GL.jl")
+include("IMEX/IMEX_I.jl")
 #include("Direct.jl")
 
 include("NonLinear/NonLinear.jl")
@@ -66,6 +67,7 @@ export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, Fr
 # FODE solvers
 export PIEx, PIIm, PITrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, GL
+export IMEX_I
 
 # FPDE solvers
 export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF, GLDiff

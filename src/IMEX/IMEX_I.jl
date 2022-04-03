@@ -1,9 +1,20 @@
 """
 First order IMEX solver for nonlinear FDEs
+
+```tex
+@article{Zhou2020ImplicitexplicitTI,
+  title={Implicit-explicit time integration of nonlinear fractional differential equations},
+  author={Yongtao Zhou and Jorge L. Suzuki and Chengjian Zhang and Mohsen Zayernouri},
+  journal={Applied Numerical Mathematics},
+  year={2020},
+  volume={156},
+  pages={555-583}
+}
+```
 """
 struct IMEX_I <: FractionalDiffEqAlgorithm end
 
-function solve(Rfun, t0, T, y0, N, alpha, lambda, Mlu, sigma1, Mf, sigma2,Mu,sigma3,Me,sigma4,tol,epsil, ::IMEX_I)
+function solve(Rfun, t0, T, y0, N, alpha, lambda, Mlu, sigma1, Mf, sigma2, Mu, sigma3, Me, sigma4, tol, epsil, ::IMEX_I)
     h=(T-t0)/N
     t=collect(t0:h:T)
     d=length(y0)
