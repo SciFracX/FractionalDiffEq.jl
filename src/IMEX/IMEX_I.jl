@@ -4,8 +4,6 @@ First order IMEX solver for nonlinear FDEs
 struct IMEX_I <: FractionalDiffEqAlgorithm end
 
 function solve(Rfun, t0, T, y0, N, alpha, lambda, Mlu, sigma1, Mf, sigma2,Mu,sigma3,Me,sigma4,tol,epsil, ::IMEX_I)
-
-    
     h=(T-t0)/N
     t=collect(t0:h:T)
     d=length(y0)
