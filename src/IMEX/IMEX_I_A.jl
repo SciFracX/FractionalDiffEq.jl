@@ -1,6 +1,8 @@
 """
 IMEX_I First-order IMEX solver for a system of nonlinear FDEs
 
+### References
+
 ```tex
 @article{Zhou2020ImplicitexplicitTI,
   title={Implicit-explicit time integration of nonlinear fractional differential equations},
