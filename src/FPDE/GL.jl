@@ -24,7 +24,7 @@ function solve(α, d, rightfun, M, N, initial_condition, left_boundry, right_bou
         D[i, 1]=d(x[i+1])
     end
     a=tau*D/(2*h^α)
-    gg=g(M, α)
+    gg = g(M, α)
     for i=1:M-1
         for k=1:N-1
             if k <= i-1
