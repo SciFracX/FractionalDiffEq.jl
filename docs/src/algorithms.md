@@ -18,6 +18,7 @@ FractionalDiffEq.PITrap
 FractionalDiffEq.IMEX_I
 FractionalDiffEq.IMEX_I_A
 FractionalDiffEq.IMEX_II
+FractionalDiffEq.ChebSpectral
 ```
 
 ## Fractional Partial Differential Equations

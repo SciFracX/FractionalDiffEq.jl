@@ -25,6 +25,7 @@ include("GL/GL.jl")
 include("IMEX/IMEX_I_A.jl")
 include("IMEX/IMEX_II.jl")
 #include("Direct.jl")
+include("ChebSpectral.jl")
 
 include("NonLinear/NonLinear.jl")
 include("NonLinear/LorenzADM.jl")
@@ -70,6 +71,7 @@ export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, Fr
 export PIEx, PIIm, PITrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, GL
 export IMEX_I, IMEX_I_A, IMEX_II
+export ChebSpectral
 
 # FPDE solvers
 export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF, GLDiff
