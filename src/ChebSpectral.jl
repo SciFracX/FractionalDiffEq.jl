@@ -5,7 +5,7 @@ Using Chebyshev spectral method to solve single term fractional ordinary differe
 
 
 !!! warning
-    Chenyshev spectral method only support for linear fractional differential equations, and the time span of the problem should be ``[-1, 1]``.
+    Chebyshev spectral method only support for linear fractional differential equations, and the time span of the problem should be ``[-1, 1]``.
 
 ### References
 
