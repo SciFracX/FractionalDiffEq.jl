@@ -65,14 +65,6 @@ result = solve(prob, h, tn, NonLinearAlg(), 10000)
 
 While in the reference[^1], using FOTF toolbox costs 228.5s to solve the problem, in FractionalDiffEq.jl, the computing time is only almost 80s.
 
-!!! info
-    The cost time doesn't use any multi-threading or parallel computing speedup.
-    ```julia-repl
-    julia> Threads.nthreads()
-    1
-    ```
-    So I think the performance would be more impressive by using multi-threading and paralell computing.
-
 
 For more fractional order chaotic systems, please see [Chaos Gallery](https://scifracx.org/FractionalDiffEq.jl/dev/ChaosGallery/)😉
 
