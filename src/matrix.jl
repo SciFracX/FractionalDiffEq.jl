@@ -61,7 +61,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::FODEMatrixDiscrete)
     result = equation\rightside
     result = vcat(zeros(highestorder), result)
 
-    return result
+    return collect(h:h:T), result
 end
 
 
@@ -213,6 +213,9 @@ function solve(α, β, κ, T, M, N, ::FPDEMatrixDiscrete)
     return result
 end
 
+"""
+Shifter matrices for representing time delays with discrete matrix.
+"""
 function shift(U, k)
     s = size(U)
     n = s[1]
@@ -232,7 +235,7 @@ function shift(U, k)
 end
 
 #FIXME: Fractional partial differential equations with time delay.
-function fpdde(alpha, alphad, beta, steps)   
+function fdpde(alpha, alphad, beta, steps)   
     a2=1
     L = 1
     m = 21
@@ -276,6 +279,12 @@ function fpdde(alpha, alphad, beta, steps)
     (XX, YY)=meshgrid(tau*(0:n-1),h*(0:m-1))
     return XX, YY, U
 end
+#=
+sol=fdpde(0.5, 0.5, 0.5, 1)
+using Plots
+plotlyjs()
+plot(sol, st=:surface)
+=#
 
 
 #=

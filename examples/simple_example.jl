@@ -7,4 +7,4 @@ prob = SingleTermFODEProblem(fun, 0.5, 0, 5)
 result = solve(prob, 0.01, PECE())
 tspan = collect(0:0.01:5)
 
-plot(tspan, result, title=s, linewidth=2, legend=:bottomright)
+plot(result, title=s, linewidth=2, legend=:bottomright)

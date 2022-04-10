@@ -118,7 +118,7 @@ end
 """
     FractionalDifferenceProblem(f, α, x0)
 
-Define fractional difference problems.
+Define fractional difference equation problems.
 """
 struct FractionalDifferenceProblem <: FDEProblem
     fun::Function
@@ -130,15 +130,14 @@ end
 """
     FIEProblem(parameters, orders, rightfun, tspan)
 
-Define fractional integral problems.
+Define fractional integral equation problems.
 """
-struct FIEProblem
+struct FIEProblem <: FDEProblem
     parameters::AbstractArray
     orders::AbstractArray
     rightfun::Union{Function, Number}
     tspan
 end
-
 
 
 
@@ -189,7 +188,10 @@ function solve(FODE::SingleTermFODEProblem, h::Float64, ::PECE)
     @fastmath @inbounds @simd for n ∈ 0:N
         y[n+1] = leftsum + h^α/gamma(α+2)*(f((n+1)*h, predictor(f, y, α, n, h, u0, T)) + right(f, y, α, n, h))
     end
-    return y
+
+    tspan = collect(0:h:T)
+
+    return tspan, y
 end
 
 function right(f, y, α, n, h::Float64)

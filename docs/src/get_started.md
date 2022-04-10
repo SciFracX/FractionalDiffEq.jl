@@ -28,13 +28,13 @@ analytical(x) = x.^1.8 .*mittleff(1.8, 2.8, -x.^1.8)
 
 # Numerical solution
 fun(x, y) = 1-y
-h=0.01;T=20;u0=0
+h=0.01; T=20; u0=0
 prob = SingleTermFODEProblem(fun, 1.8, u0, T)
-result = solve(prob, h, PECE())
+sol = solve(prob, h, PECE())
 tspan = collect(0:0.01:20)
 target = analytical(tspan)
 
-plot(tspan, result, title=s, linewidth=5, label="Numerical", legend=:bottomright)
+plot(sol, title=s, linewidth=5, label="Numerical", legend=:bottomright)
 plot!(tspan, target, lw=3, ls=:dash, label="Analytical")
 ```
 
@@ -61,10 +61,10 @@ The ```SingleTermFODEProblem``` is a class of fractional differential equation, 
 After defining a problem, we can solve it by calling the ```solve``` function:
 
 ```julia
-result = solve(prob, h, T, Alg())
+sol = solve(prob, h, T, Alg())
 ```
 
-Note that there are different algorithms for differential fractional differential equations, such as FODE, FPDE, FDDE and FIE, we need to choose a properiate algorithm for specific problem. For all the algorithms, please refer to [algorithms documentation](@ref algorithms).
+Note that there are different algorithms for differential fractional differential equations, such as FODE, FPDE, FDDE and FIE, we need to choose a suitable algorithm for specific problem. For all the algorithms, please refer to [algorithms documentation](@ref algorithms).
 
 ## Step3 : Analyzing the Solution
 
@@ -72,7 +72,7 @@ Simply call plot to visualize the solution:
 
 ```julia
 using Plots
-plot(tspan, result)
+plot(sol)
 ```
 
 ![Relaxation Oscillation](./assets/example.png)

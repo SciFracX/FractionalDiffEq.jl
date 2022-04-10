@@ -13,7 +13,7 @@ _{0}^{C}\!D_{t}^{\alpha}y - \frac{\partial^\beta y}{\partial |x|^\beta} = f(x,t)
 With initial and boundry conditions:
 
 ```math
-y(0,t) = 0, \quad y(1,t) = 0 \qquad  \quad y(x,0) = 0
+y(0,t) = 0, \quad y(1,t) = 0 \qquad  \quad y(x, 0) = 0
 ```
 
 We can use the ```FPDEMatrixDiscrete``` algorithm to solve this problem:
@@ -83,5 +83,11 @@ plot(x, t, U, st=:surface)
 
 ![DiffusionEx](./assets/finitediffex.png)
 
+
+## Fractional partial differential equations with time delay.
+
+As the generalization of [DPDE](http://www.scholarpedia.org/article/Delay_partial_differential_equations), FDPDE is also an interesting topic in fractional differential equations.
+
+To solve FDPDE problem with FractionalDiffEq.jl, we need to define our ```FDPDEProblem```.
 
 [^1]: [Exact solutions for time-fractional diffusion-wave equations by decomposition method](https://doi.org/10.1088/0031-8949%2F75%2F1%2F008)
