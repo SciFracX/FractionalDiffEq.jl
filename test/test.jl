@@ -13,7 +13,7 @@ using Test
         push!(target, i^1.8*mittleff(1.8, 2.8,-i^1.8))
     end
 
-    @test isapprox(result, target; atol=1)
+    @test isapprox(result[2], target; atol=1)
 end
 
 @testset "Test Matrix discrete method" begin
@@ -28,7 +28,7 @@ end
     singleprob = MultiTermsFODEProblem([1, 1], [0.5, 0], 1, u0, 5)
     result = solve(singleprob, 0.01, FODEMatrixDiscrete())
 
-    @test isapprox(result, target; atol=1)
+    @test isapprox(result[2], target; atol=1)
 
     ########### Yet another test case ##########
     yafun(x, y) = 1-y
@@ -44,7 +44,7 @@ end
     highsingleprob = MultiTermsFODEProblem([1, 1], [1.8, 0], 1, u0, 20)
     yaresult = solve(highsingleprob, 0.01, FODEMatrixDiscrete())
 
-    @test isapprox(yaresult, yatarget; atol=1)
+    @test isapprox(yaresult[2], yatarget; atol=1)
 
 end
 
