@@ -13,7 +13,7 @@ H.F. Li, J.X. Cao, C.P. Li. High-order approximation to Caputo derivatives and C
 """
 struct ADV_DIF <: FractionalDiffEqAlgorithm end
 
-function solve(order::Integer, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, flt, ::ADV_DIF)
+function solve(order::Integer, α, T, N, X, i, κ, v, fx0, fgz, f0t, flt, ::ADV_DIF)
     h = X/i
     gm = T/N
     miu = h^2*gm^(-α)/gamma(1-α)
@@ -77,7 +77,7 @@ function solve(order::Integer, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, fl
         end
         H1=-miu*(u1*g) + h^2*f[:, n] + H[:, n]
 
-        A=zeros(i-1,i-1)
+        A=zeros(i-1, i-1)
         for i10=1:i-1
             A[i10, i10] = miu*g2[1, n+1] + 2*κ
             if i10 !== 1
@@ -92,7 +92,7 @@ function solve(order::Integer, α::Float64, T, N, X, i, κ, v, fx0, fgz, f0t, fl
     return u
 end
 
-function wj(n::Int64, r::Int64, a)
+function wj(n::Int, r::Int, a)
     A = zeros(n, n+1)
     for iw=1:r-2
         for jw=1:iw+1
@@ -139,18 +139,18 @@ function zg(A, H)
     return U
 end
 
-function w(i::Int64, r, j, n, a)
+function w(i::Int, r, j, n, a)
     ar=ones(r-1)
     br=ones(r-1)
     for lj=1:r-2
         jj=r-lj-1
         kj=r-2
         tj=i-1
-        aj=collect(Int64, 0:tj)
-        bj=collect(Int64, tj+2:kj+1)
+        aj=collect(Int, 0:tj)
+        bj=collect(Int, tj+2:kj+1)
         cj=[aj; bj]
-        dj=collect(Int64, -1:tj-1)
-        ej=collect(Int64, tj+1:kj)
+        dj=collect(Int, -1:tj-1)
+        ej=collect(Int, tj+1:kj)
         fj=[dj; ej]
         yj = binomial.(cj, jj)
         pj = binomial.(fj, jj)
