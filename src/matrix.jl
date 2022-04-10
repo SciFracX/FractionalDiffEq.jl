@@ -71,7 +71,7 @@ end
 Compute the eliminator matrix Sₖ by omiting n-th row
 """
 function eliminator(n, row)
-    temp = I(n)
+    temp = zeros(n, n)+I
     return temp[Not(row), :]
 end
 
@@ -213,6 +213,69 @@ function solve(α, β, κ, T, M, N, ::FPDEMatrixDiscrete)
     return result
 end
 
+function shift(U, k)
+    s = size(U)
+    n = s[1]
+    absk = abs(k)
+    ek = diagm(k => ones(n-absk))
+    s1 = eliminator(n, collect(1:absk))
+    s2 = eliminator(n, collect(n-absk+1:n))
+    
+    if k>0
+        Y = s2*ek*U*ek*s1'
+    elseif k<0
+        Y = s1*ek*U*ek*s2'
+    else
+        Y = U
+    end
+    return Y
+end
+
+#FIXME: Fractional partial differential equations with time delay.
+function fpdde(alpha, alphad, beta, steps)   
+    a2=1
+    L = 1
+    m = 21
+    n = 148
+    h = L/(m-1)
+    tau = h^2 / (6*a2)
+        
+
+    B1 = D(n-1, alpha, tau)'
+    TD = kron(B1, zeros(m, m) + I)
+
+    Bdelay = shift(D(n-1+steps, alphad, tau)', steps)
+    TDdelay = kron(Bdelay, zeros(m, m) + I)
+        
+    B2 = RieszMatrix(beta, m, h)
+    SD = kron(zeros(n-1, n-1) + I, B2)
+        
+    SystemMatrix = 0.5*TD + 0.5*TDdelay- a2*SD
+
+                                     
+    S = eliminator(m, [1, m])
+    SK = kron(zeros(n-1, n-1) + I, S)
+    SystemMatrix_without_columns_1_m = SystemMatrix * SK'
+
+    S = eliminator(m, [1 m])
+    SK = kron(zeros(n-1, n-1) + I, S)
+    SystemMatrix_without_rows_columns_1_m = SK * SystemMatrix_without_columns_1_m
+
+    F = 8*ones(size(SystemMatrix_without_rows_columns_1_m,1), 1)
+        
+    Y = SystemMatrix_without_rows_columns_1_m\F
+        
+    YS = reshape(Y, m-2, n-1)
+    YS = reverse(YS, dims=2)
+        
+    U = YS
+
+    (rows, columns) = size(U)
+    U = [zeros(1, columns); U;  zeros(1, columns)]
+    U = [zeros(1,m)' U]; 
+    (XX, YY)=meshgrid(tau*(0:n-1),h*(0:m-1))
+    return XX, YY, U
+end
 
 
 #=
