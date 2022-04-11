@@ -144,7 +144,7 @@ end
     prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], rightfun, [30 90], [1 0.3], u0, t)
     result = solve(prob, ClosedFormHankelM())
 
-    @test result≈[0.0; 0.08402140107687359; 0.3754974742112727]
+    @test result[2] ≈ [0.0; 0.08402140107687359; 0.3754974742112727]
 end
 
 @testset "Test GLWithMemory method" begin

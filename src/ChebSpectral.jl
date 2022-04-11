@@ -24,7 +24,7 @@ function solve(FODE::SingleTermFODEProblem, n, ::ChebSpectral)
     @unpack f, α, u0, T = FODE
     (D, x) = Cheb(n, α)
     result = D\f.(x)
-    return result
+    return x, result
 end
 
 function VandermondeLegendre(n)

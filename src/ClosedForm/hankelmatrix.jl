@@ -31,7 +31,7 @@ function solve(prob::MultiTermsFODEProblem, ::ClosedFormHankelM)
     B = rotl90(newhankel(B[end:-1:1]))
 
     y = B*inv(A)*u
-    return y
+    return T, y
 end
 
 function newhankel(v)
