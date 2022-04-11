@@ -45,5 +45,5 @@ function solve(prob::MultiTermsFODEProblem, ::ClosedForm)
     @fastmath @inbounds @simd for i=2:nT
         y[i] = (W[1:i, (nA+1):end]*D1)'*y1[i:-1:1]
     end
-    return T, y
+    return FODESolution(T, y)
 end

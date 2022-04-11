@@ -140,6 +140,17 @@ struct FIEProblem <: FDEProblem
 end
 
 
+################################################################################
+
+abstract type AbstractFDESolution end
+
+struct FODESolution <: AbstractFDESolution
+    t::AbstractArray
+    u::AbstractArray
+end
+
+
+
 
 """
 # Usage
@@ -191,7 +202,7 @@ function solve(FODE::SingleTermFODEProblem, h::Float64, ::PECE)
 
     tspan = collect(0:h:T)
 
-    return tspan, y
+    return FODESolution(tspan, y)
 end
 
 function right(f, y, α, n, h::Float64)

@@ -34,5 +34,5 @@ function solve(FODE::SingleTermFODEProblem, h, ::GL)
         end
         y[i] = f((i-1)*h, y[i-1])*h^α - right
     end
-    return y
+    return FODESolution(collect(0:h:T), y)
 end

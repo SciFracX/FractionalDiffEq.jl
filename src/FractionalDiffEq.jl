@@ -11,6 +11,7 @@ using UnPack
 using LoopVectorization
 using HypergeometricFunctions
 using ToeplitzMatrices
+using RecipesBase
 
 include("PECE.jl")
 include("matrix.jl")
@@ -58,6 +59,8 @@ include("FIE/main.jl")
 # Mittag Leffler function
 include("mlfun.jl")
 
+include("utils.jl")
+
 
 export FractionalDiffEqAlgorithm
 
@@ -66,6 +69,8 @@ export solve, FDEProblem, FPDEProblem, FDDEProblem
 
 # Detailed problem types
 export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FractionalDifferenceProblem, FIEProblem, FDDESystem
+
+export AbstractFDESolution, FODESolution
 
 # FODE solvers
 export PIEx, PIIm, PITrap

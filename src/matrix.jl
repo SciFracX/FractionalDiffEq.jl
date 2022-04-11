@@ -61,7 +61,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::FODEMatrixDiscrete)
     result = equation\rightside
     result = vcat(zeros(highestorder), result)
 
-    return collect(h:h:T), result
+    return FODESolution(collect(h:h:T), result)
 end
 
 
@@ -71,7 +71,7 @@ end
 Compute the eliminator matrix Sₖ by omiting n-th row
 """
 function eliminator(n, row)
-    temp = zeros(n, n)+I
+    temp = zeros(n, n) + I
     return temp[Not(row), :]
 end
 

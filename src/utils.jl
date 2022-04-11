@@ -1,0 +1,1 @@
+@recipe f(sol::FODESolution) = sol.t, sol.u

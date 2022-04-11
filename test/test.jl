@@ -13,7 +13,7 @@ using Test
         push!(target, i^1.8*mittleff(1.8, 2.8,-i^1.8))
     end
 
-    @test isapprox(result[2], target; atol=1)
+    @test isapprox(result.u, target; atol=1)
 end
 
 @testset "Test Matrix discrete method" begin
@@ -28,7 +28,7 @@ end
     singleprob = MultiTermsFODEProblem([1, 1], [0.5, 0], 1, u0, 5)
     result = solve(singleprob, 0.01, FODEMatrixDiscrete())
 
-    @test isapprox(result[2], target; atol=1)
+    @test isapprox(result.u, target; atol=1)
 
     ########### Yet another test case ##########
     yafun(x, y) = 1-y
@@ -44,7 +44,7 @@ end
     highsingleprob = MultiTermsFODEProblem([1, 1], [1.8, 0], 1, u0, 20)
     yaresult = solve(highsingleprob, 0.01, FODEMatrixDiscrete())
 
-    @test isapprox(yaresult[2], yatarget; atol=1)
+    @test isapprox(yaresult.u, yatarget; atol=1)
 
 end
 
@@ -144,7 +144,7 @@ end
     prob = MultiTermsFODEProblem([1 8 26 73 90], [3.5 3.1 2.3 1.2 0.5], rightfun, [30 90], [1 0.3], u0, t)
     result = solve(prob, ClosedFormHankelM())
 
-    @test result[2] ≈ [0.0; 0.08402140107687359; 0.3754974742112727]
+    @test result.u ≈ [0.0; 0.08402140107687359; 0.3754974742112727]
 end
 
 @testset "Test GLWithMemory method" begin
@@ -167,9 +167,9 @@ end
 @testset "Test GL method" begin
     fun(x, y) = 1-y
     prob = SingleTermFODEProblem(fun, 0.5, 0, 1)
-    result = solve(prob, 0.1, GL())
+    sol = solve(prob, 0.1, GL())
 
-    @test isapprox(result, [0.0
+    @test isapprox(sol.u, [0.0
     0.31622776601683794
     0.3743416490252569
     0.42454983788325495
@@ -370,7 +370,7 @@ end
     prob = SingleTermFODEProblem(rightfun, 0.5, 0, 1)
     sol = solve(prob, n, ChebSpectral())
 
-    @test isapprox(sol, [-2.103832955612273e-8
+    @test isapprox(sol.u, [-2.103832955612273e-8
     7.611080159690798e-5
     0.01082543428432764
     0.2878301921177669
