@@ -13,8 +13,8 @@ function Lu!(du, u, p, t)
     du[2] = -u[1]*u[3]+c*u[2]
     du[3] = u[1]*u[2]-b*u[3]
 end
-prob = FODESystem(Lu!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(Lu!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Lu System")

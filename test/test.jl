@@ -157,8 +157,8 @@ end
         du[2] = u[1]*(b-u[3])-u[2]
         du[3] = u[1]*u[2]-c*u[3]
     end
-    prob = FODESystem(testf!, alpha, x0)
-    result = solve(prob, h, tf, GLWithMemory())
+    prob = FODESystem(testf!, alpha, x0, tf)
+    result = solve(prob, h, GLWithMemory())
     @test isapprox(result, [1.0 0.0 1.0
     -4.04478 13.5939 -0.352607
     84.8074 -51.1251 -27.5541]; atol=1e-4)
@@ -244,10 +244,9 @@ end
     end
     α = [0.93, 0.99, 0.92];
     x0 = [0.2; -0.1; 0.1];
-    h = 0.1;
-    prob = FODESystem(chua!, α, x0)
-    tn = 0.5;
-    result = solve(prob, h, tn, NonLinearAlg())
+    h = 0.1; tn = 0.5;
+    prob = FODESystem(chua!, α, x0, tn)
+    result = solve(prob, h, NonLinearAlg())
 
     @test isapprox(result, [ 0.2 -0.1 0.1
     0.11749    -0.0590683  0.224134

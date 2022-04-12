@@ -59,7 +59,6 @@ include("FIE/main.jl")
 # Mittag Leffler function
 include("mlfun.jl")
 
-include("types.jl")
 include("utils.jl")
 
 

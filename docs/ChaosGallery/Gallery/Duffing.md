@@ -12,8 +12,8 @@ function Duffing!(du, u, p, t)
     du[1] = u[2]
     du[2] = u[1]-α*u[2]-u[1]^3+δ*cos(ω*t)
 end
-prob = FODESystem(Duffing!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(Duffing!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot(result[:, 1], result[:, 2], title="Fractional Order Duffing System")

@@ -21,8 +21,8 @@ function Liu!(du, u, p, t)
     du[2] = b*u[2]-n*u[1]*u[3]
     du[3] = -c*u[3]+m*u[1]*u[2]
 end
-prob = FODESystem(Liu!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(Liu!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Liu System")
@@ -40,8 +40,8 @@ function Duffing!(du, u, p, t)
     du[1] = u[2]
     du[2] = u[1]-α*u[2]-u[1]^3+δ*cos(ω*t)
 end
-prob = FODESystem(Duffing!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(Duffing!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot(result[:, 1], result[:, 2], title="Fractional Order Duffing System")
@@ -60,8 +60,8 @@ function Chen!(du, u, p, t)
     du[2] = d*u[1]-u[1]*u[3]+c*u[2]
     du[3] = u[1]*u[2]-b*u[3]
 end
-prob = FODESystem(Chen!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(Chen!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Chen System")
@@ -79,8 +79,8 @@ function VanderPol!(du, u, p, t)
     du[1] = u[2]
     du[2] = -u[1]-ϵ*(u[1]^2-1)*u[2]
 end
-prob = FODESystem(VanderPol!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(VanderPol!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot(result[:, 1], result[:, 2], title="Fractional Order Van der Pol Oscillator")
@@ -99,8 +99,8 @@ function LotkaVolterra!(du, u, p, t)
     du[2] = -c*u[2]+d*u[1]*u[2]
     du[3] = -p*u[3]+s*u[3]*u[1]^2
 end
-prob = FODESystem(LotkaVolterra!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(LotkaVolterra!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Lotka Volterra System")
@@ -119,8 +119,8 @@ function Lu!(du, u, p, t)
     du[2] = -u[1]*u[3]+c*u[2]
     du[3] = u[1]*u[2]-b*u[3]
 end
-prob = FODESystem(Lu!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(Lu!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Lu System")
@@ -139,8 +139,8 @@ function Rossler!(du, u, p, t)
     du[2] = u[1]+a*u[2]
     du[3] = b+u[3]*(u[1]-c)
 end
-prob = FODESystem(Rossler!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(Rossler!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Rossler System")
@@ -159,8 +159,8 @@ function Arneodo!(du, u, p, t)
     du[2] = u[3]
     du[3] = -b1*u[1]-b2*u[2]-b3*u[3]+b4*u[1]^3
 end
-prob = FODESystem(Arneodo!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(Arneodo!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Arneodo System")
@@ -179,8 +179,8 @@ function GenesioTesi!(du, u, p, t)
     du[2] = u[3]
     du[3] -b1*u[1]-b2*u[2]-b3*u[3]+b4*u[1]^2
 end
-prob = FODESystem(GenesioTesi!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(GenesioTesi!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Genesio-Tesi System")

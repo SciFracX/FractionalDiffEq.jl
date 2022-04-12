@@ -13,8 +13,8 @@ function Liu!(du, u, p, t)
     du[2] = b*u[2]-n*u[1]*u[3]
     du[3] = -c*u[3]+m*u[1]*u[2]
 end
-prob = FODESystem(Liu!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(Liu!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Liu System")

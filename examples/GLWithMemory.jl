@@ -9,8 +9,8 @@ function f!(du, u, p, t)
     du[2] = u[1]*(b-u[3])-u[2]
     du[3] = u[1]*u[2]-c*u[3]
 end
-prob = FODESystem(f!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(f!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot(result[:, 1], result[:, 2])

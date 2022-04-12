@@ -13,8 +13,8 @@ function LotkaVolterra!(du, u, p, t)
     du[2] = -c*u[2]+d*u[1]*u[2]
     du[3] = -p*u[3]+s*u[3]*u[1]^2
 end
-prob = FODESystem(LotkaVolterra!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(LotkaVolterra!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Lotka Volterra System")

@@ -13,8 +13,8 @@ function Arneodo!(du, u, p, t)
     du[2] = u[3]
     du[3] = -b1*u[1]-b2*u[2]-b3*u[3]+b4*u[1]^3
 end
-prob = FODESystem(Arneodo!, alpha, x0)
-result = solve(prob, h, tf, GLWithMemory())
+prob = FODESystem(Arneodo!, alpha, x0, tf)
+result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Arneodo System")

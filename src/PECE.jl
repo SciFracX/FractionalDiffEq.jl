@@ -100,6 +100,7 @@ struct FODESystem <: FDEProblem
     f::Function
     α::AbstractArray
     x0::AbstractArray
+    T::Number
 end
 
 """
