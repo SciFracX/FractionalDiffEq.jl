@@ -27,9 +27,9 @@ function solve(FODE::SingleTermFODEProblem, h, ::GL)
     y = zeros(N)
     y[1] = u0
 
-    for i = 2:N
+    @fastmath @inbounds @simd for i = 2:N
         right = 0
-        for j=1:i-1
+        @fastmath @inbounds @simd for j=1:i-1
             right += c[j]*y[i-j]
         end
         y[i] = f((i-1)*h, y[i-1])*h^α - right

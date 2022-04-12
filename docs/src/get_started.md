@@ -51,6 +51,7 @@ First, we need to specify the problem we want to solve. Just by passing the para
 ```julia
 using FractionalDiffEq
 fun(x, y) = 1-y
+α = 1.8; h = 0.01; T = 20
 prob = SingleTermFODEProblem(fun, 1.8, 0.01, 20)
 ```
 
@@ -61,7 +62,7 @@ The ```SingleTermFODEProblem``` is a class of fractional differential equation, 
 After defining a problem, we can solve it by calling the ```solve``` function:
 
 ```julia
-sol = solve(prob, h, T, Alg())
+sol = solve(prob, h, Alg())
 ```
 
 Note that there are different algorithms for differential fractional differential equations, such as FODE, FPDE, FDDE and FIE, we need to choose a suitable algorithm for specific problem. For all the algorithms, please refer to [algorithms documentation](@ref algorithms).
