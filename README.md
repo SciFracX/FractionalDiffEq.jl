@@ -65,11 +65,12 @@ Let's see if we have an initial value problem:
 So we can use FractionalDiffEq.jl to solve the problem:
 
 ```julia
+using FractionalDiffEq, Plots
 fun(x, y) = 1-y
 u0 = 0; T = 5; h = 0.001
 prob = SingleTermFODEProblem(fun, 0.5, u0, T)
-result = solve(prob, h, PECE())
-tspan = collect(0:h:T)
+sol = solve(prob, h, PECE())
+plot(sol)
 ```
 
 And if you plot the result, you can see the result of the fractional differential equation:
@@ -98,8 +99,8 @@ T=30;h=0.05
 tspan = collect(0.05:h:T)
 rightfun(x) = 172/125*cos(4/5*x)
 prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, T) #pass the parameters vector and the orders vector
-result = solve(prob, h, FODEMatrixDiscrete())
-plot(tspan, result, title=s, legend=:bottomright)
+sol = solve(prob, h, FODEMatrixDiscrete())
+plot(sol, title=s, legend=:bottomright)
 ```
 
 Or use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl) to plot the numerical approximation, we can see the FDE solver in FractionalDiffEq.jl is amazingly powerful:
@@ -184,15 +185,14 @@ FractionalDiffEq.jl is also able to solve ordinary differential equations~ Let's
 
 ```julia
 using FractionalDiffEq, Plots
-
 T = 30; h = 0.05
 tspan = collect(h:h:T)
 f(x) = 1/2*(-exp(-x)-sin(x)-cos(x)+2)
 target =f.(tspan)
 rightfun(x) = sin(x)
 prob = MultiTermsFODEProblem([1, 1], [2, 1], rightfun, T)
-result = solve(prob, h, FODEMatrixDiscrete())
-plot(tspan, result, title=s, legend=:bottomright, label="ODE Numerical Solution!")
+sol = solve(prob, h, FODEMatrixDiscrete())
+plot(sol, title=s, legend=:bottomright, label="ODE Numerical Solution!")
 plot!(tspan, target, lw=3,ls=:dash,label="ODE Analytical Solution!")
 ```
 
