@@ -31,32 +31,35 @@ function solve(FDDESys::FDDESystem, h, ::DelayABM)
     x0 = copy(x[Ndelay, :])
     
     for i=1:len
-        x1[Ndelay+1, i] =  x0[i] + h^α*f(0, x[1, :], x0, i)/(gamma(α)*α)
+        αi = α[i]
+        x1[Ndelay+1, i] =  x0[i] + h^αi*f(0, x[1, :], x0, i)/(gamma(αi)*αi)
     end
 
     for i=1:len
-        x[Ndelay+1, i] = x0[i] + h^α*(f(0, x[1, :], x[Ndelay+1, :], i) + α*f(0, x[1, :], x0, i))/gamma(α+2)
+        αi = α[i]
+        x[Ndelay+1, i] = x0[i] + h^αi*(f(0, x[1, :], x[Ndelay+1, :], i) + αi*f(0, x[1, :], x0, i))/gamma(αi+2)
     end
+
     M1=zeros(len); N1=zeros(len)
     @fastmath @inbounds @simd for n=1:N
         for i=1:len
-            M1[i]=(n^(α+1)-(n-α)*(n+1)^α)*f(0, x[1, :], x0, i)
-        end
-        
-        for i=1:len
-            N1[i]=((n+1)^α-n^α)*f(0, x[1, :], x0, i)
+            αi = α[i]
+            M1[i]=(n^(αi+1)-(n-αi)*(n+1)^αi)*f(0, x[1, :], x0, i)
+            N1[i]=((n+1)^αi-n^αi)*f(0, x[1, :], x0, i)
         end
 
         @fastmath @inbounds @simd for j=1:n
             for i=1:len
-                M1[i] = M1[i]+((n-j+2)^(α+1)+(n-j)^(α+1)-2*(n-j+1)^(α+1))*f(0, x[j, :], x[Ndelay+j, :], i)
-                N1[i] = N1[i]+((n-j+1)^α-(n-j)^α)*f(0, x[j, :], x[Ndelay+j, :], i)
+                αi = α[i]
+                M1[i] = M1[i]+((n-j+2)^(αi+1)+(n-j)^(αi+1)-2*(n-j+1)^(αi+1))*f(0, x[j, :], x[Ndelay+j, :], i)
+                N1[i] = N1[i]+((n-j+1)^αi-(n-j)^αi)*f(0, x[j, :], x[Ndelay+j, :], i)
             end
         end
         
         for i=1:len
-            x1[Ndelay+n+1, i] = x0[i]+h^α*N1[i]/(gamma(α)*α)
-            x[Ndelay+n+1, i] = x0[i]+h^α*(f(0, x[n+1, :], x[Ndelay+n+1, :], i)+M1[i])/gamma(α+2)
+            αi = α[i]
+            x1[Ndelay+n+1, i] = x0[i]+h^αi*N1[i]/(gamma(αi)*αi)
+            x[Ndelay+n+1, i] = x0[i]+h^αi*(f(0, x[n+1, :], x[Ndelay+n+1, :], i)+M1[i])/gamma(αi+2)
         end
     end
     
