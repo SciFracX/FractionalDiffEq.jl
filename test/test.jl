@@ -296,16 +296,16 @@ end
     α=0.5;x0=1;
     T=1; h=0.1
     prob = FractionalDifferenceProblem(differencefun, α, x0)
-    t, y=solve(prob, T, h, PECEDifference())
-    @test isapprox(y, [1.0, 2.5, 4.25, 5.125, 5.5625, 5.78125, 5.890625, 5.9453125, 5.97265625, 5.986328125, 5.9931640625]; atol=1e-3)
+    sol = solve(prob, T, h, PECEDifference())
+    @test isapprox(sol.u, [1.0, 2.5, 4.25, 5.125, 5.5625, 5.78125, 5.890625, 5.9453125, 5.97265625, 5.986328125, 5.9931640625]; atol=1e-3)
 end
 
 @testset "Test Fractional Integral Equations SpectralUltraspherical method" begin
     tspan = LinRange(-1, 1, 5)
     prob = FIEProblem([1, 1], [1, 0.5], 1, tspan)
-    sol=solve(prob, 20, SpectralUltraspherical())
+    sol = solve(prob, 20, SpectralUltraspherical())
 
-    @test isapprox(sol, [ 1.0
+    @test isapprox(sol.u, [ 1.0
     0.5231565837302468
     0.42758357615580733
     0.37316567427801584

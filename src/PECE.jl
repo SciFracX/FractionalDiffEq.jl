@@ -68,7 +68,7 @@ Construct a fractional delayed differential equation problem.
 """
 struct FDDEProblem <: FDEProblem
     f::Function
-    ϕ
+    ϕ::Union{Number, Function}
     α
     τ::Number
     T
@@ -99,7 +99,7 @@ Define system of fractional differential equations problem.
 struct FODESystem <: FDEProblem
     f::Function
     α::AbstractArray
-    x0::AbstractArray
+    u0::AbstractArray
     T::Number
 end
 
@@ -124,7 +124,7 @@ Define fractional difference equation problems.
 struct FractionalDifferenceProblem <: FDEProblem
     fun::Function
     α
-    x0
+    u0
 end
 
 
@@ -151,6 +151,15 @@ struct FODESolution <: AbstractFDESolution
 end
 
 
+struct FDifferenceSolution <: AbstractFDESolution
+    t::AbstractArray
+    u::AbstractArray
+end
+
+struct FIESolution <: AbstractFDESolution
+    t::AbstractArray
+    u::AbstractArray
+end
 
 
 """

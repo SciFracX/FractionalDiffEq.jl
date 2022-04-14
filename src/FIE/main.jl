@@ -51,7 +51,7 @@ function solve(FIE::FIEProblem, n, ::SpectralUltraspherical)
 
 	# Evaluate solution
 	sol = myeval(u, tspan, 2)
-	return sol
+	return FIESolution(tspan, sol)
 end
 
 function myeval(u, x, q)

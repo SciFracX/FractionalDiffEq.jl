@@ -12,15 +12,15 @@ Dingyu Xue, Northeastern University, China ISBN:9787030543981
 struct NonLinearAlg <: FractionalDiffEqAlgorithm end
 
 function solve(prob::FODESystem, h, ::NonLinearAlg, L0=1e10)
-    @unpack f, α, x0, T = prob
-    n = length(x0)
+    @unpack f, α, u0, T = prob
+    n = length(u0)
     m = round(Int, T/h)+1
     g = genfun(1)
     g = g[:]
-    x0 = x0[:]
+    u0 = u0[:]
     ha = h.^α
     z = zeros(n, m)
-    x1 = copy(x0) # Here we pass the value of x0 to x1. Honestly, I kept finding this bug for almost a whole night😅
+    x1 = copy(u0) # Here we pass the value of x0 to x1. Honestly, I kept finding this bug for almost a whole night😅
 
 
     # All of the min(m, L0+1) is to set the memory effect.
@@ -38,12 +38,12 @@ function solve(prob::FODESystem, h, ::NonLinearAlg, L0=1e10)
         f(du, x1, nothing, tk)
 
         @fastmath @inbounds @simd for i = 1:n
-            x1[i] = du[i]*ha[i] - W[i, 2:L+1]'*z[i, k-1:-1:k-L] + x0[i]
+            x1[i] = du[i]*ha[i] - W[i, 2:L+1]'*z[i, k-1:-1:k-L] + u0[i]
         end
-        z[:, k] = x1 - x0
+        z[:, k] = x1 - u0
     end
 
-    result = (z + repeat(x0, 1, m))'
+    result = (z + repeat(u0, 1, m))'
     
     return result
 end

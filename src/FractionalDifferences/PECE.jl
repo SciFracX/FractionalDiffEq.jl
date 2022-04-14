@@ -22,7 +22,7 @@ Use the PECE algorithm to solve fractional difference equations
 struct PECEDifference <: FractionalDiffEqAlgorithm end
 
 function solve(FDProb::FractionalDifferenceProblem, T, h, ::PECEDifference)
-    @unpack fun, α, x0 = FDProb
+    @unpack fun, α, u0 = FDProb
     N = round(Int, T/h)
 
     # Initialize
@@ -37,7 +37,7 @@ function solve(FDProb::FractionalDifferenceProblem, T, h, ::PECEDifference)
         b[i] = gamma(N-i+α)/k
         a[N+1-i] = b[i]
     end
-    x[1] = x0+a[1]*fun(x0)/gamma(α)
+    x[1] = u0+a[1]*fun(u0)/gamma(α)
     t[1] = 1
 
     @fastmath @inbounds @simd for i=2:N
@@ -46,15 +46,15 @@ function solve(FDProb::FractionalDifferenceProblem, T, h, ::PECEDifference)
             temp = a[i+1-j]*fun(x[j])
         end
         temp = temp/gamma(α)
-        x[i] = x0 + temp+a[1]*(x0+temp)/gamma(α)
+        x[i] = u0 + temp+a[1]*(u0+temp)/gamma(α)
         t[i] = i
     end
 
-    y[1] = x0
+    y[1] = u0
     t1[1] = 0
     @fastmath @inbounds @simd for i = 1:N
         y[i+1] = x[i]
         t1[i+1] = t[i]
     end
-    return t1, y
+    return FDifferenceSolution(t1, y)
 end

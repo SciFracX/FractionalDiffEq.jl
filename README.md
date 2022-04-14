@@ -67,7 +67,7 @@ So we can use FractionalDiffEq.jl to solve the problem:
 ```julia
 using FractionalDiffEq, Plots
 fun(x, y) = 1-y
-u0 = 0; T = 5; h = 0.001
+u0 = 0; T = 5; h = 0.001;
 prob = SingleTermFODEProblem(fun, 0.5, u0, T)
 sol = solve(prob, h, PECE())
 plot(sol)
@@ -95,8 +95,7 @@ Let's see if the initial value problem like:
 
 ```julia
 using FractionalDiffEq, Plots
-T=30;h=0.05
-tspan = collect(0.05:h:T)
+T=30; h=0.05;
 rightfun(x) = 172/125*cos(4/5*x)
 prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, T) #pass the parameters vector and the orders vector
 sol = solve(prob, h, FODEMatrixDiscrete())
@@ -129,14 +128,11 @@ function chua!(du, x, p, t)
     du[2] = x[1]-x[2]+x[3]
     du[3] = -b*x[2]-c*x[3]
 end
-
 α = [0.93, 0.99, 0.92];
 x0 = [0.2; -0.1; 0.1];
-h = 0.001;
+h = 0.001; tn = 0.5;
 prob = FODESystem(chua!, α, x0)
-tn = 0.5;
 result = solve(prob, h, tn, NonLinearAlg())
-
 plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)
 ```
 

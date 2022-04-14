@@ -27,8 +27,8 @@ tspan = LinRange(-1, 1, 100)
 prob = FIEProblem([1, 1], [1, 0.5], 1, tspan)
 sol = solve(prob, 20, SpectralUltraspherical())
 solanalytical = analytical.(xx)
-plot(xx, sol, title="Second kind Abel integral equation", label="Numerical")
-plot!(xx, solanalytical, ls=:dash, label="Analytical")
+plot(sol, title="Second kind Abel integral equation", label="Numerical")
+plot!(tspan, solanalytical, ls=:dash, label="Analytical")
 ```
 
 ![Second kind Abel IE](./assets/abelinteqexample.png)
