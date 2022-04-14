@@ -80,6 +80,45 @@ plot(x[:, 1], x[:, 2], x[:, 3], title="Fractional Order Chen Delayed System")
 
 ![FOChen](./assets/fodelaychen.png)
 
+Let's see an detailed example of the fractional order version of enzyme kinetics with an inhibitor molecule:
+
+```math
+D_t^\alpha y_1(t)=10.5-\frac{y_1(t)}{1+0.0005y_4^3(t-4)}\\
+D_t^\alpha y_2(t)=\frac{y_1(t)}{1+0.0005y_4^3(t-4)}-y_2(t)\\
+D_t^\alpha y_3(t)=y_2(t)-y_3(t)\\
+D_t^\alpha y_4(t)=y_3(t)-0.5y_4(t)\\
+y(t)=[60, 10, 10, 20],\ t\leq0
+```
+
+```julia
+using FractionalDiffEq
+function EnzymeKinetics(t, ϕ, y, k)
+    if k == 1
+        return 10.5-y[1]/(1+0.0005*ϕ[4]^3)
+    elseif k == 2
+        return y[1]/(1+0.0005*ϕ[4]^3)-y[2]
+    elseif k == 3
+        return y[2]-y[3]
+    elseif k == 4
+        return y[3]-0.5*y[4]
+    end
+end
+q = [60, 10, 10, 20]
+prob = FDDESystem(f, q, 0.95, 4, 150)
+sold, sol = solve(prob, 0.01, DelayABM())
+tspan = collect(0:0.01:146)
+using Plots
+plot(tspan, sol[:, 1])
+plot!(tspan, sol[:, 2])
+plot!(tspan, sol[:, 3])
+plot!(tspan, sol[:, 4])
+```
+
+![Enzyme](./assets/enzyme_kinetics.png)
+
+
+
+
 FractionalDiffEq.jl is also capable of solving system of fractional delayed differential equations with matrix form:
 
 ```math

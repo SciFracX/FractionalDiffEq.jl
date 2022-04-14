@@ -15,16 +15,17 @@ Use the Adams-Bashforth-Moulton method to solve fractional delayed differential 
 """
 struct DelayABM <: FractionalDiffEqAlgorithm end
 #FIXME: There are still some improvments about initial condition
-
+#FIXME: Fix DelayABM method for FDDESystem : https://www.researchgate.net/publication/245538900_A_Predictor-Corrector_Scheme_For_Solving_Nonlinear_Delay_Differential_Equations_Of_Fractional_Order
+#FIXME: Also the problem definition f(t, ϕ, y) or f(t, y, ϕ)?
 function solve(FDDE::FDDEProblem, h, ::DelayABM)
     @unpack f, ϕ, α, τ, T = FDDE
     N::Int = round(Int, T/h)
     Ndelay = round(Int, τ/h)
     x1 = zeros(Ndelay+N+1)
     x = zeros(Ndelay+N+1)
-    x1[Ndelay+N+1] = 0
+    #x1[Ndelay+N+1] = 0
     
-    x[Ndelay+N+1] = 0
+    #x[Ndelay+N+1] = 0
 
     # History function handling
     #FIXME: When the value of history function ϕ is different with the initial value?
@@ -55,11 +56,11 @@ function solve(FDDE::FDDEProblem, h, ::DelayABM)
     
     xresult[N-Ndelay+1]=0
     yresult[N-Ndelay+1]=0
-    
+    #=
     @fastmath @inbounds @simd for n=2*Ndelay+1:N+Ndelay+1  
        xresult[n-2*Ndelay] = x[n]
        yresult[n-2*Ndelay] = x[n-Ndelay]
     end
-
-    return xresult, yresult
+    =#
+    return x#xresult, yresult
 end

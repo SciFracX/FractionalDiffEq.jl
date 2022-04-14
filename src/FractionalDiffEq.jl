@@ -43,6 +43,7 @@ include("FDDE/DelayPI.jl")
 include("FDDE/Matrix.jl")
 include("FDDE/DelayABM.jl")
 include("FDDE/Yuan.jl")
+include("FDDE/DelayABMSystem.jl")
 
 # Distributed order differential equations
 include("DistributedOrder/utils.jl")
