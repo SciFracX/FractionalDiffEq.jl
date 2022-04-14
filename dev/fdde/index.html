@@ -35,7 +35,31 @@ function delaychen(x, y, z, xt, yt, zt, k)
 end
 prob = FDDESystem(delaychen, ϕ, α, τ, T)
 x=solve(prob, h, DelayABMYuan())
-plot(x[:, 1], x[:, 2], x[:, 3], title=&quot;Fractional Order Chen Delayed System&quot;)</code></pre><p><img src="../assets/fodelaychen.png" alt="FOChen"/></p><p>FractionalDiffEq.jl is also capable of solving system of fractional delayed differential equations with matrix form:</p><p class="math-container">\[D_{t_0}^\alpha\textbf{x}(t)=\textbf{A}(t)\textbf{x}(t)+\textbf{B}(t)\textbf{x}(t-\tau)+\textbf{f}(t)\]</p><p>We explain the usage of algorithm by using an example:</p><p class="math-container">\[
+plot(x[:, 1], x[:, 2], x[:, 3], title=&quot;Fractional Order Chen Delayed System&quot;)</code></pre><p><img src="../assets/fodelaychen.png" alt="FOChen"/></p><p>Let&#39;s see an detailed example of the fractional order version of enzyme kinetics with an inhibitor molecule:</p><p class="math-container">\[D_t^\alpha y_1(t)=10.5-\frac{y_1(t)}{1+0.0005y_4^3(t-4)}\\
+D_t^\alpha y_2(t)=\frac{y_1(t)}{1+0.0005y_4^3(t-4)}-y_2(t)\\
+D_t^\alpha y_3(t)=y_2(t)-y_3(t)\\
+D_t^\alpha y_4(t)=y_3(t)-0.5y_4(t)\\
+y(t)=[60, 10, 10, 20],\ t\leq0\]</p><pre><code class="language-julia hljs">using FractionalDiffEq
+function EnzymeKinetics(t, ϕ, y, k)
+    if k == 1
+        return 10.5-y[1]/(1+0.0005*ϕ[4]^3)
+    elseif k == 2
+        return y[1]/(1+0.0005*ϕ[4]^3)-y[2]
+    elseif k == 3
+        return y[2]-y[3]
+    elseif k == 4
+        return y[3]-0.5*y[4]
+    end
+end
+q = [60, 10, 10, 20]
+prob = FDDESystem(f, q, 0.95, 4, 150)
+sold, sol = solve(prob, 0.01, DelayABM())
+tspan = collect(0:0.01:146)
+using Plots
+plot(tspan, sol[:, 1])
+plot!(tspan, sol[:, 2])
+plot!(tspan, sol[:, 3])
+plot!(tspan, sol[:, 4])</code></pre><p><img src="../assets/enzyme_kinetics.png" alt="Enzyme"/></p><p>FractionalDiffEq.jl is also capable of solving system of fractional delayed differential equations with matrix form:</p><p class="math-container">\[D_{t_0}^\alpha\textbf{x}(t)=\textbf{A}(t)\textbf{x}(t)+\textbf{B}(t)\textbf{x}(t-\tau)+\textbf{f}(t)\]</p><p>We explain the usage of algorithm by using an example:</p><p class="math-container">\[
 \textbf{x}(t)=\begin{pmatrix} x_{1}(t) \\ x_{2}(t) \\ x_{3}(t) \\ x_{4}(t) \end{pmatrix}
 \]</p><p class="math-container">\[
 \textbf{A}=\begin{pmatrix} 0 &amp; 0 &amp; 1 &amp; 0 \\ 0  &amp; 0 &amp; 0 &amp; 1 \\ 0  &amp; -2 &amp; 0 &amp; 0 \\ -2 &amp; 0 &amp; 0 &amp; 0 \end{pmatrix}
@@ -58,4 +82,4 @@ f=[0; 0; 0; 0]
 
 result=solve(limit, alpha, A, B, f, t0, x0, T, tau, h, MatrixForm())
 
-plot(result[:, 1], result[:, 3])</code></pre><p><img src="../assets/fdde_matrix.png" alt="Matrix Form"/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../fpde/">« Fractional Partial Differential Equations</a><a class="docs-footer-nextpage" href="../dode/">Distributed Order Differential Equations »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.15 on <span class="colophon-date" title="Thursday 14 April 2022 03:23">Thursday 14 April 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+plot(result[:, 1], result[:, 3])</code></pre><p><img src="../assets/fdde_matrix.png" alt="Matrix Form"/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../fpde/">« Fractional Partial Differential Equations</a><a class="docs-footer-nextpage" href="../dode/">Distributed Order Differential Equations »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.15 on <span class="colophon-date" title="Thursday 14 April 2022 12:28">Thursday 14 April 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
