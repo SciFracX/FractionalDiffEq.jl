@@ -45,7 +45,7 @@ pkg> add FractionalDiffEq
 
 # Quick start
 
-### An easy example
+### Fractional ordinary differential equations
 
 Let's see if we have an initial value problem:
 
@@ -162,37 +162,60 @@ By using the FPDE solvers in FractionalDiffEq.jl and plot the numerical approxim
 
 ![diffusion](docs/src/assets/diffusion.png)
 
-### ODE Example
 
-FractionalDiffEq.jl is also able to solve ordinary differential equations~ Let's see an example here:
+## Fractional Delay Differential Equations
 
-<p align="center">
-
-<img src="https://latex.codecogs.com/svg.image?y''(x)&plus;y'(x)=\sin(x)" title="y''(x)+y'(x)=\sin(x)" />
-
-</p>
+There are many powerful solvers for solving fractional delay differential equations.
 
 <p align="center">
 
-<img src="https://latex.codecogs.com/svg.image?y(0)=0" title="y(0)=0" />
+<img src="https://latex.codecogs.com/svg.image?D^\alpha_ty(t)=3.5y(t)(1-\frac{y(t-0.74)}{19}),\&space;y(0)=19.00001" title="https://latex.codecogs.com/svg.image?D^\alpha_ty(t)=3.5y(t)(1-\frac{y(t-0.74)}{19}),\ y(0)=19.00001" />
 
 </p>
 
+With history function:
+
+<p align="center">
+
+<img src="https://latex.codecogs.com/svg.image?y(t)=19,\&space;t<0" title="https://latex.codecogs.com/svg.image?y(t)=19,\ t<0" />
+
+</p>
 
 ```julia
 using FractionalDiffEq, Plots
-T = 30; h = 0.05
-tspan = collect(h:h:T)
-f(x) = 1/2*(-exp(-x)-sin(x)-cos(x)+2)
-target =f.(tspan)
-rightfun(x) = sin(x)
-prob = MultiTermsFODEProblem([1, 1], [2, 1], rightfun, T)
-sol = solve(prob, h, FODEMatrixDiscrete())
-plot(sol, title=s, legend=:bottomright, label="ODE Numerical Solution!")
-plot!(tspan, target, lw=3,ls=:dash,label="ODE Analytical Solution!")
+ϕ(x) = x == 0 ? (return 19.00001) : (return 19.0)
+f(t, y, ϕ) = 3.5*y*(1-ϕ/19)
+h = 0.05; α = 0.97; τ = 0.8; T = 56
+fddeprob = FDDEProblem(f, ϕ, α, τ, T)
+V, y = solve(fddeprob, h, DelayPECE())
+plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 ```
 
-![ODE Example](docs/src/assets/ode_example.png)
+![Delayed](docs/src/assets/fdde_example.png)
+
+## Fractional Integral Equations
+
+To solve fractional integral equations in using FractionalDiffEq.jl, we only need to follow the previous steps:
+
+<p align="center">
+
+<img src="https://latex.codecogs.com/svg.image?u(x)&plus;{_{-1}I_x^{1/2}}u(x)=1" title="https://latex.codecogs.com/svg.image?u(x)+{_{-1}I_x^{1/2}}u(x)=1" />
+
+</p>
+
+```julia
+using FractionalDiffEq, Plots, SpecialFunctions
+analytical(x)=exp(1+x)*erfc(sqrt(1+x))
+tspan = LinRange(-1, 1, 100)
+prob = FIEProblem([1, 1], [1, 0.5], 1, tspan)
+sol = solve(prob, 20, SpectralUltraspherical())
+solanalytical = analytical.(xx)
+plot(sol, title="Second kind Abel integral equation", label="Numerical")
+plot!(tspan, solanalytical, ls=:dash, label="Analytical")
+```
+
+![Second kind Abel IE](docs/src/assets/abelinteqexample.png)
+
 
 # Available Solvers
 

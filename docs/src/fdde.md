@@ -16,6 +16,16 @@ While only given the initial condition is not enough to solve the delayed differ
 
 All we need to do is to pass the function ``f(t,\ y(t),\ y(t-\tau))``, and history function ``\phi(t)`` to the ```FDDEProblem``` and choose an algorithm to solve problem:
 
+Here, we consider the fractional order version of the four year life cycle of a population of lemmings
+
+```math
+D^\alpha_ty(t)=3.5y(t)(1-\frac{y(t-0.74)}{19}),\ y(0)=19.00001
+```
+
+```math
+y(t)=19,\ t<0
+```
+
 ```julia
 using FractionalDiffEq, Plots
 
