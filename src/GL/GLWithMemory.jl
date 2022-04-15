@@ -20,25 +20,25 @@ struct GLWithMemory <: FractionalDiffEqAlgorithm end
 
 function solve(prob::FODESystem, h, ::GLWithMemory)
     @unpack f, α, u0, T = prob
-    hα=h^α[1]
+    hα = h^α[1]
     n::Int64 = floor(Int64, T/h)+1
     l = length(u0)
 
     # Initialize solution
-    result = zeros(n, length(u0))
+    result = zeros(Float64, n, length(u0))
     result[1, :] = u0
 
     # generating coefficients Cα
-    Cα = zeros(n)
+    Cα = zeros(Float64, n)
     Cα[1] = 1
     @fastmath @inbounds @simd for j in range(2, n, step=1)
         Cα[j] = (1-(1+α[1])/(j-1))*Cα[j-1]
     end
 
-    du = zeros(l)
+    du = zeros(Float64, l)
 
     @fastmath @inbounds @simd for k in range(2, n, step=1)
-        summation = zeros(length(u0))
+        summation = zeros(Float64, length(u0))
 
         @fastmath @inbounds @simd for j in range(1, k-1, step=1)
             for i in eachindex(summation)

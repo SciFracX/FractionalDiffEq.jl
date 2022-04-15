@@ -86,7 +86,7 @@ Construct system of fractional delay differential equations problem.
 struct FDDESystem <: FDEProblem
     f::Function
     ϕ::AbstractArray
-    α#::Union{AbstractArray, Number}
+    α#::Union{AbstractArray
     τ::Number
     T
 end
