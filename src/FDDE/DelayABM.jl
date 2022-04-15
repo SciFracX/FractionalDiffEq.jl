@@ -56,11 +56,11 @@ function solve(FDDE::FDDEProblem, h, ::DelayABM)
     
     xresult[N-Ndelay+1]=0
     yresult[N-Ndelay+1]=0
-    #=
+
     @fastmath @inbounds @simd for n=2*Ndelay+1:N+Ndelay+1  
        xresult[n-2*Ndelay] = x[n]
        yresult[n-2*Ndelay] = x[n-Ndelay]
     end
-    =#
-    return x#xresult, yresult
+
+    return xresult, yresult
 end

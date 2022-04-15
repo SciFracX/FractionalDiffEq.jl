@@ -11,8 +11,8 @@ function EnzymeKinetics(t, ϕ, y, k)
     end
 end
 
-q = [60, 10, 10, 20]
-prob = FDDESystem(f, q, 0.95, 4, 6)
+q = [60, 10, 10, 20]; α = [0.95, 0.95, 0.95, 0.95]
+prob = FDDESystem(f, q, α, 4, 6)
 sold, sol = solve(prob, 0.1, DelayABM())
 tspan = collect(0:0.1:2)
 using Plots

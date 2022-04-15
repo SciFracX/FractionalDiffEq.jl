@@ -1,4 +1,4 @@
-using FractionalDiffEq
+using FractionalDiffEq, SpecialFunctions
 using Test
 
 @testset "FractionalDiffEq.jl" begin
