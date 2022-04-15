@@ -63,17 +63,13 @@ D^{\alpha_3}z=x(t)y(t)-bz(t-\tau)
 ```julia
 using FractionalDiffEq, Plots
 α=[0.94, 0.94, 0.94]; ϕ=[0.2, 0, 0.5]; τ=0.009; T=1.4; h=0.001
-function delaychen(t, ϕ, y, k)
-    a=35; b=3; c=27
-    if k == 1
-      return a*(y[2]-ϕ[1])
-    elseif k == 2
-      return (c-a)*ϕ[1]-y[1]*y[3]+c*y[2]
-    elseif k == 3
-      return y[1]*y[2]-b*ϕ[3]
-    end
+function delaychen!(dy, y, ϕ, t)
+	a=35; b=3; c=27
+	dy[1] = a*(y[2]-ϕ[1])
+	dy[2] = (c-a)*ϕ[1]-y[1]*y[3]+c*y[2]
+	dy[3] = y[1]*y[2]-b*ϕ[3]
 end
-prob = FDDESystem(delaychen, ϕ, α, τ, T)
+prob = FDDESystem(delaychen!, ϕ, α, τ, T)
 y, x=solve(prob, h, DelayABM())
 plot(x[:, 1], x[:, 2], x[:, 3], title="Fractional Order Chen Delayed System")
 ```
@@ -92,19 +88,14 @@ y(t)=[60, 10, 10, 20],\ t\leq0
 
 ```julia
 using FractionalDiffEq
-function EnzymeKinetics(t, ϕ, y, k)
-    if k == 1
-        return 10.5-y[1]/(1+0.0005*ϕ[4]^3)
-    elseif k == 2
-        return y[1]/(1+0.0005*ϕ[4]^3)-y[2]
-    elseif k == 3
-        return y[2]-y[3]
-    elseif k == 4
-        return y[3]-0.5*y[4]
-    end
+function EnzymeKinetics!(dy, y, ϕ, t)
+    dy[1] = 10.5-y[1]/(1+0.0005*ϕ[4]^3)
+    dy[2] = y[1]/(1+0.0005*ϕ[4]^3)-y[2]
+    dy[3] = y[2]-y[3]
+    dy[4] = y[3]-0.5*y[4]
 end
 q = [60, 10, 10, 20]; α = [0.95, 0.95, 0.95, 0.95]
-prob = FDDESystem(f, q, α, 4, 150)
+prob = FDDESystem(EnzymeKinetics!, q, α, 4, 150)
 sold, sol = solve(prob, 0.01, DelayABM())
 tspan = collect(0:0.01:146)
 using Plots
@@ -156,12 +147,12 @@ By using the ```MatrixForm``` method for FDDE in FractionalDiffEq.jl and plot th
 ```julia
 using FractionalDiffEq, Plots
 
-limit=100
-t0=0
-T=1
-tau=3.1416
-h=0.5
-alpha=0.4
+limit=100;
+t0=0;
+T=1;
+tau=3.1416;
+h=0.5;
+alpha=0.4;
 function x0(t)
     return [sin(t)*cos(t); sin(t)*cos(t); cos(t)^2-sin(t)^2; cos(t)^2-sin(t)^2]
 end

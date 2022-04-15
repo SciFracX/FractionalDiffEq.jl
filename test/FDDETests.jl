@@ -49,7 +49,6 @@ end
 end
 
 @testset "Test DelayABM for FDDESystem" begin
-
     function EnzymeKinetics(t, ϕ, y, k)
         if k == 1
             return 10.5-y[1]/(1+0.0005*ϕ[4]^3)
