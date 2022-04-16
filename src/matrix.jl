@@ -55,7 +55,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::FODEMatrixDiscrete)
     if typeof(rightfun) <: Number # Handling right hand side
         rightside = eliminator(N, rows)*rightfun*ones(N)
     else
-        rightside = eliminator(N, rows)*rightfun.(collect(h:h:T))
+        rightside = eliminator(N, rows)*(rightfun.(collect(h:h:T)).+ic_handling(orders, parameters, u0))
     end
 
     result = equation\rightside
