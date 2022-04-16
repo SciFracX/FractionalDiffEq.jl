@@ -22,7 +22,7 @@ struct DOMatrixDiscrete <: FractionalDiffEqAlgorithm end
 isFunction(x) = isa(x, Function) ? true : false
 
 function solve(prob::DODEProblem, h, ::DOMatrixDiscrete)
-    @unpack parameters, orders, interval, rightfun, tspan = prob
+    @unpack parameters, orders, interval, rightfun, u0, tspan = prob
     N = length(tspan)
     # find the index of the distributed order
     DOid = findall(isFunction, orders)
@@ -45,13 +45,19 @@ function solve(prob::DODEProblem, h, ::DOMatrixDiscrete)
     # Don't forget the distributed order term!
     equation += ω.*DOB(ϕ, interval, 0.01, N, h)
 
-    F = eliminator(N, rows)*rightfun.(tspan)
+    F = eliminator(N, rows)*(rightfun.(tspan).+ichandling(orders, parameters, u0))
     M = eliminator(N, rows)*equation*eliminator(N, 1)'
 
     Y = M\F
 
     Y0 = [0; Y]
-    return Y0
+    return DODESolution(tspan, Y0.+u0)
+end
+
+function ichandling(orders, parameters, initialcondition)
+    zerosordersid = findall(x -> x == 0, orders)
+    zerosorderparameter = (parameters[zerosordersid])[1]
+    return -zerosorderparameter*initialcondition
 end
 
 #=

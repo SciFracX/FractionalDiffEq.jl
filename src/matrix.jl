@@ -41,7 +41,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::FODEMatrixDiscrete)
     @unpack parameters, orders, rightfun, T = prob
     N::Int64 = floor(Int, T/h)
     highestorder = Int64(findmax(ceil.(orders))[1])
-    rows = collect(1:highestorder)
+    rows = collect(Int64, 1:highestorder)
 
     equation = zeros(N, N)
 
@@ -61,7 +61,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::FODEMatrixDiscrete)
     result = equation\rightside
     result = vcat(zeros(highestorder), result)
 
-    return FODESolution(collect(h:h:T), result)
+    return FODESolution(collect(Float64, h:h:T), result)
 end
 
 
@@ -171,13 +171,13 @@ function bagleytorvik(p1, p2, p3, right, T, h)
     equation = p1*D(N, 2, h) + p2*D(N, 1.5, h) + p3*(zeros(N, N)+I)
     equation = eliminator(N, [1,2])*equation*eliminator(N, [1,2])'
 
-    rows = collect(1:2)
+    rows = collect(Int64, 1:2)
     
     typeof(right) <: Number ? rightside = eliminator(N, rows)*right*ones(N) : rightside = eliminator(N, rows)*right.(collect(h:h:T))
     
     result = equation\rightside
 
-    return vcat(zeros(2), result)
+    return vcat(zeros(Float64, 2), result)
 end
 
 

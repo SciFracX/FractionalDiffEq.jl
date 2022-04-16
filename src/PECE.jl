@@ -111,8 +111,9 @@ Define a single term distributed order differential equation problem.
 struct DODEProblem <: FDEProblem
     parameters::AbstractArray
     orders::AbstractArray
-    interval
+    interval::Tuple
     rightfun::Function
+    u0
     tspan
 end
 
@@ -157,6 +158,11 @@ struct FDifferenceSolution <: AbstractFDESolution
 end
 
 struct FIESolution <: AbstractFDESolution
+    t::AbstractArray
+    u::AbstractArray
+end
+
+struct DODESolution <: AbstractFDESolution
     t::AbstractArray
     u::AbstractArray
 end

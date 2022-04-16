@@ -1,5 +1,7 @@
 # Distributed Order Differential Equations
 
+> For more details about distributed order diffeerntial equations and distributed order dynamic systems, we recommend you to read [Distributed-Order Dynamic Systems](https://doi.org/10.1007/978-1-4471-2852-6)
+
 We integrate ``{_0D_t^\alpha f(t)}`` with respect to the order, we can obtain distributed-order differential/integral equations. Since we normally adopted the notation as:
 
 ```math
@@ -48,11 +50,11 @@ By using the ```DOMatrixDiscrete``` method to solve this problem:
 
 ```julia
 using FractionalDiffEq, Plots
-h = 0.01; t = collect(h:h:5)
-fun(t)=-0.1
-prob = DODEProblem([1, 0.1], [x->6*x*(1-x), 0], [0, 1], fun, t)
-result = solve(prob, h, DOMatrixDiscrete())
-plot(t, result, title=s)
+h = 0.01; t = collect(h:h:5);
+fun(t)=0
+prob = DODEProblem([1, 0.1], [x->6*x*(1-x), 0], (0, 1), fun, 1, t)
+sol = solve(prob, h, DOMatrixDiscrete())
+plot(sol)
 ```
 
 ![dorelaxation](./assets/dorelaxation.png)

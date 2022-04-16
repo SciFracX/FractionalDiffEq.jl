@@ -15,7 +15,7 @@ struct GL <: FractionalDiffEqAlgorithm end
 function solve(FODE::SingleTermFODEProblem, h, ::GL)
     @unpack f, α, u0, T = FODE
     N::Int = floor(Int, T/h)+1
-    c = zeros(N)
+    c = zeros(Float64, N)
 
     cp::Float64 = 1.0
     for j = 1:N

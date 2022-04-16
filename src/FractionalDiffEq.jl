@@ -70,7 +70,7 @@ export solve, FDEProblem, FPDEProblem, FDDEProblem
 # Detailed problem types
 export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FractionalDifferenceProblem, FIEProblem, FDDESystem
 
-export AbstractFDESolution, FODESolution
+export AbstractFDESolution, FODESolution, FIESolution, FDifferenceSolution, DODESolution
 
 # FODE solvers
 export PIEx, PIIm, PITrap

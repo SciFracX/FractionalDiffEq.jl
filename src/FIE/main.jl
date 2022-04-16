@@ -62,9 +62,9 @@ function myeval(u, x, q)
 	    end
 	    return uu
 	end
-  
+
 	N::Int64 = length(u)/q
-  
+
 	if q == 2
 	    uu = clenshawP(x, u[1:N]) .+ sqrt.(1 .+x).*clenshawU(x, u[N+1:2*N])
 	else
