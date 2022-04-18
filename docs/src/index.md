@@ -44,6 +44,3 @@ pkg> add FractionalDiffEq
 Just by using FractionalDiffEq.jl you're already contributing!
 
 The development of FractionalDiffEq.jl is on [GitHub](https://github.com/SciFracX/FractionalDiffEq.jl), please [report bugs](https://github.com/SciFracX/FractionalDiffEq.jl/issues) or [send pull requests](https://github.com/SciFracX/FractionalDiffEq.jl/pulls) to help FractionalDiffEq.jl grow.
-
-!!! info "WIP"
-	FractionalDiffEq.jl is under heavy construction, some APIs or docs might change a lot.

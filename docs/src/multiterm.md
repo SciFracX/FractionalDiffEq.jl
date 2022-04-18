@@ -84,4 +84,4 @@ plot(sol, title=s, legend=:bottomright, label="ODE Numerical Solution!")
 plot!(tspan, target, lw=3,ls=:dash,label="ODE Analytical Solution!")
 ```
 
-![ODE Example](docs/src/assets/ode_example.png)
+![ODE Example](./assets/ode_example.png)

@@ -28,21 +28,9 @@ y(t)=19,\ t<0
 
 ```julia
 using FractionalDiffEq, Plots
-
-function ϕ(x)
-    if x == 0
-        return 19.00001
-    else
-        return 19.0
-    end
-end
-
+ϕ(x) = x == 0 ? 19.00001 : 19.0
 f(t, y, ϕ) = 3.5*y*(1-ϕ/19)
-
-h = 0.05
-α = 0.97
-τ = 0.8
-T = 56
+h = 0.05; α = 0.97; τ = 0.8; T = 56
 fddeprob = FDDEProblem(f, ϕ, α, τ, T)
 V, y = solve(fddeprob, h, DelayPECE())
 plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
@@ -51,6 +39,10 @@ plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 ![Delayed](./assets/fdde_example.png)
 
 ## System of FDDE
+
+Time delay [Chen system](https://en.wikipedia.org/wiki/Multiscroll_attractor) as a famous chaotic system with time delay, has important applications in many fields.
+
+As the generalization of the delayed Chen system, we can use FractionalDiffEq.jl to solve the system.
 
 ```math
 \begin{cases}
