@@ -10,7 +10,7 @@ function f!(du, u, p, t)
     du[3] = u[1]*u[2]-c*u[3]
 end
 prob = FODESystem(f!, alpha, x0, tf)
-result = solve(prob, h, GLWithMemory())
+result = solve(prob, h, GL())
 
 using Plots
 plot(result[:, 1], result[:, 2])

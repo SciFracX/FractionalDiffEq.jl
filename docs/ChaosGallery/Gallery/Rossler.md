@@ -14,7 +14,7 @@ function Rossler!(du, u, p, t)
     du[3] = b+u[3]*(u[1]-c)
 end
 prob = FODESystem(Rossler!, alpha, x0, tf)
-result = solve(prob, h, GLWithMemory())
+result = solve(prob, h, GL())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Rossler System")

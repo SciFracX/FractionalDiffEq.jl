@@ -13,7 +13,7 @@ function VanderPol!(du, u, p, t)
     du[2] = -u[1]-ϵ*(u[1]^2-1)*u[2]
 end
 prob = FODESystem(VanderPol!, alpha, x0, tf)
-result = solve(prob, h, GLWithMemory())
+result = solve(prob, h, GL())
 
 using Plots
 plot(result[:, 1], result[:, 2], title="Fractional Order Van der Pol Oscillator")

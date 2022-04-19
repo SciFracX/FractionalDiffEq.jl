@@ -14,7 +14,7 @@ function Chen!(du, u, p, t)
     du[3] = u[1]*u[2]-b*u[3]
 end
 prob = FODESystem(Chen!, alpha, x0, tf)
-result = solve(prob, h, GLWithMemory())
+result = solve(prob, h, GL())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Chen System")

@@ -1,4 +1,7 @@
 """
+# Usage
+
+    solve(prob::SingleTermFODEProblem, h, GL())
 Grunwald Letnikov method for fractional ordinary differential equations
 
 ```tex

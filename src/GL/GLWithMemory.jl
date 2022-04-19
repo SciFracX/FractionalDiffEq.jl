@@ -1,7 +1,7 @@
 """
 # Usage
 
-    solve(prob::FODESystem, h, T, GLWithMemory())
+    solve(prob::FODESystem, h, GLWithMemory())
 
 ### Reference
 
@@ -16,9 +16,11 @@ doi={10.1109/MOCAST.2019.8742063}}
 
 Python version by https://github.com/DClementeL/Grunwald_Letnikov
 """
-struct GLWithMemory <: FractionalDiffEqAlgorithm end
+struct GL <: FractionalDiffEqAlgorithm end
+# Grunwald Letnikov discretization method dispatch for FODESystem
+# struct GLWithMemory <: FractionalDiffEqAlgorithm end
 
-function solve(prob::FODESystem, h, ::GLWithMemory)
+function solve(prob::FODESystem, h, ::GL)
     @unpack f, α, u0, T = prob
     hα = h^α[1]
     n::Int64 = floor(Int64, T/h)+1

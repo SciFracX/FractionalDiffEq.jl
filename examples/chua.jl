@@ -13,9 +13,8 @@ end
 
 α = [0.93, 0.99, 0.92];
 x0 = [0.2; -0.1; 0.1];
-h = 0.01;
+h = 0.01; tn = 50;
 prob = FODESystem(chua!, α, x0, tn)
-tn = 50;
-result = solve(prob, h, GLWithMemory())
+result = solve(prob, h, GL())
 
 plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)

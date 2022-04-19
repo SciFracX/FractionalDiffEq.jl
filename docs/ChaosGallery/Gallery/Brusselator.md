@@ -23,7 +23,7 @@ function Brusselator!(du, u, p, t)
 end
 
 prob = FODESystem(Brusselator!, α, u0, 100)
-result = solve(prob, h, GLWithMemory())
+result = solve(prob, h, GL())
 
 # Phase plane
 plot(result[:, 1], result[:, 2])

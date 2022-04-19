@@ -63,7 +63,7 @@ end
     @test result.u ≈ [0.0; 0.08402140107687359; 0.3754974742112727]
 end
 
-@testset "Test GLWithMemory method" begin
+@testset "Test GL method for FODESystem" begin
     h=0.5; tf=1
     alpha = [0.99, 0.99, 0.99]
     x0 = [1, 0, 1]
@@ -74,7 +74,7 @@ end
         du[3] = u[1]*u[2]-c*u[3]
     end
     prob = FODESystem(testf!, alpha, x0, tf)
-    result = solve(prob, h, GLWithMemory())
+    result = solve(prob, h, GL())
     @test isapprox(result, [1.0 0.0 1.0
     -4.04478 13.5939 -0.352607
     84.8074 -51.1251 -27.5541]; atol=1e-4)

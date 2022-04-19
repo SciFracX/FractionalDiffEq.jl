@@ -14,7 +14,7 @@ function GenesioTesi!(du, u, p, t)
     du[3] -b1*u[1]-b2*u[2]-b3*u[3]+b4*u[1]^2
 end
 prob = FODESystem(GenesioTesi!, alpha, x0, tf)
-result = solve(prob, h, GLWithMemory())
+result = solve(prob, h, GL())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Genesio-Tesi System")
