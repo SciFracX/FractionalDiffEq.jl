@@ -26,6 +26,8 @@ And multi-term distributed order differential equations
 \sum_{i=1}^k \gamma_i D_*^{r_i}u(t) = f(t,\ u(t))
 ```
 
+### Example: Distributed order relaxation
+
 The distributed order relaxation equation is similar with fractional relaxation equation, only the order is changed to a distributed function. Let's see an example here, the distributed order relaxation:
 
 ```math
@@ -37,9 +39,9 @@ With distribution of orders ``\alpha``: ``\omega(\alpha)=6\alpha(1-\alpha)``
 By using the ```DOMatrixDiscrete``` method to solve this problem:
 
 !!! info
-    The usage of ```DOMatrixDiscrete``` method is similiar with the ```FODEMatrixDiscrete``` method, all we need to do is pass the parameter array and order array to the problem difinition and solve the problem.
+    The usage of ```DOMatrixDiscrete``` method is similiar with the ```FODEMatrixDiscrete``` method, all we need to do is to pass the parameters array and orders array to the problem difinition and solve the problem.
     !!! tip
-        Pass the distributed function and other orders to the order array is the right way:
+        Pass the weight function and other orders to the order array is the right way:
         ```julia-repl
         julia> orders = [x->x*(1-x), 1.2, 3]
         3-element Vector{Any}:

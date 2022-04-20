@@ -106,7 +106,7 @@ end
 """
     DODEProblem(parameters, orders, interval, tspan, rightfun)
 
-Define a single term distributed order differential equation problem.
+Define distributed order differential equation problem.
 """
 struct DODEProblem <: FDEProblem
     parameters::AbstractArray

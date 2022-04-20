@@ -1,7 +1,7 @@
 """
 # Usage
 
-    solve(prob::FODESystem, h, GLWithMemory())
+    solve(prob::FODESystem, h, GL())
 
 ### Reference
 
