@@ -33,7 +33,7 @@ function solve(prob::DODEProblem, h, ::DOMatrixDiscrete)
     modifiedparameters = deleteat!(parameters, DOid)
 
     highestorder = Int64(findmax(ceil.(modifiedorders))[1])
-    rows=collect(Int64, 1:highestorder)
+    rows = collect(Int64, 1:highestorder)
 
     equation = zeros(N, N)
 
@@ -46,12 +46,17 @@ function solve(prob::DODEProblem, h, ::DOMatrixDiscrete)
     equation += ω.*DOB(ϕ, interval, 0.01, N, h)
 
     F = eliminator(N, rows)*(rightfun.(tspan).+ic_handling(orders, parameters, u0))
-    M = eliminator(N, rows)*equation*eliminator(N, 1)'
+    M = eliminator(N, rows)*equation*eliminator(N, rows)'
 
     Y = M\F
 
-    Y0 = [0; Y]
-    return DODESolution(tspan, Y0.+u0)
+    if typeof(u0) <: Number
+        Y0 = Y
+    else
+        Y0 = [zeros(length(u0)); Y]
+    end
+    #Y0 = [u0[:]; Y]
+    return DODESolution(tspan, Y0.+u0[1])
 end
 
 function ic_handling(orders, parameters, initialcondition)
@@ -60,7 +65,7 @@ function ic_handling(orders, parameters, initialcondition)
         zerosorderparameter = (parameters[zerosordersid])[1]
         return -zerosorderparameter*initialcondition
     else
-        nothing# Need to be FODEMatrixDiscrete
+        return initialcondition[1]# Need to be FODEMatrixDiscrete
     end
 end
 

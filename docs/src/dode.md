@@ -26,7 +26,7 @@ And multi-term distributed order differential equations
 \sum_{i=1}^k \gamma_i D_*^{r_i}u(t) = f(t,\ u(t))
 ```
 
-### Example: Distributed order relaxation
+## Example1: Distributed order relaxation
 
 The distributed order relaxation equation is similar with fractional relaxation equation, only the order is changed to a distributed function. Let's see an example here, the distributed order relaxation:
 
@@ -60,6 +60,34 @@ plot(sol)
 ```
 
 ![dorelaxation](./assets/dorelaxation.png)
+
+## Example2: Distributed order oscillator
+
+When the damping term in Bagley-Torvik equation described by a distributed-order derivative, we get the distributed order oscillator equation:
+
+
+```math
+ay''(t)+by^{\omega(\alpha)}(t)+cy(t)=f(t)
+```
+
+```math
+f(t)=\begin{cases}
+8, & (0\leq t\leq1)\\
+0, & (t>1)
+\end{cases}
+```
+
+
+```julia
+using FractionalDiffEq, Plots
+h=0.075; t=collect(0:h:30)
+f(t) = 0 ≤ t ≤ 1 ? (return 8) : (return 0)
+prob=DODEProblem([1, 1, 1], [2, x->6*x*(1-x), 0], (0, 1), f, [0; 0], t)
+sol=solve(prob, h, DOMatrixDiscrete())
+plot(sol)
+```
+
+![dobagleytorvik](./assets/dobagleytorvik.png)
 
 
 > Please see [Distributed-Order Dynamic Systems](https://link.springer.com/book/10.1007/978-1-4471-2852-6) for systematic introduction and knowledge.
