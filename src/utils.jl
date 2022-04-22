@@ -78,7 +78,7 @@ end
 
 
 """
-Fractional ordinary differential equations solutions visulization hooks.
+Fractional differential equation solutions visulization hooks.
 """
 @recipe f(sol::FODESolution) = sol.t, sol.u
 

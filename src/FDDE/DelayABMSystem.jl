@@ -20,6 +20,7 @@ function solve(FDDESys::FDDESystem, h, ::DelayABM)
     x = zeros(Ndelay+N+1, len)
     du = zeros(len)
 
+    # Put the delay term in the array
     for i=1:len
         x[1:Ndelay, i] = ϕ[i]*ones(Ndelay)
     end

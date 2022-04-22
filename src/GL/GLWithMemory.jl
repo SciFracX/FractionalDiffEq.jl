@@ -27,8 +27,8 @@ function solve(prob::FODESystem, h, ::GL)
     l = length(u0)
 
     # Initialize solution
-    result = zeros(Float64, n, length(u0))
-    result[1, :] = u0
+    result = zeros(Float64, length(u0), n)
+    result[:, 1] = u0
 
     # generating coefficients Cα
     Cα = zeros(Float64, n)
@@ -44,14 +44,12 @@ function solve(prob::FODESystem, h, ::GL)
 
         @fastmath @inbounds @simd for j in range(1, k-1, step=1)
             for i in eachindex(summation)
-                summation[i] += Cα[j+1]*result[k-j, i]
+                summation[i] += Cα[j+1]*result[i, k-j]
             end
         end
 
-        f(du, result[k-1, :], nothing, (k-1)*h)
-        for i in range(1, l, step=1)
-            result[k, i] = hα*du[i] - summation[i]
-        end
+        f(du, result[:, k-1], nothing, (k-1)*h)
+        result[:, k] .= hα.*du .- summation
     end
-    return result
+    return result'
 end
