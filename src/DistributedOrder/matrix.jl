@@ -65,7 +65,7 @@ function ic_handling(orders, parameters, initialcondition)
         zerosorderparameter = (parameters[zerosordersid])[1]
         return -zerosorderparameter*initialcondition
     else
-        return initialcondition[1]# Need to be FODEMatrixDiscrete
+        return initialcondition[1]# Need to be done in FODEMatrixDiscrete
     end
 end
 

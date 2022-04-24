@@ -97,9 +97,9 @@ Let's see if the initial value problem like:
 using FractionalDiffEq, Plots
 T=30; h=0.05;
 rightfun(x) = 172/125*cos(4/5*x)
-prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, T) #pass the parameters vector and the orders vector
+prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0], T)
 sol = solve(prob, h, FODEMatrixDiscrete())
-plot(sol, title=s, legend=:bottomright)
+plot(sol)
 ```
 
 Or use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl) to plot the numerical approximation, we can see the FDE solver in FractionalDiffEq.jl is amazingly powerful:
@@ -108,7 +108,7 @@ Or use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/m
 
 ### System of Fractional Differential Equations:
 
-FractionalDiffEq.jl is a powerful tool to solve system of fractional differential equations:
+FractionalDiffEq.jl is a powerful tool to solve system of fractional differential equations, if you are familiar with [DifferentialEquaations.jl](https://github.com/SciML/DifferentialEquations.jl), it would be just like out of the box.
 
 Let's see if we have a Chua chaos system:
 
@@ -142,7 +142,7 @@ And plot the result:
 
 ## Fractional Partial Differential Equations
 
-Fractional provide powerful algorithms to solve fractional partial differential equations, let's see a diffusion example here:
+FractionalDiffEq.jl provide powerful algorithms to solve fractional partial differential equations, let's see a diffusion equation here:
 
 <p align="center">
 
@@ -158,7 +158,7 @@ With initial and boundry conditions:
 
 </p>
 
-By using the FPDE solvers in FractionalDiffEq.jl and plot the numerical approximation:
+Use the FPDE solvers in FractionalDiffEq.jl and plot the numerical approximation:
 
 ![diffusion](docs/src/assets/diffusion.png)
 
@@ -195,7 +195,7 @@ plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 
 ## Fractional Integral Equations
 
-To solve fractional integral equations in using FractionalDiffEq.jl, we only need to follow the previous steps:
+To solve fractional integral equations with FractionalDiffEq.jl, we only need to follow the previous process:
 
 <p align="center">
 
