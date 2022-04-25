@@ -100,15 +100,17 @@ plot!(tspan, sol[:, 4])
 ![Enzyme](./assets/enzyme_kinetics.png)
 
 
+## Fractional matrix differential equations with delay
 
-
-FractionalDiffEq.jl is also capable of solving system of fractional delayed differential equations with matrix form:
+FractionalDiffEq.jl is also capable of solving fractional matrix delayed differential equations:
 
 ```math
 D_{t_0}^\alpha\textbf{x}(t)=\textbf{A}(t)\textbf{x}(t)+\textbf{B}(t)\textbf{x}(t-\tau)+\textbf{f}(t)
 ```
 
-We explain the usage of algorithm by using an example:
+Here ``\textbf{x}(t)`` is vector of states of the system, ``\textbf{f}(t)`` is a known function of disturbance.
+
+We explain the detailed usage by using an example:
 
 ```math
 
@@ -139,22 +141,15 @@ By using the ```MatrixForm``` method for FDDE in FractionalDiffEq.jl and plot th
 ```julia
 using FractionalDiffEq, Plots
 
-limit=100;
-t0=0;
-T=1;
-tau=3.1416;
-h=0.5;
-alpha=0.4;
-function x0(t)
-    return [sin(t)*cos(t); sin(t)*cos(t); cos(t)^2-sin(t)^2; cos(t)^2-sin(t)^2]
-end
+t0=0; T=70; τ=3.1416; h=0.01; α=0.4
+x0(t) = [sin(t)*cos(t); sin(t)*cos(t); cos(t)^2-sin(t)^2; cos(t)^2-sin(t)^2]
 A=[0 0 1 0; 0 0 0 1; 0 -2 0 0; -2 0 0 0]
-B=[0 0 0 0; 0 0 0 0 ;-2 0 0 0; 0 -2 0 0]
+B=[0 0 0 0; 0 0 0 0; -2 0 0 0; 0 -2 0 0]
 f=[0; 0; 0; 0]
 
-result=solve(limit, alpha, A, B, f, t0, x0, T, tau, h, MatrixForm())
-
-plot(result[:, 1], result[:, 3])
+prob = FDDEMatrixProblem(α, τ, A, B, f, x0, T, t0)
+sol=solve(prob, h, MatrixForm())
+plot(sol[:, 1], sol[:, 3])
 ```
 
 ![Matrix Form](./assets/fdde_matrix.png)

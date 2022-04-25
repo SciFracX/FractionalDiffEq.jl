@@ -68,7 +68,7 @@ export FractionalDiffEqAlgorithm
 export solve, FDEProblem, FPDEProblem, FDDEProblem
 
 # Detailed problem types
-export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FractionalDifferenceProblem, FIEProblem, FDDESystem
+export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FractionalDifferenceProblem, FIEProblem, FDDESystem, FDDEMatrixProblem
 
 export AbstractFDESolution, FODESolution, FIESolution, FDifferenceSolution, DODESolution
 

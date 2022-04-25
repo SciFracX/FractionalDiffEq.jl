@@ -92,6 +92,26 @@ struct FDDESystem <: FDEProblem
 end
 
 """
+    FDDEMatrixProblem(α, τ, A, B, f, x0, T, t0)
+
+Construct a fractional matrix differential equation with delay. The general type is:
+
+```math
+D_{t_0}^\alpha\textbf{x}(t)=\textbf{A}(t)\textbf{x}(t)+\textbf{B}(t)\textbf{x}(t-\tau)+\textbf{f}(t)
+```
+"""
+struct FDDEMatrixProblem <: FDEProblem
+    α::Float64
+    τ::Float64
+    A::Matrix
+    B::Matrix
+    f::Vector
+    x0::Function
+    T::Float64
+    t0::Float64
+end
+
+"""
     FODESystem(f, α, x0)
 
 Define system of fractional differential equations problem.
