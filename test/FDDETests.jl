@@ -105,20 +105,13 @@ end
 end
 
 @testset "Test FDDE Matrix Form method" begin
-    limit=100
-    t0=0
-    T=1
-    tau=3.1416
-    h=0.5
-    alpha=0.4
-    function testx0(t)
-        return [sin(t)*cos(t); sin(t)*cos(t); cos(t)^2-sin(t)^2; cos(t)^2-sin(t)^2]
-    end
+    t0=0; T=1; τ=3.1416; h=0.5; α=0.4
+    fx0(t) = [sin(t)*cos(t); sin(t)*cos(t); cos(t)^2-sin(t)^2; cos(t)^2-sin(t)^2]
     A=[0 0 1 0; 0 0 0 1; 0 -2 0 0; -2 0 0 0]
     B=[0 0 0 0; 0 0 0 0; -2 0 0 0; 0 -2 0 0]
     f=[0; 0; 0; 0]
-    
-    result=solve(limit, alpha, A, B, f, t0, testx0, T, tau, h, MatrixForm())
+    prob = FDDEMatrixProblem(α, τ, A, B, f, fx0, T, t0)
+    result=solve(prob, h, MatrixForm())
 
     @test isapprox(result, [0.139708   0.139708   0.96017    0.96017
     0.479462   0.479462   0.283662   0.283662
