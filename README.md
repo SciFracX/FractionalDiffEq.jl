@@ -95,11 +95,11 @@ Let's see if the initial value problem like:
 
 ```julia
 using FractionalDiffEq, Plots
-T=30; h=0.05;
-rightfun(x) = 172/125*cos(4/5*x)
-prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0], T)
-sol = solve(prob, h, FODEMatrixDiscrete())
-plot(sol)
+T=30; h=0.01
+rightfun(x, y) = 172/125*cos(4/5*x)
+prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0 0 0 0 0 0], T)
+sol = solve(prob, h, PIEx())
+plot(sol, legend=:bottomright)
 ```
 
 Or use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl) to plot the numerical approximation, we can see the FDE solver in FractionalDiffEq.jl is amazingly powerful:

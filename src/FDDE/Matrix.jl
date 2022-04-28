@@ -1,7 +1,7 @@
 """
 # Usage
 
-    solve(limit, α, A, B, f, t0, x0, T, τ, h, MatrixForm())
+    solve(prob::FDDEMatrixProblem, h, MatrixForm())
 
 ### Reference
 

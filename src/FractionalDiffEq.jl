@@ -16,6 +16,7 @@ using RecipesBase
 include("PECE.jl")
 include("matrix.jl")
 include("PI.jl")
+include("MTPI.jl")
 include("ClosedForm/hankelmatrix.jl")
 include("ClosedForm/ClosedForm.jl")
 include("ClosedForm/highprecision.jl")
