@@ -190,13 +190,13 @@ end
    92.37379693143299]; atol=1e-4)
 end
 
-@test "Test Product Integral explicit method for multi-term FODE" begin
+@testset "Test Product Integral explicit method for multi-term FODE" begin
     T = 10; h = 0.5
     rightfun(x, y) = 172/125*cos(4/5*x)
     prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0 0 0 0 0 0], T)
     sol = solve(prob, h, PIEx())
 
-    @test isapprox(sol.u, [  0.0
+    @test isapprox(sol.u, [0.0
     0.028666666666666663
     0.20802154481466284
     0.5777512805039694
@@ -216,5 +216,5 @@ end
     3.9040343901844707
     2.5017274305718367
     0.18249065149394283
-   -2.23584183347657])
+   -2.23584183347657]; atol=1e-4)
 end
