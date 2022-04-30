@@ -218,3 +218,20 @@ end
     0.18249065149394283
    -2.23584183347657]; atol=1e-4)
 end
+
+@testset "Test ABM method for FODESystem" begin
+    function testf!(t, y)
+        p=[1 3]
+        return [p[1]-(p[2]+1)*y[1] + y[1]^2*y[2]; p[2]*y[1]-y[1]^2*y[2]]
+    end
+    
+    alpha = [0.8, 0.7]
+    t0=0; T=0.1; h=0.01
+    y0=[1.2; 2.8]
+    param=[1 3]
+    prob = FODESystem(testf!, alpha, y0, t0, T)
+    (t, y) = solve(prob, h, ABM())
+
+    @test isapprox(y, [1.2  1.2061   1.21042  1.21421  1.21767  1.22089  1.22392  1.22678  1.2295   1.2321   1.23459
+    2.8  2.78118  2.76953  2.7596   2.75064  2.74235  2.73455  2.72715  2.72008  2.71329  2.70673])
+end

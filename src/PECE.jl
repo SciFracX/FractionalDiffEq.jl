@@ -120,8 +120,11 @@ struct FODESystem <: FDEProblem
     f::Function
     α::AbstractArray
     u0::AbstractArray
+    t0::Number
     T::Number
 end
+
+FODESystem(f, α, u0, T) = FODESystem(f, α, u0, 0, T)# Start from t=0
 
 """
     DODEProblem(parameters, orders, interval, tspan, rightfun)
@@ -211,7 +214,7 @@ doi={https://doi.org/10.1023/A:1016592219341}
 """
 struct PECE <: FractionalDiffEqAlgorithm end
 #TODO: Use Richardson extrapolation to refine the PECE algorithms 
-
+#TODO: Rename as ABM
 
 """
     solve(problem::SingleTermFODEProblem, args..., Alg())

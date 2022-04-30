@@ -17,6 +17,7 @@ include("PECE.jl")
 include("matrix.jl")
 include("PI.jl")
 include("MTPI.jl")
+include("SystemABM.jl")
 include("ClosedForm/hankelmatrix.jl")
 include("ClosedForm/ClosedForm.jl")
 include("ClosedForm/highprecision.jl")
@@ -83,7 +84,7 @@ export ChebSpectral
 export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF, GLDiff
 
 # System of FDE solvers
-export NonLinearAlg, GLWithMemory, LorenzADM
+export NonLinearAlg, GLWithMemory, LorenzADM, ABM
 
 # FDDE solvers
 export DelayPECE, DelayPI, DelayABM, MatrixForm
