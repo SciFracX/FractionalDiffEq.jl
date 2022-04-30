@@ -42,6 +42,7 @@ FractionalDiffEq.DelayABM
 ```@docs
 FractionalDiffEq.NonLinearAlg
 FractionalDiffEq.GL
+FractionalDiffEq.ABM
 ```
 
 ## Distributed Order Differential Equations
