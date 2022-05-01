@@ -19,11 +19,14 @@ struct MultiTermsFODEProblem <: FDEProblem
     rparameters::Union{AbstractArray, Nothing}
     rorders::Union{AbstractArray, Nothing}
     u0::AbstractArray
+    t0::Union{Number, Nothing}
     T
 end
 
 #=MultiTermsFODEProblem constructor, dispatch for closedform problem=#
-MultiTermsFODEProblem(parameters, orders, rightfun, u0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, u0, T)
+MultiTermsFODEProblem(parameters, orders, rightfun, u0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, u0, nothing, T)
+MultiTermsFODEProblem(parameters, orders, rightfun, u0, t0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, u0, t0, T)
+MultiTermsFODEProblem(parameters, orders, rightfun, rparameters, rorders, u0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, rparameters, rorders, u0, nothing, T)
 
 
 """

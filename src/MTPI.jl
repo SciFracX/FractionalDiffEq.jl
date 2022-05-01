@@ -3,8 +3,8 @@ Multiple dispatch of explicit product integral methods for multi term FODEProble
 =#
 
 function solve(prob::MultiTermsFODEProblem, h, ::PIEx)
-    @unpack parameters, orders, rightfun, u0, T = prob
-    t0 = 0
+    @unpack parameters, orders, rightfun, u0, t0, T = prob
+
     Q = length(orders)
     orders= sort(orders)
     i_al = sortperm(orders, rev=true)
@@ -77,10 +77,10 @@ end
 
 function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N , bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q)
     
-    nxi = nx0
-    nxf = nx0 + L*r - 1
-    nyi = nu0
-    nyf = nu0 + L*r - 1
+    nxi::Int = nx0
+    nxf::Int = nx0 + L*r - 1
+    nyi::Int = nu0
+    nyf::Int = nu0 + L*r - 1
     is = 1
     s_nxi = zeros(N)
     s_nxf = zeros(N)
@@ -95,7 +95,7 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N , bn, t0, proble
     while stop == false
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1 >= Nr-1)
         
-        zn = Quadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn, problem_size, Q) ;
+        zn = Quadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn, problem_size, Q)
         
         (y, fy) = Triangolo(nxi, nxi+r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q) ;
         i_triangolo = i_triangolo + 1
@@ -125,8 +125,8 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N , bn, t0, proble
 end
     
 function Quadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn,  problem_size, Q)
-    coef_beg = Int64(nxi-nyf) ; coef_end = Int64(nxf-nyi+1)
-    funz_beg = Int64(nyi+1) ; funz_end = Int64(nyf+1)
+    coef_beg = nxi-nyf; coef_end = nxf-nyi+1
+    funz_beg = nyi+1; funz_end = nyf+1
     
     for i = 1:Q
         vett_coef = bn[i, coef_beg:coef_end]
@@ -212,10 +212,16 @@ function ourifft(x, n)
         return ifft(x)
     end
 end
-    
-    
-f_vectorfield(t,y,rightfun)=rightfun(t, y)
-    
+
+f_vectorfield(t, y, rightfun)=rightfun(t, y)
+function process_rightfun(t, y, rightfun)
+    if typeof(rightfun) <: Function
+        return rightfun(t, y)
+    else
+        return rightfun*ones(length(y))
+    end
+end
+
 function StartingTerm_Multi(t,t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
     ys = zeros(problem_size, 1)
 
