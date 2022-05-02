@@ -70,7 +70,7 @@ function solve(prob::FODESystem, h, ::ABM)
 
     # Evaluation of coefficients of the PECE method
     nvett = 0 : NNr+1
-    bn = zeros(alpha_length, NNr+1) ; an = copy(bn); a0 = copy(bn)
+    bn = zeros(alpha_length, NNr+1); an = copy(bn); a0 = copy(bn)
     for i_alpha = 1:alpha_length
         #find_alpha = find(α[i_alpha]==α[1:i_alpha-1])
         find_alpha=[]
@@ -90,28 +90,27 @@ function solve(prob::FODESystem, h, ::ABM)
             a0[i_alpha, :] = [0; nalpha1[1:end-2]-nalpha[2:end-1].*(nvett[2:end-1].-α[i_alpha].-1)]
         end
     end
-    METH.bn = bn ; METH.an = an ; METH.a0 = a0
+    METH.bn = bn; METH.an = an; METH.a0 = a0
     METH.halpha1 = h.^α./gamma.(α.+1)
     METH.halpha2 = h.^α./gamma.(α.+2)
-    METH.mu = mu ; METH.mu_tol = mu_tol
+    METH.mu = mu; METH.mu_tol = mu_tol
 
     # Evaluation of FFT of coefficients of the PECE method
     METH.r = r 
     if Qr >= 0
-        index_fft = zeros(Int, 2, Qr+1) ;
+        index_fft = zeros(Int, 2, Qr+1)
         for l = 1 : Qr+1
             if l == 1
-                index_fft[1, l] = 1 ; index_fft[2, l] = r*2
+                index_fft[1, l] = 1; index_fft[2, l] = r*2
             else
-                index_fft[1, l] = index_fft[2, l-1]+1 ; index_fft[2, l] = index_fft[2, l-1]+2^l*r
+                index_fft[1, l] = index_fft[2, l-1]+1; index_fft[2, l] = index_fft[2, l-1]+2^l*r
             end
         end
         
-        bn_fft = zeros(Complex, alpha_length, index_fft[2, Qr+1]) ; an_fft = copy(bn_fft)
+        bn_fft = zeros(Complex, alpha_length, index_fft[2, Qr+1]); an_fft = copy(bn_fft)
         for l = 1 : Qr+1
             coef_end = 2^l*r
             for i_alpha = 1 : alpha_length
-                #find_alpha = find(α(i_alpha)==α(1:i_alpha-1)) ;
                 find_alpha = []
                 if α[i_alpha] == α[1:i_alpha-1]
                     push!(find_alpha, i_alpha)
@@ -132,7 +131,7 @@ function solve(prob::FODESystem, h, ::ABM)
     t = t0 .+ collect(0:N)*h
     y[:, 1] = u0[:, 1]
     fy[:, 1] = f_temp ;
-    (y, fy) = Triangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f) ;
+    (y, fy) = ABMTriangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f) ;
 
     # Main process of computation by means of the FFT algorithm
     ff = zeros(1, 2^(Qr+2)) ; ff[1:2] = [0; 2] ; card_ff = 2
@@ -167,25 +166,25 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N , 
     s_nxf = zeros(N)
     s_nyi = zeros(N)
     s_nyf = zeros(N)
-    s_nxi[is] = nxi ; s_nxf[is] = nxf ; s_nyi[is] = nyi ; s_nyf[is] = nyf ;
+    s_nxi[is] = nxi; s_nxf[is] = nxf ; s_nyi[is] = nyi ; s_nyf[is] = nyf ;
 
-    i_triangolo = 0 ; stop = false
+    i_triangolo = 0; stop = false
     while stop == false
         
-        stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1) # Ci si ferma quando il triangolo attuale finisce alla fine del quadrato
+        stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         
-        (zn_pred, zn_corr) = Quadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length) ;
+        (zn_pred, zn_corr) = ABMQuadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length) ;
         
-        (y, fy) = Triangolo(nxi, nxi+r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f) ;
+        (y, fy) = ABMTriangolo(nxi, nxi+r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f) ;
         i_triangolo = i_triangolo + 1 ;
         
         if stop == false
-            if nxi+r-1 == nxf   # Il triangolo finisce dove finisce il quadrato -> si scende di livello
+            if nxi+r-1 == nxf
                 i_Delta = ff[i_triangolo]
                 Delta = i_Delta*r ;
-                nxi = s_nxf[is]+1 ; nxf = s_nxf[is]  + Delta ;
-                nyi = s_nxf[is] - Delta +1; nyf = s_nxf[is]  ;
-                s_nxi[is] = nxi ; s_nxf[is] = nxf ; s_nyi[is] = nyi ; s_nyf[is] = nyf ;
+                nxi = s_nxf[is]+1 ; nxf = s_nxf[is]  + Delta
+                nyi = s_nxf[is] - Delta +1; nyf = s_nxf[is]
+                s_nxi[is] = nxi; s_nxf[is] = nxf; s_nyi[is] = nyi; s_nyf[is] = nyf ;
             else # Il triangolo finisce prima del quadrato -> si fa un quadrato accanto
                 nxi = nxi + r ; nxf = nxi + r - 1 ; nyi = nyf + 1 ; nyf = nyf + r  ;
                 is = is + 1 ;
@@ -197,18 +196,16 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N , 
     return y, fy
 end
 
-function Quadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length)
-
-    #coef_beg = nxi-nyf ; 
+function ABMQuadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length)
     coef_end = Int64(nxf-nyi+1)
     i_fft = log2(coef_end/METH.r) 
-    funz_beg = Int64(nyi+1) ; funz_end = Int64(nyf+1)
+    funz_beg = Int64(nyi+1); funz_end = Int64(nyf+1)
     Nnxf = min(N, nxf)
 
     # Evaluation convolution segment for the predictor
     vett_funz = fy[:, funz_beg:funz_end]
     vett_funz_fft = rowfft(vett_funz, coef_end)
-    zzn_pred = zeros(problem_size,coef_end) ;
+    zzn_pred = zeros(problem_size, coef_end)
     for i = 1 : problem_size
         i_alpha = min(alpha_length,i) ;
         Z = METH.bn_fft[i_alpha, METH.index_fft[1, Int64(i_fft)]:METH.index_fft[2, Int64(i_fft)]].*vett_funz_fft[i, :]
@@ -239,7 +236,7 @@ end
 
 
 
-function Triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f)
+function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f)
 
     for n = Int64(nxi) : Int64(min(N, nxf))
         
@@ -268,21 +265,21 @@ function Triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, 
                 Phi = Phi + METH.an[1:alpha_length, n-j+1].*fy[:, j+1]
             end
             Phi_n = St + METH.halpha2.*(METH.a0[1:alpha_length, n+1].*fy[:, 1] + zn_corr[:, n+1] + Phi)
-            yn0 = y_pred ; fn0 = f_pred ;        
-            stop = 0 ; mu_it = 0 ;
+            yn0 = y_pred; fn0 = f_pred    
+            stop = 0; mu_it = 0
             while stop == false
-                global yn1 = Phi_n + METH.halpha2.*fn0 ;
-                mu_it = mu_it + 1 ;
+                global yn1 = Phi_n + METH.halpha2.*fn0
+                mu_it = mu_it + 1
                 if METH.mu == Inf
-                    stop = norm(yn1-yn0,inf) < METH.mu_tol ;
+                    stop = norm(yn1-yn0,inf) < METH.mu_tol
                     if mu_it > 100 && ~stop
-                        stop = 1 ;
+                        stop = 1
                     end
                 else
                     stop = mu_it == METH.mu
                 end
                 global fn1 = f_vectorfield(t[n+1], yn1, f)
-                yn0 = yn1 ; fn0 = fn1 ;
+                yn0 = yn1; fn0 = fn1
             end
             y[:, n+1] = yn1
             fy[:, n+1] = fn1
