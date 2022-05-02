@@ -1,6 +1,6 @@
 # System of fractional differential equations
 
-Many "real life" situations are governed by a system of fractional differential equations.
+Many real life situations are governed by a system of fractional differential equations.
 
 ## Fractional Order Chua System Example
 
@@ -57,8 +57,8 @@ result = solve(prob, h, tn, NonLinearAlg(), 10000)
 
 While in the reference[^1], using FOTF toolbox costs 228.5s to solve the problem, in FractionalDiffEq.jl, the computing time is only almost 80s.
 
-
-For more fractional order chaotic systems, please see [Chaos Gallery](https://scifracx.org/FractionalDiffEq.jl/dev/ChaosGallery/)😉
+!!! tip "More examples"
+    For more fractional order chaotic systems, please see [Chaos Gallery](https://scifracx.org/FractionalDiffEq.jl/dev/ChaosGallery/)😉
 
 
 [^1]: 分数阶微积分学与分数阶控制 薛定宇 ISBN:9787030543981 Page 208

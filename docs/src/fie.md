@@ -1,8 +1,5 @@
 # Fractional Integral Equations
 
-!!! warning "WIP"
-    Supporting for fractional integral equatoins is still under heavy development.
-
 !!! info "Spectral method"
     The algorithms we can use to solving Fractional Integration Equations are Spectral methods with help of [ApproxFun.jl](https://github.com/JuliaApproximation/ApproxFun.jl).
 
