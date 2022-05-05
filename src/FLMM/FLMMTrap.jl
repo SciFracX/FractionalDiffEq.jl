@@ -1,26 +1,26 @@
 """
-    solve(prob::FODESystem, Jfdefun, h, FLMMNewtonGregory())
+    solve(prob::FODEsystem, Jfdefun, FLMMTrap())
 
-Use Newton Gregory generated weights fractional linear multiple steps method to solve system of FODE.
+Use Trapezoidal with generating function ``f(x)=\\frac{1+x}{2(1-x)^\\alpha}`` generated weights fractional linear multiple steps method to solve system of FODE.
 
 ### References
 
 ```tex
-@inproceedings{Garrappa2018NumericalSO,
-  title={Numerical Solution of Fractional Differential Equations: A Survey and a Software Tutorial},
+@article{Garrappa2015TrapezoidalMF,
+  title={Trapezoidal methods for fractional differential equations: Theoretical and computational aspects},
   author={Roberto Garrappa},
-  year={2018}
+  journal={ArXiv},
+  year={2015},
+  volume={abs/1912.09878}
 }
-```
 """
-struct FLMMNewtonGregory <: FractionalDiffEqAlgorithm end
+struct FLMMTrap <: FractionalDiffEqAlgorithm end
 
-function solve(prob::FODESystem, Jfdefun, h, ::FLMMNewtonGregory)
+function solve(prob::FODESystem, Jfdefun, h, ::FLMMTrap)
     @unpack f, α, u0, t0, T = prob
     fdefun, alpha, y0, t0, tfinal = f, α, u0, t0, T
     itmax = 100
     tol = 1.0e-6
-    method = 1
 
     m_alpha = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
@@ -45,15 +45,15 @@ function solve(prob::FODESystem, Jfdefun, h, ::FLMMNewtonGregory)
     zn = zeros(problem_size, NNr+1)
 
     # Evaluation of convolution and starting weights of the FLMM
-    (omega, w, s) = NGWeights(alpha, NNr+1, method)
+    (omega, w, s) = TrapWeights(alpha, NNr+1)
     halpha = h^alpha
     
     # Initializing solution and proces of computation
     t = collect(0:N)*h
     y[:, 1] = y0[:, 1]
     fy[:, 1] = f_vectorfield(t0, y0[:, 1], fdefun)
-    (y, fy) = NGFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
-    (y, fy) = NGTriangolo(s+1, r-1, 0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+    (y, fy) = TrapFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+    (y, fy) = TrapTriangolo(s+1, r-1, 0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     
     # Main process of computation by means of the FFT algorithm
     nx0 = 0; ny0 = 0
@@ -61,7 +61,7 @@ function solve(prob::FODESystem, Jfdefun, h, ::FLMMNewtonGregory)
     ff[1:2] = [0 2]
     for q = 0:Q
         L = Int64(2^q)
-        (y, fy) = NGDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;
+        (y, fy) = TrapDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
@@ -75,7 +75,7 @@ function solve(prob::FODESystem, Jfdefun, h, ::FLMMNewtonGregory)
 end
 
 
-function NGDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function TrapDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     nxi = Int64(copy(nx0)); nxf = Int64(copy(nx0 + L*r - 1))
     nyi = Int64(copy(ny0)); nyf = Int64(copy(ny0 + L*r - 1))
     is = 1
@@ -87,8 +87,8 @@ function NGDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax, 
     i_triangolo = 0;  stop = false
     while ~stop
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
-        zn = NGQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
-        (y, fy) = NGTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;#fy出问题了
+        zn = TrapQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
+        (y, fy) = TrapTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;#fy出问题了
         i_triangolo = i_triangolo + 1
         
         if ~stop
@@ -109,7 +109,7 @@ function NGDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax, 
     return y, fy
 end
 
-function NGQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
+function TrapQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     coef_beg = Int64(nxi-nyf); coef_end = Int64(nxf-nyi+1)
     funz_beg = Int64(nyi+1); funz_end = Int64(nyf+1)
     vett_coef = omega[coef_beg+1:coef_end+1]
@@ -119,10 +119,10 @@ function NGQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     return zn
 end
 
-function NGTriangolo(nxi, nxf, j0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function TrapTriangolo(nxi, nxf, j0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     for n = Int64(nxi):Int64(min(N, nxf))
         n1 = Int64(n+1)
-        St = NGStartingTerm(t[n1], y0, m_alpha, t0, m_alpha_factorial)
+        St = TrapStartingTerm(t[n1], y0, m_alpha, t0, m_alpha_factorial)
         
         Phi = zeros(problem_size, 1)
         for j = 0:s
@@ -162,14 +162,14 @@ function NGTriangolo(nxi, nxf, j0, t, y, fy, zn, N, tol, itmax, s, w, omega, hal
     return y, fy
 end
 
-function NGFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function TrapFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     m = problem_size
     Im = zeros(m, m)+I ; Ims = zeros(m*s, m*s)+I
     Y0 = zeros(s*m, 1); F0 = copy(Y0); B0 = copy(Y0)
     for j = 1 : s
         Y0[(j-1)*m+1:j*m, 1] = y[:, 1]
         F0[(j-1)*m+1:j*m, 1] = f_vectorfield(t[j+1], y[:, 1], fdefun)
-        St = NGStartingTerm(t[j+1], y0, m_alpha, t0, m_alpha_factorial)
+        St = TrapStartingTerm(t[j+1], y0, m_alpha, t0, m_alpha_factorial)
         B0[(j-1)*m+1:j*m, 1] = St + halpha*(omega[j+1]+w[1, j+1])*fy[:, 1]
     end
     W = zeros(s, s)
@@ -260,16 +260,20 @@ function ourifft(x, n)
     end
 end
 
-function NGWeights(alpha, N, method)
-    # Newton-Gregory formula with generating function (1-x)^(-alpha)*(1-alpha/2*(1-x))
-    omega1 = zeros(1, N+1); omega = copy(omega1)
-    alphameno1 = alpha - 1
-    omega1[1] = 1
+function TrapWeights(alpha, N)
+    # Trapezoidal method with generating function ((1+x)/2/(1-x))^alpha
+    omega1 = zeros(1, N+1); omega2 = copy(omega1)
+    omega1[1] = 1; omega2[1] = 1
+    alpha_minus_1 = alpha - 1 ; alpha_plus_1 = alpha + 1
     for n = 1 : N
-        omega1[n+1] = (1 + alphameno1/n)*omega1[n]
+        omega1[n+1] = (alpha_plus_1/n - 1)*omega1[n]
+        omega2[n+1] = (1 + alpha_minus_1/n)*omega2[n]
     end
-    omega[1] = 1-alpha/2
-    omega[2:N+1] = (1-alpha/2)*omega1[2:N+1] + alpha/2*omega1[1:N]
+    x = fft([omega1 zeros(size(omega1))])
+    y = fft([omega2 zeros(size(omega2))])
+    omega = ifft(x.*y) 
+    omega = omega[1:N+1]/2^alpha
+    omega = real.(omega)
 
     k = floor(1/abs(alpha))
     if abs(k - 1/alpha) < 1.0e-12
@@ -315,7 +319,7 @@ function Jf_vectorfield(t, y, Jfdefun)
     return f
 end
 
-function NGStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)
+function TrapStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)
     ys = zeros(size(y0, 1), 1)
     for k = 1:Int64(m_alpha)
         ys = ys + (t-t0)^(k-1)/m_alpha_factorial[k]*y0[:, k]

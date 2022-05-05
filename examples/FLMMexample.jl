@@ -8,6 +8,7 @@ t0=0; tfinal=50; y0=[0.2; 0.03]
 h=0.01
 prob = FODESystem(fdefun, alpha, y0, t0, tfinal)
 #(t, y) = solve(prob, Jfdefun, h, FLMMBDF())
-(t, y) = solve(prob, Jfdefun, h, FLMMNewtonGregory())
+#(t, y) = solve(prob, Jfdefun, h, FLMMNewtonGregory())
+(t, y) = solve(prob, Jfdefun, h, FLMMTrap())
 
 plot(y[1, :], y[2, :])

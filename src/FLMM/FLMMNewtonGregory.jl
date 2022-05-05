@@ -1,26 +1,27 @@
 """
-    solve(prob::FODESystem, Jfdefun, h, FLMMBDF())
+    solve(prob::FODESystem, Jfdefun, h, FLMMNewtonGregory())
 
-Use BDF generated weights fractional linear multiple steps method to solve system of FODE.
+Use Newton Gregory generated weights fractional linear multiple steps method to solve system of FODE.
 
 ### References
 
 ```tex
-@inproceedings{Garrappa2018NumericalSO,
-  title={Numerical Solution of Fractional Differential Equations: A Survey and a Software Tutorial},
+@article{Garrappa2015TrapezoidalMF,
+  title={Trapezoidal methods for fractional differential equations: Theoretical and computational aspects},
   author={Roberto Garrappa},
-  year={2018}
+  journal={ArXiv},
+  year={2015},
+  volume={abs/1912.09878}
 }
 ```
 """
-struct FLMMBDF <: FractionalDiffEqAlgorithm end
+struct FLMMNewtonGregory <: FractionalDiffEqAlgorithm end
 
-function solve(prob::FODESystem, Jfdefun, h, ::FLMMBDF)
+function solve(prob::FODESystem, Jfdefun, h, ::FLMMNewtonGregory)
     @unpack f, α, u0, t0, T = prob
     fdefun, alpha, y0, t0, tfinal = f, α, u0, t0, T
     itmax = 100
     tol = 1.0e-6
-    method = 1
 
     m_alpha = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
@@ -32,7 +33,7 @@ function solve(prob::FODESystem, Jfdefun, h, ::FLMMBDF)
     # Check compatibility size of the problem with size of the vector field
     f_temp = f_vectorfield(t0, y0[:, 1], fdefun)
     
-    # Number of points in which to evaluate the solution or the BDFWeights
+    # Number of points in which to evaluate the solution or the weights
     r = 16
     N = ceil(Int, (tfinal-t0)/h)
     Nr = ceil(Int, (N+1)/r)*r
@@ -44,16 +45,16 @@ function solve(prob::FODESystem, Jfdefun, h, ::FLMMBDF)
     fy = zeros(problem_size, N+1)
     zn = zeros(problem_size, NNr+1)
 
-    # Evaluation of convolution and starting BDFWeights of the FLMM
-    (omega, w, s) = BDFWeights(alpha, NNr+1, method)
+    # Evaluation of convolution and starting weights of the FLMM
+    (omega, w, s) = NGWeights(alpha, NNr+1)
     halpha = h^alpha
     
     # Initializing solution and proces of computation
     t = collect(0:N)*h
     y[:, 1] = y0[:, 1]
     fy[:, 1] = f_vectorfield(t0, y0[:, 1], fdefun)
-    (y, fy) = BDFFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
-    (y, fy) = BDFTriangolo(s+1, r-1, 0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+    (y, fy) = NGFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+    (y, fy) = NGTriangolo(s+1, r-1, 0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     
     # Main process of computation by means of the FFT algorithm
     nx0 = 0; ny0 = 0
@@ -61,7 +62,7 @@ function solve(prob::FODESystem, Jfdefun, h, ::FLMMBDF)
     ff[1:2] = [0 2]
     for q = 0:Q
         L = Int64(2^q)
-        (y, fy) = BDFDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;
+        (y, fy) = NGDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
@@ -75,7 +76,7 @@ function solve(prob::FODESystem, Jfdefun, h, ::FLMMBDF)
 end
 
 
-function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function NGDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     nxi = Int64(copy(nx0)); nxf = Int64(copy(nx0 + L*r - 1))
     nyi = Int64(copy(ny0)); nyf = Int64(copy(ny0 + L*r - 1))
     is = 1
@@ -87,8 +88,8 @@ function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax,
     i_triangolo = 0;  stop = false
     while ~stop
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
-        zn = BDFQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
-        (y, fy) = BDFTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;#fy出问题了
+        zn = NGQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
+        (y, fy) = NGTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;#fy出问题了
         i_triangolo = i_triangolo + 1
         
         if ~stop
@@ -109,7 +110,7 @@ function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax,
     return y, fy
 end
 
-function BDFQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
+function NGQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     coef_beg = Int64(nxi-nyf); coef_end = Int64(nxf-nyi+1)
     funz_beg = Int64(nyi+1); funz_end = Int64(nyf+1)
     vett_coef = omega[coef_beg+1:coef_end+1]
@@ -119,10 +120,10 @@ function BDFQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     return zn
 end
 
-function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function NGTriangolo(nxi, nxf, j0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     for n = Int64(nxi):Int64(min(N, nxf))
         n1 = Int64(n+1)
-        St = ABMStartingTerm(t[n1], y0, m_alpha, t0, m_alpha_factorial)
+        St = NGStartingTerm(t[n1], y0, m_alpha, t0, m_alpha_factorial)
         
         Phi = zeros(problem_size, 1)
         for j = 0:s
@@ -162,14 +163,14 @@ function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, tol, itmax, s, w, omega, ha
     return y, fy
 end
 
-function BDFFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function NGFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     m = problem_size
     Im = zeros(m, m)+I ; Ims = zeros(m*s, m*s)+I
     Y0 = zeros(s*m, 1); F0 = copy(Y0); B0 = copy(Y0)
     for j = 1 : s
         Y0[(j-1)*m+1:j*m, 1] = y[:, 1]
         F0[(j-1)*m+1:j*m, 1] = f_vectorfield(t[j+1], y[:, 1], fdefun)
-        St = ABMStartingTerm(t[j+1], y0, m_alpha, t0, m_alpha_factorial)
+        St = NGStartingTerm(t[j+1], y0, m_alpha, t0, m_alpha_factorial)
         B0[(j-1)*m+1:j*m, 1] = St + halpha*(omega[j+1]+w[1, j+1])*fy[:, 1]
     end
     W = zeros(s, s)
@@ -260,17 +261,16 @@ function ourifft(x, n)
     end
 end
 
-function BDFWeights(alpha, N, method)
-    # BDF-2 with generating function (2/3/(1-4x/3+x^2/3))^alpha
-    omega = zeros(1, N+1)
-    onethird = 1/3; fourthird = 4/3
-    twothird_oneminusalpha = 2/3*(1-alpha)
-    fourthird_oneminusalpha = 4/3*(1-alpha)
-    omega[1] = 1; omega[2] = fourthird*alpha*omega[1]
-    for n = 2:N
-        omega[n+1] = (fourthird - fourthird_oneminusalpha/n)*omega[n] + (twothird_oneminusalpha/n - onethird)*omega[n-1]
+function NGWeights(alpha, N)
+    # Newton-Gregory formula with generating function (1-x)^(-alpha)*(1-alpha/2*(1-x))
+    omega1 = zeros(1, N+1); omega = copy(omega1)
+    alphameno1 = alpha - 1
+    omega1[1] = 1
+    for n = 1 : N
+        omega1[n+1] = (1 + alphameno1/n)*omega1[n]
     end
-    omega = omega*((2/3)^(alpha))
+    omega[1] = 1-alpha/2
+    omega[2:N+1] = (1-alpha/2)*omega1[2:N+1] + alpha/2*omega1[1:N]
 
     k = floor(1/abs(alpha))
     if abs(k - 1/alpha) < 1.0e-12
@@ -280,7 +280,7 @@ function BDFWeights(alpha, N, method)
     end
     s = length(A) - 1
     # Generation of the matrix and the right hand--side vectors of the system
-    nn = collect(0:N)
+    nn = collect(0:N)#collect
     V = zeros(s+1, s+1); jj_nu = zeros(s+1, N+1); nn_nu_alpha = copy(jj_nu)
     for i = 0:s
         nu = A[i+1]
@@ -316,7 +316,7 @@ function Jf_vectorfield(t, y, Jfdefun)
     return f
 end
 
-function ABMStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)
+function NGStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)
     ys = zeros(size(y0, 1), 1)
     for k = 1:Int64(m_alpha)
         ys = ys + (t-t0)^(k-1)/m_alpha_factorial[k]*y0[:, k]

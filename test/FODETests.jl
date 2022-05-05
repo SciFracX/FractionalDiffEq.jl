@@ -263,3 +263,17 @@ end
     @test isapprox(y, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
     0.03  0.165554  0.265678  0.355635  0.439544  0.519211]; atol=1e-4)
 end
+
+@testset "Test FLMMTrap" begin
+    a=1; mu=4
+    fdefun(t, y)=[a-(mu+1)*y[1]+y[1]^2*y[2]; mu*y[1]-y[1]^2*y[2]]
+    Jfdefun(t, y) = [-(mu+1)+2*y[1]*y[2] y[1]^2; mu-2*y[1]*y[2] -y[1]^2]
+    alpha=0.8
+    t0=0; tfinal=0.5; y0=[0.2; 0.03]
+    h=0.1
+    prob = FODESystem(fdefun, alpha, y0, t0, tfinal)
+    (t, y) = solve(prob, Jfdefun, h, FLMMTrap())
+
+    @test isapprox(y, [0.2   0.200531  0.201161  0.201808  0.202452  0.203088
+    0.03  0.165554  0.265678  0.355635  0.439545  0.519211]; atol=1e-4)
+end

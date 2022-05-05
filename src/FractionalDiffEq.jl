@@ -18,8 +18,9 @@ include("matrix.jl")
 include("PI.jl")
 include("MTPI.jl")
 include("SystemABM.jl")
-include("FLMMBDF.jl")
-include("FLMMNewtonGregory.jl")
+include("FLMM/FLMMBDF.jl")
+include("FLMM/FLMMNewtonGregory.jl")
+include("FLMM/FLMMTrap.jl")
 include("ClosedForm/hankelmatrix.jl")
 include("ClosedForm/ClosedForm.jl")
 include("ClosedForm/highprecision.jl")
@@ -86,7 +87,7 @@ export ChebSpectral
 export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF, GLDiff
 
 # System of FDE solvers
-export NonLinearAlg, GLWithMemory, LorenzADM, ABM, FLMMBDF, FLMMNewtonGregory
+export NonLinearAlg, GLWithMemory, LorenzADM, ABM, FLMMBDF, FLMMNewtonGregory, FLMMTrap
 
 # FDDE solvers
 export DelayPECE, DelayPI, DelayABM, MatrixForm
