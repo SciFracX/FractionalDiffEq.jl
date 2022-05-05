@@ -24,6 +24,14 @@ The corresponding matrix discretization paper and toolbox is developed by Prof I
 
 FLMM2 toolbox is a toolbox developed by [Prof Roberto Garrappa](https://www.dm.uniba.it/members/garrappa) together with his [paper](http://dx.doi.org/10.1016/j.matcom.2013.09.012)
 
+| exsiting | FractionalDiffEq.jl |
+|-----|-----|
+| ```FLMM2(with method=1)``` | ```FLMMTrap``` |
+| ```FLMM2(with method=2)``` | ```FLMMNewtonGregory``` |
+| ```FLMM2(with method=3)``` | ```FLMMBDF```|
+| ```fde12``` | ```ABM``` |
+| ```mt_fde_pi1_ex``` | ```PIEx``` |
+
 ## Python
 
 [fodeint](https://github.com/mattja/fodeint): With explicit one-step Adams-Bashforth (Euler) method.
