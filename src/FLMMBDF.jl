@@ -32,7 +32,7 @@ function solve(prob::FODESystem, Jfdefun, h, ::FLMMBDF)
     # Check compatibility size of the problem with size of the vector field
     f_temp = f_vectorfield(t0, y0[:, 1], fdefun)
     
-    # Number of points in which to evaluate the solution or the weights
+    # Number of points in which to evaluate the solution or the BDFWeights
     r = 16
     N = ceil(Int, (tfinal-t0)/h)
     Nr = ceil(Int, (N+1)/r)*r
@@ -44,16 +44,16 @@ function solve(prob::FODESystem, Jfdefun, h, ::FLMMBDF)
     fy = zeros(problem_size, N+1)
     zn = zeros(problem_size, NNr+1)
 
-    # Evaluation of convolution and starting weights of the FLMM
-    (omega, w, s) = Weights(alpha, NNr+1, method)
+    # Evaluation of convolution and starting BDFWeights of the FLMM
+    (omega, w, s) = BDFWeights(alpha, NNr+1, method)
     halpha = h^alpha
     
     # Initializing solution and proces of computation
     t = collect(0:N)*h
     y[:, 1] = y0[:, 1]
     fy[:, 1] = f_vectorfield(t0, y0[:, 1], fdefun)
-    (y, fy) = FirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
-    (y, fy) = Triangolo(s+1, r-1, 0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+    (y, fy) = BDFFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+    (y, fy) = BDFTriangolo(s+1, r-1, 0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     
     # Main process of computation by means of the FFT algorithm
     nx0 = 0; ny0 = 0
@@ -61,7 +61,7 @@ function solve(prob::FODESystem, Jfdefun, h, ::FLMMBDF)
     ff[1:2] = [0 2]
     for q = 0:Q
         L = Int64(2^q)
-        (y, fy) = DisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;
+        (y, fy) = BDFDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
@@ -75,7 +75,7 @@ function solve(prob::FODESystem, Jfdefun, h, ::FLMMBDF)
 end
 
 
-function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     nxi = Int64(copy(nx0)); nxf = Int64(copy(nx0 + L*r - 1))
     nyi = Int64(copy(ny0)); nyf = Int64(copy(ny0 + L*r - 1))
     is = 1
@@ -87,8 +87,8 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax, s,
     i_triangolo = 0;  stop = false
     while ~stop
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
-        zn = Quadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
-        (y, fy) = Triangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;#fy出问题了
+        zn = BDFQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
+        (y, fy) = BDFTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;#fy出问题了
         i_triangolo = i_triangolo + 1
         
         if ~stop
@@ -109,7 +109,7 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax, s,
     return y, fy
 end
 
-function Quadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
+function BDFQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     coef_beg = Int64(nxi-nyf); coef_end = Int64(nxf-nyi+1)
     funz_beg = Int64(nyi+1); funz_end = Int64(nyf+1)
     vett_coef = omega[coef_beg+1:coef_end+1]
@@ -119,10 +119,10 @@ function Quadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     return zn
 end
 
-function Triangolo(nxi, nxf, j0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     for n = Int64(nxi):Int64(min(N, nxf))
         n1 = Int64(n+1)
-        St = StartingTerm(t[n1], y0, m_alpha, t0, m_alpha_factorial)
+        St = ABMStartingTerm(t[n1], y0, m_alpha, t0, m_alpha_factorial)
         
         Phi = zeros(problem_size, 1)
         for j = 0:s
@@ -162,14 +162,14 @@ function Triangolo(nxi, nxf, j0, t, y, fy, zn, N, tol, itmax, s, w, omega, halph
     return y, fy
 end
 
-function FirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function BDFFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     m = problem_size
     Im = zeros(m, m)+I ; Ims = zeros(m*s, m*s)+I
     Y0 = zeros(s*m, 1); F0 = copy(Y0); B0 = copy(Y0)
     for j = 1 : s
         Y0[(j-1)*m+1:j*m, 1] = y[:, 1]
         F0[(j-1)*m+1:j*m, 1] = f_vectorfield(t[j+1], y[:, 1], fdefun)
-        St = StartingTerm(t[j+1], y0, m_alpha, t0, m_alpha_factorial)
+        St = ABMStartingTerm(t[j+1], y0, m_alpha, t0, m_alpha_factorial)
         B0[(j-1)*m+1:j*m, 1] = St + halpha*(omega[j+1]+w[1, j+1])*fy[:, 1]
     end
     W = zeros(s, s)
@@ -260,7 +260,7 @@ function ourifft(x, n)
     end
 end
 
-function Weights(alpha, N, method)
+function BDFWeights(alpha, N, method)
     # BDF-2 with generating function (2/3/(1-4x/3+x^2/3))^alpha
     omega = zeros(1, N+1)
     onethird = 1/3; fourthird = 4/3
@@ -316,7 +316,7 @@ function Jf_vectorfield(t, y, Jfdefun)
     return f
 end
 
-function StartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)
+function ABMStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)
     ys = zeros(size(y0, 1), 1)
     for k = 1:Int64(m_alpha)
         ys = ys + (t-t0)^(k-1)/m_alpha_factorial[k]*y0[:, k]
