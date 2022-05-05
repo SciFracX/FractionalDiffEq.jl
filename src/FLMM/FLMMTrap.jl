@@ -13,12 +13,14 @@ Use Trapezoidal with generating function ``f(x)=\\frac{1+x}{2(1-x)^\\alpha}`` ge
   year={2015},
   volume={abs/1912.09878}
 }
+```
 """
 struct FLMMTrap <: FractionalDiffEqAlgorithm end
 
 function solve(prob::FODESystem, Jfdefun, h, ::FLMMTrap)
     @unpack f, α, u0, t0, T = prob
-    fdefun, alpha, y0, t0, tfinal = f, α, u0, t0, T
+    fdefun, alphas, y0, t0, tfinal = f, α, u0, t0, T
+    alpha = alphas[1]
     itmax = 100
     tol = 1.0e-6
 

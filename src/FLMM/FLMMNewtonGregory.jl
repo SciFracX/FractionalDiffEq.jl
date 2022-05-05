@@ -19,7 +19,8 @@ struct FLMMNewtonGregory <: FractionalDiffEqAlgorithm end
 
 function solve(prob::FODESystem, Jfdefun, h, ::FLMMNewtonGregory)
     @unpack f, α, u0, t0, T = prob
-    fdefun, alpha, y0, t0, tfinal = f, α, u0, t0, T
+    fdefun, alphas, y0, t0, tfinal = f, α, u0, t0, T
+    alpha = alphas[1]
     itmax = 100
     tol = 1.0e-6
 

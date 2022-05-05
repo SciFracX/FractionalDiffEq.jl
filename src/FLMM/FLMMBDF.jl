@@ -19,19 +19,16 @@ struct FLMMBDF <: FractionalDiffEqAlgorithm end
 
 function solve(prob::FODESystem, Jfdefun, h, ::FLMMBDF)
     @unpack f, α, u0, t0, T = prob
-    fdefun, alpha, y0, t0, tfinal = f, α, u0, t0, T
+    fdefun, alphas, y0, t0, tfinal = f, α, u0, t0, T
+    alpha = alphas[1]
     itmax = 100
     tol = 1.0e-6
 
     m_alpha = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
-    # Structure for storing information on the problem
+    # Structure for storing information of the problem
     
     problem_size = size(y0, 1)
-    
-    
-    # Check compatibility size of the problem with size of the vector field
-    f_temp = f_vectorfield(t0, y0[:, 1], fdefun)
     
     # Number of points in which to evaluate the solution or the BDFWeights
     r = 16
