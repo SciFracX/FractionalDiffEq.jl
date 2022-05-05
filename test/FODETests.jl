@@ -235,3 +235,31 @@ end
     @test isapprox(y, [1.2  1.2061   1.21042  1.21421  1.21767  1.22089  1.22392  1.22678  1.2295   1.2321   1.23459
     2.8  2.78118  2.76953  2.7596   2.75064  2.74235  2.73455  2.72715  2.72008  2.71329  2.70673]; atol=1e-3)
 end
+
+@testset "Test FLMMNewtonGregory method" begin
+    a=1; mu=4
+    fdefun(t, y)=[a-(mu+1)*y[1]+y[1]^2*y[2]; mu*y[1]-y[1]^2*y[2]]
+    Jfdefun(t, y) = [-(mu+1)+2*y[1]*y[2] y[1]^2; mu-2*y[1]*y[2] -y[1]^2]
+    alpha=0.8
+    t0=0; tfinal=0.5; y0=[0.2; 0.03]
+    h=0.1
+    prob = FODESystem(fdefun, alpha, y0, t0, tfinal)
+    (t, y) = solve(prob, Jfdefun, h, FLMMNewtonGregory())
+
+    @test isapprox(y, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
+    0.03  0.165554  0.265678  0.355635  0.439544  0.519211])
+end
+
+@testset "Test FLMMBDF" begin
+    a=1; mu=4
+    fdefun(t, y)=[a-(mu+1)*y[1]+y[1]^2*y[2]; mu*y[1]-y[1]^2*y[2]]
+    Jfdefun(t, y) = [-(mu+1)+2*y[1]*y[2] y[1]^2; mu-2*y[1]*y[2] -y[1]^2]
+    alpha=0.8
+    t0=0; tfinal=0.5; y0=[0.2; 0.03]
+    h=0.1
+    prob = FODESystem(fdefun, alpha, y0, t0, tfinal)
+    (t, y) = solve(prob, Jfdefun, h, FLMMNewtonGregory())
+
+    @test isapprox(y, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
+    0.03  0.165554  0.265678  0.355635  0.439544  0.519211])
+end

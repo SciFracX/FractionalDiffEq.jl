@@ -1,9 +1,26 @@
-using SpecialFunctions, FFTW, LinearAlgebra
+"""
+    solve(prob::FODESystem, Jfdefun, h, FLMMNewtonGregory())
 
-function flmm2(alpha, fdefun, Jfdefun, t0, tfinal, y0, h)
+Use Newton Gregory generated weights fractional linear multiple steps method to solve system of FODE.
+
+### References
+
+```tex
+@inproceedings{Garrappa2018NumericalSO,
+  title={Numerical Solution of Fractional Differential Equations: A Survey and a Software Tutorial},
+  author={Roberto Garrappa},
+  year={2018}
+}
+```
+"""
+struct FLMMNewtonGregory <: FractionalDiffEqAlgorithm end
+
+function solve(prob::FODESystem, Jfdefun, h, ::FLMMNewtonGregory)
+    @unpack f, α, u0, t0, T = prob
+    fdefun, alpha, y0, t0, tfinal = f, α, u0, t0, T
     itmax = 100
     tol = 1.0e-6
-    method = 3
+    method = 1
 
     m_alpha = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
@@ -43,7 +60,7 @@ function flmm2(alpha, fdefun, Jfdefun, t0, tfinal, y0, h)
     ff = zeros(1, 2^(Q+2), 1)
     ff[1:2] = [0 2]
     for q = 0:Q
-        L = Int64(2^q)# y和fy第一次jinDisegnalBlocchi的时候没看问题，第二次的时候就不精准了
+        L = Int64(2^q)
         (y, fy) = DisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
@@ -93,11 +110,10 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax, s,
 end
 
 function Quadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
-    zn = zeros(problem_size, NNr+1)#这里的zn还是有点问题，每次MATLAB中进来的zn总是2x129的全零矩阵
     coef_beg = Int64(nxi-nyf); coef_end = Int64(nxf-nyi+1)
     funz_beg = Int64(nyi+1); funz_end = Int64(nyf+1)
     vett_coef = omega[coef_beg+1:coef_end+1]
-    vett_funz = [fy[:, funz_beg:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]#问题是fy的索引问题， funz_beg和funz_end不对劲
+    vett_funz = [fy[:, funz_beg:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]
     zzn = real(FastConv(vett_coef, vett_funz))
     zn[:, Int64(nxi+1):Int64(nxf+1)] = zn[:, Int64(nxi+1):Int64(nxf+1)] + zzn[:, Int64(nxf-nyf):end-1]
     return zn
@@ -245,42 +261,15 @@ function ourifft(x, n)
 end
 
 function Weights(alpha, N, method)
-        # Trapezoidal method with generating function ((1+x)/2/(1-x))^alpha
-        if method == 1
-            omega1 = zeros(1, N+1); omega2 = copy(omega1)
-            omega1[1] = 1; omega2[1] = 1
-            alpha_minus_1 = alpha - 1 ; alpha_plus_1 = alpha + 1
-            for n = 1 : N
-                omega1[n+1] = (alpha_plus_1/n - 1)*omega1[n]
-                omega2[n+1] = (1 + alpha_minus_1/n)*omega2[n]
-            end
-            x = fft([omega1, zeros(size(omega1))])
-            y = fft([omega2, zeros(size(omega2))])
-            omega = ifft(x.*y) 
-            omega = omega(1:N+1)/2^alpha
-        # Newton-Gregory formula with generating function (1-x)^(-alpha)*(1-alpha/2*(1-x))
-        elseif method == 2
-            omega1 = zeros(1, N+1); omega = copy(omega1)
-            alphameno1 = alpha - 1
-            omega1[1] = 1
-            for n = 1 : N
-                omega1[n+1] = (1 + alphameno1/n)*omega1[n]
-            end
-            omega[1] = 1-alpha/2
-            omega[2:N+1] = (1-alpha/2)*omega1[2:N+1] + alpha/2*omega1[1:N]
-         
-        # BDF-2 with generating function (2/3/(1-4x/3+x^2/3))^alpha
-        elseif method == 3 
-            omega = zeros(1, N+1)
-            onethird = 1/3; fourthird = 4/3
-            twothird_oneminusalpha = 2/3*(1-alpha)
-            fourthird_oneminusalpha = 4/3*(1-alpha)
-            omega[1] = 1; omega[2] = fourthird*alpha*omega[1]
-            for n = 2:N
-                omega[n+1] = (fourthird - fourthird_oneminusalpha/n)*omega[n] + (twothird_oneminusalpha/n - onethird)*omega[n-1]
-            end
-            omega = omega*((2/3)^(alpha))
-        end
+    # Newton-Gregory formula with generating function (1-x)^(-alpha)*(1-alpha/2*(1-x))
+    omega1 = zeros(1, N+1); omega = copy(omega1)
+    alphameno1 = alpha - 1
+    omega1[1] = 1
+    for n = 1 : N
+        omega1[n+1] = (1 + alphameno1/n)*omega1[n]
+    end
+    omega[1] = 1-alpha/2
+    omega[2:N+1] = (1-alpha/2)*omega1[2:N+1] + alpha/2*omega1[1:N]
 
     k = floor(1/abs(alpha))
     if abs(k - 1/alpha) < 1.0e-12
@@ -290,7 +279,7 @@ function Weights(alpha, N, method)
     end
     s = length(A) - 1
     # Generation of the matrix and the right hand--side vectors of the system
-    nn = 0:N#collect
+    nn = collect(0:N)#collect
     V = zeros(s+1, s+1); jj_nu = zeros(s+1, N+1); nn_nu_alpha = copy(jj_nu)
     for i = 0:s
         nu = A[i+1]
@@ -306,8 +295,9 @@ function Weights(alpha, N, method)
             end
         end
     end
-    #FIXME: temp这里出了问题！！！！ 其他的都OK
+
     temp = FastConv([omega  zeros(size(omega))], [jj_nu zeros(size(jj_nu))])
+    temp = real.(temp)
     b = nn_nu_alpha - temp[:, 1:N+1]
     # Solution of the linear system with multiple right-hand side
     w = real.(V\b)
@@ -332,15 +322,3 @@ function StartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)
     end
     return ys
 end
-#=
-a=1; mu=4
-fdefun(t, y)=[a-(mu+1)*y[1]+y[1]^2*y[2]; mu*y[1]-y[1]^2*y[2]]
-Jfdefun(t, y) = [-(mu+1)+2*y[1]*y[2] y[1]^2; mu-2*y[1]*y[2] -y[1]^2]
-alpha=0.8
-t0=0; tfinal=50; y0=[0.2; 0.03]
-h=0.1
-(t, y) = flmm2(alpha, fdefun, Jfdefun, t0, tfinal, y0, h)
-
-using Plots
-plot(y[1, :], y[2, :])
-=#

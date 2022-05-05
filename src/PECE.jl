@@ -120,11 +120,11 @@ end
 Define system of fractional differential equations problem.
 """
 struct FODESystem <: FDEProblem
-    f::Function
-    α::AbstractArray
-    u0::AbstractArray
-    t0::Number
-    T::Number
+    f#::Function
+    α#::AbstractArray
+    u0#::AbstractArray
+    t0#::Number
+    T#::Number
 end
 
 FODESystem(f, α, u0, T) = FODESystem(f, α, u0, 0, T)# Start from t=0
