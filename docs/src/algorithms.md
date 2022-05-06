@@ -16,6 +16,8 @@ FractionalDiffEq.PIEx
 FractionalDiffEq.PIIm
 FractionalDiffEq.PITrap
 FractionalDiffEq.PIPECE
+FractionalDiffEq.PIIMRect
+FractionalDiffEq.PIIMTrap
 FractionalDiffEq.ChebSpectral
 FractionalDiffEq.FLMMBDF
 FractionalDiffEq.FLMMNewtonGregory

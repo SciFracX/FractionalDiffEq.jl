@@ -1,5 +1,5 @@
 """
-    solve(prob::FODESystem, h, PIPECE())
+    solve(prob::MultiTermsFODEProblem, h, PIPECE())
 
 Use product integration predictor-corrector method to solve multi-terms FODE.
 """

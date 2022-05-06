@@ -12,12 +12,15 @@ using LoopVectorization
 using HypergeometricFunctions
 using ToeplitzMatrices
 using RecipesBase
+using ForwardDiff
 
 include("PECE.jl")
 include("matrix.jl")
 include("PI.jl")
 include("MTPI.jl")
 include("MTPECE.jl")
+include("MTPIIMTrap.jl")
+include("MTPIIMRect.jl")
 include("SystemABM.jl")
 include("FLMM/FLMMBDF.jl")
 include("FLMM/FLMMNewtonGregory.jl")
@@ -75,7 +78,7 @@ export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, Fr
 export AbstractFDESolution, FODESolution, FIESolution, FDifferenceSolution, DODESolution
 
 # FODE solvers
-export PIEx, PIIm, PITrap, PIPECE
+export PIEx, PIIm, PITrap, PIPECE, PIIMRect, PIIMTrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, GL
 export ChebSpectral
 
