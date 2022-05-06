@@ -17,6 +17,7 @@ include("PECE.jl")
 include("matrix.jl")
 include("PI.jl")
 include("MTPI.jl")
+include("MTPECE.jl")
 include("SystemABM.jl")
 include("FLMM/FLMMBDF.jl")
 include("FLMM/FLMMNewtonGregory.jl")
@@ -27,14 +28,10 @@ include("ClosedForm/highprecision.jl")
 
 include("GL/GLWithMemory.jl")
 include("GL/GL.jl")
-#include("IMEX/IMEX_I.jl")
-include("IMEX/IMEX_I_A.jl")
-include("IMEX/IMEX_II.jl")
 #include("Direct.jl")
 include("ChebSpectral.jl")
 
 include("NonLinear/NonLinear.jl")
-include("NonLinear/LorenzADM.jl")
 
 # Fractional partial differential equations
 include("FPDE/FiniteDiffEx.jl")
@@ -78,16 +75,15 @@ export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, Fr
 export AbstractFDESolution, FODESolution, FIESolution, FDifferenceSolution, DODESolution
 
 # FODE solvers
-export PIEx, PIIm, PITrap
+export PIEx, PIIm, PITrap, PIPECE
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, GL
-export IMEX_I, IMEX_I_A, IMEX_II
 export ChebSpectral
 
 # FPDE solvers
 export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF, GLDiff
 
 # System of FDE solvers
-export NonLinearAlg, GLWithMemory, LorenzADM, ABM, FLMMBDF, FLMMNewtonGregory, FLMMTrap
+export NonLinearAlg, GLWithMemory, ABM, FLMMBDF, FLMMNewtonGregory, FLMMTrap
 
 # FDDE solvers
 export DelayPECE, DelayPI, DelayABM, MatrixForm
@@ -107,7 +103,7 @@ export SpectralUltraspherical
 export eliminator, RieszMatrix, omega, meshgrid
 
 # Export some special models
-export bagleytorvik, diffusion, FractionalLorenz
+export bagleytorvik, diffusion
 
 # Auxiliary functions
 export mittleff, mittlefferr, mittleffderiv
