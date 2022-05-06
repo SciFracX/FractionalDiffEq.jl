@@ -100,7 +100,7 @@ end
 Construct a fractional matrix differential equation with delay. The general type is:
 
 ```math
-D_{t_0}^\alpha\textbf{x}(t)=\textbf{A}(t)\textbf{x}(t)+\textbf{B}(t)\textbf{x}(t-\tau)+\textbf{f}(t)
+D_{t_0}^\\alpha\\textbf{x}(t)=\\textbf{A}(t)\\textbf{x}(t)+\\textbf{B}(t)\\textbf{x}(t-\\tau)+\\textbf{f}(t)
 ```
 """
 struct FDDEMatrixProblem <: FDEProblem

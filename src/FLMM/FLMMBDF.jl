@@ -1,7 +1,7 @@
 """
     solve(prob::FODESystem, Jfdefun, h, FLMMBDF())
 
-Use BDF generated weights fractional linear multiple steps method to solve system of FODE.
+Use [BDF](https://en.wikipedia.org/wiki/Backward_differentiation_formula) generated weights fractional linear multiple steps method to solve system of FODE.
 
 ### References
 
