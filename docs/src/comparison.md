@@ -26,9 +26,9 @@ FLMM2 toolbox is a toolbox developed by [Prof Roberto Garrappa](https://www.dm.u
 
 | exsiting | FractionalDiffEq.jl |
 |-----|-----|
-| ```FLMM2(with method=1)``` | ```FLMMTrap``` |
-| ```FLMM2(with method=2)``` | ```FLMMNewtonGregory``` |
-| ```FLMM2(with method=3)``` | ```FLMMBDF```|
+| ```FLMM2(method=1)``` | ```FLMMTrap``` |
+| ```FLMM2(method=2)``` | ```FLMMNewtonGregory``` |
+| ```FLMM2(method=3)``` | ```FLMMBDF```|
 | ```fde12``` | ```ABM``` |
 | ```mt_fde_pi1_ex``` | ```PIEx``` |
 

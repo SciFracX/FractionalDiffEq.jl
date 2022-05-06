@@ -52,28 +52,23 @@ function solve(prob::FODESystem, h, ::ABM)
 
     f_temp = f_vectorfield(t0, u0[:, 1], f)
 
-    r = 16
-    N = ceil(Int64, (T-t0)/h)
-    Nr = ceil(Int64, (N+1)/r)*r
+    r::Int = 16
+    N::Int = ceil(Int64, (T-t0)/h)
+    Nr::Int = ceil(Int64, (N+1)/r)*r
     Qr::Int = ceil(Int64, log2(Nr/r)) - 1
-    NNr = Int64(2^(Qr+1)*r)
+    NNr::Int = 2^(Qr+1)*r
 
     # Preallocation of some variables
     y = zeros(problem_size, N+1)
     fy = zeros(problem_size, N+1)
     zn_pred = zeros(problem_size, NNr+1)
-    if mu > 0
-        zn_corr = zeros(problem_size, NNr+1)
-    else
-        zn_corr = 0
-    end
+    mu > 0 ?  (zn_corr = zeros(problem_size, NNr+1)) : (zn_corr = 0)
 
     # Evaluation of coefficients of the PECE method
-    nvett = 0 : NNr+1
+    nvett = 0:NNr+1 |> collect
     bn = zeros(alpha_length, NNr+1); an = copy(bn); a0 = copy(bn)
     for i_alpha = 1:alpha_length
-        #find_alpha = find(α[i_alpha]==α[1:i_alpha-1])
-        find_alpha=[]
+        find_alpha = Float64[]
         if α[i_alpha] == α[1:i_alpha-1]
             push!(find_alpha, i_alpha)
         end
@@ -111,7 +106,7 @@ function solve(prob::FODESystem, h, ::ABM)
         for l = 1 : Qr+1
             coef_end = 2^l*r
             for i_alpha = 1 : alpha_length
-                find_alpha = []
+                find_alpha = Float64[]
                 if α[i_alpha] == α[1:i_alpha-1]
                     push!(find_alpha, i_alpha)
                 end
@@ -134,8 +129,8 @@ function solve(prob::FODESystem, h, ::ABM)
     (y, fy) = ABMTriangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f) ;
 
     # Main process of computation by means of the FFT algorithm
-    ff = zeros(1, 2^(Qr+2)) ; ff[1:2] = [0; 2] ; card_ff = 2
-    nx0 = 0 ; ny0 = 0 ;
+    ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0; 2] ; card_ff = 2
+    nx0::Int = 0; ny0::Int = 0
     for qr = 0 : Qr
         L = 2^qr 
         (y, fy) = DisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f) ;
@@ -159,30 +154,30 @@ end
 
 function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N , METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f)
 
-    nxi = nx0 ; nxf = nx0 + L*r - 1
-    nyi = ny0 ; nyf = ny0 + L*r - 1
-    is = 1
+    nxi::Int = nx0; nxf::Int = nx0 + L*r - 1
+    nyi::Int = ny0; nyf::Int = ny0 + L*r - 1
+    is::Int = 1
     s_nxi = zeros(N)
     s_nxf = zeros(N)
     s_nyi = zeros(N)
     s_nyf = zeros(N)
-    s_nxi[is] = nxi; s_nxf[is] = nxf ; s_nyi[is] = nyi ; s_nyf[is] = nyf ;
+    s_nxi[is] = nxi; s_nxf[is] = nxf; s_nyi[is] = nyi; s_nyf[is] = nyf
 
     i_triangolo = 0; stop = false
     while stop == false
         
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         
-        (zn_pred, zn_corr) = ABMQuadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length) ;
+        (zn_pred, zn_corr) = ABMQuadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length)
         
-        (y, fy) = ABMTriangolo(nxi, nxi+r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f) ;
-        i_triangolo = i_triangolo + 1 ;
+        (y, fy) = ABMTriangolo(nxi, nxi+r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f)
+        i_triangolo = i_triangolo + 1
         
         if stop == false
             if nxi+r-1 == nxf
                 i_Delta = ff[i_triangolo]
-                Delta = i_Delta*r ;
-                nxi = s_nxf[is]+1 ; nxf = s_nxf[is]  + Delta
+                Delta = i_Delta*r
+                nxi = s_nxf[is]+1; nxf = s_nxf[is]  + Delta
                 nyi = s_nxf[is] - Delta +1; nyf = s_nxf[is]
                 s_nxi[is] = nxi; s_nxf[is] = nxf; s_nyi[is] = nyi; s_nyf[is] = nyf ;
             else # Il triangolo finisce prima del quadrato -> si fa un quadrato accanto
@@ -197,22 +192,22 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N , 
 end
 
 function ABMQuadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length)
-    coef_end = Int64(nxf-nyi+1)
-    i_fft = log2(coef_end/METH.r) 
-    funz_beg = Int64(nyi+1); funz_end = Int64(nyf+1)
-    Nnxf = min(N, nxf)
+    coef_end::Int = nxf-nyi+1
+    i_fft::Int = log2(coef_end/METH.r) 
+    funz_beg::Int = nyi+1; funz_end::Int = nyf+1
+    Nnxf::Int = min(N, nxf)
 
     # Evaluation convolution segment for the predictor
     vett_funz = fy[:, funz_beg:funz_end]
     vett_funz_fft = rowfft(vett_funz, coef_end)
     zzn_pred = zeros(problem_size, coef_end)
     for i = 1 : problem_size
-        i_alpha = min(alpha_length,i) ;
-        Z = METH.bn_fft[i_alpha, METH.index_fft[1, Int64(i_fft)]:METH.index_fft[2, Int64(i_fft)]].*vett_funz_fft[i, :]
+        i_alpha = min(alpha_length,i)
+        Z = METH.bn_fft[i_alpha, METH.index_fft[1, i_fft]:METH.index_fft[2, i_fft]].*vett_funz_fft[i, :]
         zzn_pred[i, :] = real.(ourifft(Z, coef_end))
     end
-    zzn_pred = zzn_pred[:, Int64(nxf-nyf+1-1):end-1]
-    zn_pred[:, Int64(nxi+1):Int64(Nnxf+1)] = zn_pred[:, Int64(nxi+1):Int64(Nnxf+1)] + zzn_pred[:, 1:Int64(Nnxf-nxi+1)]
+    zzn_pred = zzn_pred[:, nxf-nyf:end-1]
+    zn_pred[:, nxi+1:Nnxf+1] = zn_pred[:, nxi+1:Nnxf+1] + zzn_pred[:, 1:Nnxf-nxi+1]
 
     # Evaluation convolution segment for the corrector
     if METH.mu > 0
@@ -220,14 +215,14 @@ function ABMQuadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_
             vett_funz = [zeros(problem_size, 1) fy[:, funz_beg+1:funz_end]]
             vett_funz_fft = rowfft(vett_funz, coef_end)
         end
-        zzn_corr = zeros(problem_size, coef_end) ;
+        zzn_corr = zeros(problem_size, coef_end)
         for i = 1 : problem_size
-            i_alpha = min(alpha_length,i) ;
-            Z = METH.an_fft[i_alpha,METH.index_fft[1, Int64(i_fft)]:METH.index_fft[2, Int64(i_fft)]].*vett_funz_fft[i, :]
+            i_alpha = min(alpha_length,i)
+            Z = METH.an_fft[i_alpha,METH.index_fft[1, i_fft]:METH.index_fft[2, i_fft]].*vett_funz_fft[i, :]
             zzn_corr[i, :] = real.(ourifft(Z, coef_end))
         end
-        zzn_corr = zzn_corr[:, Int64(nxf-nyf+1):end]
-        zn_corr[:, Int64(nxi+1):Int64(Nnxf+1)] = zn_corr[:, Int64(nxi+1):Int64(Nnxf+1)] + zzn_corr[:, 1:Int64(Nnxf-nxi+1)]
+        zzn_corr = zzn_corr[:, nxf-nyf+1:end]
+        zn_corr[:, nxi+1:Nnxf+1] = zn_corr[:, nxi+1:Nnxf+1] + zzn_corr[:, 1:Nnxf-nxi+1]
     else
         zn_corr = 0
     end
@@ -238,16 +233,16 @@ end
 
 function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f)
 
-    for n = Int64(nxi) : Int64(min(N, nxf))
+    for n = nxi:min(N, nxf)
         
         # Evaluation of the predictor
         Phi = zeros(problem_size, 1)
         if nxi == 1 # Case of the first triangle
-            j_beg = 0
+            j_beg::Int = 0
         else # Case of any triangle but not the first
             j_beg = nxi
         end
-        for j = Int64(j_beg) : Int64(n-1)
+        for j = j_beg:n-1
             Phi = Phi + METH.bn[1:alpha_length,n-j].*fy[:, j+1]
         end
         St = StartingTerm(t[n+1], u0, m_alpha, t0, m_alpha_factorial)
@@ -259,24 +254,24 @@ function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_siz
             y[:, n+1] = y_pred
             fy[:, n+1] = f_pred
         else
-            j_beg = Int64(nxi)
+            j_beg = nxi
             Phi = zeros(problem_size, 1)
             for j = j_beg : n-1
                 Phi = Phi + METH.an[1:alpha_length, n-j+1].*fy[:, j+1]
             end
             Phi_n = St + METH.halpha2.*(METH.a0[1:alpha_length, n+1].*fy[:, 1] + zn_corr[:, n+1] + Phi)
             yn0 = y_pred; fn0 = f_pred    
-            stop = 0; mu_it = 0
+            stop = false; mu_it = 0
             while stop == false
                 global yn1 = Phi_n + METH.halpha2.*fn0
                 mu_it = mu_it + 1
                 if METH.mu == Inf
-                    stop = norm(yn1-yn0,inf) < METH.mu_tol
+                    stop = norm(yn1-yn0, Inf) < METH.mu_tol
                     if mu_it > 100 && ~stop
                         stop = 1
                     end
                 else
-                    stop = mu_it == METH.mu
+                    stop = (mu_it == METH.mu)
                 end
                 global fn1 = f_vectorfield(t[n+1], yn1, f)
                 yn0 = yn1; fn0 = fn1
@@ -289,18 +284,14 @@ function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_siz
 end
 
 
-function f_vectorfield(t, y, f_fun!)
-    f = f_fun!(t, y)
-    return f
-end
+f_vectorfield(t, y, f_fun!) = f_fun!(t, y)
 
 function  StartingTerm(t, u0, m_alpha, t0, m_alpha_factorial)
-    ys = zeros(size(u0, 1),1) ;
+    ys = zeros(size(u0, 1), 1)
     for k = 1 : maximum(m_alpha)
         if length(m_alpha) == 1
             ys = ys + (t-t0)^(k-1)/m_alpha_factorial[k]*u0[:, k]
         else
-            #i_alpha = find(k<=m_alpha)
             i_alpha = findall(x -> x>=k, m_alpha)
             ys[i_alpha, 1] = ys[i_alpha, 1] + (t-t0)^(k-1)*u0[i_alpha, k]./m_alpha_factorial[i_alpha, k]
         end

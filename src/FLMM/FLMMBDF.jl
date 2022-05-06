@@ -31,10 +31,10 @@ function solve(prob::FODESystem, Jfdefun, h, ::FLMMBDF)
     problem_size = size(y0, 1)
     
     # Number of points in which to evaluate the solution or the BDFWeights
-    r = 16
-    N = ceil(Int, (tfinal-t0)/h)
-    Nr = ceil(Int, (N+1)/r)*r
-    Q = ceil(Int, log2((Nr)/r))-1
+    r::Int = 16
+    N::Int = ceil(Int, (tfinal-t0)/h)
+    Nr::Int = ceil(Int, (N+1)/r)*r
+    Q::Int = ceil(Int, log2((Nr)/r))-1
     global NNr = 2^(Q+1)*r
 
     # Preallocation of some variables
@@ -54,11 +54,11 @@ function solve(prob::FODESystem, Jfdefun, h, ::FLMMBDF)
     (y, fy) = BDFTriangolo(s+1, r-1, 0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     
     # Main process of computation by means of the FFT algorithm
-    nx0 = 0; ny0 = 0
+    nx0::Int = 0; ny0::Int = 0
     ff = zeros(1, 2^(Q+2), 1)
     ff[1:2] = [0 2]
     for q = 0:Q
-        L = Int64(2^q)
+        L::Int = 2^q
         (y, fy) = BDFDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
@@ -74,14 +74,14 @@ end
 
 
 function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
-    nxi = Int64(copy(nx0)); nxf = Int64(copy(nx0 + L*r - 1))
-    nyi = Int64(copy(ny0)); nyf = Int64(copy(ny0 + L*r - 1))
-    is = 1
+    nxi::Int = copy(nx0); nxf::Int = copy(nx0 + L*r - 1)
+    nyi::Int = copy(ny0); nyf::Int = copy(ny0 + L*r - 1)
+    is::Int = 1
     s_nxi = zeros(N)
     s_nxf = zeros(N)
     s_nyi = zeros(N)
     s_nyf = zeros(N)
-    s_nxi[is] = nxi; s_nxf[is] = nxf ; s_nyi[is] = nyi; s_nyf[is] = nyf
+    s_nxi[is] = nxi; s_nxf[is] = nxf; s_nyi[is] = nyi; s_nyf[is] = nyf
     i_triangolo = 0;  stop = false
     while ~stop
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
@@ -97,9 +97,9 @@ function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax,
                 nyi = s_nxf[is] - Delta +1; nyf = s_nxf[is]
                 s_nxi[is] = nxi; s_nxf[is] = nxf; s_nyi[is] = nyi; s_nyf[is] = nyf
             else # Il triangolo finisce prima del quadrato -> si fa un quadrato accanto
-                nxi = nxi + r ; nxf = nxi + r - 1 ; nyi = nyf + 1 ; nyf = nyf + r
+                nxi = nxi + r; nxf = nxi + r - 1 ; nyi = nyf + 1 ; nyf = nyf + r
                 is = is + 1
-                s_nxi[is] = nxi ; s_nxf[is] = nxf ; s_nyi[is] = nyi ; s_nyf[is] = nyf
+                s_nxi[is] = nxi; s_nxf[is] = nxf ; s_nyi[is] = nyi ; s_nyf[is] = nyf
             end
         end
         
@@ -108,25 +108,25 @@ function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax,
 end
 
 function BDFQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
-    coef_beg = Int64(nxi-nyf); coef_end = Int64(nxf-nyi+1)
-    funz_beg = Int64(nyi+1); funz_end = Int64(nyf+1)
+    coef_beg::Int = nxi-nyf; coef_end::Int = nxf-nyi+1
+    funz_beg::Int = nyi+1; funz_end::Int = nyf+1
     vett_coef = omega[coef_beg+1:coef_end+1]
     vett_funz = [fy[:, funz_beg:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]
     zzn = real(FastConv(vett_coef, vett_funz))
-    zn[:, Int64(nxi+1):Int64(nxf+1)] = zn[:, Int64(nxi+1):Int64(nxf+1)] + zzn[:, Int64(nxf-nyf):end-1]
+    zn[:, nxi+1:nxf+1] = zn[:, nxi+1:nxf+1] + zzn[:, nxf-nyf:end-1]
     return zn
 end
 
 function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
-    for n = Int64(nxi):Int64(min(N, nxf))
-        n1 = Int64(n+1)
+    for n = nxi:min(N, nxf)
+        n1::Int = n+1
         St = ABMStartingTerm(t[n1], y0, m_alpha, t0, m_alpha_factorial)
         
         Phi = zeros(problem_size, 1)
         for j = 0:s
             Phi = Phi + w[j+1, n1]*fy[:, j+1]
         end
-        for j = Int64(j0):Int64(n-1)
+        for j = j0:n-1
             Phi = Phi + omega[n-j+1]*fy[:, j+1]
         end
         Phi_n = St + halpha*(zn[:, n1] + Phi)
@@ -162,7 +162,7 @@ end
 
 function BDFFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     m = problem_size
-    Im = zeros(m, m)+I ; Ims = zeros(m*s, m*s)+I
+    Im = zeros(m, m)+I; Ims = zeros(m*s, m*s)+I
     Y0 = zeros(s*m, 1); F0 = copy(Y0); B0 = copy(Y0)
     for j = 1 : s
         Y0[(j-1)*m+1:j*m, 1] = y[:, 1]
@@ -304,15 +304,8 @@ function BDFWeights(alpha, N)
     return omega, w, s
 end
 
-function f_vectorfield(t, y, fdefun)
-    f = fdefun(t, y)
-    return f
-end
-
-function Jf_vectorfield(t, y, Jfdefun)
-    f = Jfdefun(t, y)
-    return f
-end
+f_vectorfield(t, y, fdefun) = fdefun(t, y)
+Jf_vectorfield(t, y, Jfdefun) = Jfdefun(t, y)
 
 function ABMStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)
     ys = zeros(size(y0, 1), 1)
