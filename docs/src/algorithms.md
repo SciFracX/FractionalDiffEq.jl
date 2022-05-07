@@ -22,6 +22,7 @@ FractionalDiffEq.ChebSpectral
 FractionalDiffEq.FLMMBDF
 FractionalDiffEq.FLMMNewtonGregory
 FractionalDiffEq.FLMMTrap
+FractionalDiffEq.PIEX
 ```
 
 ## Fractional Partial Differential Equations

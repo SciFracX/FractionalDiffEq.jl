@@ -104,7 +104,7 @@ function solve(prob::FODESystem, h, ::PIEX)
     # Initializing solution and proces of computation
     t = t0 .+ collect(0:N)*h
     y[:, 1] = u0[:, 1]
-    fy[:, 1] = f_temp ;
+    fy[:, 1] = f_temp
     (y, fy) = PIEXTriangolo(1, r-1, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, α)
 
     # Main process of computation by means of the FFT algorithm

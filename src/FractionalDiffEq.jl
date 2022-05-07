@@ -1,18 +1,8 @@
 module FractionalDiffEq
 
-using LinearAlgebra, SpecialFunctions, SparseArrays
-using ApproxFun
-using InvertedIndices
-using QuadGK
-using SpecialMatrices
-using Polynomials
-using FFTW
-using UnPack
-using LoopVectorization
-using HypergeometricFunctions
-using ToeplitzMatrices
-using RecipesBase
-using ForwardDiff
+using LinearAlgebra, SpecialFunctions, SparseArrays, ApproxFun, InvertedIndices, QuadGK
+using SpecialMatrices, Polynomials, FFTW, UnPack, LoopVectorization, HypergeometricFunctions
+using ToeplitzMatrices, RecipesBase, ForwardDiff
 
 include("PECE.jl")
 include("matrix.jl")
