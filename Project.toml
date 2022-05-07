@@ -23,6 +23,7 @@ UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
 [compat]
 ApproxFun = "0.12"
 FFTW = "1.0.0"
+ForwardDiff = "0.10"
 HypergeometricFunctions = "0.3.8"
 InvertedIndices = "1.1"
 LoopVectorization = "0.12"
