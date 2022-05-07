@@ -311,7 +311,7 @@ end
 end
 
 
-@testset "Test ABM method for FODESystem" begin
+@testset "Test product integration PECE method for FODESystem" begin
     function testf!(t, y)
         p=[1 3]
         return [p[1]-(p[2]+1)*y[1] + y[1]^2*y[2]; p[2]*y[1]-y[1]^2*y[2]]
@@ -322,10 +322,27 @@ end
     y0=[1.2; 2.8]
     param=[1 3]
     prob = FODESystem(testf!, alpha, y0, t0, T)
-    (t, y) = solve(prob, h, ABM())
+    (t, y) = solve(prob, h, PECE())
 
     @test isapprox(y, [1.2  1.2061   1.21042  1.21421  1.21767  1.22089  1.22392  1.22678  1.2295   1.2321   1.23459
     2.8  2.78118  2.76953  2.7596   2.75064  2.74235  2.73455  2.72715  2.72008  2.71329  2.70673]; atol=1e-3)
+end
+
+@testset "Test explicit product integration method for FODESystem" begin
+    function testf!(t, y)
+        p=[1 3]
+        return [p[1]-(p[2]+1)*y[1] + y[1]^2*y[2]; p[2]*y[1]-y[1]^2*y[2]]
+    end
+    
+    alpha = [0.8, 0.7]
+    t0=0; T=0.1; h=0.01
+    y0=[1.2; 2.8]
+    param=[1 3]
+    prob = FODESystem(testf!, alpha, y0, t0, T)
+    (t, y) = solve(prob, h, PIEX())
+
+    @test isapprox(y, [ 1.2  1.20626  1.21061  1.21444  1.21793  1.22118  1.22424  1.22713  1.22989  1.23252  1.23504
+    2.8  2.78107  2.76943  2.75949  2.75052  2.74221  2.7344   2.72697  2.71988  2.71305  2.70647]; atol=1e-4)
 end
 
 @testset "Test FLMMNewtonGregory method" begin

@@ -17,11 +17,12 @@ using ForwardDiff
 include("PECE.jl")
 include("matrix.jl")
 include("PI.jl")
-include("MTPI.jl")
-include("MTPECE.jl")
+include("PIEX.jl")
+include("MTPIEX.jl")
+include("MTPIPECE.jl")
 include("MTPIIMTrap.jl")
 include("MTPIIMRect.jl")
-include("SystemABM.jl")
+include("PIPECE.jl")
 include("FLMM/FLMMBDF.jl")
 include("FLMM/FLMMNewtonGregory.jl")
 include("FLMM/FLMMTrap.jl")
@@ -86,7 +87,7 @@ export ChebSpectral
 export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF, GLDiff
 
 # System of FDE solvers
-export NonLinearAlg, GLWithMemory, ABM, FLMMBDF, FLMMNewtonGregory, FLMMTrap
+export NonLinearAlg, GLWithMemory, FLMMBDF, FLMMNewtonGregory, FLMMTrap, PIEX
 
 # FDDE solvers
 export DelayPECE, DelayPI, DelayABM, MatrixForm
