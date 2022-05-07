@@ -54,3 +54,57 @@ end
     @test isFunction(x->x)==true
     @test isFunction("Hello")==false
 end
+
+@testset "Test singleterm show method" begin
+    # SingleTermFODEProblem
+    singlefun(x, y) = 1-y
+    singletermprob = SingleTermFODEProblem(singlefun, 1.8, 0, 5)
+    @test_nowarn show(singletermprob)
+end
+
+@testset "Test Multiterms show method" begin
+    # MultiTermsFODEProblem
+    rightfun(x, y) = 172/125*cos(4/5*x)
+    multitermsprob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0 0 0 0 0 0], 0, 10)
+    multitermssol = solve(multitermsprob, 0.5, PIEx())
+
+    @test_nowarn show(multitermsprob)
+    @test_nowarn show(multitermssol)
+end
+
+@testset "Test FODESystem show method" begin
+    # FODESystem
+    h=0.5; tf=1
+    alpha = [0.99, 0.99, 0.99]
+    x0 = [1, 0, 1]
+    function testf!(du, u, p, t)
+        a, b, c = 10, 28, 8/3
+        du[1] = a*(u[2]-u[1])
+        du[2] = u[1]*(b-u[3])-u[2]
+        du[3] = u[1]*u[2]-c*u[3]
+    end
+    fodesystemprob = FODESystem(testf!, alpha, x0, tf)
+    fodesystemsol = solve(fodesystemprob, h, GL())
+
+    @test_nowarn show(fodesystemprob)
+    @test_nowarn show(fodesystemsol)
+end
+
+@testset "Test FDDEProblem show method" begin
+    # FDDEProblem
+    function ϕ(x)
+        if x == 0
+            return 19.00001
+        else
+            return 19.0
+        end
+    end
+    function delayf(t, y, ϕ)
+        return 3.5*y*(1-ϕ/19)
+    end
+    fddeprob = FDDEProblem(delayf, ϕ, 0.97, 0.8, 2, 0)
+    fddesol = solve(fddeprob, 0.5, DelayPI())
+
+    @test_nowarn show(fddeprob)
+    @test_nowarn show(fddesol)
+end

@@ -193,7 +193,7 @@ end
 @testset "Test Product Integration explicit method for multi-terms FODE" begin
     T = 10; h = 0.5
     rightfunex(x, y) = 172/125*cos(4/5*x)
-    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfunex, [0 0 0 0 0 0], 0, T)
+    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfunex, [0, 0, 0, 0, 0, 0], 0, T)
     sol = solve(prob, h, PIEx())
 
     @test isapprox(sol.u, [0.0
@@ -222,7 +222,7 @@ end
 @testset "Test Product integration with predictor-corrector method for multi-terms FODE" begin
     T = 10; h = 0.5
     rightfun(x, y) = 172/125*cos(4/5*x)
-    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0 0 0 0 0 0], 0, T)
+    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], 0, T)
     
     sol = solve(prob, h, PIPECE())
 
@@ -253,7 +253,7 @@ end
 @testset "Test implicit Product integration rectangular type method for multi-terms FODE" begin
     T = 10; h = 0.5
     rightfun(x, y) = 172/125*cos(4/5*x)
-    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0 0 0 0 0 0], 0, T)
+    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], 0, T)
     
     sol = solve(prob, h, PIIMRect())
 
@@ -283,7 +283,7 @@ end
 @testset "Test implicit Product integration trapezoidal type method for multi-terms FODE" begin
     T = 10; h = 0.5
     rightfun(x, y) = 172/125*cos(4/5*x)
-    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0 0 0 0 0 0], 0, T)
+    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], 0, T)
     
     sol = solve(prob, h, PIIMTrap())
 

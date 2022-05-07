@@ -9,6 +9,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIPECE)
     @unpack parameters, orders, rightfun, u0, t0, T = prob
     mu=1
     mu_tol=1e-6
+    u0 = u0[:]'
     Q = length(orders)
     orders= sort(orders)
     i_al = sortperm(orders, rev=true)

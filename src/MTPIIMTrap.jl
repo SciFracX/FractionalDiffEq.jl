@@ -7,7 +7,7 @@ struct PIIMTrap <: FractionalDiffEqAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, h, ::PIIMTrap)
     @unpack parameters, orders, rightfun, u0, t0, T = prob
-
+    u0 = u0[:]'
     J_fun(x, y) = ForwardDiff.derivative(x -> rightfun(x, y), x)
     
     Q = length(orders)
