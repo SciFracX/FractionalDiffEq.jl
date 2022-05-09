@@ -21,7 +21,7 @@ ToeplitzMatrices = "c751599d-da0a-543b-9d20-d0a503d91d24"
 UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
 
 [compat]
-ApproxFun = "0.12"
+ApproxFun = "0.12, 0.13"
 FFTW = "1.0.0"
 ForwardDiff = "0.10"
 HypergeometricFunctions = "0.3.8"
