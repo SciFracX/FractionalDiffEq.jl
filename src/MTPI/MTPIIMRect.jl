@@ -8,6 +8,8 @@ struct PIIMRect <: FractionalDiffEqAlgorithm end
 function solve(prob::MultiTermsFODEProblem, h, ::PIIMRect)
     @unpack parameters, orders, rightfun, u0, t0, T = prob
     u0 = u0[:]'
+
+    # Generate the jacobian of the given function
     J_fun(x, y) = ForwardDiff.derivative(x -> rightfun(x, y), x)
     
     Q = length(orders)
@@ -18,9 +20,9 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMRect)
     al_i = orders[1:end-1]
     lam_Q = parameters[end]
     lam_rat_i = parameters[1:end-1]/lam_Q
-    m_Q = ceil(Int64, al_Q)
-    m_i = ceil.(Int64, orders[1:end-1])
-    bet = [al_Q .- al_i; al_Q]
+    m_Q::Int = ceil(Int64, al_Q)
+    m_i::Int = ceil.(Int64, orders[1:end-1])
+    bet::Int = [al_Q .- al_i; al_Q]
     
     itmax = 100
     tol = 1.0e-6 
@@ -213,44 +215,6 @@ function PIIMRectTriangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, u0, 
     return y, fy
 end
 
-
-function FastConv(x, y)
-    Lx = length(x); Ly = size(y, 2); problem_size = size(y, 1)
-
-    r = Lx
-    z = zeros(Number, problem_size, r)
-    X = ourfft(x, r)
-    for i = 1:problem_size
-        Y = ourfft(y[i, :]', r)
-        Z = X.*Y
-        z[i, :] = ourifft(Z, r)
-    end
-    return z
-end
-
-function ourfft(x, n)
-    s=length(x)
-    x=x[:]
-    if s > n
-        return fft(x[1:n])
-    elseif s < n
-        return fft([x; zeros(n-s)])
-    else
-        return fft(x)
-    end
-end
-
-function ourifft(x, n)
-    s=length(x)
-    x=x[:]
-    if s > n
-        return ifft(x[1:n])
-    elseif s < n
-        return ifft([x; zeros(n-s)])
-    else
-        return ifft(x)
-    end
-end
 
 f_vectorfield(t, y, rightfun)=rightfun(t, y)
 Jf_vectorfield(t, y, fun)=fun(t, y)

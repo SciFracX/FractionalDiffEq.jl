@@ -56,6 +56,7 @@ include("FIE/main.jl")
 include("mlfun.jl")
 
 include("utils.jl")
+include("auxiliary.jl")
 
 
 export FractionalDiffEqAlgorithm
