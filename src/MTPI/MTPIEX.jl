@@ -2,7 +2,7 @@
 Multiple dispatch of explicit product integral methods for multi term FODEProblem
 =#
 
-function solve(prob::MultiTermsFODEProblem, h, ::PIEx)
+function solve(prob::MultiTermsFODEProblem, h, ::PIEX)
     @unpack parameters, orders, rightfun, u0, t0, T = prob
     u0 = u0[:]'
     Q = length(orders)
@@ -222,7 +222,7 @@ function process_rightfun(t, y, rightfun)
     end
 end
 
-function PIExStartingTerm_Multi(t,t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
+function PIExStartingTerm_Multi(t, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
     ys = zeros(problem_size)
 
     for k = 0:m_Q-1

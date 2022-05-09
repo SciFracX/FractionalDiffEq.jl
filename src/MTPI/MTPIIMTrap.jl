@@ -67,7 +67,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMTrap)
     nx0 = 0; nu0 = 0
     for qr = 0 : Qr
         L = 2^qr
-        (y, fy) = DisegnaBlocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, N, zn, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, tol)
+        (y, fy) = PIIMTrapDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, N, zn, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, tol)
         ff[1:2*card_ff] = [ff[1:card_ff] ff[1:card_ff]]
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -84,7 +84,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMTrap)
 end
     
 
-function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, N, zn, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, tol)
+function PIIMTrapDisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, N, zn, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, tol)
     
     nxi::Int = nx0
     nxf::Int = nx0 + L*r - 1
@@ -104,7 +104,7 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, N, zn, a0, an, t0, pro
     while stop == false
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1 >= Nr-1)
         
-        zn = PIExQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, an, problem_size, Q)
+        zn = PIIMTrapQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, an, problem_size, Q)
         
         (y, fy) = PIExTriangolo(nxi, nxi+r-1, t, y, fy, zn, N, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, tol, itmax, J_fun)
         i_triangolo = i_triangolo + 1
@@ -133,7 +133,7 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, N, zn, a0, an, t0, pro
     return y, fy
 end
 
-function PIExQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, an, problem_size, Q)
+function PIIMTrapQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, an, problem_size, Q)
     coef_beg = nxi-nyf; coef_end = nxf-nyi+1
     funz_beg = nyi+1; funz_end = nyf+1
     
@@ -164,7 +164,7 @@ end
 function PIExTriangolo(nxi, nxf, t, y, fy, zn, N, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, tol, itmax, J_fun)
 
     for n = nxi:min(N, nxf)
-        St = PIExStartingTerm_Multi(t[n+1], t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
+        St = PIIMTrapStartingTerm_Multi(t[n+1], t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
         Phi_n = copy(St)
 
         for i = 1:Q-1
@@ -256,7 +256,7 @@ end
 f_vectorfield(t, y, rightfun)=rightfun(t, y)
 Jf_vectorfield(t, y, fun)=fun(t, y)
 
-function PIExStartingTerm_Multi(t,t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
+function PIIMTrapStartingTerm_Multi(t,t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
     ys = zeros(problem_size)
 
     for k = 0:m_Q-1

@@ -60,13 +60,13 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMRect)
     t = collect(0:N)*h
     y[:, 1] = u0[:, 1]
     fy[:, 1] .= f_vectorfield(t0, u0[:, 1], rightfun)
-    (y, fy) = PIExTriangolo(1, r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, tol, itmax, J_fun)
+    (y, fy) = PIIMRectTriangolo(1, r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, tol, itmax, J_fun)
     
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0 2]; card_ff = 2
     nx0 = 0; nu0 = 0
     for qr = 0 : Qr
         L = 2^qr
-        (y, fy) = DisegnaBlocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, tol)
+        (y, fy) = PIIMRectDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, tol)
         ff[1:2*card_ff] = [ff[1:card_ff] ff[1:card_ff]]
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -83,7 +83,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMRect)
 end
     
 
-function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N , bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, tol)
+function PIIMRectDisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N , bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, tol)
     
     nxi::Int = nx0
     nxf::Int = nx0 + L*r - 1
@@ -103,9 +103,9 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N , bn, t0, proble
     while stop == false
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1 >= Nr-1)
         
-        zn = PIExQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn, problem_size, Q)
+        zn = PIIMRectQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn, problem_size, Q)
         
-        (y, fy) = PIExTriangolo(nxi, nxi+r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, tol, itmax, J_fun)
+        (y, fy) = PIIMRectTriangolo(nxi, nxi+r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, tol, itmax, J_fun)
         i_triangolo = i_triangolo + 1
         
         if stop==false
@@ -132,7 +132,7 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N , bn, t0, proble
     return y, fy
 end
 
-function PIExQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn,  problem_size, Q)
+function PIIMRectQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn,  problem_size, Q)
     coef_beg = nxi-nyf; coef_end = nxf-nyi+1
     funz_beg = nyi+1; funz_end = nyf+1
     
@@ -160,7 +160,7 @@ end
     
     
  
-function PIExTriangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, tol, itmax, J_fun)
+function PIIMRectTriangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, tol, itmax, J_fun)
 
     for n = nxi:min(N, nxf)
         St = PIExStartingTerm_Multi(t[n+1], t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)

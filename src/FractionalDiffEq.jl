@@ -69,7 +69,7 @@ export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, Fr
 export AbstractFDESolution, FODESolution, FIESolution, FDifferenceSolution, DODESolution
 
 # FODE solvers
-export PIEx, PIIm, PITrap, PIPECE, PIIMRect, PIIMTrap
+export PIEX, PIIM, PITrap, PIPECE, PIIMRect, PIIMTrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, GL
 export ChebSpectral
 

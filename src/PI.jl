@@ -13,7 +13,7 @@
 }
 ```
 """
-struct PIEx <: FractionalDiffEqAlgorithm end
+struct PIEX <: FractionalDiffEqAlgorithm end
 
 """
 # Usage
@@ -30,7 +30,7 @@ struct PIEx <: FractionalDiffEqAlgorithm end
 }
 ```
 """
-struct PIIm <: FractionalDiffEqAlgorithm end
+struct PIIM <: FractionalDiffEqAlgorithm end
 
 """
 # Usage
@@ -49,7 +49,7 @@ struct PIIm <: FractionalDiffEqAlgorithm end
 """
 struct PITrap <: FractionalDiffEqAlgorithm end
 
-function solve(FODE::SingleTermFODEProblem, h, ::PIEx)
+function solve(FODE::SingleTermFODEProblem, h, ::PIEX)
     @unpack f, α, u0, T = FODE
     N::Int64 = round(T/h)
     y = zeros(N)
@@ -66,7 +66,7 @@ function solve(FODE::SingleTermFODEProblem, h, ::PIEx)
     return y
 end
 
-function solve(FODE::SingleTermFODEProblem, h, ::PIIm)
+function solve(FODE::SingleTermFODEProblem, h, ::PIIM)
     @unpack f, α, u0, T = FODE
     N::Int64 = round(T/h)
     y = zeros(N)
