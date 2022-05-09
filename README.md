@@ -35,6 +35,8 @@
   </a>
 </p>
 
+FractionalDiffEq.jl provides FDE solvers to [DifferentialEquations.jl](https://diffeq.sciml.ai/dev/) ecosystem. There are many performant solvers available, capable of solving many kinds of fractional differential equations.
+
 # Installation
 
 If you have already installed Julia, you can install FractionalDiffEq.jl in REPL using Julia package manager:
@@ -97,8 +99,8 @@ Let's see if the initial value problem like:
 using FractionalDiffEq, Plots
 T=30; h=0.01
 rightfun(x, y) = 172/125*cos(4/5*x)
-prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], T)
-sol = solve(prob, h, PIEx())
+prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], 0, T)
+sol = solve(prob, h, PIEX())
 plot(sol, legend=:bottomright)
 ```
 
@@ -108,7 +110,7 @@ Or use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/m
 
 ### System of Fractional Differential Equations:
 
-FractionalDiffEq.jl is a powerful tool to solve system of fractional differential equations, if you are familiar with [DifferentialEquaations.jl](https://github.com/SciML/DifferentialEquations.jl), it would be just like out of the box.
+FractionalDiffEq.jl is a powerful tool to solve system of fractional differential equations, if you are familiar with [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl), it would be just like out of the box.
 
 Let's see if we have a Chua chaos system:
 
@@ -142,7 +144,7 @@ And plot the result:
 
 ## Fractional Partial Differential Equations
 
-FractionalDiffEq.jl provide powerful algorithms to solve fractional partial differential equations, let's see a diffusion equation here:
+FractionalDiffEq.jl provides powerful algorithms to solve fractional partial differential equations, let's see a diffusion equation here:
 
 <p align="center">
 
@@ -165,7 +167,7 @@ Use the FPDE solvers in FractionalDiffEq.jl and plot the numerical approximation
 
 ## Fractional Delay Differential Equations
 
-There are many powerful solvers for solving fractional delay differential equations.
+There are also many powerful solvers for solving fractional delay differential equations.
 
 <p align="center">
 
