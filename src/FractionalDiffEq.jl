@@ -106,6 +106,6 @@ export mittleff, mittlefferr, mittleffderiv
 # Distributed order auxiliary SpecialFunctions
 export DOB, DOF, DORANORT, isFunction
 
-export myeval
+export myeval, ourfft, ourifft, rowfft, FastConv
 
 end

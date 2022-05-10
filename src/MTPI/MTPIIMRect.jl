@@ -20,9 +20,9 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMRect)
     al_i = orders[1:end-1]
     lam_Q = parameters[end]
     lam_rat_i = parameters[1:end-1]/lam_Q
-    m_Q::Int = ceil(Int64, al_Q)
-    m_i::Int = ceil.(Int64, orders[1:end-1])
-    bet::Int = [al_Q .- al_i; al_Q]
+    m_Q = ceil(Int64, al_Q)
+    m_i = ceil.(Int64, orders[1:end-1])
+    bet = [al_Q .- al_i; al_Q]
     
     itmax = 100
     tol = 1.0e-6 
@@ -61,7 +61,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMRect)
     
     t = collect(0:N)*h
     y[:, 1] = u0[:, 1]
-    fy[:, 1] .= f_vectorfield(t0, u0[:, 1], rightfun)
+    fy[:, 1] .= mtf_vectorfield(t0, u0[:, 1], rightfun)
     (y, fy) = PIIMRectTriangolo(1, r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, tol, itmax, J_fun)
     
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0 2]; card_ff = 2
@@ -182,7 +182,7 @@ function PIIMRectTriangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, u0, 
         Phi_n = Phi_n + temp/lam_Q
 
 
-        yn0 = y[:, n]; fn0 = f_vectorfield(t[n+1], yn0, rightfun)
+        yn0 = y[:, n]; fn0 = mtf_vectorfield(t[n+1], yn0, rightfun)
         Jfn0 = Jf_vectorfield(t[n+1], yn0, J_fun)
         Gn0 = (1+C)*yn0 .- bn[Q, 1]./lam_Q*fn0 .- Phi_n
         stop = false; it = 0
@@ -191,7 +191,7 @@ function PIIMRectTriangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, u0, 
             
             JGn0 = (1+C)*zeros(problem_size, problem_size)+I .- bn[Q, 1]/lam_Q*Jfn0
             global yn1 = yn0 - JGn0\Gn0
-            global fn1 = f_vectorfield(t[n+1], yn1, rightfun)
+            global fn1 = mtf_vectorfield(t[n+1], yn1, rightfun)
             Gn1 = (1+C)*yn1 .- bn[Q, 1]/lam_Q*fn1 .- Phi_n
             it = it + 1
             
@@ -216,7 +216,8 @@ function PIIMRectTriangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, u0, 
 end
 
 
-f_vectorfield(t, y, rightfun)=rightfun(t, y)
+mtf_vectorfield(t, y, rightfun)=rightfun(t, y)
+
 Jf_vectorfield(t, y, fun)=fun(t, y)
 
 function PIExStartingTerm_Multi(t,t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)

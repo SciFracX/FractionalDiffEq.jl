@@ -17,12 +17,14 @@ Use [Newton Gregory](https://www.geeksforgeeks.org/newton-forward-backward-inter
 """
 struct FLMMNewtonGregory <: FractionalDiffEqAlgorithm end
 
-function solve(prob::FODESystem, Jfdefun, h, ::FLMMNewtonGregory)
+function solve(prob::FODESystem, h, ::FLMMNewtonGregory)
     @unpack f, α, u0, t0, T = prob
     fdefun, alphas, y0, t0, tfinal = f, α, u0, t0, T
     alpha = alphas[1]
     itmax = 100
     tol = 1.0e-6
+
+    Jfdefun(t, u) = jacobian_of_fdefun(fdefun, t, u)
 
     m_alpha = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
@@ -307,11 +309,7 @@ function NGWeights(alpha, N)
     return omega, w, s
 end
 
-function f_vectorfield(t, y, fdefun)
-    f = fdefun(t, y)
-    return f
-end
-
+f_vectorfield(t, y, fdefun) = fdefun(zeros(length(y)), y, 0, t)
 function Jf_vectorfield(t, y, Jfdefun)
     f = Jfdefun(t, y)
     return f

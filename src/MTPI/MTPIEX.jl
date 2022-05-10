@@ -51,7 +51,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIEX)
     
     t = collect(0:N)*h
     y[:, 1] = u0[:, 1]
-    fy[:, 1] .= f_vectorfield(t0, u0[:, 1], rightfun)
+    fy[:, 1] .= mtf_vectorfield(t0, u0[:, 1], rightfun)
     (y, fy) = PIExTriangolo(1, r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q)
     
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0 2]; card_ff = 2
@@ -168,13 +168,13 @@ function PIExTriangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m
         Phi_n = Phi_n + temp/lam_Q
 
         y[:, n+1] = Phi_n
-        fy[:, n+1] .= f_vectorfield(t[n+1], y[:, n+1], rightfun) 
+        fy[:, n+1] .= mtf_vectorfield(t[n+1], y[:, n+1], rightfun) 
             
     end
     return y, fy
 end
 
-f_vectorfield(t, y, rightfun)=rightfun(t, y)
+mtf_vectorfield(t, y, rightfun)=rightfun(t, y)
 function process_rightfun(t, y, rightfun)
     if typeof(rightfun) <: Function
         return rightfun(t, y)
@@ -197,4 +197,44 @@ function PIExStartingTerm_Multi(t, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_r
         ys = ys + lam_rat_i[i]*temp
     end
     return ys'
+end
+
+
+
+function FastConv(x, y)
+    Lx = length(x); Ly = size(y, 2); problem_size = size(y, 1)
+
+    r = Lx
+    z = zeros(Number, problem_size, r)
+    X = ourfft(x, r)
+    for i = 1:problem_size
+        Y = ourfft(y[i, :]', r)
+        Z = X.*Y
+        z[i, :] = ourifft(Z, r)
+    end
+    return z
+end
+
+function ourfft(x, n)
+    s=length(x)
+    x=x[:]
+    if s > n
+        return fft(x[1:n])
+    elseif s < n
+        return fft([x; zeros(n-s)])
+    else
+        return fft(x)
+    end
+end
+
+function ourifft(x, n)
+    s=length(x)
+    x=x[:]
+    if s > n
+        return ifft(x[1:n])
+    elseif s < n
+        return ifft([x; zeros(n-s)])
+    else
+        return ifft(x)
+    end
 end

@@ -17,12 +17,14 @@ Use [Trapezoidal](https://en.wikipedia.org/wiki/Trapezoidal_rule_(differential_e
 """
 struct FLMMTrap <: FractionalDiffEqAlgorithm end
 
-function solve(prob::FODESystem, Jfdefun, h, ::FLMMTrap)
+function solve(prob::FODESystem, h, ::FLMMTrap)
     @unpack f, α, u0, t0, T = prob
     fdefun, alphas, y0, t0, tfinal = f, α, u0, t0, T
     alpha = alphas[1]
     itmax = 100
     tol = 1.0e-6
+
+    Jfdefun(t, u) = jacobian_of_fdefun(fdefun, t, u)
 
     m_alpha::Int = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
@@ -311,7 +313,7 @@ function TrapWeights(alpha, N)
     return omega, w, s
 end
 
-f_vectorfield(t, y, fdefun) = fdefun(t, y)
+f_vectorfield(t, y, fdefun) = fdefun(zeros(length(y)), y, 0, t)
 Jf_vectorfield(t, y, Jfdefun) = Jfdefun(t, y)
 
 function TrapStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)

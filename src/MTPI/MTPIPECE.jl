@@ -64,7 +64,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIPECE)
     
     t = collect(0:N)*h
     y[:, 1] = u0[:, 1]
-    fy[:, 1] .= f_vectorfield(t0, u0[:, 1], rightfun)
+    fy[:, 1] .= mtf_vectorfield(t0, u0[:, 1], rightfun)
     (y, fy) = PIPECETriangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, mu_tol, C)
     
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0 2]; card_ff = 2
@@ -206,7 +206,7 @@ function PIPECETriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, bn, t0, proble
         end
         Phi_n = Phi_n + temp/lam_Q
         y_pred = copy(Phi_n)
-        f_pred = copy(f_vectorfield(t[n+1], y_pred, rightfun))
+        f_pred = copy(mtf_vectorfield(t[n+1], y_pred, rightfun))
 
         if mu == 0
             y[:,n+1] = y_pred
@@ -241,7 +241,7 @@ function PIPECETriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, bn, t0, proble
                 else
                     stop = mu_it == mu
                 end
-                global fn1 = f_vectorfield(t[n+1], yn1, rightfun)           
+                global fn1 = mtf_vectorfield(t[n+1], yn1, rightfun)           
                 yn0 = yn1; fn0 = fn1
             end
 
@@ -252,14 +252,7 @@ function PIPECETriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, bn, t0, proble
     return y, fy
 end
 
-f_vectorfield(t, y, rightfun)=rightfun(t, y)
-function process_rightfun(t, y, rightfun)
-    if typeof(rightfun) <: Function
-        return rightfun(t, y)
-    else
-        return rightfun*ones(length(y))
-    end
-end
+mtf_vectorfield(t, y, rightfun)=rightfun(t, y)
 
 function PIPECEStartingTerm_Multi(t,t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
     ys = zeros(problem_size)
