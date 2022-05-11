@@ -28,8 +28,8 @@ analytical(x) = x.^1.8 .*mittleff(1.8, 2.8, -x.^1.8)
 
 # Numerical solution
 fun(x, y) = 1-y
-h=0.01; T=20; u0=0
-prob = SingleTermFODEProblem(fun, 1.8, u0, T)
+α=1.8; h=0.01; T=20; u0=0
+prob = SingleTermFODEProblem(fun, α, u0, T)
 sol = solve(prob, h, PECE())
 tspan = collect(0:0.01:20)
 target = analytical(tspan)
@@ -46,13 +46,13 @@ To provide users a simple way to solve fractional differential equations, we fol
 
 ## Step 1: Defining a Problem
 
-First, we need to specify the problem we want to solve. Just by passing the parameters —— describing function, orders, step size and time span:
+First, we need to specify the problem we want to solve. Just by passing the parameters —— describing function, orders, initial condition and time span:
 
 ```julia
 using FractionalDiffEq
 fun(x, y) = 1-y
-α = 1.8; h = 0.01; T = 20
-prob = SingleTermFODEProblem(fun, 1.8, 0.01, 20)
+α = 1.8; u0 = 0; T = 20; h = 0.01;
+prob = SingleTermFODEProblem(fun, α, u0, T)
 ```
 
 The ```SingleTermFODEProblem``` is a class of fractional differential equation, describing equations with ``D^{\alpha}u=f(t, u)`` pattern. For other patterns and classes of fractional differential equation, please refer to [Problem types](@ref problems)
