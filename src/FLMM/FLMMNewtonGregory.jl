@@ -1,5 +1,5 @@
 """
-    solve(prob::FODESystem, Jfdefun, h, FLMMNewtonGregory())
+    solve(prob::FODESystem, h, FLMMNewtonGregory())
 
 Use [Newton Gregory](https://www.geeksforgeeks.org/newton-forward-backward-interpolation/) generated weights fractional linear multiple steps method to solve system of FODE.
 

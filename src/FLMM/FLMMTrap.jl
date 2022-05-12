@@ -1,5 +1,5 @@
 """
-    solve(prob::FODEsystem, Jfdefun, FLMMTrap())
+    solve(prob::FODEsystem, FLMMTrap())
 
 Use [Trapezoidal](https://en.wikipedia.org/wiki/Trapezoidal_rule_(differential_equations)) with generating function ``f(x)=\\frac{1+x}{2(1-x)^\\alpha}`` generated weights fractional linear multiple steps method to solve system of FODE.
 

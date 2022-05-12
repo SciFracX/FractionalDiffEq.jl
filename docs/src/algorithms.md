@@ -12,8 +12,6 @@ FractionalDiffEq.FODEMatrixDiscrete
 FractionalDiffEq.ClosedForm
 FractionalDiffEq.ClosedFormHankelM
 FractionalDiffEq.GL
-FractionalDiffEq.PIEx
-FractionalDiffEq.PIIm
 FractionalDiffEq.PITrap
 FractionalDiffEq.PIPECE
 FractionalDiffEq.PIIMRect

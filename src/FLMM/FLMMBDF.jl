@@ -1,7 +1,7 @@
 """
-    solve(prob::FODESystem, Jfdefun, h, FLMMBDF())
+    solve(prob::FODESystem, h, FLMMBDF())
 
-Use [BDF](https://en.wikipedia.org/wiki/Backward_differentiation_formula) generated weights fractional linear multiple steps method to solve system of FODE.
+Use [Backward Differentiation Formula](https://en.wikipedia.org/wiki/Backward_differentiation_formula) generated weights fractional linear multi-steps method to solve system of FODE.
 
 ### References
 
@@ -24,6 +24,7 @@ function solve(prob::FODESystem, h, ::FLMMBDF)
     itmax = 100
     tol = 1.0e-6
     
+    # generate jacobian of input function
     Jfdefun(t, u) = jacobian_of_fdefun(fdefun, t, u)
 
     m_alpha = ceil.(Int, alpha)
