@@ -319,7 +319,7 @@ function ABMStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)
 end
 
 function jacobian_of_fdefun(f, t, y)
-    ForwardDiff.jacobian(y) do y
+    ForwardDiff.jacobian(y) do y # Thanks Bagge Carlson for helping me with this
     du = similar(y)
     f(du, y, 0, t)
     du

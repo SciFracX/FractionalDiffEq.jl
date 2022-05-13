@@ -31,7 +31,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIEX)
     r::Int = 16
     N::Int = ceil(Int, (T-t0)/h)
     Nr::Int = ceil(Int, (N+1)/r)*r
-    Qr::Int = ceil(Int, log2((Nr)/r)) - 1
+    Qr::Int = ceil(Int, log2((Nr)/r))-1
     NNr::Int = 2^(Qr+1)*r
     
     y = zeros(problem_size, N+1)
@@ -197,44 +197,4 @@ function PIExStartingTerm_Multi(t, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_r
         ys = ys + lam_rat_i[i]*temp
     end
     return ys'
-end
-
-
-
-function FastConv(x, y)
-    Lx = length(x); Ly = size(y, 2); problem_size = size(y, 1)
-
-    r = Lx
-    z = zeros(Number, problem_size, r)
-    X = ourfft(x, r)
-    for i = 1:problem_size
-        Y = ourfft(y[i, :]', r)
-        Z = X.*Y
-        z[i, :] = ourifft(Z, r)
-    end
-    return z
-end
-
-function ourfft(x, n)
-    s=length(x)
-    x=x[:]
-    if s > n
-        return fft(x[1:n])
-    elseif s < n
-        return fft([x; zeros(n-s)])
-    else
-        return fft(x)
-    end
-end
-
-function ourifft(x, n)
-    s=length(x)
-    x=x[:]
-    if s > n
-        return ifft(x[1:n])
-    elseif s < n
-        return ifft([x; zeros(n-s)])
-    else
-        return ifft(x)
-    end
 end

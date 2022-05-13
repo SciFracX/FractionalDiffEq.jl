@@ -237,36 +237,3 @@ function  StartingTerm(t, u0, m_alpha, t0, m_alpha_factorial)
     end
     return ys
 end
-
-
-function ourfft(x::Vector, n)
-    s=length(x)
-    x=x[:]
-    if s > n
-        return fft(x[1:n])
-    elseif s < n
-        return fft([x; zeros(n-s)])
-    else
-        return fft(x)
-    end
-end
-
-function ourifft(x, n)
-    s=length(x)
-    x=x[:]
-    if s > n
-        return ifft(x[1:n])
-    elseif s < n
-        return ifft([x; zeros(n-s)])
-    else
-        return ifft(x)
-    end
-end
-
-function rowfft(x::AbstractMatrix, n)
-    result = zeros(Complex, size(x)[1], n)
-    for i=1:size(x)[1]
-        result[i, :] = ourfft(x[i, :], n)
-    end
-    return result
-end
