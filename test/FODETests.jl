@@ -189,14 +189,14 @@ end
    75.6356722636105
    92.37379693143299]; atol=1e-4)
 end
-#=
+
 @testset "Test Product Integration explicit method for multi-terms FODE" begin
     #T = 10; h = 0.5
     rightfunex(x, y) = 172/125*cos(4/5*x)
     PIEXMultiprob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfunex, [0, 0, 0, 0, 0, 0], 0, 10)
     PIEXMultisol = solve(PIEXMultiprob, 0.5, PIEX())
 
-    @test isapprox(PIEXMultisol.u, [0.0
+    @test isapprox(PIEXMultisol.u, [  0.0
     0.028666666666666663
     0.20802154481466284
     0.5777512805039694
@@ -212,13 +212,13 @@ end
    -1.226608005191384
     0.7994418493409547
     2.76345190855897
-  -16.910372706956238
-   -5.576224501611167
-    7.246730889494675
-   18.018508871011914
-   22.35103070638173]; atol=1e-4)
+    3.9650094859689915
+    3.9040343901844707
+    2.5017274305718367
+    0.18249065149394283
+   -2.23584183347657]; atol=1e-4)
 end
-=#
+
 @testset "Test Product integration with predictor-corrector method for multi-terms FODE" begin
     T = 10; h = 0.5
     rightfun(x, y) = 172/125*cos(4/5*x)
