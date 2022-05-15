@@ -75,7 +75,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIEX)
 end
     
 
-function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N , bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q)
+function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q)
     
     nxi::Int = nx0
     nxf::Int = nx0 + L*r - 1

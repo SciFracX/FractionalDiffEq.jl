@@ -52,7 +52,7 @@ function solve(prob::FODESystem, h, ::FLMMBDF)
     # Initializing solution and proces of computation
     t = collect(0:N)*h
     y[:, 1] = y0[:, 1]
-    fy[:, 1] = f_vectorfield(t0, y0[:, 1], fdefun)
+    fy[:, 1] = BDFf_vectorfield(t0, y0[:, 1], fdefun)
     (y, fy) = BDFFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     (y, fy) = BDFTriangolo(s+1, r-1, 0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     
@@ -134,14 +134,14 @@ function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, tol, itmax, s, w, omega, ha
         end
         Phi_n = St + halpha*(zn[:, n1] + Phi)
         
-        yn0 = y[:, n]; fn0 = f_vectorfield(t[n1], yn0, fdefun)
+        yn0 = y[:, n]; fn0 = BDFf_vectorfield(t[n1], yn0, fdefun)
         Jfn0 = Jf_vectorfield(t[n1], yn0, Jfdefun)
         Gn0 = yn0 - halpha*omega[1]*fn0 - Phi_n
         stop = false; it = 0
         while ~stop            
             JGn0 = zeros(problem_size, problem_size)+I - halpha*omega[1]*Jfn0
             global yn1 = yn0 - JGn0\Gn0
-            global fn1 = f_vectorfield(t[n1], yn1, fdefun)
+            global fn1 = BDFf_vectorfield(t[n1], yn1, fdefun)
             Gn1 = yn1 - halpha*omega[1]*fn1 - Phi_n
             it = it + 1
             
@@ -169,7 +169,7 @@ function BDFFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, probl
     Y0 = zeros(s*m, 1); F0 = copy(Y0); B0 = copy(Y0)
     for j = 1 : s
         Y0[(j-1)*m+1:j*m, 1] = y[:, 1]
-        F0[(j-1)*m+1:j*m, 1] = f_vectorfield(t[j+1], y[:, 1], fdefun)
+        F0[(j-1)*m+1:j*m, 1] = BDFf_vectorfield(t[j+1], y[:, 1], fdefun)
         St = ABMStartingTerm(t[j+1], y0, m_alpha, t0, m_alpha_factorial)
         B0[(j-1)*m+1:j*m, 1] = St + halpha*(omega[j+1]+w[1, j+1])*fy[:, 1]
     end
@@ -196,7 +196,7 @@ function BDFFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, probl
         global Y1 = Y0 - JG\G0
         
         for j = 1 : s
-            F1[(j-1)*m+1:j*m, 1] = f_vectorfield(t[j+1], Y1[(j-1)*m+1:j*m, 1], fdefun)
+            F1[(j-1)*m+1:j*m, 1] = BDFf_vectorfield(t[j+1], Y1[(j-1)*m+1:j*m, 1], fdefun)
         end
         G1 = Y1 - B0 - W*F1
         
@@ -307,7 +307,7 @@ function BDFWeights(alpha, N)
     return omega, w, s
 end
 
-f_vectorfield(t, y, fdefun) = fdefun(zeros(length(y)), y, 0, t)
+BDFf_vectorfield(t, y, fdefun) = fdefun(zeros(length(y)), y, 0, t)
 Jf_vectorfield(t, y, Jfdefun) = Jfdefun(t, y)
 
 function ABMStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)

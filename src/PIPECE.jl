@@ -52,7 +52,7 @@ function solve(prob::FODESystem, h, ::PECE)
     end
 
 
-    f_temp = f_vectorfield(t0, u0[:, 1], f)
+    f_temp = sysf_vectorfield(t0, u0[:, 1], f)
 
     r::Int = 16
     N::Int = ceil(Int64, (T-t0)/h)
@@ -127,7 +127,7 @@ function solve(prob::FODESystem, h, ::PECE)
     # Initializing solution and proces of computation
     t = t0 .+ collect(0:N)*h
     y[:, 1] = u0[:, 1]
-    fy[:, 1] = f_temp ;
+    fy[:, 1] = f_temp
     (y, fy) = ABMTriangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f) ;
 
     # Main process of computation by means of the FFT algorithm
@@ -135,7 +135,7 @@ function solve(prob::FODESystem, h, ::PECE)
     nx0::Int = 0; ny0::Int = 0
     for qr = 0 : Qr
         L = 2^qr 
-        (y, fy) = DisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f) ;
+        (y, fy) = DisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f)
         ff[1:2*card_ff] = [ff[1:card_ff]; ff[1:card_ff]] 
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -154,7 +154,7 @@ function solve(prob::FODESystem, h, ::PECE)
 end
 
 
-function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N , METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f)
+function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f)
 
     nxi::Int = nx0; nxf::Int = nx0 + L*r - 1
     nyi::Int = ny0; nyf::Int = ny0 + L*r - 1
@@ -249,7 +249,7 @@ function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_siz
         end
         St = StartingTerm(t[n+1], u0, m_alpha, t0, m_alpha_factorial)
         y_pred = St + METH.halpha1.*(zn_pred[:, n+1] + Phi)
-        f_pred = f_vectorfield(t[n+1], y_pred, f)
+        f_pred = sysf_vectorfield(t[n+1], y_pred, f)
         
         # Evaluation of the corrector
         if METH.mu == 0
@@ -275,7 +275,7 @@ function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_siz
                 else
                     stop = (mu_it == METH.mu)
                 end
-                global fn1 = f_vectorfield(t[n+1], yn1, f)
+                global fn1 = sysf_vectorfield(t[n+1], yn1, f)
                 yn0 = yn1; fn0 = fn1
             end
             y[:, n+1] = yn1
@@ -286,7 +286,7 @@ function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_siz
 end
 
 
-f_vectorfield(t, y, f_fun!) = f_fun!(t, y)
+sysf_vectorfield(t, y, f_fun) = f_fun(t, y)
 
 function  StartingTerm(t, u0, m_alpha, t0, m_alpha_factorial)
     ys = zeros(size(u0, 1), 1)

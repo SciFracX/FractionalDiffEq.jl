@@ -39,7 +39,7 @@ function solve(prob::FODESystem, h, ::PIEX)
     end
 
 
-    f_temp = f_vectorfield(t0, u0[:, 1], f)
+    f_temp = sysf_vectorfield(t0, u0[:, 1], f)
 
     r::Int = 16
     N::Int = ceil(Int64, (T-t0)/h)
@@ -114,7 +114,7 @@ function solve(prob::FODESystem, h, ::PIEX)
     nx0::Int = 0; ny0::Int = 0
     for qr = 0 : Qr
         L = 2^qr 
-        (y, fy) = DisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, α)
+        (y, fy) = PIDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, α)
         ff[1:2*card_ff] = [ff[1:card_ff]; ff[1:card_ff]] 
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -133,7 +133,7 @@ function solve(prob::FODESystem, h, ::PIEX)
 end
 
 
-function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, alpha)
+function PIDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, alpha)
 
     nxi::Int = nx0; nxf::Int = nx0 + L*r - 1
     nyi::Int = ny0; nyf::Int = ny0 + L*r - 1
@@ -149,7 +149,7 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , METH, problem_
         
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         
-        zn = PIEXQuadrato(nxi, nxf, nyi, nyf, fy, zn, N, METH, problem_size, alpha_length)
+        zn = PIEXQuadrato(nxi, nxf, nyi, nyf, fy, zn, N, METH, problem_size, alpha_length, alpha)
         
         (y, fy) = PIEXTriangolo(nxi, nxi+r-1, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, alpha)
         i_triangolo = i_triangolo + 1
@@ -172,7 +172,7 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , METH, problem_
     return y, fy
 end
 
-function PIEXQuadrato(nxi, nxf, nyi, nyf, fy, zn, N, METH, problem_size, alpha_length)
+function PIEXQuadrato(nxi, nxf, nyi, nyf, fy, zn, N, METH, problem_size, alpha_length, alpha)
     coef_end::Int = nxf-nyi+1
     i_fft::Int = log2(coef_end/METH.r) 
     funz_beg::Int = nyi+1; funz_end::Int = nyf+1
@@ -216,14 +216,14 @@ function PIEXTriangolo(nxi, nxf, t, y, fy, zn, N, METH, problem_size, alpha_leng
         St[i_alpha_1] = y[i_alpha_1, n]
         
         y[:, n+1] = St + METH.halpha1.*(zn[:, n+1] + Phi)
-        fy[:, n+1] = f_vectorfield(t[n+1], y[:, n+1], f)
+        fy[:, n+1] = sysf_vectorfield(t[n+1], y[:, n+1], f)
         
     end
     return y, fy
 end
 
 
-f_vectorfield(t, y, f_fun!) = f_fun!(t, y)
+sysf_vectorfield(t, y, f_fun) = f_fun(t, y)
 
 function  StartingTerm(t, u0, m_alpha, t0, m_alpha_factorial)
     ys = zeros(size(u0, 1), 1)
