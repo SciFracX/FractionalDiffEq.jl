@@ -3,6 +3,8 @@
 
     solve(prob::FODESystem, h, GL())
 
+Use Grunwald Letnikov difference method to solve system of system of FODE.
+
 ### Reference
 
 ```tex
@@ -30,7 +32,7 @@ function solve(prob::FODESystem, h, ::GL)
     result = zeros(Float64, length(u0), n)
     result[:, 1] = u0
 
-    # generating coefficients Cα
+    # generating generalized binomial Cα
     Cα = zeros(Float64, n)
     Cα[1] = 1
     @fastmath @inbounds @simd for j in range(2, n, step=1)

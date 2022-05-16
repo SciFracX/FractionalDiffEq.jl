@@ -154,6 +154,17 @@ struct FractionalDifferenceProblem <: FDEProblem
     u0
 end
 
+"""
+    FractionalDifferenceSystem(f, α, x0)
+
+Define fractional difference equation system.
+"""
+struct FractionalDifferenceSystem <: FDEProblem
+    fun::Function
+    α
+    u0
+end
+
 
 """
     FIEProblem(parameters, orders, rightfun, tspan)

@@ -60,6 +60,7 @@ FractionalDiffEq.DOMatrixDiscrete
 
 ```@docs
 FractionalDiffEq.PECEDifference
+FractionalDiffEq.GL
 ```
 
 ## Fractional Integral Equations

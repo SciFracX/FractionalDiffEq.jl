@@ -2,7 +2,7 @@
 
 There are also some solvers can be used to solve Fractional Differences Equations in FractionalDiffEq.jl.
 
-Fractional Differences Equations has the form:
+Fractional Differences Equations with the form:
 
 ```math
 \Delta^{\alpha}x(t)=f(t+\alpha,\ x(t+\alpha))
@@ -40,3 +40,33 @@ plot(sol, seriestype=:scatter, legend=:bottomright)
 And plot the solution:
 
 ![Differences](./assets/fractionaldifference.png)
+
+## System of Fractional Difference Equations
+
+Let's see if we have a system of fractional difference equations:
+
+```math
+\begin{cases}
+{_3^G\nabla}_k^\alpha x_1(k+1)=-0.05x_2(k)-0.05x_3(k)+0.01\tanh(x_2(k))\\
+{_3^G\nabla}_k^\alpha x_2(k+1)=0.05x_1(k)+0.02x_2(k)+0.01\tanh(x_1(k))\\
+{_3^G\nabla}_k^\alpha x_3(k+1)=0.1-0.2x_3(k)+0.05x_1(k)x_3(k)+0.01\tanh(x_3(k))
+\end{cases}
+```
+
+To solve this system of fractional difference equations, we only need to follow the procedure likewise:
+
+```julia
+using FractionalDiffEq, Plots
+
+function sys!(du, u, p, t)
+    du[1] = -0.05*u[2] - 0.05*u[3] + 0.01*tanh(u[2])
+    du[2] = 0.05*u[1] + 0.02*u[2] + 0.01*tanh(u[1])
+    du[3] = 0.1 - 0.2*u[3] + 0.05*u[1]*u[3] + 0.01*tanh(u[3])
+end
+prob = FractionalDifferenceSystem(sys!, 0.98, [1, -1, 0])
+result = solve(prob, 7, GL())
+
+plot(result[1, :], result[2, :], result[3, :], seriestype=:scatter)
+```
+
+![FNN](./assets/fractionalneuralnetwork.png)

@@ -1,5 +1,18 @@
 # Fractional Order Chen System
 
+Fractional order[Chen system](https://www.worldscientific.com/doi/abs/10.1142/s0218127499001024):
+
+```math
+\begin{cases}
+D^{\alpha_1}x=a(y-x)\\
+D^{\alpha_2}y=(c-a)x-xz+cy\\
+D^{\alpha_3}z=xy-bz
+\end{cases}
+```
+
+Behave chaotic property when ``a=35``, ``b=3``, ``c=28``.
+
+
 ```julia
 using FractionalDiffEq
 

@@ -46,6 +46,7 @@ include("DistributedOrder/matrix.jl")
 
 # Fractional Differences equations
 include("FractionalDifferences/PECE.jl")
+include("FractionalDifferences/GL.jl")
 
 # Fractional integral equations
 include("FIE/Qmat.jl")
@@ -65,7 +66,7 @@ export FractionalDiffEqAlgorithm
 export solve, FDEProblem, FPDEProblem, FDDEProblem
 
 # Detailed problem types
-export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FractionalDifferenceProblem, FIEProblem, FDDESystem, FDDEMatrixProblem
+export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FractionalDifferenceProblem, FIEProblem, FDDESystem, FDDEMatrixProblem, FractionalDifferenceSystem
 
 export AbstractFDESolution, FODESolution, FIESolution, FDifferenceSolution, DODESolution
 
