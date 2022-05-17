@@ -22,7 +22,6 @@ include("ClosedForm/highprecision.jl")
 
 include("GL/GLWithMemory.jl")
 include("GL/GL.jl")
-#include("Direct.jl")
 include("ChebSpectral.jl")
 
 include("NonLinear/NonLinear.jl")
@@ -62,13 +61,30 @@ include("auxiliary.jl")
 
 export FractionalDiffEqAlgorithm
 
-# Export general types
-export solve, FDEProblem, FPDEProblem, FDDEProblem
+# General types
+export solve, FDEProblem
 
-# Detailed problem types
-export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FractionalDifferenceProblem, FIEProblem, FDDESystem, FDDEMatrixProblem, FractionalDifferenceSystem
+# FPDE problems
+export FPDEProblem
 
-export AbstractFDESolution, FODESolution, FIESolution, FDifferenceSolution, DODESolution
+# FDDE problems
+export FDDEProblem, FDDESystem, FDDEMatrixProblem
+
+# FODE problems
+export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem
+
+# Fractional Difference probelms
+export FractionalDifferenceProblem, FractionalDifferenceSystem
+
+# FIE problems
+export FIEProblem
+
+
+###################################################
+
+
+export AbstractFDESolution
+export FODESolution, FIESolution, FDifferenceSolution, DODESolution
 
 # FODE solvers
 export PIEX, PIIM, PITrap, PIPECE, PIIMRect, PIIMTrap
@@ -78,7 +94,7 @@ export ChebSpectral
 # FPDE solvers
 export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF, GLDiff
 
-# System of FDE solvers
+# System of FODE solvers
 export NonLinearAlg, GLWithMemory, FLMMBDF, FLMMNewtonGregory, FLMMTrap, PIEX
 
 # FDDE solvers
@@ -93,7 +109,7 @@ export PECEDifference
 # Fractional Integral Equations solvers
 export SpectralUltraspherical
 
-
+###################################################
 
 # Export some api to construct the equation
 export eliminator, RieszMatrix, omega, meshgrid

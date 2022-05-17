@@ -108,3 +108,46 @@ end
     @test_nowarn show(fddeprob)
     @test_nowarn show(fddesol)
 end
+
+@testset "Test FDDESystem show method" begin
+    function EnzymeKinetics!(dy, y, ϕ, t)
+        dy[1] = 10.5-y[1]/(1+0.0005*ϕ[4]^3)
+        dy[2] = y[1]/(1+0.0005*ϕ[4]^3)-y[2]
+        dy[3] = y[2]-y[3]
+        dy[4] = y[3]-0.5*y[4]
+    end
+    q = [60, 10, 10, 20]; α = [0.95, 0.95, 0.95, 0.95]
+    fddesystemprob = FDDESystem(EnzymeKinetics!, q, α, 4, 6)
+
+    @test_nowarn show(fddesystemprob)
+end
+
+@testset "Test DODEProblem show method" begin
+    h = 0.5; t = collect(0:h:1)
+    dodefun(t)=0
+    dodeprob = DODEProblem([1, 0.1], [x->6*x*(1-x), 0], (0, 1), dodefun, 1, t)
+    dodesol = solve(prob, h, DOMatrixDiscrete())
+
+    @test_nowarn show(dodeprob)
+    @test_nowarn show(dodesol)
+end
+
+@testset "Test FractionalDifferenceProblem" begin
+    differencefun(x) = 0.5*x+1
+    α=0.5;x0=1;
+    T=1; h=0.1
+    differenceprob = FractionalDifferenceProblem(differencefun, α, x0)
+    differencesol = solve(differenceprob, T, h, PECEDifference())
+
+    @test_nowarn show(differenceprob)
+    @test_nowarn show(differencesol)
+end
+
+@testset "Test FIEProblem show method" begin
+    fietspan = LinRange(-1, 1, 5)
+    fieprob = FIEProblem([1, 1], [1, 0.5], 1, fietspan)
+    fiesol = solve(fieprob, 20, SpectralUltraspherical())
+
+    @test_nowarn show(fieprob)
+    @test_nowarn show(fiesol)
+end
