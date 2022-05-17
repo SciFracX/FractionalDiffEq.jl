@@ -155,9 +155,15 @@ struct FractionalDifferenceProblem <: FDEProblem
 end
 
 """
-    FractionalDifferenceSystem(f, α, x0)
+    FractionalDifferenceSystem(f, α, u0)
 
-Define fractional difference equation system.
+Define Fractional Difference System with the general constructure:
+
+```math
+{_{a-m}^G\nabla_k^\alpha x(k+1)}=f(x(k))\\
+```
+
+With given initial condition ``x(i)``.
 """
 struct FractionalDifferenceSystem <: FDEProblem
     fun::Function

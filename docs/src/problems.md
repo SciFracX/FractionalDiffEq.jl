@@ -52,6 +52,7 @@ FractionalDiffEq.DODEProblem
 
 ```@docs
 FractionalDiffEq.FractionalDifferenceProblem
+FractionalDiffEq.FractionalDifferenceSystem
 ```
 
 ## FIEProblem
