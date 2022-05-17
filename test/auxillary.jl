@@ -126,7 +126,7 @@ end
     h = 0.5; t = collect(0:h:1)
     dodefun(t)=0
     dodeprob = DODEProblem([1, 0.1], [x->6*x*(1-x), 0], (0, 1), dodefun, 1, t)
-    dodesol = solve(prob, h, DOMatrixDiscrete())
+    dodesol = solve(dodeprob, h, DOMatrixDiscrete())
 
     @test_nowarn show(dodeprob)
     @test_nowarn show(dodesol)
