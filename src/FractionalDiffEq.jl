@@ -1,8 +1,17 @@
 module FractionalDiffEq
 
-using LinearAlgebra, SpecialFunctions, SparseArrays, ApproxFun, InvertedIndices, QuadGK
-using SpecialMatrices, Polynomials, FFTW, UnPack, LoopVectorization, HypergeometricFunctions
-using ToeplitzMatrices, RecipesBase, ForwardDiff
+using LinearAlgebra, SpecialFunctions, SparseArrays
+using ApproxFun: Fun, Ultraspherical, coefficients
+using InvertedIndices
+using QuadGK: quadgk
+using SpecialMatrices
+using FFTW: fft, ifft
+using UnPack:@unpack
+using LoopVectorization: @turbo
+using HypergeometricFunctions
+using ToeplitzMatrices
+using RecipesBase
+using ForwardDiff
 
 include("PECE.jl")
 include("matrix.jl")
@@ -118,7 +127,7 @@ export eliminator, RieszMatrix, omega, meshgrid
 export bagleytorvik, diffusion
 
 # Auxiliary functions
-export mittleff, mittlefferr, mittleffderiv
+export mittleff, mittleffderiv
 
 # Distributed order auxiliary SpecialFunctions
 export DOB, DOF, DORANORT, isFunction
