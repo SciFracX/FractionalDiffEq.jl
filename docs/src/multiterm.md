@@ -1,13 +1,13 @@
-# Multi term FDE
+# Multi-term FODE
 
-By specifying different orders in the equation, we can handle multi-term differential equations now!
+By specifying different orders in the equation, we can handle multi-terms FODE now!
 
 Let's see if we have an initial value problem with multiple terms derivative containing both fractional and integer, we can use the **FODEMatrixDiscrete** algorithm to solve the equation.
 
 All we need to do is passing the parameters and orders of the fractional ordinary differential equation to the API ```solve``` as two arrays.
 
 !!! warning "The parameters and orders array must have the same length"
-    When we are solving the multi-terms FDE problem, please note we should keep the parameters array and orders array have the same length.
+    When we are solving the multi-terms FODE problem, please note we should keep the parameters array and orders array have the same length.
 
 ## Detailed Usage
 
@@ -17,15 +17,15 @@ Let's see if we have an equation like:
 2y''(t)+4D^{1.5}y(t)=1
 ```
 
-To solve this equation, you can use the code:
+To solve the multi-terms fractional order  equation, you can use the code:
 
 ```julia
 rightside = 1
 prob = MultiTermsFODEProblem([2, 4], [2, 1.5], rightside, [0, 0], 30)
-solve(prob, 0.01, FODEMatrixDiscrete())
+sol = solve(prob, 0.01, FODEMatrixDiscrete())
 ```
 
-Bingo! the result would represent the numerical solution of this equation!!!!
+Bingo! The result ```sol``` is the numerical solution of this equation!!!!
 
 ## Example
 
