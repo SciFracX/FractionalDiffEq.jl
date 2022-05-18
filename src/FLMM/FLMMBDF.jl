@@ -223,44 +223,6 @@ function BDFFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, probl
     return y, fy
 end
 
-function FastConv(x, y)
-        Lx = length(x); Ly = size(y, 2); problem_size = size(y, 1)
-    
-        r = Lx
-        z = zeros(Number, problem_size, r)
-        X = ourfft(x, r)
-        for i = 1:problem_size
-            Y = ourfft(y[i, :]', r)
-            Z = X.*Y
-            z[i, :] = ourifft(Z, r)
-        end
-    return z
-end
-
-function ourfft(x, n)
-    s=length(x)
-    x=x[:]
-    if s > n
-        return fft(x[1:n])
-    elseif s < n
-        return fft([x; zeros(n-s)])
-    else
-        return fft(x)
-    end
-end
-
-function ourifft(x, n)
-    s=length(x)
-    x=x[:]
-    if s > n
-        return ifft(x[1:n])
-    elseif s < n
-        return ifft([x; zeros(n-s)])
-    else
-        return ifft(x)
-    end
-end
-
 function BDFWeights(alpha, N)
     # BDF-2 with generating function (2/3/(1-4x/3+x^2/3))^alpha
     omega = zeros(1, N+1)

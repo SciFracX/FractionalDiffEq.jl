@@ -12,7 +12,7 @@ function FastConv(x, y)
     return z
 end
 
-function ourfft(x::Vector, n)
+function ourfft(x, n)
     s=length(x)
     x=x[:]
     if s > n

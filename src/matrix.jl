@@ -212,7 +212,7 @@ function solve(α, β, κ, T, M, N, ::FPDEMatrixDiscrete)
 
     return result
 end
-
+#=
 """
 Shifter matrices for representing time delays with discrete matrix.
 """
@@ -279,6 +279,7 @@ function fdpde(alpha, alphad, beta, steps)
     (XX, YY)=meshgrid(tau*(0:n-1),h*(0:m-1))
     return XX, YY, U
 end
+=#
 #=
 sol=fdpde(0.5, 0.5, 0.5, 1)
 using Plots
