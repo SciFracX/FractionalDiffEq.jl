@@ -97,9 +97,9 @@ Let's see if the initial value problem like:
 
 ```julia
 using FractionalDiffEq, Plots
-T=30; h=0.01
+h=0.01; tspan = (0, 30)
 rightfun(x, y) = 172/125*cos(4/5*x)
-prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], 0, T)
+prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], (0, T))
 sol = solve(prob, h, PIEX())
 plot(sol, legend=:bottomright)
 ```
@@ -133,8 +133,8 @@ end
 α = [0.93, 0.99, 0.92];
 x0 = [0.2; -0.1; 0.1];
 h = 0.001; tn = 0.5;
-prob = FODESystem(chua!, α, x0)
-result = solve(prob, h, tn, NonLinearAlg())
+prob = FODESystem(chua!, α, x0, tn)
+result = solve(prob, h, NonLinearAlg())
 plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)
 ```
 

@@ -15,12 +15,13 @@ ISBN:9787030543981
 struct ClosedForm <: FractionalDiffEqAlgorithm end
 
 
-function solve(prob::MultiTermsFODEProblem, ::ClosedForm)
-    @unpack parameters, orders, rightfun, rparameters, rorders, T = prob
-    h = T[2]-T[1]
+function solve(prob::MultiTermsFODEProblem, h, ::ClosedForm)
+    @unpack parameters, orders, rightfun, rparameters, rorders, u0, tspan = prob
+    t0 = tspan[1]; T = tspan[2]
     D = sum(parameters./(h.^orders))
-    nT = length(T)
-    u = rightfun.(T)
+    t = collect(t0:h:T)
+    nT = length(t)
+    u = rightfun.(t)
 
     #TODO: For small orders? e.g. if rparameters and rorders is Number???
     isa(rparameters, Number) && typeof(rorders) <: Number ? D1 = rparameters/h^rorders : D1 = rparameters[:]./h.^rorders[:]
@@ -45,5 +46,5 @@ function solve(prob::MultiTermsFODEProblem, ::ClosedForm)
     @fastmath @inbounds @simd for i=2:nT
         y[i] = (W[1:i, (nA+1):end]*D1)'*y1[i:-1:1]
     end
-    return FODESolution(T, y)
+    return FODESolution(t, y)
 end

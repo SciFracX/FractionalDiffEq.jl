@@ -3,7 +3,8 @@ Multiple dispatch of explicit product integral methods for multi term FODEProble
 =#
 
 function solve(prob::MultiTermsFODEProblem, h, ::PIEX)
-    @unpack parameters, orders, rightfun, u0, t0, T = prob
+    @unpack parameters, orders, rightfun, u0, tspan = prob
+    t0 = tspan[1]; T = tspan[2]
     u0 = u0[:]'
     Q = length(orders)
     orders= sort(orders)

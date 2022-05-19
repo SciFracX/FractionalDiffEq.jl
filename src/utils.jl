@@ -20,7 +20,7 @@ function Base.show(io::IO, prob::MultiTermsFODEProblem)
     printstyled(" with order ")
     printstyled("$(prob.orders)", color=:red)
     println()
-    println("timespan: $(prob.T)")
+    println("timespan: $(prob.tspan)")
     println("u0: $(prob.u0)")
 end
 

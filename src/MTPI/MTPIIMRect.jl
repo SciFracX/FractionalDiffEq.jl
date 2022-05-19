@@ -6,7 +6,8 @@ Use implicit product integration rectangular type method to solve multi-terms FO
 struct PIIMRect <: FractionalDiffEqAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, h, ::PIIMRect)
-    @unpack parameters, orders, rightfun, u0, t0, T = prob
+    @unpack parameters, orders, rightfun, u0, tspan = prob
+    t0 = tspan[1]; T = tspan[2]
     u0 = u0[:]'
 
     # Generate the jacobian of the given function

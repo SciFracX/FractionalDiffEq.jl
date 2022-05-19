@@ -6,7 +6,8 @@ Use product integration predictor-corrector method to solve multi-terms FODE.
 struct PIPECE <: FractionalDiffEqAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, h, ::PIPECE)
-    @unpack parameters, orders, rightfun, u0, t0, T = prob
+    @unpack parameters, orders, rightfun, u0, tspan = prob
+    t0 = tspan[1]; T = tspan[2]
     mu=1
     mu_tol=1e-6
     u0 = u0[:]'

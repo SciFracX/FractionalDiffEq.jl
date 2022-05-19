@@ -8,10 +8,11 @@ Use Closed-Form Hankel matrix algorithm to obtain numerical solution at zero ini
 struct ClosedFormHankelM <: FractionalDiffEqAlgorithm end
 
 
-function solve(prob::MultiTermsFODEProblem, ::ClosedFormHankelM)
-    @unpack parameters, orders, rightfun, rparameters, rorders, T = prob
-    h = T[2]-T[1]
-    u = rightfun.(T)
+function solve(prob::MultiTermsFODEProblem, h, ::ClosedFormHankelM)
+    @unpack parameters, orders, rightfun, rparameters, rorders, u0, tspan = prob
+    t0 = tspan[1]; T = tspan[2]
+    t = collect(t0:h:T)
+    u = rightfun.(t)
     u = u[:]
     A, B = 0, 0
 
@@ -31,7 +32,7 @@ function solve(prob::MultiTermsFODEProblem, ::ClosedFormHankelM)
     B = rotl90(newhankel(B[end:-1:1]))
 
     y = B*inv(A)*u
-    return FODESolution(T, y)
+    return FODESolution(t, y)
 end
 
 function newhankel(v)

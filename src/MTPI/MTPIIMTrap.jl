@@ -6,7 +6,8 @@ Use implicit product integration trapezoidal type method to solve multi-terms FO
 struct PIIMTrap <: FractionalDiffEqAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, h, ::PIIMTrap)
-    @unpack parameters, orders, rightfun, u0, t0, T = prob
+    @unpack parameters, orders, rightfun, u0, tspan = prob
+    t0 = tspan[1]; T = tspan[2]
     u0 = u0[:]'
 
     # Generate the jacobian of the given function
