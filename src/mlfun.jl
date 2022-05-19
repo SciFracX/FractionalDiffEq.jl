@@ -25,20 +25,17 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 =#
 
-
 """
-```tex
-@ARTICLE{Gorenflo_computationof,
-    author = {Rudolf Gorenflo and Joulia Loutchko and Yuri Luchko},
-    title = {Computation of the Mittag-Leffler function Eα, β(z) and its derivative},
-    journal = {FRACT. CALC. APPL. ANAL},
-    year = {},
-    pages = {2002}
+@article{Garrappa2015NumericalEO,
+  title={Numerical Evaluation of Two and Three Parameter Mittag-Leffler Functions},
+  author={Roberto Garrappa},
+  journal={SIAM J. Numer. Anal.},
+  year={2015},
+  volume={53},
+  pages={1350-1369}
 }
-```
 """
 
-# The second definition would work for both complex and real
 myeps(x) = x |> one |> float |> eps
 myeps(x::Complex) =  x |> real |> myeps
 
@@ -48,8 +45,6 @@ myeps(x::Complex) =  x |> real |> myeps
 Compute the derivative of the Mittag-Leffler function at `z` for parameters `α, β`.
 """
 function mittleffderiv(α, β, z)
-    # Derivative of Mittag Leffler function WRT to main argument Z.
-    # Take q = 0.5. Paper requires |z| <= q < 1.
     q = 1//2
     #case 1, small z
     if abs(z) <= q
@@ -64,7 +59,7 @@ function mittleffderiv(α, β, z)
             k₁ = maximum([((3-α-β)/α) + 1, ((1-2*ω*α + sqrt(D))/(2*(α^2)))+1])
         end
         k₀ = maximum([k₁, log(myeps(z)*(1-abs(z)))/log(abs(z))])
-        k₀ = ceil(Int, k₀) #take ceiling (not specified in paper whether floor or ceiling)
+        k₀ = ceil(Int, k₀)
         out = zero(z)
         for k in 0:k₀
             out = out + ((k + 1)*z^k)/(gamma(α + β + α*k))

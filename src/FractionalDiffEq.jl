@@ -1,12 +1,13 @@
 module FractionalDiffEq
 
-using LinearAlgebra, SpecialFunctions, SparseArrays
+using LinearAlgebra
+using SpecialFunctions
+using SparseArrays
 using ApproxFun: Fun, Ultraspherical, coefficients
 using InvertedIndices
-using QuadGK: quadgk
 using SpecialMatrices
 using FFTW: fft, ifft
-using UnPack:@unpack
+using UnPack: @unpack
 using LoopVectorization: @turbo
 using HypergeometricFunctions
 using ToeplitzMatrices
@@ -16,12 +17,12 @@ using ForwardDiff
 include("PECE.jl")
 include("matrix.jl")
 include("PI.jl")
-include("PIEX.jl")
+include("SystemPI/PIEX.jl")
 include("MTPI/MTPIEX.jl")
 include("MTPI/MTPIPECE.jl")
 include("MTPI/MTPIIMTrap.jl")
 include("MTPI/MTPIIMRect.jl")
-include("PIPECE.jl")
+include("SystemPI/PIPECE.jl")
 include("FLMM/FLMMBDF.jl")
 include("FLMM/FLMMNewtonGregory.jl")
 include("FLMM/FLMMTrap.jl")
