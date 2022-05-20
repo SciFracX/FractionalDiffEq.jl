@@ -11,7 +11,7 @@ function Base.show(io::IO, prob::SingleTermFODEProblem)
     printstyled(" with order ")
     printstyled("$(prob.α)", color=:red)
     println()
-    println("timespan: $(prob.T)")
+    println("timespan: $(prob.tspan)")
     println("u0: $(prob.u0)")
 end
 

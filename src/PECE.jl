@@ -37,7 +37,7 @@ struct SingleTermFODEProblem <: FDEProblem
     f::Function
     α::Float64
     u0
-    T
+    tspan::Union{Tuple, Number}
 end
 
 
@@ -240,8 +240,9 @@ struct PECE <: FractionalDiffEqAlgorithm end
 Generalproblem solving API for solving FDE problems.
 """
 function solve(FODE::SingleTermFODEProblem, h::Float64, ::PECE)
-    @unpack f, α, u0, T = FODE
-    N::Int64 = round(Int, T/h)
+    @unpack f, α, u0, tspan = FODE
+    t0 = tspan[1]; T = tspan[2]
+    N::Int64 = round(Int, (T-t0)/h)
     y = zeros(N+1) # Initialize the solution array
     leftsum = zero(Float64)
     l = floor(α)
@@ -254,10 +255,10 @@ function solve(FODE::SingleTermFODEProblem, h::Float64, ::PECE)
     end
     
     @fastmath @inbounds @simd for n ∈ 0:N
-        y[n+1] = leftsum + h^α/gamma(α+2)*(f((n+1)*h, predictor(f, y, α, n, h, u0, T)) + right(f, y, α, n, h))
+        y[n+1] = leftsum + h^α/gamma(α+2)*(f(t0+(n+1)*h, predictor(f, y, α, n, h, u0, T)) + right(f, y, α, n, h))
     end
 
-    tspan = collect(0:h:T)
+    tspan = collect(t0:h:T)
 
     return FODESolution(tspan, y)
 end

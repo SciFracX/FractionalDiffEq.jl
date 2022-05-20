@@ -16,8 +16,9 @@ doi={10.1109/MOCAST.2019.8742063}}
 struct GL <: FractionalDiffEqAlgorithm end
 
 function solve(FODE::SingleTermFODEProblem, h, ::GL)
-    @unpack f, α, u0, T = FODE
-    N::Int = floor(Int, T/h)+1
+    @unpack f, α, u0, tspan = FODE
+    t0 = tspan[1]; T = tspan[2]
+    N::Int = floor(Int, (T-t0)/h)+1
     c = zeros(Float64, N)
 
     cp::Float64 = 1.0
@@ -35,7 +36,7 @@ function solve(FODE::SingleTermFODEProblem, h, ::GL)
         @fastmath @inbounds @simd for j=1:i-1
             right += c[j]*y[i-j]
         end
-        y[i] = f((i-1)*h, y[i-1])*h^α - right
+        y[i] = f(t0+(i-1)*h, y[i-1])*h^α - right
     end
-    return FODESolution(collect(0:h:T), y)
+    return FODESolution(collect(t0:h:T), y)
 end

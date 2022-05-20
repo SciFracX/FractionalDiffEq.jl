@@ -15,89 +15,23 @@
 """
 struct PIEX <: FractionalDiffEqAlgorithm end
 
-"""
-# Usage
-
-    solve(prob::SingleTermFODEProblem, h, PIEX())
-
-### References
-
-```tex
-@inproceedings{Garrappa2018NumericalSO,
-  title={Numerical Solution of Fractional Differential Equations: A Survey and a Software Tutorial},
-  author={Roberto Garrappa},
-  year={2018}
-}
-```
-"""
-struct PIIM <: FractionalDiffEqAlgorithm end
-
-"""
-# Usage
-
-    solve(prob::SingleTermFODEProblem, h, PITrap())
-
-### References
-
-```tex
-@inproceedings{Garrappa2018NumericalSO,
-  title={Numerical Solution of Fractional Differential Equations: A Survey and a Software Tutorial},
-  author={Roberto Garrappa},
-  year={2018}
-}
-```
-"""
-struct PITrap <: FractionalDiffEqAlgorithm end
-
 function solve(FODE::SingleTermFODEProblem, h, ::PIEX)
-    @unpack f, α, u0, T = FODE
-    N::Int64 = round(T/h)
-    y = zeros(N)
+    @unpack f, α, u0, tspan = FODE
+    t0 = tspan[1]; T = tspan[2]
+    N::Int64 = round(Int, (T-t0)/h)
+    y = zeros(N+1)
 
     y[1]=u0
-    for j in range(2, N, step=1)
+    for j in range(2, N+1, step=1)
         middle=0
         @turbo for i=0:j-1
-            middle += bcoefficients(j-i, α)*f(i*h, y[i+1])
+            middle += bcoefficients(j-i, α)*f(t0+i*h, y[i+1])
         end
         middle = middle/gamma(α+1)
         y[j] = u0 + middle*h^α
     end
-    return y
-end
-
-function solve(FODE::SingleTermFODEProblem, h, ::PIIM)
-    @unpack f, α, u0, T = FODE
-    N::Int64 = round(T/h)
-    y = zeros(N)
-
-    y[1]=u0
-    for j in range(2, N, step=1)
-        middle=0
-        for i=1:j
-            middle += bcoefficients(j-i, α)*f(i*h, y[i])
-        end
-        middle = middle/gamma(α+1)
-        y[j] = u0 + middle*h^α
-    end
-    return y
-end
-
-function solve(FODE::SingleTermFODEProblem, h, ::PITrap)
-    @unpack f, α, u0, T = FODE
-    N::Int64 = round(T/h)
-    y = zeros(N)
-    y[1] = u0
-
-    for n in range(2, N, step=1)
-        middle=0
-        for j=1:n
-            middle += acoefficients(n-j, α)*f(j*h, y[j])
-        end
-        middle = middle/gamma(α+2)
-        y[n] = u0 + h^α*(tacoefficients(n, α)+middle)
-    end
-    return y
+    t = collect(t0:h:T)
+    return FODESolution(t, y)
 end
 
 function acoefficients(n, α)
@@ -108,5 +42,4 @@ function acoefficients(n, α)
     end
 end
 
-tacoefficients(n, α) = ((n-1)^(α+1)-n^α*(n-α-1))/gamma(α+2)
 bcoefficients(n, α) = ((n+1)^α-n^α)

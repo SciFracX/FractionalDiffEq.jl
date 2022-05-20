@@ -69,8 +69,8 @@ So we can use FractionalDiffEq.jl to solve the problem:
 ```julia
 using FractionalDiffEq, Plots
 fun(x, y) = 1-y
-u0 = 0; T = 5; h = 0.001;
-prob = SingleTermFODEProblem(fun, 0.5, u0, T)
+u0 = 0; tspan = (0, 5); h = 0.001;
+prob = SingleTermFODEProblem(fun, 0.5, u0, tspan)
 sol = solve(prob, h, PECE())
 plot(sol)
 ```

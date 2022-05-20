@@ -97,7 +97,7 @@ export AbstractFDESolution
 export FODESolution, FIESolution, FDifferenceSolution, DODESolution
 
 # FODE solvers
-export PIEX, PIIM, PITrap, PIPECE, PIIMRect, PIIMTrap
+export PIEX, PIPECE, PIIMRect, PIIMTrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, GL
 export ChebSpectral
 

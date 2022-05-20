@@ -21,7 +21,7 @@ To solve the multi-terms fractional order  equation, you can use the code:
 
 ```julia
 rightside = 1
-prob = MultiTermsFODEProblem([2, 4], [2, 1.5], rightside, [0, 0], 30)
+prob = MultiTermsFODEProblem([2, 4], [2, 1.5], rightside, [0, 0], (0, 30))
 sol = solve(prob, 0.01, FODEMatrixDiscrete())
 ```
 
@@ -43,9 +43,9 @@ Model this problem and solve the equation:
 
 ```julia
 using FractionalDiffEq, Plots
-T = 30; h = 0.01
+tspan = (0, 30); h = 0.01
 rightfun(x, y) = 172/125*cos(4/5*x)
-prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], T)
+prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], tspan)
 sol = solve(prob, h, PIEx())
 plot(sol, legend=:bottomright)
 ```
@@ -72,12 +72,12 @@ y(0) = 0
 
 ```julia
 using FractionalDiffEq, Plots
-T = 30; h = 0.05
+tspan = (0, 30); h = 0.05
 tspan = collect(h:h:T)
 f(x) = 1/2*(-exp(-x)-sin(x)-cos(x)+2)
 target =f.(tspan)
 rightfun(x) = sin(x)
-prob = MultiTermsFODEProblem([1, 1], [2, 1], rightfun, T)
+prob = MultiTermsFODEProblem([1, 1], [2, 1], rightfun, tspan)
 sol = solve(prob, h, FODEMatrixDiscrete())
 plot(sol, title=s, legend=:bottomright, label="ODE Numerical Solution!")
 plot!(tspan, target, lw=3,ls=:dash,label="ODE Analytical Solution!")

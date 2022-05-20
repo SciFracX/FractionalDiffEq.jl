@@ -9,7 +9,5 @@ sol = solve(prob, 0.01, PECE())
 tspan = collect(0:0.01:20)
 target = analytical(tspan)
 
-gr()
-
 plot(sol, linewidth=5, label="Numerical", legend=:bottomright)
 plot!(tspan, target, lw=3, ls=:dash, label="Analytical")

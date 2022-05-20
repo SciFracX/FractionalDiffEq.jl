@@ -22,20 +22,11 @@ We can solve this problem by the following code using FractionalDiffEq.jl:
 
 ```julia
 using FractionalDiffEq, Plots
-
-# Analytical solution
-analytical(x) = x.^1.8 .*mittleff(1.8, 2.8, -x.^1.8)
-
-# Numerical solution
 fun(x, y) = 1-y
-α=1.8; h=0.01; T=20; u0=0
-prob = SingleTermFODEProblem(fun, α, u0, T)
+α=1.8; h=0.01; tspan = (0, 20); u0 = 0
+prob = SingleTermFODEProblem(fun, α, u0, tspan)
 sol = solve(prob, h, PECE())
-tspan = collect(0:0.01:20)
-target = analytical(tspan)
-
-plot(sol, title=s, linewidth=5, label="Numerical", legend=:bottomright)
-plot!(tspan, target, lw=3, ls=:dash, label="Analytical")
+plot(sol)
 ```
 
 By plotting the numerical result, we can get the approximation result:
@@ -51,8 +42,8 @@ First, we need to specify the problem we want to solve. Just by passing the para
 ```julia
 using FractionalDiffEq
 fun(x, y) = 1-y
-α = 1.8; u0 = 0; T = 20; h = 0.01;
-prob = SingleTermFODEProblem(fun, α, u0, T)
+α = 1.8; u0 = 0; Ts = (0, 20); h = 0.01;
+prob = SingleTermFODEProblem(fun, α, u0, Ts)
 ```
 
 The ```SingleTermFODEProblem``` is a class of fractional differential equation, describing equations with ``D^{\alpha}u=f(t, u)`` pattern. For other patterns and classes of fractional differential equation, please refer to [Problem types](@ref problems)
