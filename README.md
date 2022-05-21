@@ -98,7 +98,9 @@ FractionalDiffEq.jl is a powerful tool to solve system of fractional differentia
 
 Let's see if we have a Chua chaos system:
 
-$$ \begin{cases}D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x+1|-|x-1|)]\\D^{\alpha_2}y=x-y+z\\D^{\alpha_3}z=-10.593y-0.268z\end{cases} $$
+$$ \begin{cases}D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x+1|-|x-1|)]\\
+D^{\alpha_2}y=x-y+z\\
+D^{\alpha_3}z=-10.593y-0.268z\end{cases} $$
 
 By using the ```NonLinearAlg``` algorithms to solve this problem:
 
@@ -130,7 +132,7 @@ $$ _{0}^{C}\!D_{t}^{\alpha}y- \frac{\partial^\beta y}{\partial |x|^\beta} = f(x,
 
 With initial and boundry conditions:
 
-$$ y(0,t) = 0, \quad y(1,t) = 0 \qquad  \quad y(x,0) = 0 $$
+$$ y(0,t) = 0, \quad y(1,t) = 0 \quad y(x,0) = 0 $$
 
 
 Use the FPDE solvers in FractionalDiffEq.jl and plot the numerical approximation:
@@ -142,7 +144,9 @@ Use the FPDE solvers in FractionalDiffEq.jl and plot the numerical approximation
 
 There are also many powerful solvers for solving fractional delay differential equations.
 
-$$ D^\alpha_ty(t)=3.5y(t)(1-\frac{y(t-0.74)}{19}),\ y(0)=19.00001 $$
+$$ D^\alpha_ty(t)=3.5y(t)(1-\frac{y(t-0.74)}{19}) $$
+
+$$ y(0)=19.00001 $$
 
 
 With history function:
