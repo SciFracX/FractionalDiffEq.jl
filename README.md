@@ -51,18 +51,10 @@ pkg> add FractionalDiffEq
 
 Let's see if we have an initial value problem:
 
-$$
-
-D^{0.5}y(x)=1-y
-
-$$
+$$ D^{0.5}y(x)=1-y $$
 
 
-$$
-
-y(0)=0
-
-$$
+$$ y(0)=0 $$
 
 So we can use FractionalDiffEq.jl to solve the problem:
 
@@ -83,17 +75,9 @@ And if you plot the result, you can see the result of the fractional differentia
 
 Let's see if the initial value problem like:
 
-$$
+$$ y'''(t)+\frac{1}{16}{^C_0D^{2.5}_t}y(t)+\frac{4}{5}y''(t)+\frac{3}{2}y'(t)+\frac{1}{25}{^C_0D^{0.5}_t}y(t)+\frac{6}{5}y(t)=\frac{172}{125}\cos(\frac{4t}{5}) $$
 
-y'''(t)+\frac{1}{16}{^C_0D^{2.5}_t}y(t)+\frac{4}{5}y''(t)+\frac{3}{2}y'(t)+\frac{1}{25}{^C_0D^{0.5}_t}y(t)+\frac{6}{5}y(t)=\frac{172}{125}\cos(\frac{4t}{5})
-
-$$
-
-$$
-
-y(0)=0,\ y'(0)=0,\ y''(0)=0
-
-$$
+$$ y(0)=0,\ y'(0)=0,\ y''(0)=0 $$
 
 ```julia
 using FractionalDiffEq, Plots
@@ -114,11 +98,7 @@ FractionalDiffEq.jl is a powerful tool to solve system of fractional differentia
 
 Let's see if we have a Chua chaos system:
 
-$$
-
-\begin{cases}D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x+1|-|x-1|)]\\D^{\alpha_2}y=x-y+z\\D^{\alpha_3}z=-10.593y-0.268z\end{cases}
-
-$$
+$$ \begin{cases}D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x+1|-|x-1|)]\\D^{\alpha_2}y=x-y+z\\D^{\alpha_3}z=-10.593y-0.268z\end{cases} $$
 
 By using the ```NonLinearAlg``` algorithms to solve this problem:
 
@@ -146,19 +126,11 @@ And plot the result:
 
 FractionalDiffEq.jl provides powerful algorithms to solve fractional partial differential equations, let's see a diffusion equation here:
 
-$$
-
-_{0}^{C}\!D_{t}^{\alpha}y- \frac{\partial^\beta y}{\partial |x|^\beta} = f(x,t)
-
-$$
+$$ _{0}^{C}\!D_{t}^{\alpha}y- \frac{\partial^\beta y}{\partial |x|^\beta} = f(x,t) $$
 
 With initial and boundry conditions:
 
-$$
-
-y(0,t) = 0, \quad y(1,t) = 0 \qquad  \quad y(x,0) = 0
-
-$$
+$$ y(0,t) = 0, \quad y(1,t) = 0 \qquad  \quad y(x,0) = 0 $$
 
 
 Use the FPDE solvers in FractionalDiffEq.jl and plot the numerical approximation:
@@ -170,20 +142,12 @@ Use the FPDE solvers in FractionalDiffEq.jl and plot the numerical approximation
 
 There are also many powerful solvers for solving fractional delay differential equations.
 
-$$
-
-D^\alpha_ty(t)=3.5y(t)(1-\frac{y(t-0.74)}{19}),\ y(0)=19.00001
-
-$$
+$$ D^\alpha_ty(t)=3.5y(t)(1-\frac{y(t-0.74)}{19}),\ y(0)=19.00001 $$
 
 
 With history function:
 
-$$
-
-y(t)=19,\ t<0
-
-$$
+$$ y(t)=19,\ t<0 $$
 
 ```julia
 using FractionalDiffEq, Plots
@@ -201,11 +165,7 @@ plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 
 To solve fractional integral equations with FractionalDiffEq.jl, we only need to follow the previous process:
 
-$$
-
-u(x)+{_{-1}I_x^{1/2}}u(x)=1
-
-$$
+$$ u(x)+{_{-1}I_x^{1/2}}u(x)=1 $$
 
 
 ```julia
