@@ -85,7 +85,7 @@ end
         du[2] = u[1]*(b-u[3])-u[2]
         du[3] = u[1]*u[2]-c*u[3]
     end
-    prob = FODESystem(testf!, alpha, x0, tf)
+    prob = FODESystem(testf!, alpha, x0, (0, tf))
     result = solve(prob, h, GL())
     @test isapprox(result, [1.0 0.0 1.0
     -4.04478 13.5939 -0.352607
@@ -349,7 +349,7 @@ end
     t0=0; T=0.1; h=0.01
     y0=[1.2; 2.8]
     param=[1 3]
-    prob = FODESystem(testf, alpha, y0, t0, T)
+    prob = FODESystem(testf, alpha, y0, (t0, T))
     (t, y) = solve(prob, h, PIEX())
 
     @test isapprox(y, [ 1.2  1.20626  1.21061  1.21444  1.21793  1.22118  1.22424  1.22713  1.22989  1.23252  1.23504
@@ -365,8 +365,8 @@ end
     end
     alpha=[0.8; 0.8]
     t0=0; tfinal=0.5; y0=[0.2; 0.03]
-    h=0.1
-    prob = FODESystem(Brusselator, alpha, y0, t0, tfinal)
+    h=0.1; tspan=(t0, tfinal)
+    prob = FODESystem(Brusselator, alpha, y0, tspan)
     (t, y) = solve(prob, h, FLMMNewtonGregory())
 
     @test isapprox(y, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
@@ -382,8 +382,8 @@ end
     end
     alpha=[0.8; 0.8]
     t0=0; tfinal=0.5; y0=[0.2; 0.03]
-    h=0.1
-    prob = FODESystem(Brusselator, alpha, y0, t0, tfinal)
+    h=0.1; (t0, tfinal)
+    prob = FODESystem(Brusselator, alpha, y0, tspan)
     (t, y) = solve(prob, h, FLMMBDF())
 
     @test isapprox(y, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
@@ -399,8 +399,8 @@ end
     end
     alpha=[0.8; 0.8]
     t0=0; tfinal=0.5; y0=[0.2; 0.03]
-    h=0.1
-    prob = FODESystem(Brusselator, alpha, y0, t0, tfinal)
+    h=0.1; (t0, tfinal)
+    prob = FODESystem(Brusselator, alpha, y0, tspan)
     (t, y) = solve(prob, h, FLMMTrap())
 
     @test isapprox(y, [0.2   0.200531  0.201161  0.201808  0.202452  0.203088

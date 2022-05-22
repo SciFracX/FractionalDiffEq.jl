@@ -18,8 +18,9 @@ Use [Backward Differentiation Formula](https://en.wikipedia.org/wiki/Backward_di
 struct FLMMBDF <: FractionalDiffEqAlgorithm end
 
 function solve(prob::FODESystem, h, ::FLMMBDF)
-    @unpack f, α, u0, t0, T = prob
-    fdefun, alphas, y0, t0, tfinal = f, α, u0, t0, T
+    @unpack f, α, u0, tspan = prob
+    t0 = tspan[1]; tfinal = tspan[2]
+    fdefun, alphas, y0 = f, α, u0
     alpha = alphas[1]
     itmax = 100
     tol = 1.0e-6

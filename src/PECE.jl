@@ -121,8 +121,7 @@ struct FODESystem <: FDEProblem
     f::Function
     α::AbstractArray
     u0::AbstractArray
-    t0::Number
-    T::Number
+    tspan::Union{Tuple, Number}
 end
 
 FODESystem(f, α, u0, T) = FODESystem(f, α, u0, 0, T)# Start from t=0

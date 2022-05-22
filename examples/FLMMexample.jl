@@ -9,8 +9,8 @@ function Brusselator(du, u, p, t)
 end
 alpha=[0.8; 0.8]
 t0=0; tfinal=50; y0=[0.2; 0.03]
-h=0.01
-prob = FODESystem(Brusselator, alpha, y0, t0, tfinal)
+h=0.01; tspan = (t0, tfinal)
+prob = FODESystem(Brusselator, alpha, y0, tspan)
 #(t, y) = solve(prob, h, FLMMBDF())
 #(t, y) = solve(prob, h, FLMMNewtonGregory())
 (t, y) = solve(prob, h, FLMMTrap())
