@@ -70,7 +70,7 @@ end
 
 @testset "Test FODESystem show method" begin
     # FODESystem
-    h=0.5; tf=1
+    h=0.5; tspan=(0, 1)
     alpha = [0.99, 0.99, 0.99]
     x0 = [1, 0, 1]
     function testf!(du, u, p, t)
@@ -79,7 +79,7 @@ end
         du[2] = u[1]*(b-u[3])-u[2]
         du[3] = u[1]*u[2]-c*u[3]
     end
-    fodesystemprob = FODESystem(testf!, alpha, x0, tf)
+    fodesystemprob = FODESystem(testf!, alpha, x0, tspan)
     fodesystemsol = solve(fodesystemprob, h, GL())
 
     @test_nowarn show(fodesystemprob)
