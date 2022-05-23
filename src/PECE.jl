@@ -87,7 +87,7 @@ Construct system of fractional delay differential equations problem.
 struct FDDESystem <: FDEProblem
     f::Function
     ϕ::AbstractArray
-    α#::Union{AbstractArray
+    α
     τ::Number
     T
 end
@@ -108,8 +108,7 @@ struct FDDEMatrixProblem <: FDEProblem
     B::Matrix
     f::Vector
     x0::Function
-    T::Float64
-    t0::Float64
+    tspan::Tuple{Float64, Float64}
 end
 
 """
