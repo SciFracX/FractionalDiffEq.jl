@@ -110,7 +110,7 @@ end
     A=[0 0 1 0; 0 0 0 1; 0 -2 0 0; -2 0 0 0]
     B=[0 0 0 0; 0 0 0 0; -2 0 0 0; 0 -2 0 0]
     f=[0; 0; 0; 0]
-    prob = FDDEMatrixProblem(α, τ, A, B, f, fx0, T, t0)
+    prob = FDDEMatrixProblem(α, τ, A, B, f, fx0, tspan)
     result=solve(prob, h, MatrixForm())
 
     @test isapprox(result, [0.139708   0.139708   0.96017    0.96017

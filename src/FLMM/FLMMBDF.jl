@@ -17,13 +17,12 @@ Use [Backward Differentiation Formula](https://en.wikipedia.org/wiki/Backward_di
 """
 struct FLMMBDF <: FractionalDiffEqAlgorithm end
 
-function solve(prob::FODESystem, h, ::FLMMBDF)
+function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
     @unpack f, α, u0, tspan = prob
     t0 = tspan[1]; tfinal = tspan[2]
     fdefun, alphas, y0 = f, α, u0
     alpha = alphas[1]
     itmax = 100
-    tol = 1.0e-6
     
     # generate jacobian of input function
     Jfdefun(t, u) = jacobian_of_fdefun(fdefun, t, u)
@@ -54,8 +53,8 @@ function solve(prob::FODESystem, h, ::FLMMBDF)
     t = collect(0:N)*h
     y[:, 1] = y0[:, 1]
     fy[:, 1] = BDFf_vectorfield(t0, y0[:, 1], fdefun)
-    (y, fy) = BDFFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
-    (y, fy) = BDFTriangolo(s+1, r-1, 0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+    (y, fy) = BDFFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+    (y, fy) = BDFTriangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     
     # Main process of computation by means of the FFT algorithm
     nx0::Int = 0; ny0::Int = 0
@@ -63,7 +62,7 @@ function solve(prob::FODESystem, h, ::FLMMBDF)
     ff[1:2] = [0 2]
     for q = 0:Q
         L::Int = 2^q
-        (y, fy) = BDFDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;
+        (y, fy) = BDFDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
@@ -77,7 +76,7 @@ function solve(prob::FODESystem, h, ::FLMMBDF)
 end
 
 
-function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     nxi::Int = copy(nx0); nxf::Int = copy(nx0 + L*r - 1)
     nyi::Int = copy(ny0); nyf::Int = copy(ny0 + L*r - 1)
     is::Int = 1
@@ -90,7 +89,7 @@ function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , tol, itmax,
     while ~stop
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         zn = BDFQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
-        (y, fy) = BDFTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;#fy出问题了
+        (y, fy) = BDFTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;#fy出问题了
         i_triangolo = i_triangolo + 1
         
         if ~stop
@@ -121,7 +120,7 @@ function BDFQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     return zn
 end
 
-function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, tol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     for n = nxi:min(N, nxf)
         n1::Int = n+1
         St = ABMStartingTerm(t[n1], y0, m_alpha, t0, m_alpha_factorial)
@@ -146,7 +145,7 @@ function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, tol, itmax, s, w, omega, ha
             Gn1 = yn1 - halpha*omega[1]*fn1 - Phi_n
             it = it + 1
             
-            stop = (norm(yn1-yn0, Inf) < tol) || (norm(Gn1, Inf)<tol)
+            stop = (norm(yn1-yn0, Inf) < abstol) || (norm(Gn1, Inf)<abstol)
             if it > itmax && ~stop
                 @warn "Non Convergence"
                 stop = true
@@ -164,7 +163,7 @@ function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, tol, itmax, s, w, omega, ha
     return y, fy
 end
 
-function BDFFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function BDFFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
     m = problem_size
     Im = zeros(m, m)+I; Ims = zeros(m*s, m*s)+I
     Y0 = zeros(s*m, 1); F0 = copy(Y0); B0 = copy(Y0)
@@ -203,7 +202,7 @@ function BDFFirstApproximations(t, y, fy, tol, itmax, s, halpha, omega, w, probl
         
         it = it + 1
         
-        stop = (norm(Y1-Y0, Inf) < tol) || (norm(G1, Inf) <  tol)
+        stop = (norm(Y1-Y0, Inf) < abstol) || (norm(G1, Inf) <  abstol)
         if it > itmax && ~stop
             @warn "Non Convergence"
             stop = 1
