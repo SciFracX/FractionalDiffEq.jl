@@ -6,17 +6,33 @@ Pages = ["algorithms.md"]
 
 ## Fractional Ordinary Differential Equations
 
+### Single Term FODE
+
 ```@docs
 FractionalDiffEq.PECE
+FractionalDiffEq.GL
+FractionalDiffEq.PIEX
+FractionalDiffEq.ChebSpectral
+```
+
+### Multi-Term FODE
+
+```@docs
 FractionalDiffEq.FODEMatrixDiscrete
 FractionalDiffEq.ClosedForm
 FractionalDiffEq.ClosedFormHankelM
-FractionalDiffEq.GL
 FractionalDiffEq.PITrap
 FractionalDiffEq.PIPECE
 FractionalDiffEq.PIIMRect
 FractionalDiffEq.PIIMTrap
-FractionalDiffEq.ChebSpectral
+```
+
+### System of FODE
+
+```@docs
+FractionalDiffEq.NonLinearAlg
+FractionalDiffEq.ABM
+FractionalDiffEq.GL
 FractionalDiffEq.FLMMBDF
 FractionalDiffEq.FLMMNewtonGregory
 FractionalDiffEq.FLMMTrap
@@ -40,14 +56,6 @@ FractionalDiffEq.DelayPECE
 FractionalDiffEq.DelayPI
 FractionalDiffEq.MatrixForm
 FractionalDiffEq.DelayABM
-```
-
-## Systems of Fractional Differential Equations
-
-```@docs
-FractionalDiffEq.NonLinearAlg
-FractionalDiffEq.GL
-FractionalDiffEq.ABM
 ```
 
 ## Distributed Order Differential Equations

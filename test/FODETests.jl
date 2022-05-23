@@ -122,8 +122,8 @@ end
     end
     α = [0.93, 0.99, 0.92];
     x0 = [0.2; -0.1; 0.1];
-    h = 0.1; tn = 0.5;
-    prob = FODESystem(chua!, α, x0, tn)
+    h = 0.1; tspan = (0, 0.5);
+    prob = FODESystem(chua!, α, x0, tspan)
     result = solve(prob, h, NonLinearAlg())
 
     @test isapprox(result, [ 0.2 -0.1 0.1
@@ -329,10 +329,10 @@ end
     end
     
     alpha = [0.8, 0.7]
-    t0=0; T=0.1; h=0.01
+    tspan=(0, 0.1); h=0.01
     y0=[1.2; 2.8]
     param=[1 3]
-    prob = FODESystem(testf, alpha, y0, t0, T)
+    prob = FODESystem(testf, alpha, y0, tspan)
     (t, y) = solve(prob, h, PECE())
 
     @test isapprox(y, [1.2  1.2061   1.21042  1.21421  1.21767  1.22089  1.22392  1.22678  1.2295   1.2321   1.23459
@@ -346,10 +346,10 @@ end
     end
     
     alpha = [0.8, 0.7]
-    t0=0; T=0.1; h=0.01
+    tspan = (0, 0.1); h=0.01
     y0=[1.2; 2.8]
     param=[1 3]
-    prob = FODESystem(testf, alpha, y0, (t0, T))
+    prob = FODESystem(testf, alpha, y0, tspan)
     (t, y) = solve(prob, h, PIEX())
 
     @test isapprox(y, [ 1.2  1.20626  1.21061  1.21444  1.21793  1.22118  1.22424  1.22713  1.22989  1.23252  1.23504
@@ -364,8 +364,8 @@ end
         du
     end
     alpha=[0.8; 0.8]
-    t0=0; tfinal=0.5; y0=[0.2; 0.03]
-    h=0.1; tspan=(t0, tfinal)
+    y0=[0.2; 0.03]
+    h=0.1; tspan=(0, 0.5)
     prob = FODESystem(Brusselator, alpha, y0, tspan)
     (t, y) = solve(prob, h, FLMMNewtonGregory())
 
@@ -381,8 +381,8 @@ end
         du
     end
     alpha=[0.8; 0.8]
-    t0=0; tfinal=0.5; y0=[0.2; 0.03]
-    h=0.1; (t0, tfinal)
+    y0=[0.2; 0.03]
+    h=0.1; tspan=(0, 0.5)
     prob = FODESystem(Brusselator, alpha, y0, tspan)
     (t, y) = solve(prob, h, FLMMBDF())
 
@@ -398,8 +398,8 @@ end
         du
     end
     alpha=[0.8; 0.8]
-    t0=0; tfinal=0.5; y0=[0.2; 0.03]
-    h=0.1; (t0, tfinal)
+    y0=[0.2; 0.03]
+    h=0.1; tspan=(0, 0.5)
     prob = FODESystem(Brusselator, alpha, y0, tspan)
     (t, y) = solve(prob, h, FLMMTrap())
 

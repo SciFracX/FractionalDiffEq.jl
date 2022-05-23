@@ -32,7 +32,8 @@ mutable struct M
 end
 
 function solve(prob::FODESystem, h, ::PECE)
-    @unpack f, α, u0, t0, T = prob
+    @unpack f, α, u0, tspan = prob
+    t0 = tspan[1]; T = tspan[2]
     METH = M(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)# Initialization
     mu_tol = 1.0e-6
     mu = 1
