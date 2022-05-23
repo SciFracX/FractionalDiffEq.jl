@@ -17,7 +17,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::ClosedFormHankelM)
     A, B = 0, 0
 
     g = genfun(1)
-    nt = length(T)
+    nt = length(t)
     n = length(parameters)
     m = length(rparameters)
     for i=1:n
