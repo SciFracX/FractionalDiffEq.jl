@@ -27,8 +27,6 @@ pkg> add FractionalDiffEq
 
 * Capable of solving both linear and nonlinear fractional differential equations. Including fractional ordinary differential equations, fractional partial differential equations, fractional delayed differential equations, distributed order differential equations, fractional differences equations, system of fractional differential equations and Fractional integral equations.
 
-* Detailed models supporting, such as Lorenz system, Bagley Torvik equations, Relaxation Oscillation equations and Diffusion equations many more.
-
 ## Roadmap
 
 * More algorithms are planned to support.
