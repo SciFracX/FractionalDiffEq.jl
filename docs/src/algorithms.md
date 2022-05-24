@@ -21,7 +21,6 @@ FractionalDiffEq.ChebSpectral
 FractionalDiffEq.FODEMatrixDiscrete
 FractionalDiffEq.ClosedForm
 FractionalDiffEq.ClosedFormHankelM
-FractionalDiffEq.PITrap
 FractionalDiffEq.PIPECE
 FractionalDiffEq.PIIMRect
 FractionalDiffEq.PIIMTrap
@@ -31,7 +30,7 @@ FractionalDiffEq.PIIMTrap
 
 ```@docs
 FractionalDiffEq.NonLinearAlg
-FractionalDiffEq.ABM
+FractionalDiffEq.PECE
 FractionalDiffEq.GL
 FractionalDiffEq.FLMMBDF
 FractionalDiffEq.FLMMNewtonGregory
