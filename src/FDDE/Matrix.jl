@@ -10,7 +10,7 @@ https://github.com/mandresik/system-of-linear-fractional-differential-delayed-eq
 struct MatrixForm <: FractionalDiffEqAlgorithm end
 
 function solve(prob::FDDEMatrixProblem, h, ::MatrixForm)
-    @unpack α, τ, A, B, f, x0, T, t0 = prob
+    @unpack α, τ, A, B, f, x0, tspan = prob
     t0 = tspan[1]; T = tspan[2]
     limit = 100
     var_num = length(A[:, 1])

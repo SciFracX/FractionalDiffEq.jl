@@ -14,48 +14,51 @@ using ToeplitzMatrices
 using RecipesBase
 using ForwardDiff
 
-include("PECE.jl")
-include("matrix.jl")
-include("PI.jl")
-include("SystemPI/PIEX.jl")
-include("MTPI/MTPIEX.jl")
-include("MTPI/MTPIPECE.jl")
-include("MTPI/MTPIIMTrap.jl")
-include("MTPI/MTPIIMRect.jl")
-include("SystemPI/PIPECE.jl")
-include("FLMM/FLMMBDF.jl")
-include("FLMM/FLMMNewtonGregory.jl")
-include("FLMM/FLMMTrap.jl")
-include("ClosedForm/hankelmatrix.jl")
-include("ClosedForm/ClosedForm.jl")
-include("ClosedForm/highprecision.jl")
+# Single-term fractional ordinary differential equations
+include("singletermfode/PECE.jl")
+include("singletermfode/PI.jl")
+include("singletermfode/GL.jl")
+include("singletermfode/ChebSpectral.jl")
 
-include("GL/GLWithMemory.jl")
-include("GL/GL.jl")
-include("ChebSpectral.jl")
+# Multi-terms fractional ordinary differential equations
+include("multitermsfode/matrix.jl")
+include("multitermsfode/hankelmatrix.jl")
+include("multitermsfode/ClosedForm.jl")
+include("multitermsfode/highprecision.jl")
+include("multitermsfode/MTPIEX.jl")
+include("multitermsfode/MTPIPECE.jl")
+include("multitermsfode/MTPIIMTrap.jl")
+include("multitermsfode/MTPIIMRect.jl")
 
-include("NonLinear/NonLinear.jl")
+# System of fractional ordinary differential equations
+include("fodesystem/PIPECE.jl")
+include("fodesystem/FLMMBDF.jl")
+include("fodesystem/FLMMNewtonGregory.jl")
+include("fodesystem/FLMMTrap.jl")
+include("fodesystem/PIEX.jl")
+include("fodesystem/GLWithMemory.jl")
+include("fodesystem/NonLinear.jl")
 
 # Fractional partial differential equations
-include("FPDE/FiniteDiffEx.jl")
-include("FPDE/FiniteDiffIm.jl")
-include("FPDE/CaputoDiscrete.jl")
-include("FPDE/GL.jl")
+include("fpde/FiniteDiffEx.jl")
+include("fpde/FiniteDiffIm.jl")
+include("fpde/CaputoDiscrete.jl")
+include("fpde/GL.jl")
 
 # Fractional delay differential equations
-include("FDDE/DelayPECE.jl")
-include("FDDE/DelayPI.jl")
-include("FDDE/Matrix.jl")
-include("FDDE/DelayABM.jl")
-include("FDDE/DelayABMSystem.jl")
+include("fdde/DelayPECE.jl")
+include("fdde/DelayPI.jl")
+include("fdde/Matrix.jl")
+include("fdde/DelayABM.jl")
+include("fdde/DelayABMSystem.jl")
 
 # Distributed order differential equations
-include("DistributedOrder/utils.jl")
-include("DistributedOrder/matrix.jl")
+include("dode/utils.jl")
+include("dode/matrix.jl")
 
 # Fractional Differences equations
-include("FractionalDifferences/PECE.jl")
-include("FractionalDifferences/GL.jl")
+include("fractionaldifferences/PECE.jl")
+include("fractionaldifferences/GL.jl")
 
 # Fractional integral equations
 include("FIE/Qmat.jl")
