@@ -40,17 +40,17 @@ include("fodesystem/GLWithMemory.jl")
 include("fodesystem/NonLinear.jl")
 
 # Fractional partial differential equations
-include("fpde/FiniteDiffEx.jl")
-include("fpde/FiniteDiffIm.jl")
-include("fpde/CaputoDiscrete.jl")
-include("fpde/GL.jl")
+include("FPDE/FiniteDiffEx.jl")
+include("FPDE/FiniteDiffIm.jl")
+include("FPDE/CaputoDiscrete.jl")
+include("FPDE/GL.jl")
 
 # Fractional delay differential equations
-include("fdde/DelayPECE.jl")
-include("fdde/DelayPI.jl")
-include("fdde/Matrix.jl")
-include("fdde/DelayABM.jl")
-include("fdde/DelayABMSystem.jl")
+include("FDDE/DelayPECE.jl")
+include("FDDE/DelayPI.jl")
+include("FDDE/Matrix.jl")
+include("FDDE/DelayABM.jl")
+include("FDDE/DelayABMSystem.jl")
 
 # Distributed order differential equations
 include("dode/utils.jl")
