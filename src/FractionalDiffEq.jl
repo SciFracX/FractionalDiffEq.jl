@@ -57,8 +57,8 @@ include("dode/utils.jl")
 include("dode/matrix.jl")
 
 # Fractional Differences equations
-include("fractionaldifferences/PECE.jl")
-include("fractionaldifferences/GL.jl")
+include("FractionalDifferences/PECE.jl")
+include("FractionalDifferences/GL.jl")
 
 # Fractional integral equations
 include("FIE/Qmat.jl")
