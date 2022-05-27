@@ -1,6 +1,6 @@
 @testset "Test Diethelm PECE algorithms" begin
     fun(x, y) = 1-y
-    prob = SingleTermFODEProblem(fun, 1.8, 0, (0, 5))
+    prob = SingleTermFODEProblem(fun, 1.8, [0, 0], (0, 5))
     sol = solve(prob, 0.5, PECE())
 
     @test isapprox(sol.u, [0.16153482345602124

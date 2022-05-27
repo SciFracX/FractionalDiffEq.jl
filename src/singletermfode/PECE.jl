@@ -242,22 +242,18 @@ function solve(FODE::SingleTermFODEProblem, h::Float64, ::PECE)
     t0 = tspan[1]; T = tspan[2]
     N::Int64 = round(Int, (T-t0)/h)
     y = zeros(N+1) # Initialize the solution array
-    leftsum = zero(Float64)
-    l = floor(α)
 
-    # Handling initial value
-    if l == 0
-        leftsum = u0
-    elseif l == 1
-        leftsum = u0 + T*u0
-    end
-    
+
     @fastmath @inbounds @simd for n ∈ 0:N
-        y[n+1] = leftsum + h^α/gamma(α+2)*(f(t0+(n+1)*h, predictor(f, y, α, n, h, u0, T)) + right(f, y, α, n, h))
+        # Handling initial value
+        temp=0
+        for k=0:ceil(Int, α)-1
+            temp += u0[k+1]*(t0+(n+1)*h)^k/factorial(k)
+        end
+        y[n+1] = temp + h^α/gamma(α+2)*(f(t0+(n+1)*h, predictor(f, y, α, n, h, u0, t0)) + right(f, y, α, n, h))
     end
 
     tspan = collect(t0:h:T)
-
     return FODESolution(tspan, y)
 end
 
@@ -271,17 +267,15 @@ function right(f, y, α, n, h::Float64)
     return temp
 end
 
-function predictor(f, y, α::Float64, n::Integer, h::Float64, u0, T)
+function predictor(f, y, α::Float64, n::Integer, h::Float64, u0, t0)
     predict = 0
     leftsum = 0
 
-    l = floor(α)
+    l = ceil(Int, α)
 
     # Handling initial value
-    if l == 0
-        leftsum = u0
-    elseif l == 1
-        leftsum = u0 + T*u0
+    for k=0:l-1
+        leftsum += u0[k+1]*(t0+(n+1)*h)^k/factorial(k)
     end
 
     @turbo for j ∈ 0:n

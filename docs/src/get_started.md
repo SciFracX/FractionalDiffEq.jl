@@ -23,7 +23,7 @@ We can solve this problem by the following code using FractionalDiffEq.jl:
 ```julia
 using FractionalDiffEq, Plots
 fun(x, y) = 1-y
-α=1.8; h=0.01; tspan = (0, 20); u0 = 0
+α=1.8; h=0.01; tspan = (0, 20); u0 = [0, 0]
 prob = SingleTermFODEProblem(fun, α, u0, tspan)
 sol = solve(prob, h, PECE())
 plot(sol)
@@ -42,7 +42,7 @@ First, we need to specify the problem we want to solve. Just by passing the para
 ```julia
 using FractionalDiffEq
 fun(x, y) = 1-y
-α = 1.8; u0 = 0; Ts = (0, 20); h = 0.01;
+α = 1.8; u0 = [0, 0]; Ts = (0, 20); h = 0.01;
 prob = SingleTermFODEProblem(fun, α, u0, Ts)
 ```
 
