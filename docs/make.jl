@@ -22,6 +22,7 @@ makedocs(;
         "Distributed Order Differential Equations" => "dode.md",
         "Fractional Differences Equations" => "differences.md",
         "Fractional Integral Equations" => "fie.md",
+        "Ordinary Differential Equations" => "ode.md",
         ChaosGallery,
         "Problems" => "problems.md",
         "Algorithms" => "algorithms.md",
