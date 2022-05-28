@@ -58,29 +58,3 @@ By solving the equation and plotting the result, we can see its solution here:
 !!! info "Example in GitHub"
     This example is an official example in the source code, please see the [example folder](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl)
 
-## Solvers for Ordinary differential equations
-
-FractionalDiffEq.jl is also able to solve ordinary differential equations~ Let's see an example here:
-
-```math
-y''(x) + y'(x) = \sin(x)
-```
-
-```math
-y(0) = 0
-```
-
-```julia
-using FractionalDiffEq, Plots
-tspan = (0, 30); h = 0.05
-tspan = collect(h:h:T)
-f(x) = 1/2*(-exp(-x)-sin(x)-cos(x)+2)
-target =f.(tspan)
-rightfun(x) = sin(x)
-prob = MultiTermsFODEProblem([1, 1], [2, 1], rightfun, tspan)
-sol = solve(prob, h, FODEMatrixDiscrete())
-plot(sol, title=s, legend=:bottomright, label="ODE Numerical Solution!")
-plot!(tspan, target, lw=3,ls=:dash,label="ODE Analytical Solution!")
-```
-
-![ODE Example](./assets/ode_example.png)
