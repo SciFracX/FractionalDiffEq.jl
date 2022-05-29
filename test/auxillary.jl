@@ -38,6 +38,12 @@ end
     @test isapprox(mittleff(1, 2, 1, 1), 1.7182818284590438; atol=1e-5)
     @test isapprox(mittleff(2, 2, 1, 1), 1.1752011936438016; atol=1e-3)
     @test isapprox(mittleff(2.1, 2, 1, 1), 1.1527981788744044; atol=1e-4)
+
+    # Also tests for Complex z:
+
+    m = mittleff(1, 2, im)
+    @test isapprox(real(m), 0.8414709848078965; atol=1e-5)
+    @test isapprox(imag(m), 0.4596976941318611; atol=1e-5)
 end
 
 @testset "Test meshgrid" begin

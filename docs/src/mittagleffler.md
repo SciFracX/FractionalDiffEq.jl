@@ -60,3 +60,11 @@ Different order classical Mittag Leffler function plot(``0<\alpha<1``):
 And also ``1<\alpha<2``:
 
 ![MittagLeffler](./assets/mittlefffunhigh.png)
+
+If we input complex number to Mittag Leffler function, for example:
+
+```math
+E_{0.8, 0.9}(z)
+```
+
+![MittLeff3D](./assets/mittleff3d.png)

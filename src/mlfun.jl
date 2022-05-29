@@ -121,9 +121,9 @@ Compute single-parametric Mittag Leffler function
 """
 mittleff(α, z) = mittleff(α, 1, 1, z)
 
-mittleff(α, vec::Vector) = map(x -> mittleff(α, 1, x), vec)
-mittleff(α, β, vec::Vector) = map(x -> mittleff(α, β, x), vec)
-mittleff(α, β, γ, vec::Vector) = map(x -> mittleff(α, β, γ, x), vec)
+mittleff(α, vec::AbstractArray) = map(x -> mittleff(α, 1, x), vec)
+mittleff(α, β, vec::AbstractArray) = map(x -> mittleff(α, β, x), vec)
+mittleff(α, β, γ, vec::AbstractArray) = map(x -> mittleff(α, β, γ, x), vec)
 
 function LTInversion(t, lambda, alpha, beta, gama, log_epsilon)
     theta = angle(lambda)
@@ -190,6 +190,7 @@ function LTInversion(t, lambda, alpha, beta, gama, log_epsilon)
     if isreal(lambda) 
         E = real(E)
     end
+    return E
 end
 
 function OptimalParam_RU(t, phi_s_star_j, pj, log_epsilon)
