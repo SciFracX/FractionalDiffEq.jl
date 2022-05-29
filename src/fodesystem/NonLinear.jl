@@ -1,7 +1,7 @@
 """
 # Usage
 
-    solve(f, α, x0, h, t, NonLinearAlg())
+    solve(prob::FODESystem, h, NonLinearAlg())
 
 Nonlinear algorithm for nonlinear fractional differential equations.
 

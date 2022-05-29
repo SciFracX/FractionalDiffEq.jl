@@ -323,16 +323,16 @@ end
 end
 
 @testset "Test product integration PECE method for FODESystem" begin
-    function testf(t, y)
-        p=[1 3]
-        return [p[1]-(p[2]+1)*y[1] + y[1]^2*y[2]; p[2]*y[1]-y[1]^2*y[2]]
+    function test(du, u, p, t)
+        du[1] = 1-4*u[1]+u[1]^2*u[2]
+        du[2] = 3*u[1]-u[1]^2*u[2]
     end
     
     alpha = [0.8, 0.7]
     tspan=(0, 0.1); h=0.01
     y0=[1.2; 2.8]
     param=[1 3]
-    prob = FODESystem(testf, alpha, y0, tspan)
+    prob = FODESystem(test, alpha, y0, tspan)
     (t, y) = solve(prob, h, PECE())
 
     @test isapprox(y, [1.2  1.2061   1.21042  1.21421  1.21767  1.22089  1.22392  1.22678  1.2295   1.2321   1.23459
@@ -340,16 +340,16 @@ end
 end
 
 @testset "Test explicit product integration method for FODESystem" begin
-    function testf(t, y)
-        p=[1 3]
-        return [p[1]-(p[2]+1)*y[1] + y[1]^2*y[2]; p[2]*y[1]-y[1]^2*y[2]]
+    function test(du, u, p, t)
+        du[1] = 1-4*u[1]+u[1]^2*u[2]
+        du[2] = 3*u[1]-u[1]^2*u[2]
     end
     
     alpha = [0.8, 0.7]
     tspan = (0, 0.1); h=0.01
     y0=[1.2; 2.8]
     param=[1 3]
-    prob = FODESystem(testf, alpha, y0, tspan)
+    prob = FODESystem(test, alpha, y0, tspan)
     (t, y) = solve(prob, h, PIEX())
 
     @test isapprox(y, [ 1.2  1.20626  1.21061  1.21444  1.21793  1.22118  1.22424  1.22713  1.22989  1.23252  1.23504
@@ -361,7 +361,6 @@ end
     function Brusselator(du, u, p, t)
         du[1] = a-(mu+1)*u[1]+u[1]^2*u[2]
         du[2] = mu*u[1]-u[1]^2*u[2]
-        du
     end
     alpha=[0.8; 0.8]
     y0=[0.2; 0.03]
@@ -378,7 +377,6 @@ end
     function Brusselator(du, u, p, t)
         du[1] = a-(mu+1)*u[1]+u[1]^2*u[2]
         du[2] = mu*u[1]-u[1]^2*u[2]
-        du
     end
     alpha=[0.8; 0.8]
     y0=[0.2; 0.03]
@@ -395,7 +393,6 @@ end
     function Brusselator(du, u, p, t)
         du[1] = a-(mu+1)*u[1]+u[1]^2*u[2]
         du[2] = mu*u[1]-u[1]^2*u[2]
-        du
     end
     alpha=[0.8; 0.8]
     y0=[0.2; 0.03]

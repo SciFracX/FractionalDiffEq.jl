@@ -40,8 +40,9 @@ function solve(prob::FODESystem, h, ::PIEX)
         end
     end
 
-
-    f_temp = sysf_vectorfield(t0, u0[:, 1], f)
+    f_temp = zeros(length(u0[:, 1]))
+    #f_temp = sysf_vectorfield(t0, u0[:, 1], f)
+    f(f_temp, u0[:, 1], nothing, t0)
 
     r::Int = 16
     N::Int = ceil(Int64, (T-t0)/h)
@@ -108,7 +109,7 @@ function solve(prob::FODESystem, h, ::PIEX)
     # Initializing solution and proces of computation
     t = t0 .+ collect(0:N)*h
     y[:, 1] = u0[:, 1]
-    fy[:, 1] = f_temp ;
+    fy[:, 1] = f_temp
     (y, fy) = PIEXTriangolo(1, r-1, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, α)
 
     # Main process of computation by means of the FFT algorithm
@@ -162,11 +163,11 @@ function PIDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N, METH, problem
                 Delta = i_Delta*r
                 nxi = s_nxf[is]+1; nxf = s_nxf[is]  + Delta
                 nyi = s_nxf[is] - Delta +1; nyf = s_nxf[is]
-                s_nxi[is] = nxi; s_nxf[is] = nxf; s_nyi[is] = nyi; s_nyf[is] = nyf ;
+                s_nxi[is] = nxi; s_nxf[is] = nxf; s_nyi[is] = nyi; s_nyf[is] = nyf
             else
-                nxi = nxi + r ; nxf = nxi + r - 1 ; nyi = nyf + 1 ; nyf = nyf + r  ;
-                is = is + 1 ;
-                s_nxi[is] = nxi ; s_nxf[is] = nxf ; s_nyi[is] = nyi ; s_nyf[is] = nyf ;
+                nxi = nxi + r; nxf = nxi + r - 1; nyi = nyf + 1; nyf = nyf + r
+                is = is + 1
+                s_nxi[is] = nxi; s_nxf[is] = nxf; s_nyi[is] = nyi; s_nyf[is] = nyf
             end
         end
         
@@ -218,7 +219,10 @@ function PIEXTriangolo(nxi, nxf, t, y, fy, zn, N, METH, problem_size, alpha_leng
         St[i_alpha_1] = y[i_alpha_1, n]
         
         y[:, n+1] = St + METH.halpha1.*(zn[:, n+1] + Phi)
-        fy[:, n+1] = sysf_vectorfield(t[n+1], y[:, n+1], f)
+        temp = zeros(length(y[:, n+1]))
+        f(temp, y[:, n+1], nothing, t[n+1])
+        #fy[:, n+1] = sysf_vectorfield(t[n+1], y[:, n+1], f)
+        fy[:, n+1] = temp
         
     end
     return y, fy

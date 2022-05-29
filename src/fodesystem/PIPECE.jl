@@ -52,8 +52,9 @@ function solve(prob::FODESystem, h, ::PECE)
         end
     end
 
-
-    f_temp = sysf_vectorfield(t0, u0[:, 1], f)
+    f_temp = zeros(size(u0[:, 1]))
+    #f_temp = sysf_vectorfield(t0, u0[:, 1], f)
+    f(f_temp, u0[:, 1], nothing, t0)
 
     r::Int = 16
     N::Int = ceil(Int64, (T-t0)/h)
@@ -250,7 +251,9 @@ function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_siz
         end
         St = StartingTerm(t[n+1], u0, m_alpha, t0, m_alpha_factorial)
         y_pred = St + METH.halpha1.*(zn_pred[:, n+1] + Phi)
-        f_pred = sysf_vectorfield(t[n+1], y_pred, f)
+        f_pred = zeros(length(y_pred))
+        #f_pred = sysf_vectorfield(t[n+1], y_pred, f)
+        f(f_pred, y_pred, nothing, t[n+1])
         
         # Evaluation of the corrector
         if METH.mu == 0
@@ -276,7 +279,9 @@ function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_siz
                 else
                     stop = (mu_it == METH.mu)
                 end
-                global fn1 = sysf_vectorfield(t[n+1], yn1, f)
+                global fn1 = zeros(length(yn1))
+                #sysf_vectorfield(t[n+1], yn1, f)
+                f(fn1, yn1, nothing, t[n+1])
                 yn0 = yn1; fn0 = fn1
             end
             y[:, n+1] = yn1

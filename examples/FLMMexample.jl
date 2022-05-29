@@ -5,7 +5,7 @@ a=1; mu=4
 function Brusselator(du, u, p, t)
     du[1] = a-(mu+1)*u[1]+u[1]^2*u[2]
     du[2] = mu*u[1]-u[1]^2*u[2]
-    du
+    #du
 end
 alpha=[0.8; 0.8]
 t0=0; tfinal=50; y0=[0.2; 0.03]
