@@ -41,18 +41,18 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIEX)
     
     nvett = collect(0:NNr+1)
     bn = zeros(Q, NNr+1)
-    for i = 1 : Q
+    for i = 1:Q
         nbeta = nvett.^bet[i]
         bn[i, :] = (nbeta[2:end] - nbeta[1:end-1]) * h^bet[i]/gamma(bet[i]+1)
     end
     C = 0
-    for i = 1 : Q-1
+    for i = 1:Q-1
         C = C + lam_rat_i[i]*bn[i, 1]
     end
     
     t = collect(0:N)*h
     y[:, 1] = u0[:, 1]
-    fy[:, 1] .= mtf_vectorfield(t0, u0[:, 1], rightfun)
+    fy[:, 1] .= rightfun(t0, u0[:, 1])
     (y, fy) = PIExTriangolo(1, r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q)
     
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0 2]; card_ff = 2
@@ -169,13 +169,12 @@ function PIExTriangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m
         Phi_n = Phi_n + temp/lam_Q
 
         y[:, n+1] = Phi_n
-        fy[:, n+1] .= mtf_vectorfield(t[n+1], y[:, n+1], rightfun) 
+        fy[:, n+1] .= rightfun(t[n+1], y[:, n+1]) 
             
     end
     return y, fy
 end
 
-mtf_vectorfield(t, y, rightfun)=rightfun(t, y)
 function process_rightfun(t, y, rightfun)
     if typeof(rightfun) <: Function
         return rightfun(t, y)

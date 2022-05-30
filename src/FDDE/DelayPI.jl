@@ -22,11 +22,12 @@ Use explicit rectangular product integration algorithm to solve an FDDE problem.
 struct DelayPI <: FractionalDiffEqAlgorithm end
 
 function solve(FDDE::FDDEProblem, h, ::DelayPI)
-    @unpack f, ϕ, α, τ, T, t0 = FDDE
+    @unpack f, ϕ, α, τ, tspan = FDDE
+    t0 = tspan[1]; T = tspan[2]
     N = ceil(Int, (T-t0)/h)
-    t = t0 .+ h*collect(0:1:N)
+    t = t0 .+ h*collect(0:N)
 
-    nn_al = collect(0:1:N).^α
+    nn_al = collect(0:N).^α
     b = [0; nn_al[2:end].-nn_al[1:end-1]]/gamma(α+1)
     h_al = h^α
 

@@ -277,11 +277,9 @@ function BDFWeights(alpha, N)
     b = nn_nu_alpha - temp[:, 1:N+1]
     # Solution of the linear system with multiple right-hand side
     w = real.(V\b)
-
     return omega, w, s
 end
 
-#BDFf_vectorfield(t, y, fdefun) = fdefun(zeros(length(y)), y, 0, t)
 Jf_vectorfield(t, y, Jfdefun) = Jfdefun(t, y)
 
 function ABMStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)

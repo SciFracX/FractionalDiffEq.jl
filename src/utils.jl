@@ -1,9 +1,8 @@
 function Base.show(io::IO, sol::FODESolution)
-    show(io::IO, typeof(sol.t))
-    show(stdout, MIME("text/plain"), sol.t)
-    println()
-    show(io::IO, typeof(sol.u))
-    show(stdout, MIME("text/plain"), sol.u)
+    println("Time span $(typeof(sol.t))")
+    println(sol.t)
+    println("Solution $(typeof(sol.u))")
+    print(sol.u)
 end
 
 function Base.show(io::IO, prob::SingleTermFODEProblem)
@@ -38,7 +37,7 @@ function Base.show(io::IO, prob::FDDEProblem)
     printstyled(" with order ")
     printstyled("$(prob.α)", color=:red)
     println()
-    println("timespan: $(prob.T)")
+    println("timespan: $(prob.tspan)")
     println("history function: $(prob.ϕ)")
 end
 

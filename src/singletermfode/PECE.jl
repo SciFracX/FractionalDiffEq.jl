@@ -62,8 +62,7 @@ struct FPDEProblem <: FDEProblem
 end
 
 """
-    FDDEProblem(f, ϕ, α, τ, T)
-    FDDEProblem(f, ϕ, α, τ, t0, T)
+    FDDEProblem(f, ϕ, α, τ, tspan)
 
 Construct a fractional delayed differential equation problem.
 """
@@ -72,8 +71,7 @@ struct FDDEProblem <: FDEProblem
     ϕ::Union{Number, Function}
     α
     τ::Number
-    T
-    t0::Union{Number, Nothing}
+    tspan::Union{Number, Tuple}
 end
 
 #=FDDEProblem constructor=#
@@ -112,7 +110,7 @@ struct FDDEMatrixProblem <: FDEProblem
 end
 
 """
-    FODESystem(f, α, x0)
+    FODESystem(f, α, u0, tspan)
 
 Define system of fractional differential equations problem.
 """

@@ -18,8 +18,9 @@ struct DelayABM <: FractionalDiffEqAlgorithm end
 #FIXME: Fix DelayABM method for FDDESystem : https://www.researchgate.net/publication/245538900_A_Predictor-Corrector_Scheme_For_Solving_Nonlinear_Delay_Differential_Equations_Of_Fractional_Order
 #FIXME: Also the problem definition f(t, ϕ, y) or f(t, y, ϕ)?
 function solve(FDDE::FDDEProblem, h, ::DelayABM)
-    @unpack f, ϕ, α, τ, T = FDDE
-    N::Int = round(Int, T/h)
+    @unpack f, ϕ, α, τ, tspan = FDDE
+    t0 = tspan[1]; T = tspan[2]
+    N::Int = round(Int, (T-t0)/h)
     Ndelay::Int = round(Int, τ/h)
     x1 = zeros(Ndelay+N+1)
     x = zeros(Ndelay+N+1)

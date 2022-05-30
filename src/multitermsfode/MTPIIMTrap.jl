@@ -5,7 +5,7 @@ Use implicit product integration trapezoidal type method to solve multi-terms FO
 """
 struct PIIMTrap <: FractionalDiffEqAlgorithm end
 
-function solve(prob::MultiTermsFODEProblem, h, ::PIIMTrap)
+function solve(prob::MultiTermsFODEProblem, h, ::PIIMTrap; abstol=1e-6)
     @unpack parameters, orders, rightfun, u0, tspan = prob
     t0 = tspan[1]; T = tspan[2]
     u0 = u0[:]'
@@ -26,7 +26,6 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMTrap)
     bet = [al_Q .- al_i; al_Q]
     
     itmax = 100
-    tol = 1.0e-6 
     
     gamma_val = zeros(Q, m_Q)
     for i = 1 : Q-1
@@ -63,14 +62,14 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMTrap)
     
     t = collect(0:N)*h
     y[:, 1] = u0[:, 1]
-    fy[:, 1] .= mtf_vectorfield(t0, u0[:, 1], rightfun)
-    (y, fy) = PIExTriangolo(1, r-1, t, y, fy, zn, N, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, tol, itmax, J_fun)
+    fy[:, 1] .= rightfun(t0, u0[:, 1])
+    (y, fy) = PIExTriangolo(1, r-1, t, y, fy, zn, N, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, itmax, J_fun)
     
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0 2]; card_ff = 2
     nx0 = 0; nu0 = 0
     for qr = 0 : Qr
         L = 2^qr
-        (y, fy) = PIIMTrapDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, N, zn, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, tol)
+        (y, fy) = PIIMTrapDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, N, zn, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, abstol)
         ff[1:2*card_ff] = [ff[1:card_ff] ff[1:card_ff]]
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -87,7 +86,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMTrap)
 end
     
 
-function PIIMTrapDisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, N, zn, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, tol)
+function PIIMTrapDisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, N, zn, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, abstol)
     
     nxi::Int = nx0
     nxf::Int = nx0 + L*r - 1
@@ -109,7 +108,7 @@ function PIIMTrapDisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, N, zn, a0, an,
         
         zn = PIIMTrapQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, an, problem_size, Q)
         
-        (y, fy) = PIExTriangolo(nxi, nxi+r-1, t, y, fy, zn, N, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, tol, itmax, J_fun)
+        (y, fy) = PIExTriangolo(nxi, nxi+r-1, t, y, fy, zn, N, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, itmax, J_fun)
         i_triangolo = i_triangolo + 1
         
         if stop==false
@@ -164,7 +163,7 @@ end
     
     
  
-function PIExTriangolo(nxi, nxf, t, y, fy, zn, N, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, tol, itmax, J_fun)
+function PIExTriangolo(nxi, nxf, t, y, fy, zn, N, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, itmax, J_fun)
 
     for n = nxi:min(N, nxf)
         St = PIIMTrapStartingTerm_Multi(t[n+1], t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
@@ -184,7 +183,7 @@ function PIExTriangolo(nxi, nxf, t, y, fy, zn, N, a0, an, t0, problem_size, u0, 
         Phi_n = Phi_n + temp/lam_Q
 
 
-        yn0 = y[:, n]; fn0 = mtf_vectorfield(t[n+1], yn0, rightfun)
+        yn0 = y[:, n]; fn0 = rightfun(t[n+1], yn0)
         Jfn0 = Jf_vectorfield(t[n+1], yn0, J_fun)
         Gn0 = (1+C)*yn0 .- an[Q, 1]./lam_Q*fn0 .- Phi_n
         stop = false; it = 0
@@ -193,11 +192,11 @@ function PIExTriangolo(nxi, nxf, t, y, fy, zn, N, a0, an, t0, problem_size, u0, 
             
             JGn0 = (1+C)*(zeros(problem_size, problem_size)+I) .- an[Q, 1]/lam_Q*Jfn0
             global yn1 = yn0 - JGn0\Gn0
-            global fn1 = mtf_vectorfield(t[n+1], yn1, rightfun)
+            global fn1 = rightfun(t[n+1], yn1)
             Gn1 = (1+C)*yn1 .- an[Q, 1]/lam_Q*fn1 .- Phi_n
             it = it + 1
             
-            stop = (norm(yn1-yn0, Inf) < tol) || (norm(Gn1, Inf) < tol)
+            stop = (norm(yn1-yn0, Inf) < abstol) || (norm(Gn1, Inf) < abstol)
             if it > itmax && ~stop
                 @warn "Non Convergence"
                 stop = true
@@ -217,8 +216,6 @@ function PIExTriangolo(nxi, nxf, t, y, fy, zn, N, a0, an, t0, problem_size, u0, 
     return y, fy
 end
 
-
-mtf_vectorfield(t, y, rightfun)=rightfun(t, y)
 Jf_vectorfield(t, y, fun)=fun(t, y)
 
 function PIIMTrapStartingTerm_Multi(t,t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)

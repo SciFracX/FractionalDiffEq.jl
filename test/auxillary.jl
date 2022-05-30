@@ -104,7 +104,7 @@ end
     function delayf(t, y, ϕ)
         return 3.5*y*(1-ϕ/19)
     end
-    fddeprob = FDDEProblem(delayf, ϕ, 0.97, 0.8, 2, 0)
+    fddeprob = FDDEProblem(delayf, ϕ, 0.97, 0.8, (0, 2))
     fddesol = solve(fddeprob, 0.5, DelayPI())
 
     @test_nowarn show(fddeprob)
