@@ -39,8 +39,8 @@ struct FPDEMatrixDiscrete <: FractionalDiffEqAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, h, ::FODEMatrixDiscrete)
     @unpack parameters, orders, rightfun, tspan = prob
-    T = tspan
-    N::Int64 = floor(Int, T/h)
+    t0 = tspan[1]; T = tspan[2]
+    N::Int64 = floor(Int, (T-t0)/h)
     highestorder = Int64(findmax(ceil.(orders))[1])
     rows = collect(Int64, 1:highestorder)
 
@@ -62,7 +62,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::FODEMatrixDiscrete)
     result = equation\rightside
     result = vcat(zeros(highestorder), result)
 
-    return FODESolution(collect(Float64, h:h:T), result)
+    return FODESolution(collect(Float64, t0+h:h:T), result)
 end
 
 
