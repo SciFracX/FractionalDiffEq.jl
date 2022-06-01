@@ -231,7 +231,7 @@ struct PECE <: FractionalDiffEqAlgorithm end
 #TODO: Rename as ABM
 
 """
-    solve(problem::SingleTermFODEProblem, args..., Alg())
+    solve(problem::SingleTermFODEProblem, h, PECE())
 
 Generalproblem solving API for solving FDE problems.
 """

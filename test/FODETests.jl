@@ -25,7 +25,7 @@ end
         push!(target, i^0.5*mittleff(0.5, 1.5,-i^0.5))
     end
 
-    singleprob = MultiTermsFODEProblem([1, 1], [0.5, 0], 1, u0, 5)
+    singleprob = MultiTermsFODEProblem([1, 1], [0.5, 0], 1, u0, (0, 5))
     result = solve(singleprob, 0.01, FODEMatrixDiscrete())
 
     @test isapprox(result.u, target; atol=1)
@@ -41,7 +41,7 @@ end
         push!(yatarget, i^1.8*mittleff(1.8,2.8,-i^1.8))
     end
 
-    highsingleprob = MultiTermsFODEProblem([1, 1], [1.8, 0], 1, u0, 20)
+    highsingleprob = MultiTermsFODEProblem([1, 1], [1.8, 0], 1, u0, (0, 20))
     yaresult = solve(highsingleprob, 0.01, FODEMatrixDiscrete())
 
     @test isapprox(yaresult.u, yatarget; atol=1)
