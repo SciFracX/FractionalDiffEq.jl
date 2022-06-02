@@ -29,9 +29,9 @@ MultiTermsFODEProblem(parameters, orders, rightfun, u0, T) = MultiTermsFODEProbl
 
 """
 
-    SingleTermFODEProblem(f, α, u0, T)
+    SingleTermFODEProblem(f, α, u0, tspan)
 
-Define a single term fractional ordinary differential equation, there are only one term in this problem.
+Define a single term fractional ordinary differential equation, there are only one fractional differential operator in this problem.
 """
 struct SingleTermFODEProblem <: FDEProblem
     f::Function
@@ -42,7 +42,7 @@ end
 
 
 """
-Base type of FractionalDiffEq algorithms
+Base type for all of the FractionalDiffEq algorithms
 """
 abstract type FractionalDiffEqAlgorithm end
 
@@ -91,7 +91,7 @@ struct FDDESystem <: FDEProblem
 end
 
 """
-    FDDEMatrixProblem(α, τ, A, B, f, x0, T, t0)
+    FDDEMatrixProblem(α, τ, A, B, f, x0, tspan)
 
 Construct a fractional matrix differential equation with delay. The general type is:
 
@@ -112,7 +112,7 @@ end
 """
     FODESystem(f, α, u0, tspan)
 
-Define system of fractional differential equations problem.
+Define system of fractional differential equations.
 """
 struct FODESystem <: FDEProblem
     f::Function
@@ -154,7 +154,7 @@ end
 Define Fractional Difference System with the general constructure:
 
 ```math
-{_{a-m}^G\nabla_k^\alpha x(k+1)}=f(x(k))\\
+{_{a-m}^G\\nabla_k^\\alpha x(k+1)}=f(x(k))\\
 ```
 
 With given initial condition ``x(i)``.
