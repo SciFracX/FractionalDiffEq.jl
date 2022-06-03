@@ -44,6 +44,32 @@ plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 
 ![Delayed](./assets/fdde_example.png)
 
+## FDDE with multiple lags
+
+```math
+{_0^CD_t^\alpha}y(t)=\frac{2y(t-2)}{1+y(t-2.6)^{9.65}}-y(t)\\
+
+y(t)=0.5,\ t\leq0
+```
+
+```julia
+using FractionalDiffEq, Plots
+α = 0.95; ϕ(x) = 0.5
+τ = [2, 2.6]
+fun(t, y, ϕ1, ϕ2) = 2*ϕ1/(1+ϕ2^9.65)-y
+prob = FDDEProblem(fun, ϕ, α, τ, 100)
+delayed, y = solve(prob, 0.01, DelayPECE())
+
+p1=plot(delayed[1, :], y)
+p2=plot(delayed[2, :], y)
+plot(p1, p2, layout=(1, 2))
+```
+
+![fdde_multiple_lags](./assets/fdde_multiple_lags.png)
+
+![fdde_multiple_lags12](./assets/fdde_multiple_lags12.png)
+
+
 ## System of FDDE
 
 Time delay [Chen system](https://en.wikipedia.org/wiki/Multiscroll_attractor) as a famous chaotic system with time delay, has important applications in many fields.

@@ -19,8 +19,7 @@ struct DelayABM <: FractionalDiffEqAlgorithm end
 #FIXME: Also the problem definition f(t, ϕ, y) or f(t, y, ϕ)?
 function solve(FDDE::FDDEProblem, h, ::DelayABM)
     @unpack f, ϕ, α, τ, tspan = FDDE
-    t0 = tspan[1]; T = tspan[2]
-    N::Int = round(Int, (T-t0)/h)
+    N::Int = round(Int, tspan/h)
     Ndelay::Int = round(Int, τ/h)
     x1 = zeros(Ndelay+N+1)
     x = zeros(Ndelay+N+1)
@@ -30,7 +29,12 @@ function solve(FDDE::FDDEProblem, h, ::DelayABM)
 
     # History function handling
     #FIXME: When the value of history function ϕ is different with the initial value?
-    x[1:Ndelay] = ϕ*ones(Ndelay)
+    if typeof(ϕ) <: Number
+        x[1:Ndelay] = ϕ*ones(Ndelay)
+    elseif typeof(ϕ) <: Function
+        x[Ndelay] = ϕ(0)
+        x[1:Ndelay-1] .= ϕ(collect(-h*(Ndelay-1):h:(-h)))
+    end
     
     x0 = copy(x[Ndelay])
     

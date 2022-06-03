@@ -45,11 +45,11 @@ function solve(FDDE::FDDEProblem, h, ::DelayPECE)
         y[n+1] = y[n+1]/gamma(α)+h^α*f(t[n+1], yp[n+1], v(ϕ, n+1, τ, h, y, yp))/gamma(α+2)+ϕ(0)
     end
 
-    V = copy(t)
+    delayedterm = copy(t)
     @fastmath @inbounds @simd for n = 1:maxn-1
-        V[n] = v(ϕ, n, τ, h, y, yp)
+        delayedterm[n] = v(ϕ, n, τ, h, y, yp)
     end
-    return V, y
+    return delayedterm, y
 end
 
 function a(j, n, α, h)
@@ -68,7 +68,7 @@ function b(j, n, α, h)
 end
 
 function v(ϕ, n, τ, h, y, yp)
-    if τ >= (n-1)*h
+    if τ >= n*h
         return ϕ((n-1)*h-τ)
     else
         m = floor(Int, τ/h)

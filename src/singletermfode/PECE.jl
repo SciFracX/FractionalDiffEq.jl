@@ -69,8 +69,8 @@ Construct a fractional delayed differential equation problem.
 struct FDDEProblem <: FDEProblem
     f::Function
     ϕ::Union{Number, Function}
-    α
-    τ::Number
+    α::Union{Number, Function}
+    τ::Union{Number, AbstractArray}
     tspan::Union{Number, Tuple}
 end
 
