@@ -5,6 +5,8 @@
 
 Using the delayed predictor-corrector method to solve the delayed fractional differential equation problem.
 
+Capable of solving both single term FDDE and multiple FDDE.
+
 ### References
 
 ```tex
@@ -21,7 +23,8 @@ Using the delayed predictor-corrector method to solve the delayed fractional dif
 struct DelayPECE <: FractionalDiffEqAlgorithm end
 
 function solve(FDDE::FDDEProblem, h, ::DelayPECE)
-    if typeof(FDDE.τ) <: AbstractArray
+    if length(FDDE.τ) > 1
+        # Call the DelayPECE solver for multiple lags FDDE
         solve_fdde_with_multiple_lags(FDDE, h)
     else
         solve_fdde_with_single_lag(FDDE, h)
@@ -123,9 +126,7 @@ function solve_fdde_with_multiple_lags(FDDE::FDDEProblem, h)
     delayed = zeros(length(τ), length(V))
     for i=1:length(V)
         delayed[:, i] = V[i]
-    end
-
-    
+    end    
     return delayed, y
 end
 
@@ -139,7 +140,7 @@ function multia(j, n, α, h)
     else
         result = (n-j+2)^(α+1) + (n-j)^(α+1) - 2*(n-j+1)^(α+1)
     end
-    return result*h^α / (α*(α + 1))
+    return result*h^α/(α*(α + 1))
 end
 
 function multiv(ϕ, n, τ, h, y, yp)

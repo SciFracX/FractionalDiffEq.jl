@@ -46,6 +46,8 @@ plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 
 ## FDDE with multiple lags
 
+For FDDE with multiple lags, we need to specify the lags term by entering the array of lags ``\tau``, and call the `DelayPECE` method to solve the multiple lags FDDE.
+
 ```math
 {_0^CD_t^\alpha}y(t)=\frac{2y(t-2)}{1+y(t-2.6)^{9.65}}-y(t)\\
 
