@@ -3,6 +3,9 @@
 
 Solve FODE system using Newton Polynomials methods.
 
+!!! tip
+    Used for the Caputo Fabrizio fractional differential operators.
+
 ```tex
 https://doi.org/10.1016/c2020-0-02711-8
 ```
@@ -12,7 +15,7 @@ struct NewtonPolynomial <: FractionalDiffEqAlgorithm end
 function solve(prob::FODESystem, h, ::NewtonPolynomial)
     @unpack f, α, u0, tspan = prob
     t0 = tspan[1]; tfinal = tspan[2]
-    α = α[1];
+    α = α[1]
     t = collect(t0:h:tfinal)
     M = 1-α+α/gamma(α)
     N::Int = ceil(Int, (tfinal-t0)/h)
