@@ -184,3 +184,22 @@ result = solve(prob, h, GLWithMemory())
 
 using Plots
 plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Genesio-Tesi System")
+
+
+#=======Fractional Order Labyrinth System=======#
+using FractionalDiffEq
+
+t0=0; tfinal=5; h=0.5;
+α = [0.98, 0.98, 0.98]
+u0 = [-1, 1, 1]
+function fun(du, u, p, t)
+    b=0.1;
+    du[1] = -sin(u[2])-b*u[1]
+    du[2] = -sin(u[3])-b*u[2]
+    du[3] = -sin(u[1])-b*u[3]
+end
+prob = FODESystem(fun, α, u0, (t0, tfinal))
+sol = solve(prob, h, NewtonPolynomial())
+
+using Plots
+plot3d(sol[1, :], sol[2, :], sol[3, :], title="Fractional Order Labyrinth System")
