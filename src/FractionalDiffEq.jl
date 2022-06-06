@@ -38,6 +38,7 @@ include("fodesystem/FLMMTrap.jl")
 include("fodesystem/PIEX.jl")
 include("fodesystem/GLWithMemory.jl")
 include("fodesystem/NonLinear.jl")
+include("fodesystem/NewtonPolynomial.jl")
 
 # Fractional partial differential equations
 include("FPDE/FiniteDiffEx.jl")
@@ -108,7 +109,7 @@ export ChebSpectral
 export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF, GLDiff
 
 # System of FODE solvers
-export NonLinearAlg, GLWithMemory, FLMMBDF, FLMMNewtonGregory, FLMMTrap, PIEX
+export NonLinearAlg, GLWithMemory, FLMMBDF, FLMMNewtonGregory, FLMMTrap, PIEX, NewtonPolynomial
 
 # FDDE solvers
 export DelayPECE, DelayPI, DelayABM, MatrixForm
