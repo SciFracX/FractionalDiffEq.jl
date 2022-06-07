@@ -13,6 +13,7 @@ FractionalDiffEq.PECE
 FractionalDiffEq.GL
 FractionalDiffEq.PIEX
 FractionalDiffEq.ChebSpectral
+FractionalDiffEq.AtanganaSeda
 ```
 
 ### Multi-Term FODE

@@ -19,6 +19,7 @@ include("singletermfode/PECE.jl")
 include("singletermfode/PI.jl")
 include("singletermfode/GL.jl")
 include("singletermfode/ChebSpectral.jl")
+include("singletermfode/AS.jl")
 
 # Multi-terms fractional ordinary differential equations
 include("multitermsfode/matrix.jl")
@@ -104,6 +105,7 @@ export FODESolution, FIESolution, FDifferenceSolution, DODESolution
 export PIEX, PIPECE, PIIMRect, PIIMTrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, GL
 export ChebSpectral
+export AtanganaSeda
 
 # FPDE solvers
 export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF, GLDiff
