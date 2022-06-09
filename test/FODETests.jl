@@ -427,7 +427,7 @@ end
 @testset "Test Atangana Seda method" begin
     fun(x, y) = 1-y
     prob = SingleTermFODEProblem(fun, 0.5, 0, (0, 5))
-    sol = solve(prob, 0.01, AtanganaSeda())
+    sol = solve(prob, 0.5, AtanganaSeda())
 
     @test isapprox(sol.u, [0.0
     0.5
