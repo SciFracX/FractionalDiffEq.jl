@@ -19,7 +19,7 @@ include("singletermfode/PECE.jl")
 include("singletermfode/PI.jl")
 include("singletermfode/GL.jl")
 include("singletermfode/ChebSpectral.jl")
-include("singletermfode/AS.jl")
+include("singletermfode/AtanganaSeda.jl")
 
 # Multi-terms fractional ordinary differential equations
 include("multitermsfode/matrix.jl")

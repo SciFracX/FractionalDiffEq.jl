@@ -36,7 +36,7 @@ Define a single term fractional ordinary differential equation, there are only o
 struct SingleTermFODEProblem <: FDEProblem
     f::Function
     α::Float64
-    u0
+    u0::Union{AbstractArray, Number}
     tspan::Union{Tuple, Number}
 end
 
@@ -85,7 +85,7 @@ Construct system of fractional delay differential equations problem.
 struct FDDESystem <: FDEProblem
     f::Function
     ϕ::AbstractArray
-    α
+    α::Union{AbstractArray, Number}
     τ::Number
     T
 end
@@ -265,7 +265,7 @@ function right(f, y, α, n, h::Float64)
     return temp
 end
 
-function predictor(f, y, α::Float64, n::Integer, h::Float64, u0, t0)
+function predictor(f::Function, y, α::Float64, n::Integer, h::Float64, u0, t0)
     predict = 0
     leftsum = 0
 
