@@ -20,7 +20,7 @@ function solve(prob::FODESystem, h, ::NewtonPolynomial)
     M = 1-α+α/gamma(α)
     N::Int = ceil(Int, (tfinal-t0)/h)
     l = length(u0)
-    result = zeros(3, N+1)
+    result = zeros(l, N+1)
 
     result[:, 1]=u0
     temp = zeros(l)
