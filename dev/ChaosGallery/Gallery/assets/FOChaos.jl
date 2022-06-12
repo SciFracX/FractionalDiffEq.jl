@@ -189,7 +189,7 @@ plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Genesio
 #=======Fractional Order Labyrinth System=======#
 using FractionalDiffEq
 
-t0=0; tfinal=5; h=0.5;
+t0=0; tfinal=5; h=0.005;
 α = [0.98, 0.98, 0.98]
 u0 = [-1, 1, 1]
 function fun(du, u, p, t)
@@ -203,3 +203,23 @@ sol = solve(prob, h, NewtonPolynomial())
 
 using Plots
 plot3d(sol[1, :], sol[2, :], sol[3, :], title="Fractional Order Labyrinth System")
+
+
+#=======Fractional Order Hadley System=======#
+using FractionalDiffEq
+
+t0=0; tfinal=50; h=0.01
+α = [0.99, 0.99, 0.99]
+u0 = [-0.1; 0.1; -0.1]
+function fun(du, u, p, t)
+    a=0.2;b=4;ζ=8;δ=1;
+    du[1] = -u[2]^2-u[3]^2-a*u[1]+a*ζ
+    du[2] = u[1]*u[2]-b*u[1]*u[3]-u[2]+δ
+    du[3] = b*u[1]*u[2]+u[1]*u[3]-u[3]
+end
+prob = FODESystem(fun, α, u0, (t0, tfinal))
+sol = solve(prob, h, AtanganaSedaAB())
+
+using Plots
+plot3d(sol[1, :], sol[2, :], sol[3, :], title="Fractional Order Hadley System")
+
