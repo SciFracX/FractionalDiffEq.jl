@@ -9,5 +9,4 @@ using Test
     include("FIETests.jl")
     include("DODETests.jl")
     include("auxillary.jl")
-    include("models.jl")
 end

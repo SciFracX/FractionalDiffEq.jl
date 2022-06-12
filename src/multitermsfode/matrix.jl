@@ -159,28 +159,6 @@ function B(N, p)
     return result
 end
 
-"""
-    bagleytorvik(p1, p2, p3, T, h)
-
-By specifying the parameters of Bagley Torvik Equation, we can use **bagleytorvik** to directly obtain the numerical approximation of a bagley torvik equation.
-
-!!! info "p2 ≠ 0"
-    Please note that the parameter of fractional derivative part must not be 0
-"""
-function bagleytorvik(p1, p2, p3, right, T, h)
-    N = round(Int, T/h)+1
-    equation = p1*D(N, 2, h) + p2*D(N, 1.5, h) + p3*(zeros(N, N)+I)
-    equation = eliminator(N, [1,2])*equation*eliminator(N, [1,2])'
-
-    rows = collect(Int64, 1:2)
-    
-    typeof(right) <: Number ? rightside = eliminator(N, rows)*right*ones(N) : rightside = eliminator(N, rows)*right.(collect(h:h:T))
-    
-    result = equation\rightside
-
-    return vcat(zeros(Float64, 2), result)
-end
-
 
 function solve(α, β, κ, T, M, N, ::FPDEMatrixDiscrete)
     h = T/(M-1)
@@ -347,7 +325,7 @@ plot(XX, YY, U, st=:surface)
 
 =#
 
-
+#=
 """
     diffusion(α, β)
 
@@ -358,7 +336,7 @@ plot(XX, YY, U, st=:surface)
 function diffusion(α, β)
     solve(α, β, 1, 21, 148, FPDEMatrixDiscrete())
 end
-
+=#
 ## An fractional partial differential equation Example
 
 
