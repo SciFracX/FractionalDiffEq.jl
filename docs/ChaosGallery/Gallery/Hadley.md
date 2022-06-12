@@ -1,14 +1,14 @@
 # Fractional Order Hadley System
 
-Fractional differential equations with Atangana-Baleanu fractional operator ``{_{t_0}^{ABC}D_t^\alpha}`` in the sense of Caputo.
-
-$$
+```math
 \begin{cases}
 {_{t_0}^{ABC}D_t^\alpha}x(t)=-y^2-z^2-ax+a\zeta\\
 {_{t_0}^{ABC}D_t^\alpha}y(t)=xy-bxz-y+\delta\\
 {_{t_0}^{ABC}D_t^\alpha}z(t)=bxy+xz-z\\
 \end{cases}
-$$
+```
+
+Fractional differential equations with Atangana-Baleanu fractional operator ``{_{t_0}^{ABC}D_t^\alpha}`` in the sense of Caputo.
 
 ```julia
 using FractionalDiffEq

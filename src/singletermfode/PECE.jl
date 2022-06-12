@@ -70,7 +70,7 @@ struct FDDEProblem <: FDEProblem
     f::Function
     ϕ::Union{Number, Function}
     α::Union{Number, Function}
-    τ::Union{Number, AbstractArray}
+    τ::Union{Number, AbstractArray, Function}
     tspan::Union{Number, Tuple}
 end
 
