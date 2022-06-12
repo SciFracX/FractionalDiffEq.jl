@@ -38,6 +38,7 @@ FractionalDiffEq.FLMMNewtonGregory
 FractionalDiffEq.FLMMTrap
 FractionalDiffEq.PIEX
 FractionalDiffEq.NewtonPolynomial
+FractionalDiffEq.AtanganaSedaAB
 ```
 
 ## Fractional Partial Differential Equations

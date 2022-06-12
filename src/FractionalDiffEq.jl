@@ -40,6 +40,7 @@ include("fodesystem/PIEX.jl")
 include("fodesystem/GLWithMemory.jl")
 include("fodesystem/NonLinear.jl")
 include("fodesystem/NewtonPolynomial.jl")
+include("fodesystem/AS.jl")
 
 # Fractional partial differential equations
 include("FPDE/FiniteDiffEx.jl")
@@ -105,7 +106,7 @@ export FODESolution, FIESolution, FDifferenceSolution, DODESolution
 export PIEX, PIPECE, PIIMRect, PIIMTrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, GL
 export ChebSpectral
-export AtanganaSeda
+export AtanganaSeda, AtanganaSedaAB
 
 # FPDE solvers
 export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF, GLDiff
