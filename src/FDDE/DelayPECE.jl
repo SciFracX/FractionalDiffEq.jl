@@ -79,16 +79,26 @@ function b(j, n, α, h)
 end
 
 function v(ϕ, n, τ, h, y, yp)
-    if τ >= (n-1)*h
-        return ϕ((n-1)*h-τ)
+    if typeof(τ) <: Function
+        m = floor.(Int, τ/h)
+        δ = @. m-τ/h
+        if m[n] > 1
+            return δ[n]*y[n-m[n]+2] + (1-δ[n])*y[n-m[n]+1]
+        elseif m[n] == 1
+            return δ[n]*yp[n+1] + (1-δ[n])*y[n]
+        end
     else
-        m = floor(Int, τ/h)
-        δ = m-τ/h
+        if τ >= (n-1)*h
+            return ϕ((n-1)*h-τ)
+        else
+            m = floor(Int, τ/h)
+            δ = m-τ/h
 
-        if m>1
-            return δ*y[n-m+2] + (1-δ)*y[n-m+1]
-        elseif m == 1
-            return δ*yp[n+1] + (1-δ)*y[n]
+            if m>1
+                return δ*y[n-m+2] + (1-δ)*y[n-m+1]
+            elseif m == 1
+                return δ*yp[n+1] + (1-δ)*y[n]
+            end
         end
     end
 end
