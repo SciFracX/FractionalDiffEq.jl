@@ -22,7 +22,7 @@ prob = FDDEProblem(f, ϕ, α, τ, T)
 
 And choose an algorithm to solve problem.
 
-Here, we consider the fractional order version of the four year life cycle of a population of lemmings:
+Here, we consider the fractional order version of the four year life cycle of a population of lemmings[^1]:
 
 ```math
 D^\alpha_ty(t)=3.5y(t)(1-\frac{y(t-0.74)}{19}),\ y(0)=19.00001
@@ -71,6 +71,15 @@ plot(p1, p2, layout=(1, 2))
 
 ![fdde_multiple_lags12](./assets/fdde_multiple_lags12.png)
 
+## FDDE with variable order
+
+Variable order fractional differential operators give modeling more freedom when we describe the systems. FractionalDiffEq.jl can solve FDDE with variable order derivative no matter single lags or multiple lags. To provide a comprehensive interface, all we need to do is just define customized ```FDDEProblem``` according to our model.
+
+```julia
+FDDEProblem(f, ϕ, α, τ, tspan)
+```
+
+we can pass ```α``` as a number or a function to tell FractionalDiffEq.jl it it is a normal constant order fractional derivative FDDE or variable order FDDE.
 
 ## System of FDDE
 
@@ -187,3 +196,5 @@ plot(sol[:, 1], sol[:, 3])
 ```
 
 ![Matrix Form](./assets/fdde_matrix.png)
+
+[^1]: [A PREDICTOR-CORRECTOR SCHEME FOR SOLVING NONLINEAR DELAY DIFFERENTIAL EQUATIONS OF FRACTIONAL ORDER, Sachin Bhalekar and Varsha Daftardar-Gejji](https://www.researchgate.net/profile/Sachin-Bhalekar-2/publication/245538900_A_Predictor-Corrector_Scheme_For_Solving_Nonlinear_Delay_Differential_Equations_Of_Fractional_Order/links/53ea02980cf2dc24b3caf95a/A-Predictor-Corrector-Scheme-For-Solving-Nonlinear-Delay-Differential-Equations-Of-Fractional-Order.pdf)

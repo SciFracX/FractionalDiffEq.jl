@@ -1,4 +1,4 @@
-@testset "Test DelayPECE method" begin
+@testset "Test DelayPECE method with single constant lag" begin
     function ϕ(x)
         if x == 0
             return 19.00001
@@ -16,6 +16,54 @@
     τ = 0.8
     T = 1
     fddeprob = FDDEProblem(f, ϕ, α, τ, T)
+    V, y = solve(fddeprob, h, DelayPECE())
+
+    @test V≈[19.0, 19.0, 1.0]
+    @test y≈[19.00001, 19.00001, 37.274176448220274]
+end
+
+@testset "Test DelayPECE method with single constant lag with variable order" begin
+    function ϕ(x)
+        if x == 0
+            return 19.00001
+        else
+            return 19.0
+        end
+    end
+    
+    function f(t, y, ϕ)
+        return 3.5*y*(1-ϕ/19)
+    end
+    
+    h = 0.5
+    alpha(t) = 0.99-(0.01/100)*t
+    τ = 0.8
+    T = 1
+    fddeprob = FDDEProblem(f, ϕ, alpha, τ, T)
+    V, y = solve(fddeprob, h, DelayPECE())
+
+    @test V≈[19.0, 19.0, 1.0]
+    @test y≈[19.00001, 19.00001, 36.698681913021375]
+end
+
+@testset "Test DelayPECE method with single time varying lag" begin
+    function ϕ(x)
+        if x == 0
+            return 19.00001
+        else
+            return 19.0
+        end
+    end
+    
+    function f(t, y, ϕ)
+        return 3.5*y*(1-ϕ/19)
+    end
+    
+    h = 0.5
+    alpha = 0.97
+    τ(t) = 0.8
+    T = 1
+    fddeprob = FDDEProblem(f, ϕ, alpha, τ, T)
     V, y = solve(fddeprob, h, DelayPECE())
 
     @test V≈[19.0, 19.0, 1.0]
@@ -125,7 +173,7 @@ end
 end
 
 
-@testset "Test DelayPECE method for multiple lags FDDE" begin
+@testset "Test DelayPECE method with multiple constant lags" begin
     α = 0.95; ϕ(x) = 0.5
     τ = [2, 2.6]
     fun(t, y, ϕ1, ϕ2) = 2*ϕ1/(1+ϕ2^9.65)-y
