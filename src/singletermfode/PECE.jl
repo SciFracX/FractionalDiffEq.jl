@@ -119,9 +119,11 @@ struct FODESystem <: FDEProblem
     α::AbstractArray
     u0::AbstractArray
     tspan::Union{Tuple, Number}
+    p::Union{AbstractArray, Number, Nothing}
 end
 
-FODESystem(f, α, u0, T) = FODESystem(f, α, u0, 0, T)# Start from t=0
+# If the there are no parameters, we do this:
+FODESystem(f, α, u0, tspan) = FODESystem(f, α, u0, tspan, nothing)# Start from t=0
 
 """
     DODEProblem(parameters, orders, interval, tspan, rightfun)

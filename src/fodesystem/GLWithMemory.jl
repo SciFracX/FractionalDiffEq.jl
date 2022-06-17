@@ -23,7 +23,7 @@ struct GL <: FractionalDiffEqAlgorithm end
 # struct GLWithMemory <: FractionalDiffEqAlgorithm end
 
 function solve(prob::FODESystem, h, ::GL)
-    @unpack f, α, u0, tspan = prob
+    @unpack f, α, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
     hα = h^α[1]
     n::Int64 = floor(Int64, (T-t0)/h)+1
@@ -51,7 +51,7 @@ function solve(prob::FODESystem, h, ::GL)
             end
         end
 
-        f(du, result[:, k-1], nothing, t0+(k-1)*h)
+        f(du, result[:, k-1], p, t0+(k-1)*h)
         result[:, k] .= hα.*du .- summation
     end
     return result'
