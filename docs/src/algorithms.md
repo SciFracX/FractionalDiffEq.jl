@@ -10,7 +10,7 @@ Pages = ["algorithms.md"]
 
 ```@docs
 FractionalDiffEq.PECE
-FractionalDiffEq.GL
+FractionalDiffEq.GLFractionalDiffEq.Euler
 FractionalDiffEq.PIEX
 FractionalDiffEq.ChebSpectral
 FractionalDiffEq.AtanganaSeda

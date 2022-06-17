@@ -16,6 +16,14 @@
     0.977769035221195]; atol=1e-3)
 end
 
+@testset "Test forward Euler method" begin
+    fun(x, y) = 1-y
+    prob = SingleTermFODEProblem(fun, 0.5, 0, (0, 5))
+    sol = solve(prob, 0.5, Euler())
+
+    @test isapprox(sol.u, [0.0, 0.7978845608028654, 0.4917593947279313, 0.7259128254126388, 0.6517091834824043, 0.7289344741198424, 0.7179084631988641, 0.7483267686842404, 0.7528156154229637, 0.7681082183772983, 0.7753604356669395]; atol=1e-3)
+end
+
 @testset "Test Matrix discrete method" begin
     fun(x, y) = 1-y
     u0 = [0, 0]

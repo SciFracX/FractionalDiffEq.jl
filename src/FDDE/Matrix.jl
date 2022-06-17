@@ -14,7 +14,7 @@ function solve(prob::FDDEMatrixProblem, h, ::MatrixForm)
     t0 = tspan[1]; T = tspan[2]
     limit = 100
     var_num = length(A[:, 1])
-    m = ceil(Int, α)
+    m::Int = ceil(Int, α)
 
     t_tau = t0-τ
     temp = collect(t0-h:-h:t_tau)

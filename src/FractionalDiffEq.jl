@@ -13,6 +13,9 @@ using HypergeometricFunctions
 using ToeplitzMatrices
 using RecipesBase
 using ForwardDiff
+using DiffEqBase
+using Reexport
+@reexport using DiffEqBase
 
 # Single-term fractional ordinary differential equations
 include("singletermfode/PECE.jl")
@@ -20,6 +23,7 @@ include("singletermfode/PI.jl")
 include("singletermfode/GL.jl")
 include("singletermfode/ChebSpectral.jl")
 include("singletermfode/AtanganaSeda.jl")
+include("singletermfode/Euler.jl")
 
 # Multi-terms fractional ordinary differential equations
 include("multitermsfode/matrix.jl")
@@ -107,6 +111,7 @@ export PIEX, PIPECE, PIIMRect, PIIMTrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, GL
 export ChebSpectral
 export AtanganaSeda, AtanganaSedaAB
+export Euler
 
 # FPDE solvers
 export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF, GLDiff

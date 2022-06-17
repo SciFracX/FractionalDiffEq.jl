@@ -75,7 +75,7 @@ function solve_fdde_with_single_lag(FDDE::FDDEProblem, h)
     for n in 1:maxn-1
         yp[n+1] = 0
         for j = 1:n
-            yp[n+1] = yp[n+1]+b(j-1, n-1, α, h)*f(t[j], y[j], v(ϕ, j, τ, h, y, yp, t))
+            yp[n+1] = yp[n+1]+generalized_binomials(j-1, n-1, α, h)*f(t[j], y[j], v(ϕ, j, τ, h, y, yp, t))
         end
         yp[n+1] = yp[n+1]/gamma(α)+ϕ(0)
 
@@ -90,6 +90,7 @@ function solve_fdde_with_single_lag(FDDE::FDDEProblem, h)
 
     V = copy(t)
     @fastmath @inbounds @simd for n = 1:maxn-1
+        # The delay term
         V[n] = v(ϕ, n, τ, h, y, yp, t)
     end
     return V, y
@@ -106,7 +107,7 @@ function a(j, n, α, h)
     return result*h^α / (α*(α + 1))
 end
 
-b(j, n, α, h) = h^α/α*((n-j+1)^α - (n-j)^α)
+generalized_binomials(j, n, α, h) = h^α/α*((n-j+1)^α - (n-j)^α)
 
 function v(ϕ, n, τ, h, y, yp, t)
     if typeof(τ) <: Function
@@ -149,7 +150,7 @@ function solve_fdde_with_multiple_lags(FDDE::FDDEProblem, h)
     for n in 1:maxn-1
         yp[n+1] = 0
         for j = 1:n
-            yp[n+1] = yp[n+1]+b(j-1, n-1, α, h)*f(t[j], y[j], multiv(ϕ, j, τ, h, y, yp)...)
+            yp[n+1] = yp[n+1]+generalized_binomials(j-1, n-1, α, h)*f(t[j], y[j], multiv(ϕ, j, τ, h, y, yp)...)
         end
         yp[n+1] = yp[n+1]/gamma(α)+ϕ(0)
 
@@ -224,7 +225,7 @@ function solve_fdde_with_single_lag_and_variable_order(FDDE::FDDEProblem, h)
     for n in 1:maxn-1
         yp[n+1] = 0
         for j = 1:n
-            yp[n+1] = yp[n+1] + b(j-1, n-1, α(t[n+1]), h)*f(t[j], y[j], v(ϕ, j, τ, h, y, yp, t))
+            yp[n+1] = yp[n+1] + generalized_binomials(j-1, n-1, α(t[n+1]), h)*f(t[j], y[j], v(ϕ, j, τ, h, y, yp, t))
         end
         yp[n+1] = yp[n+1]/gamma(α(t[n+1]))+ϕ(0)
 
@@ -256,7 +257,7 @@ function solve_fdde_with_multiple_lags_and_variable_order(FDDE::FDDEProblem, h)
     for n in 1:maxn-1
         yp[n+1] = 0
         for j = 1:n
-            yp[n+1] = yp[n+1]+b(j-1, n-1, α(t[n+1]), h)*f(t[j], y[j], multiv(ϕ, j, τ, h, y, yp)...)
+            yp[n+1] = yp[n+1]+generalized_binomials(j-1, n-1, α(t[n+1]), h)*f(t[j], y[j], multiv(ϕ, j, τ, h, y, yp)...)
         end
         yp[n+1] = yp[n+1]/gamma(α(t[n+1]))+ϕ(0)
 
