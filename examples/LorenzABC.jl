@@ -1,7 +1,6 @@
 using FractionalDiffEq, Plots
 α=1;β=1;h=0.01;tfinal=50
 u0 = [-2, 1, -1]
-a=10;b=28;c=8/3
 function fun(du, u, p, t)
     a=10;b=28;c=8/3
     du[1] = a*(u[2]-u[1])

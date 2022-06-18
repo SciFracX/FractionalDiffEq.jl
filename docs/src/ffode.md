@@ -14,13 +14,13 @@ FFODESystem(f, [α, β], u0, tspan)
 
 Let's see the Lorenz system in Atangana-Baleanu-Caputo sense:
 
-$$
+```math
 \begin{cases}
 {^{FFM}D^{\alpha,\beta}}x=a(y-x)\\
 {^{FFM}D^{\alpha,\beta}}y=(b-z)x-y\\
 {^{FFM}D^{\alpha,\beta}}z=xy-cz
 \end{cases}
-$$
+```
 
 ```julia
 using FractionalDiffEq, Plots
