@@ -261,19 +261,19 @@ function solve(FODE::SingleTermFODEProblem, h::Float64, ::PECE)
     @unpack f, α, u0, tspan = FODE
     t0 = tspan[1]; T = tspan[2]
     N::Int64 = round(Int, (T-t0)/h)
-    y = zeros(N+1) # Initialize the solution array
+    y = zeros(Float64, N+1) # Initialize the solution array
 
 
     @fastmath @inbounds @simd for n ∈ 0:N
         # Handling initial value
         temp=0
-        for k=0:ceil(Int, α)-1
+        for k in 0:ceil(Int, α)-1
             temp += u0[k+1]*(t0+(n+1)*h)^k/factorial(k)
         end
         y[n+1] = temp + h^α/gamma(α+2)*(f(t0+(n+1)*h, predictor(f, y, α, n, h, u0, t0)) + right(f, y, α, n, h))
     end
 
-    tspan = collect(t0:h:T)
+    tspan = collect(Float64, t0:h:T)
     return FODESolution(tspan, y)
 end
 
@@ -294,7 +294,7 @@ function predictor(f::Function, y, α::Float64, n::Integer, h::Float64, u0, t0)
     l = ceil(Int, α)
 
     # Handling initial value
-    for k=0:l-1
+    for k in 0:l-1
         leftsum += u0[k+1]*(t0+(n+1)*h)^k/factorial(k)
     end
 
@@ -306,7 +306,7 @@ function predictor(f::Function, y, α::Float64, n::Integer, h::Float64, u0, t0)
 end
 
 
-function A(j, n, α)
+function A(j::Int, n::Int, α)
     if j == 0
         return n^(α+1) - (n-α)*(n+1)^α
     elseif 1 ≤ j ≤ n
@@ -316,4 +316,4 @@ function A(j, n, α)
     end
 end
 
-B(j, n, α) = ((n + 1 - j)^α - (n - j)^α) # Moved the h^α/α to the end of predictor: return leftsum + h^α/α*predict
+B(j::Int, n::Int, α) = ((n + 1 - j)^α - (n - j)^α) # Moved the h^α/α to the end of predictor: return leftsum + h^α/α*predict

@@ -35,9 +35,9 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIEX)
     Qr::Int = ceil(Int, log2((Nr)/r))-1
     NNr::Int = 2^(Qr+1)*r
     
-    y = zeros(problem_size, N+1)
-    fy = zeros(problem_size, N+1)
-    zn = zeros(problem_size, NNr+1, Q)
+    y = zeros(Float64, problem_size, N+1)
+    fy = zeros(Float64, problem_size, N+1)
+    zn = zeros(Float64, problem_size, NNr+1, Q)
     
     nvett = collect(0:NNr+1)
     bn = zeros(Q, NNr+1)
@@ -71,7 +71,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIEX)
         y[:, N+1] = (1-c)*y[:, N] + c*y[:, N+1]
     end
 
-    t = t[1:N+1] ; y = y[:, 1:N+1]
+    t = t[1:N+1]; y = y[:, 1:N+1]
     return FODESolution(t, y[:])
 end
     
@@ -82,7 +82,7 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N, bn, t0, problem
     nxf::Int = nx0 + L*r - 1
     nyi::Int = nu0
     nyf::Int = nu0 + L*r - 1
-    is = 1
+    is::Int = 1
     s_nxi = zeros(N)
     s_nxf = zeros(N)
     s_nyi = zeros(N)

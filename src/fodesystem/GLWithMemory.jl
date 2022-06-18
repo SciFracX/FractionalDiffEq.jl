@@ -22,8 +22,10 @@ Python version by https://github.com/DClementeL/Grunwald_Letnikov
 # struct GLWithMemory <: FractionalDiffEqAlgorithm end
 
 function solve(prob::FODESystem, h, ::GL)
+    # GL method is only for same order FODE
     @unpack f, α, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
+    α = α[1]
     hα = h^α[1]
     n::Int64 = floor(Int64, (T-t0)/h)+1
     l = length(u0)
@@ -36,7 +38,7 @@ function solve(prob::FODESystem, h, ::GL)
     Cα = zeros(Float64, n)
     Cα[1] = 1
     @fastmath @inbounds @simd for j in range(2, n, step=1)
-        Cα[j] = (1-(1+α[1])/(j-1))*Cα[j-1]
+        Cα[j] = (1-(1+α)/(j-1))*Cα[j-1]
     end
 
     du = zeros(Float64, l)
