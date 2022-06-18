@@ -9,7 +9,7 @@ Nonlinear algorithm for nonlinear fractional differential equations.
 
 Dingyu Xue, Northeastern University, China ISBN:9787030543981
 """
-struct NonLinearAlg <: FractionalDiffEqAlgorithm end
+struct NonLinearAlg <: AbstractFDEAlgorithm end
 
 function solve(prob::FODESystem, h, ::NonLinearAlg, L0=1e10)
     @unpack f, α, u0, tspan, p = prob

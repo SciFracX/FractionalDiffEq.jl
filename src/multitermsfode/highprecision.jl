@@ -5,7 +5,7 @@
 
 Closed form high precision algorithms for multi term ordinary differential equations.
 """
-struct ClosedFormHighPercision <: FractionalDiffEqAlgorithm end
+struct ClosedFormHighPercision <: AbstractFDEAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, h, p, ::ClosedFormHighPercision)
     @unpack parameters, orders, rightfun, rparameters, rorders, tspan =  prob

@@ -83,7 +83,7 @@ include("utils.jl")
 include("auxiliary.jl")
 
 
-export FractionalDiffEqAlgorithm
+export AbstractFDEAlgorithm
 
 # General types
 export solve, FDEProblem

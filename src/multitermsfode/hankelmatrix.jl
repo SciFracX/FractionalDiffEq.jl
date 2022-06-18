@@ -5,7 +5,7 @@
 
 Use Closed-Form Hankel matrix algorithm to obtain numerical solution at zero initial condition.
 """
-struct ClosedFormHankelM <: FractionalDiffEqAlgorithm end
+struct ClosedFormHankelM <: AbstractFDEAlgorithm end
 
 
 function solve(prob::MultiTermsFODEProblem, h, ::ClosedFormHankelM)

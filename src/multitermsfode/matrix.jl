@@ -15,7 +15,7 @@ Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matri
 }
 ```
 """
-struct FODEMatrixDiscrete <: FractionalDiffEqAlgorithm end
+struct FODEMatrixDiscrete <: AbstractFDEAlgorithm end
 
 
 """
@@ -33,7 +33,7 @@ Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matri
 }
 ```
 """
-struct FPDEMatrixDiscrete <: FractionalDiffEqAlgorithm end
+struct FPDEMatrixDiscrete <: AbstractFDEAlgorithm end
 
 
 

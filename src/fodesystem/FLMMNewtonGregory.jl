@@ -15,7 +15,7 @@ Use [Newton Gregory](https://www.geeksforgeeks.org/newton-forward-backward-inter
 }
 ```
 """
-struct FLMMNewtonGregory <: FractionalDiffEqAlgorithm end
+struct FLMMNewtonGregory <: AbstractFDEAlgorithm end
 
 function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-6)
     @unpack f, α, u0, tspan = prob

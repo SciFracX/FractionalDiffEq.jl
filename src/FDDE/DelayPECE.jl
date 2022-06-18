@@ -32,7 +32,7 @@ Capable of solving both single term FDDE and multiple FDDE.
 }
 ```
 """
-struct DelayPECE <: FractionalDiffEqAlgorithm end
+struct DelayPECE <: AbstractFDEAlgorithm end
 #FIXME: If we have a FDDE with both variable order and time varying lag??😂
 function solve(FDDE::FDDEProblem, h, ::DelayPECE)
     # If the delays are time varying, we need to specify single delay and multiple delay

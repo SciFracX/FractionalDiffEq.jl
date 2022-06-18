@@ -7,7 +7,7 @@
 
 https://github.com/mandresik/system-of-linear-fractional-differential-delayed-equations
 """
-struct MatrixForm <: FractionalDiffEqAlgorithm end
+struct MatrixForm <: AbstractFDEAlgorithm end
 
 function solve(prob::FDDEMatrixProblem, h, ::MatrixForm)
     @unpack α, τ, A, B, f, x0, tspan = prob

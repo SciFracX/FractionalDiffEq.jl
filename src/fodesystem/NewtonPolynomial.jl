@@ -10,7 +10,7 @@ Solve FODE system using Newton Polynomials methods.
 https://doi.org/10.1016/c2020-0-02711-8
 ```
 """
-struct NewtonPolynomial <: FractionalDiffEqAlgorithm end
+struct NewtonPolynomial <: AbstractFDEAlgorithm end
 
 function solve(prob::FODESystem, h, ::NewtonPolynomial)
     @unpack f, α, u0, tspan, p = prob

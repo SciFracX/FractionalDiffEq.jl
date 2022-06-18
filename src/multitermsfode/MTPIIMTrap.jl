@@ -3,7 +3,7 @@
 
 Use implicit product integration trapezoidal type method to solve multi-terms FODE.
 """
-struct PIIMTrap <: FractionalDiffEqAlgorithm end
+struct PIIMTrap <: AbstractFDEAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, h, ::PIIMTrap; abstol=1e-6)
     @unpack parameters, orders, rightfun, u0, tspan = prob

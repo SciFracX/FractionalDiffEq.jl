@@ -18,7 +18,7 @@ Using Ultrasphereical spectral method solve fractional integral equations.
 }
 ```
 """
-struct SpectralUltraspherical <: FractionalDiffEqAlgorithm end
+struct SpectralUltraspherical <: AbstractFDEAlgorithm end
 
 function solve(FIE::FIEProblem, n, ::SpectralUltraspherical)
 	@unpack parameters, orders, rightfun, tspan = FIE

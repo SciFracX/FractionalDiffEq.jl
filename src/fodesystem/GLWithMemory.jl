@@ -18,7 +18,6 @@ doi={10.1109/MOCAST.2019.8742063}}
 
 Python version by https://github.com/DClementeL/Grunwald_Letnikov
 """
-struct GL <: FractionalDiffEqAlgorithm end
 # Grunwald Letnikov discretization method dispatch for FODESystem
 # struct GLWithMemory <: FractionalDiffEqAlgorithm end
 

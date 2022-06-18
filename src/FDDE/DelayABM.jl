@@ -13,7 +13,7 @@ Use the Adams-Bashforth-Moulton method to solve fractional delayed differential 
 }
 ```
 """
-struct DelayABM <: FractionalDiffEqAlgorithm end
+struct DelayABM <: AbstractFDEAlgorithm end
 #FIXME: There are still some improvments about initial condition
 #FIXME: Fix DelayABM method for FDDESystem : https://www.researchgate.net/publication/245538900_A_Predictor-Corrector_Scheme_For_Solving_Nonlinear_Delay_Differential_Equations_Of_Fractional_Order
 #FIXME: Also the problem definition f(t, ϕ, y) or f(t, y, ϕ)?

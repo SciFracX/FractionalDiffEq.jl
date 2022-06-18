@@ -4,8 +4,6 @@
 
 Use explicit Product integration method to solve system of FODE.
 """
-struct PIEX <: FractionalDiffEqAlgorithm end
-
 
 mutable struct M
     an

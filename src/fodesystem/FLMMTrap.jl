@@ -15,7 +15,7 @@ Use [Trapezoidal](https://en.wikipedia.org/wiki/Trapezoidal_rule_(differential_e
 }
 ```
 """
-struct FLMMTrap <: FractionalDiffEqAlgorithm end
+struct FLMMTrap <: AbstractFDEAlgorithm end
 
 function solve(prob::FODESystem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
     @unpack f, α, u0, tspan = prob

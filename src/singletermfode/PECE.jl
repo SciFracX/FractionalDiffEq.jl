@@ -44,7 +44,7 @@ end
 """
 Base type for all of the FractionalDiffEq algorithms
 """
-abstract type FractionalDiffEqAlgorithm end
+abstract type AbstractFDEAlgorithm end
 
 
 
@@ -248,7 +248,7 @@ doi={https://doi.org/10.1023/A:1016592219341}
 }
 ```
 """
-struct PECE <: FractionalDiffEqAlgorithm end
+struct PECE <: AbstractFDEAlgorithm end
 #TODO: Use Richardson extrapolation to refine the PECE algorithms 
 #TODO: Rename as ABM
 

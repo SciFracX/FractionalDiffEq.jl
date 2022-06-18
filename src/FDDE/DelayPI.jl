@@ -19,7 +19,7 @@ Use explicit rectangular product integration algorithm to solve an FDDE problem.
 }
 ```
 """
-struct DelayPI <: FractionalDiffEqAlgorithm end
+struct DelayPI <: AbstractFDEAlgorithm end
 
 function solve(FDDE::FDDEProblem, h, ::DelayPI)
     @unpack f, ϕ, α, τ, tspan = FDDE

@@ -17,7 +17,7 @@ Using Chebyshev spectral method to solve single term fractional ordinary differe
 }
 ```
 """
-struct ChebSpectral <: FractionalDiffEqAlgorithm end
+struct ChebSpectral <: AbstractFDEAlgorithm end
 #FIXME: Fix the initial conditions
 
 function solve(FODE::SingleTermFODEProblem, n, ::ChebSpectral)

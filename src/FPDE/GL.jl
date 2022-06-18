@@ -1,7 +1,7 @@
 """
 Using Grunwald Letnikov discretization operator to discrete fractional operator.
 """
-struct GLDiff <: FractionalDiffEqAlgorithm end
+struct GLDiff <: AbstractFDEAlgorithm end
 
 function solve(α, d, rightfun, M, N, initial_condition, left_boundry, right_boundry, ::GLDiff)
     ue=zeros(M+1, N+1)

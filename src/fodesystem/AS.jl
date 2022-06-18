@@ -3,7 +3,7 @@
 
 Solve Atangana-Baleanu fractional order differential equations using Newton Polynomials.
 """
-struct AtanganaSedaAB <: FractionalDiffEqAlgorithm end
+struct AtanganaSedaAB <: AbstractFDEAlgorithm end
 
 function solve(prob::FODESystem, h, ::AtanganaSedaAB)
     @unpack f, α, u0, tspan = prob
