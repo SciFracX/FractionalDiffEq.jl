@@ -479,7 +479,7 @@ end
         du[2] = (b-u[3])*u[1]-u[2]
         du[3] = u[1]*u[2]-c*u[3]
     end
-    prob = FFODESystem(fun, [α, β], u0, (0, tfinal))
+    prob = FFODEProblem(fun, [α, β], u0, (0, tfinal))
     sol = solve(prob, h, AtanganaSeda())
 
     @test isapprox(sol, [ -2.0   1.0       -9.35      31.0271   -160.86      637.491
