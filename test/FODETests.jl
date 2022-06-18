@@ -95,9 +95,9 @@ end
     end
     prob = FODESystem(testf!, alpha, x0, (0, tf))
     result = solve(prob, h, GL())
-    @test isapprox(result, [1.0 0.0 1.0
-    -4.04478 13.5939 -0.352607
-    84.8074 -51.1251 -27.5541]; atol=1e-4)
+    @test isapprox(result, [1.0  -4.04478    84.8074
+    0.0  13.5939    -51.1251
+    1.0  -0.352607  -27.5541]; atol=1e-4)
 end
 
 @testset "Test GL method" begin
