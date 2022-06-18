@@ -123,23 +123,26 @@ struct FODESystem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-FODESystem(f, α, u0, tspan) = FODESystem(f, α, u0, tspan, nothing)# Start from t=0
+FODESystem(f, α, u0, tspan) = FODESystem(f, α, u0, tspan, nothing)
+
 
 """
-    FFODESystem(f, α, u0, tspan, p)
+    FFODEProblem(f, α, u0, tspan, p)
 
 Define fractal-fractional differential equations problems.
 """
-struct FFODESystem <: FDEProblem
+struct FFODEProblem <: FDEProblem
     f::Function
     order::AbstractArray
-    u0::AbstractArray
+    u0::Union{AbstractArray, Number}
     tspan::Union{Tuple, Number}
     p::Union{AbstractArray, Number, Nothing}
 end
 
 # If the there are no parameters, we do this:
-FFODESystem(f, order, u0, tspan) = FFODESystem(f, order, u0, tspan, nothing)# Start from t=0
+FFODEProblem(f, order, u0, tspan) = FFODEProblem(f, order, u0, tspan, nothing)
+
+
 
 
 """
