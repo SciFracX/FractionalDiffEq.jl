@@ -467,3 +467,22 @@ end
     0.1   0.525  1.08088  -4.03383   32.0085
    -0.1  -0.065  1.03463   4.10537   13.3441]; atol=1e-2)
 end
+
+
+@testset "Test AtanganaSeda method for FFODESystem" begin
+    α=1;β=1;h=0.1;tfinal=0.5
+    u0 = [-2, 1, -1]
+    a=10;b=28;c=8/3
+    function fun(du, u, p, t)
+        a=10;b=28;c=8/3
+        du[1] = a*(u[2]-u[1])
+        du[2] = (b-u[3])*u[1]-u[2]
+        du[3] = u[1]*u[2]-c*u[3]
+    end
+    prob = FFODESystem(fun, [α, β], u0, (0, tfinal))
+    sol = solve(prob, h, AtanganaSeda())
+
+    @test isapprox(sol, [ -2.0   1.0       -9.35      31.0271   -160.86      637.491
+    1.0  -4.9        3.125    -59.1272    190.243  -11690.4
+   -1.0  -0.933333  -1.32833   -5.57208  -351.022   -5795.54]; atol=1e-4)
+end

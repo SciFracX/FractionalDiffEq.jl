@@ -28,6 +28,12 @@ FractionalDiffEq.MultiTermsFODEProblem
 FractionalDiffEq.FODESystem
 ```
 
+### FFODE problem
+
+```@docs
+FractionalDiffEq.FFODESystem
+```
+
 ## FPDE Problem
 
 ```@docs

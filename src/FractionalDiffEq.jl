@@ -47,6 +47,9 @@ include("fodesystem/NonLinear.jl")
 include("fodesystem/NewtonPolynomial.jl")
 include("fodesystem/AS.jl")
 
+# System of fractal-fractional ordinary differential equations
+include("ffodeproblem/AS.jl")
+
 # Fractional partial differential equations
 include("FPDE/FiniteDiffEx.jl")
 include("FPDE/FiniteDiffIm.jl")
@@ -92,7 +95,7 @@ export FPDEProblem
 export FDDEProblem, FDDESystem, FDDEMatrixProblem
 
 # FODE problems
-export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem
+export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FFODESystem
 
 # Fractional Difference probelms
 export FractionalDifferenceProblem, FractionalDifferenceSystem
