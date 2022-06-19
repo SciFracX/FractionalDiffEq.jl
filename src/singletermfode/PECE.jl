@@ -306,7 +306,7 @@ function predictor(f::Function, y, α::Float64, n::Integer, h::Float64, u0, t0)
 end
 
 
-function A(j::Int, n::Int, α)
+function A(j, n, α)
     if j == 0
         return n^(α+1) - (n-α)*(n+1)^α
     elseif 1 ≤ j ≤ n
