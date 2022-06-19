@@ -74,6 +74,15 @@ function Base.show(io::IO, prob::FIEProblem)
     println("timespan: $(prob.tspan)")
 end
 
+function Base.show(io::IO, prob::FFODEProblem)
+    printstyled("FFODEProblem", color=:light_blue)
+    printstyled(" with order ")
+    printstyled("$(prob.order[1])", color=:red)
+    printstyled(" and $(prob.order[2])", color=:red)
+    println()
+    println("timespan: $(prob.tspan)")
+end
+
 
 
 """

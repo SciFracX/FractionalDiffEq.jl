@@ -153,3 +153,18 @@ end
     @test_nowarn show(fieprob)
     @test_nowarn show(fiesol)
 end
+
+@testset "Test FFODEProblem show method" begin
+    α=1;β=1;h=0.1;tfinal=0.5
+    u0 = [-2, 1, -1]
+    a=10;b=28;c=8/3
+    function fun(du, u, p, t)
+        a=10;b=28;c=8/3
+        du[1] = a*(u[2]-u[1])
+        du[2] = (b-u[3])*u[1]-u[2]
+        du[3] = u[1]*u[2]-c*u[3]
+    end
+    prob = FFODEProblem(fun, [α, β], u0, (0, tfinal))
+
+    @test_nowarn show(prob)
+end
