@@ -134,12 +134,9 @@ end
     prob = FODESystem(chua!, α, x0, tspan)
     result = solve(prob, h, NonLinearAlg())
 
-    @test isapprox(result, [ 0.2 -0.1 0.1
-    0.11749    -0.0590683  0.224134
-    0.074388   -0.018475   0.282208
-    0.0733938   0.0192931  0.286636
-    0.117483    0.0534393  0.246248
-    0.210073    0.0844175  0.168693]; atol=1e-3)
+    @test isapprox(result, [  0.2   0.11749     0.074388  0.0733938  0.117483   0.210073
+    -0.1  -0.0590683  -0.018475  0.0192931  0.0534393  0.0844175
+     0.1   0.224134    0.282208  0.286636   0.246248   0.168693]; atol=1e-3)
 end
 
 @testset "Test Product Integral Explicit method" begin
@@ -447,7 +444,7 @@ end
    -3.0656444401780365
     9.199001384099954
   -18.488162171353544
-   44.23628311938973]; atol=1e-6)
+   44.23628311938973]; atol=1e-3)
 end
 
 @testset "Test Atangana Seda method for Atangana-Baleanu FodeSystem" begin

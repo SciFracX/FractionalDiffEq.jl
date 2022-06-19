@@ -20,7 +20,7 @@ function solve(prob::FODESystem, h, ::NonLinearAlg, L0=1e10)
     g = g[:]
     u0 = u0[:]
     ha = h.^α
-    z = zeros(n, m)
+    z = zeros(Float64, n, m)
     x1 = copy(u0) # Here we pass the value of x0 to x1. Honestly, I kept finding this bug for almost a whole night😅
 
 
@@ -43,9 +43,7 @@ function solve(prob::FODESystem, h, ::NonLinearAlg, L0=1e10)
         end
         z[:, k] = x1 - u0
     end
-
-    result = (z + repeat(u0, 1, m))'
-    
+    result = z + repeat(u0, 1, m)
     return result
 end
 
