@@ -32,9 +32,9 @@ function solve(FDDE::FDDEProblem, h, ::DelayPI)
     h_al = h^α
 
     y0 = ϕ(t0)
-    y = zeros(N+1)
+    y = zeros(Float64, N+1)
 
-    g = zeros(N+1)
+    g = zeros(Float64, N+1)
     y[1] = y0
 
     for n = 1:N

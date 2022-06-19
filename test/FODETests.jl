@@ -466,7 +466,7 @@ end
 end
 
 
-@testset "Test AtanganaSeda method for FFODESystem" begin
+@testset "Test AtanganaSeda method for FFODEProblem" begin
     α=1;β=1;h=0.1;tfinal=0.5
     u0 = [-2, 1, -1]
     a=10;b=28;c=8/3
@@ -481,5 +481,5 @@ end
 
     @test isapprox(sol, [ -2.0   1.0       -9.35      31.0271   -160.86      637.491
     1.0  -4.9        3.125    -59.1272    190.243  -11690.4
-   -1.0  -0.933333  -1.32833   -5.57208  -351.022   -5795.54]; atol=1e-4)
+   -1.0  -0.933333  -1.32833   -5.57208  -351.022   -5795.54]; atol=1e-2)
 end

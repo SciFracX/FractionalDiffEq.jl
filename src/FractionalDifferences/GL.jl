@@ -33,7 +33,7 @@ end
 
 
 function generalized_binomial(i, alpha)
-    result = ones(i+1)
+    result = ones(Float64, i+1)
     for j in 1:i
         result[j+1] = result[j]*(j-1-alpha)/j
     end

@@ -21,8 +21,8 @@ function solve(FDDE::FDDEProblem, h, ::DelayABM)
     @unpack f, ϕ, α, τ, tspan = FDDE
     N::Int = round(Int, tspan/h)
     Ndelay::Int = round(Int, τ/h)
-    x1 = zeros(Ndelay+N+1)
-    x = zeros(Ndelay+N+1)
+    x1 = zeros(Float64, Ndelay+N+1)
+    x = zeros(Float64, Ndelay+N+1)
     #x1[Ndelay+N+1] = 0
     
     #x[Ndelay+N+1] = 0
@@ -33,7 +33,7 @@ function solve(FDDE::FDDEProblem, h, ::DelayABM)
         x[1:Ndelay] = ϕ*ones(Ndelay)
     elseif typeof(ϕ) <: Function
         x[Ndelay] = ϕ(0)
-        x[1:Ndelay-1] .= ϕ(collect(-h*(Ndelay-1):h:(-h)))
+        x[1:Ndelay-1] .= ϕ(collect(Float64, -h*(Ndelay-1):h:(-h)))
     end
     
     x0 = copy(x[Ndelay])

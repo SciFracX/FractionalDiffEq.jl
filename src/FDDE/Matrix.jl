@@ -23,9 +23,9 @@ function solve(prob::FDDEMatrixProblem, h, ::MatrixForm)
     index = length(temp)
     N = length(t)-index-1
 
-    x = zeros(length(t), var_num)
-    b = zeros(1, N)
-    F = zeros(var_num, N)
+    x = zeros(Float64, length(t), var_num)
+    b = zeros(Float64, N)
+    F = zeros(Float64, var_num, N)
     x0TP = x0(t0)
 
     @fastmath @inbounds @simd for i=1:index+1

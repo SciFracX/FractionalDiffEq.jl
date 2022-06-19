@@ -5,7 +5,7 @@
 
 Using the delayed predictor-corrector method to solve the delayed fractional differential equation problem in the Caputo sense.
 
-Capable of solving both single term FDDE and multiple FDDE.
+Capable of solving both single term FDDE and multiple FDDE, support time varying lags of course😋.
 
 ### References
 
@@ -33,7 +33,7 @@ Capable of solving both single term FDDE and multiple FDDE.
 ```
 """
 struct DelayPECE <: AbstractFDEAlgorithm end
-#FIXME: If we have a FDDE with both variable order and time varying lag??😂
+#FIXME: What if we have an FDDE with both variable order and time varying lag??😂
 function solve(FDDE::FDDEProblem, h, ::DelayPECE)
     # If the delays are time varying, we need to specify single delay and multiple delay
     if  typeof(FDDE.τ) <: Function
@@ -68,7 +68,7 @@ function solve_fdde_with_single_lag(FDDE::FDDEProblem, h)
     T = tspan
     t = collect(0:h:T)
     maxn = size(t, 1)
-    yp = collect(0:h:T+h)
+    yp = collect(Float64, 0:h:T+h)
     y = copy(t)
     y[1] = ϕ(0)
 
@@ -96,7 +96,7 @@ function solve_fdde_with_single_lag(FDDE::FDDEProblem, h)
     return V, y
 end
 
-function a(j, n, α, h)
+function a(j::Int, n::Int, α, h)
     if j == n+1
         result = 1
     elseif j == 0
@@ -143,7 +143,7 @@ function solve_fdde_with_multiple_lags(FDDE::FDDEProblem, h)
     @unpack f, ϕ, α, τ, tspan = FDDE
     t = collect(0:h:tspan)
     maxn = length(t)
-    yp = zeros(maxn)
+    yp = zeros(Float64, maxn)
     y = copy(t)
     y[1] = ϕ(0)
 
@@ -175,7 +175,7 @@ function solve_fdde_with_multiple_lags(FDDE::FDDEProblem, h)
     return delayed, y
 end
 
-function multia(j, n, α, h)
+function multia(j::Int, n::Int, α, h)
     if j == n+1
         result = 1
     elseif j == 0
@@ -275,7 +275,7 @@ function solve_fdde_with_multiple_lags_and_variable_order(FDDE::FDDEProblem, h)
         push!(V, multiv(ϕ, n, τ, h, y, yp))
     end
 
-    delayed = zeros(length(τ), length(V))
+    delayed = zeros(Float64, length(τ), length(V))
     for i=1:length(V)
         delayed[:, i] = V[i]
     end    

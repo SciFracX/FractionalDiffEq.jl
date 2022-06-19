@@ -8,9 +8,9 @@ struct AtanganaSeda <: AbstractFDEAlgorithm end
 function solve(prob::SingleTermFODEProblem, h, ::AtanganaSeda)
     @unpack f, α, u0, tspan = prob
     t0 = tspan[1]; tfinal = tspan[2]
-    N = ceil(Int, (tfinal-t0)/h)
+    N::Int = ceil(Int, (tfinal-t0)/h)
     t = collect(t0:h:tfinal)
-    u=zeros(N+1)
+    u = zeros(Float64, N+1)
 
     u[1]=u0
     u[2]=u[1]+h*f(t[1], u[1]) # One step Euler method to first evaluate the second value

@@ -16,7 +16,7 @@ struct Euler <: AbstractFDEAlgorithm end
 function solve(prob::SingleTermFODEProblem, h, ::Euler)
     @unpack f, α, u0, tspan = prob
     t0 = tspan[1]; tfinal = tspan[2]
-    t = collect(t0:h:tfinal)
+    t = collect(Float64, t0:h:tfinal)
     N::Int = ceil(Int, (tfinal-t0)/h)
     y = zeros(Float64, N+1)
     y[1] = sum(u0)

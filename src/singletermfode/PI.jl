@@ -19,7 +19,7 @@ function solve(FODE::SingleTermFODEProblem, h, ::PIEX)
     @unpack f, α, u0, tspan = FODE
     t0 = tspan[1]; T = tspan[2]
     N::Int64 = round(Int, (T-t0)/h)
-    y = zeros(N+1)
+    y = zeros(Float64, N+1)
 
     y[1]=u0
     for j in range(2, N+1, step=1)
@@ -30,7 +30,7 @@ function solve(FODE::SingleTermFODEProblem, h, ::PIEX)
         middle = middle/gamma(α+1)
         y[j] = u0 + middle*h^α
     end
-    t = collect(t0:h:T)
+    t = collect(Float64, t0:h:T)
     return FODESolution(t, y)
 end
 
