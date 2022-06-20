@@ -133,7 +133,7 @@ Define fractal-fractional differential equations problems.
 """
 struct FFODEProblem <: FDEProblem
     f::Function
-    order::AbstractArray
+    order::Union{AbstractArray, Function}
     u0::Union{AbstractArray, Number}
     tspan::Union{Tuple, Number}
     p::Union{AbstractArray, Number, Nothing}
