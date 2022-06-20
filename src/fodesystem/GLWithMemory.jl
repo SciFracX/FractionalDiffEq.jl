@@ -37,6 +37,7 @@ function solve(prob::FODESystem, h, ::GL)
     # generating generalized binomial Cα
     Cα = zeros(Float64, n)
     Cα[1] = 1
+
     @fastmath @inbounds @simd for j in range(2, n, step=1)
         Cα[j] = (1-(1+α)/(j-1))*Cα[j-1]
     end

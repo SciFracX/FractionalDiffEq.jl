@@ -16,7 +16,7 @@ D^{\alpha_3}z=-10.593y-0.268z
 \end{cases}
 ```
 
-Use the ```NonLinearAlg``` algorithm in FractionalDiffEq.jl to solve the Chua system and plot the result:
+Use the ```NonLinearAlg``` algorithm in FractionalDiffEq.jl to solve the Chua system[^1] and plot the result:
 
 ```julia
 using FractionalDiffEq, Plots
@@ -38,8 +38,6 @@ plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)
 
 Cheers!🎉🎉🎉
 
-It is noteworthy that in the reference book Fractional Calculus and Fractional-order Control[^1], the computing time is almost 20 minutes to solve this problem in [FOTF toolbox](https://www.mathworks.com/matlabcentral/fileexchange/60874-fotf-toolbox), in my own computer, the computing time of FOTF toolbox is **1499.940487** seconds while in FractionalDiffEq.jl, the computing time has a speedup of about two times, only cost **567.260306** seconds!!
-
 ### Short memory effect in FDE
 
 !!! tip "Why we use short memory effect in simulation?"
@@ -54,8 +52,6 @@ result = solve(prob, h, tn, NonLinearAlg(), 10000)
 ```
 
 ![Chua_short_memory](./assets/chua_short_memory.png)
-
-While in the reference[^1], using FOTF toolbox costs 228.5s to solve the problem, in FractionalDiffEq.jl, the computing time is only almost 80s.
 
 !!! tip "More examples"
     For more fractional order chaotic systems, please see [Chaos Gallery](https://scifracx.org/FractionalDiffEq.jl/dev/ChaosGallery/)😉
