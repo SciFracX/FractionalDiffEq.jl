@@ -1,4 +1,4 @@
-using FractionalDiffEq, Plots
+using FractionalDiffEq, Plots, SpecialFunctions
 plotlyjs()
 rightfun(x, t) = -(1+x).*exp.(-t).*x.^3
 T=1

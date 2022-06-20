@@ -9,13 +9,13 @@ function solve(prob::SingleTermFODEProblem, h, ::AtanganaSeda)
     @unpack f, α, u0, tspan = prob
     t0 = tspan[1]; tfinal = tspan[2]
     N::Int = ceil(Int, (tfinal-t0)/h)
-    t = collect(t0:h:tfinal)
+    t = collect(Float64, t0:h:tfinal)
     u = zeros(Float64, N+1)
 
-    u[1]=u0
-    u[2]=u[1]+h*f(t[1], u[1]) # One step Euler method to first evaluate the second value
+    u[1] = u0
+    u[2] = u[1]+h*f(t[1], u[1]) # One step Euler method to first evaluate the second value
 
-    u[3]=u[2]+(h/2)*(3*f(t[2], u[2])-f(t[1], u[1])) # Two-step Adams-Bashforth method to evaluate the third value
+    u[3] = u[2]+(h/2)*(3*f(t[2], u[2])-f(t[1], u[1])) # Two-step Adams-Bashforth method to evaluate the third value
 
     for n=3:N
         temp1=0

@@ -14,7 +14,7 @@
 
 function solve(prob::FractionalDifferenceSystem, N, ::GL)
     @unpack fun, α, u0 = prob
-    result = zeros(length(u0), N)
+    result = zeros(Float64, length(u0), N)# Initialization
     result[:, 1] = u0
 
     for j=2:N

@@ -291,14 +291,14 @@ function predictor(f::Function, y, α::Float64, n::Integer, h::Float64, u0, t0)
     predict = 0
     leftsum = 0
 
-    l = ceil(Int, α)
+    l::Int = ceil(Int, α)
 
     # Handling initial value
     for k in 0:l-1
         leftsum += u0[k+1]*(t0+(n+1)*h)^k/factorial(k)
     end
 
-    @turbo for j ∈ 0:n
+    @turbo for j in 0:n
         predict += B(j, n, α)*f(j*h, y[j+1])
     end
 

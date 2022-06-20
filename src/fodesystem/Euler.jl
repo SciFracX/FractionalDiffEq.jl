@@ -2,8 +2,8 @@ function solve(prob::FODESystem, h, ::Euler)
     @unpack f, α, u0, tspan = prob
     t0=tspan[1]; tfinal=tspan[2]
     α = α[1]
-    t = collect(t0:h:tfinal)
-    N=ceil(Int, (tfinal-t0)/h)
+    t = collect(Float64, t0:h:tfinal)
+    N::Int = ceil(Int, (tfinal-t0)/h)
     l = length(u0)
     result = zeros(Float64, l, N+1)
     result[:, 1] = u0

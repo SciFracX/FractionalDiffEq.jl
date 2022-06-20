@@ -8,6 +8,10 @@ function solve(α, d, rightfun, M, N, initial_condition, left_boundry, right_bou
     u=copy(ue)
     D=zeros(M-1, 1)
     a=copy(D)
+    tau=1/N
+    h=1/M
+    x=collect(0:h:1)
+    t=collect(0:tau:1)
     #
 
     #exact(x, t) = exp(-t).*x.^3
