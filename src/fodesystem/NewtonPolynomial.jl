@@ -16,7 +16,7 @@ function solve(prob::FODESystem, h, ::NewtonPolynomial)
     @unpack f, α, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     α = α[1]
-    t = collect(t0:h:tfinal)
+    t = collect(Float64, t0:h:tfinal)
     M = 1-α+α/gamma(α)
     N::Int = ceil(Int, (tfinal-t0)/h)
     l = length(u0)
@@ -30,9 +30,9 @@ function solve(prob::FODESystem, h, ::NewtonPolynomial)
     f(temptemp, result[:, 2], p, t[2])
     result[:, 3] = result[:, 2]+(h/2).*(3 .*temptemp-temp)
 
-    temp1 = zeros(l)
-    temp2 = zeros(l)
-    temp3 = zeros(l)
+    temp1 = zeros(Float64, l)
+    temp2 = zeros(Float64, l)
+    temp3 = zeros(Float64, l)
 
     for n=3:N
         f(temp1, result[:, n], p, t[n])

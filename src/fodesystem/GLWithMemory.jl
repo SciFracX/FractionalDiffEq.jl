@@ -54,7 +54,7 @@ function solve(prob::FODESystem, h, ::GL)
         end
 
         f(du, result[:, k-1], p, t0+(k-1)*h)
-        result[:, k] .= hα.*du .- summation
+        result[:, k] = @. hα*du-summation
     end
     return result
 end

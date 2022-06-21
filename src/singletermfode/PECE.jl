@@ -226,6 +226,11 @@ struct DODESolution <: AbstractFDESolution
     u::AbstractArray
 end
 
+struct FFODESolution <: AbstractFDESolution
+    t::AbstractArray
+    u::AbstractArray
+end
+
 
 """
 # Usage

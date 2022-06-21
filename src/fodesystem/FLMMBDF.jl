@@ -27,7 +27,7 @@ function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
     # generate jacobian of input function
     Jfdefun(t, u) = jacobian_of_fdefun(fdefun, t, u)
 
-    m_alpha = ceil.(Int, alpha)
+    m_alpha::Int = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
     # Structure for storing information of the problem
     
