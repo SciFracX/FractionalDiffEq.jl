@@ -46,6 +46,7 @@ include("fodesystem/GLWithMemory.jl")
 include("fodesystem/NonLinear.jl")
 include("fodesystem/NewtonPolynomial.jl")
 include("fodesystem/AS.jl")
+include("fodesystem/ASCF.jl")
 
 # System of fractal-fractional ordinary differential equations
 include("ffodeproblem/AS.jl")
@@ -122,6 +123,7 @@ export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF, GLDiff
 
 # System of FODE solvers
 export NonLinearAlg, GLWithMemory, FLMMBDF, FLMMNewtonGregory, FLMMTrap, PIEX, NewtonPolynomial
+export AtanganaSedaCF
 
 # FDDE solvers
 export DelayPECE, DelayPI, DelayABM, MatrixForm
