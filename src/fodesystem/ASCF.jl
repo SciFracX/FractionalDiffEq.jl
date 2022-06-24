@@ -19,7 +19,6 @@ function solve(prob::FODESystem, h, ::AtanganaSedaCF)
     α=α[1]
     M=1-α+α/gamma(α)
     N=ceil(Int, (tfinal-t0)/h)
-
     l=length(u0)
     result = zeros(l, N+1)
     temp1 = zeros(l); temp2 = zeros(l)
