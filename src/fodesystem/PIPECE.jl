@@ -151,7 +151,7 @@ function solve(prob::FODESystem, h, ::PECE)
     end
 
     t = t[1:N+1]; y = y[:, 1:N+1]
-    return FODESolution(t,y)
+    return t, y
 
 end
 
