@@ -32,7 +32,7 @@ mutable struct M
 end
 
 function solve(prob::FODESystem, h, ::PECE)
-    @unpack f, α, u0, tspan = prob
+    @unpack f, α, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
     METH = M(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)# Initialization
     mu_tol = 1.0e-6
@@ -54,7 +54,7 @@ function solve(prob::FODESystem, h, ::PECE)
 
     f_temp = zeros(size(u0[:, 1]))
     #f_temp = sysf_vectorfield(t0, u0[:, 1], f)
-    f(f_temp, u0[:, 1], nothing, t0)
+    f(f_temp, u0[:, 1], p, t0)
 
     r::Int = 16
     N::Int = ceil(Int64, (T-t0)/h)
@@ -130,14 +130,14 @@ function solve(prob::FODESystem, h, ::PECE)
     t = t0 .+ collect(0:N)*h
     y[:, 1] = u0[:, 1]
     fy[:, 1] = f_temp
-    (y, fy) = ABMTriangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f) ;
+    (y, fy) = ABMTriangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f) ;
 
     # Main process of computation by means of the FFT algorithm
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0; 2] ; card_ff = 2
     nx0::Int = 0; ny0::Int = 0
     for qr = 0 : Qr
         L = 2^qr 
-        (y, fy) = DisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f)
+        (y, fy) = DisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f)
         ff[1:2*card_ff] = [ff[1:card_ff]; ff[1:card_ff]] 
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -156,7 +156,7 @@ function solve(prob::FODESystem, h, ::PECE)
 end
 
 
-function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f)
+function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f)
 
     nxi::Int = nx0; nxf::Int = nx0 + L*r - 1
     nyi::Int = ny0; nyf::Int = ny0 + L*r - 1
@@ -174,7 +174,7 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N, M
         
         (zn_pred, zn_corr) = ABMQuadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length)
         
-        (y, fy) = ABMTriangolo(nxi, nxi+r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f)
+        (y, fy) = ABMTriangolo(nxi, nxi+r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f)
         i_triangolo = i_triangolo + 1
         
         if stop == false
@@ -235,7 +235,7 @@ end
 
 
 
-function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f)
+function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f)
 
     for n = nxi:min(N, nxf)
         
@@ -253,7 +253,7 @@ function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_siz
         y_pred = St + METH.halpha1.*(zn_pred[:, n+1] + Phi)
         f_pred = zeros(length(y_pred))
         #f_pred = sysf_vectorfield(t[n+1], y_pred, f)
-        f(f_pred, y_pred, nothing, t[n+1])
+        f(f_pred, y_pred, p, t[n+1])
         
         # Evaluation of the corrector
         if METH.mu == 0
@@ -281,7 +281,7 @@ function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_siz
                 end
                 global fn1 = zeros(length(yn1))
                 #sysf_vectorfield(t[n+1], yn1, f)
-                f(fn1, yn1, nothing, t[n+1])
+                f(fn1, yn1, p, t[n+1])
                 yn0 = yn1; fn0 = fn1
             end
             y[:, n+1] = yn1
