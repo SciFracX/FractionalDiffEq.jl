@@ -18,14 +18,14 @@ Use [Backward Differentiation Formula](https://en.wikipedia.org/wiki/Backward_di
 struct FLMMBDF <: AbstractFDEAlgorithm end
 
 function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
-    @unpack f, α, u0, tspan = prob
+    @unpack f, α, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     fdefun, alphas, y0 = f, α, u0
     alpha = alphas[1]
     itmax = 100
     
     # generate jacobian of input function
-    Jfdefun(t, u) = jacobian_of_fdefun(fdefun, t, u)
+    Jfdefun(t, u) = jacobian_of_fdefun(fdefun, t, u, p)
 
     m_alpha::Int = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
@@ -53,11 +53,11 @@ function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
     t = collect(0:N)*h
     y[:, 1] = y0[:, 1]
     temp = zeros(length(y0[:, 1]))
-    fdefun(temp, y0[:, 1], nothing, t0)
+    fdefun(temp, y0[:, 1], p, t0)
     #fy[:, 1] = BDFf_vectorfield(t0, y0[:, 1], fdefun)
     fy[:, 1] = temp
-    (y, fy) = BDFFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
-    (y, fy) = BDFTriangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+    (y, fy) = BDFFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+    (y, fy) = BDFTriangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     
     # Main process of computation by means of the FFT algorithm
     nx0::Int = 0; ny0::Int = 0
@@ -65,7 +65,7 @@ function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
     ff[1:2] = [0 2]
     for q = 0:Q
         L::Int = 2^q
-        (y, fy) = BDFDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;
+        (y, fy) = BDFDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
@@ -79,7 +79,7 @@ function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
 end
 
 
-function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     nxi::Int = copy(nx0); nxf::Int = copy(nx0 + L*r - 1)
     nyi::Int = copy(ny0); nyf::Int = copy(ny0 + L*r - 1)
     is::Int = 1
@@ -92,7 +92,7 @@ function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, itm
     while ~stop
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         zn = BDFQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
-        (y, fy) = BDFTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;#fy出问题了
+        (y, fy) = BDFTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
         i_triangolo = i_triangolo + 1
         
         if ~stop
@@ -123,7 +123,7 @@ function BDFQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     return zn
 end
 
-function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     for n = nxi:min(N, nxf)
         n1::Int = n+1
         St = ABMStartingTerm(t[n1], y0, m_alpha, t0, m_alpha_factorial)
@@ -139,7 +139,7 @@ function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega,
         
         yn0 = y[:, n]
         temp = zeros(length(yn0))
-        fdefun(temp, yn0, nothing, t[n1])
+        fdefun(temp, yn0, p, t[n1])
         #fn0 = BDFf_vectorfield(t[n1], yn0, fdefun)
         fn0 = temp
         Jfn0 = Jf_vectorfield(t[n1], yn0, Jfdefun)
@@ -149,7 +149,7 @@ function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega,
             JGn0 = zeros(problem_size, problem_size)+I - halpha*omega[1]*Jfn0
             global yn1 = yn0 - JGn0\Gn0
             global fn1 = zeros(length(yn1)) #BDFf_vectorfield(t[n1], yn1, fdefun)
-            fdefun(fn1, yn1, nothing, t[n1])
+            fdefun(fn1, yn1, p, t[n1])
             Gn1 = yn1 - halpha*omega[1]*fn1 - Phi_n
             it = it + 1
             
@@ -171,14 +171,14 @@ function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega,
     return y, fy
 end
 
-function BDFFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function BDFFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     m = problem_size
     Im = zeros(m, m)+I; Ims = zeros(m*s, m*s)+I
     Y0 = zeros(s*m, 1); F0 = copy(Y0); B0 = copy(Y0)
     for j = 1 : s
         Y0[(j-1)*m+1:j*m, 1] = y[:, 1]
         temp = zeros(length(y[:, 1]))
-        fdefun(temp, y[:, 1], nothing, t[j+1])
+        fdefun(temp, y[:, 1], p, t[j+1])
         F0[(j-1)*m+1:j*m, 1] = temp#BDFf_vectorfield(t[j+1], y[:, 1], fdefun)
         St = ABMStartingTerm(t[j+1], y0, m_alpha, t0, m_alpha_factorial)
         B0[(j-1)*m+1:j*m, 1] = St + halpha*(omega[j+1]+w[1, j+1])*fy[:, 1]
@@ -207,7 +207,7 @@ function BDFFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, pr
         
         for j = 1 : s
             temp = zeros(length(Y1[(j-1)*m+1:j*m, 1]))
-            fdefun(temp, Y1[(j-1)*m+1:j*m, 1], nothing, t[j+1])
+            fdefun(temp, Y1[(j-1)*m+1:j*m, 1], p, t[j+1])
             F1[(j-1)*m+1:j*m, 1] = temp#BDFf_vectorfield(t[j+1], Y1[(j-1)*m+1:j*m, 1], fdefun)
         end
         G1 = Y1 - B0 - W*F1
@@ -290,10 +290,10 @@ function ABMStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)
     return ys
 end
 
-function jacobian_of_fdefun(f, t, y)
+function jacobian_of_fdefun(f, t, y, p)
     ForwardDiff.jacobian(y) do y # Thanks Bagge Carlson for helping me with this
     du = similar(y)
-    f(du, y, 0, t)
+    f(du, y, p, t)
     du
     end
 end
