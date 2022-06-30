@@ -176,7 +176,7 @@ end
 Define Fractional Difference System with the general constructure:
 
 ```math
-{_{a-m}^G\\nabla_k^\\alpha x(k+1)}=f(x(k))\\
+{^G\\nabla_k^\\alpha x(k+1)}=f(x(k))
 ```
 
 With given initial condition ``x(i)``.

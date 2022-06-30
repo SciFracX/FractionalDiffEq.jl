@@ -31,7 +31,7 @@ FractionalDiffEq.FODESystem
 ### FFODE problem
 
 ```@docs
-FractionalDiffEq.FFODESystem
+FractionalDiffEq.FFODEProblem
 ```
 
 ## FPDE Problem
