@@ -3,15 +3,16 @@ function solve(prob::FFODEProblem, h, ::AtanganaSeda)
         solve_cf_variable_ffodeproblem(prob, h)
     else
         if length(prob.u0) > 1 # We need to skip the variable order case in this flow
-        solve_ffodesystem(prob, h)
+            solve_ffodesystem(prob, h)
         else
-        solve_singletermffode(prob, h)
+            solve_singletermffode(prob, h)
         end
     end
 end
 function solve_singletermffode(prob::FFODEProblem, h)
     @unpack f, order, u0, tspan, p = prob
-    α = order[1]; β = order[2]
+    α = order[1] # Fractional order
+    β = order[2] # Fractal dimension
     t0 = tspan[1]; tfinal = tspan[2]
     t = (t0+h):h:tfinal
     N::Int = ceil(Int, (tfinal-t0)/h)
@@ -72,7 +73,7 @@ function solve_cf_variable_ffodeproblem(prob::FFODEProblem, h)
     @unpack f, order, u0, tspan, p = prob
     α = order[1]; β = order[2]
     t0 = tspan[1]; tfinal = tspan[2]
-    M=1-α+α/gamma(α)
+    M = 1-α+α/gamma(α)
     # When we directly let t0=0, we get a problem with the first step.
     if t0 == 0
         t=h:h:tfinal
@@ -84,16 +85,16 @@ function solve_cf_variable_ffodeproblem(prob::FFODEProblem, h)
     result = zeros(Float64, length(u0), N+1)
     result[:, 1] = u0
     temp1 = zeros(l)
-    f(temp1, u0, nothing, t[1])
+    f(temp1, u0, p, t[1])
     result[:, 2] = u0+h*temp1
     temp2 = zeros(l)
-    f(temp2, result[:, 2], nothing, t[2])
+    f(temp2, result[:, 2], p, t[2])
     result[:, 3] = result[:, 2]+(h/2)*(3*temp2-temp1)
     tempn, tempn1, tempn2 = zeros(l), zeros(l), zeros(l)# Prelocation
     for n=3:N
-        f(tempn, result[:, n], nothing, t[n])
-        f(tempn1, result[:, n-1], nothing, t[n-1])
-        f(tempn2, result[:, n-2], nothing, t[n-2])
+        f(tempn, result[:, n], p, t[n])
+        f(tempn1, result[:, n-1], p, t[n-1])
+        f(tempn2, result[:, n-2], p, t[n-2])
         result[:, n+1] = result[:, n] + ((1-α)/M)*(t[n]^β(t[n]).*(((β(t[n+1])-β(t[n]))./h).*log(t[n])+(β(t[n])./t[n])).*tempn- t[n-1].^β(t[n-1]).*(((β(t[n])-β(t[n-1]))./h).*log(t[n-1])+(β(t[n-1])./t[n-1])).*tempn1)+ α/M.*h.*(5/12*t[n-2].^β(t[n-2]).*(((β(t[n-1])-β(t[n-2]))./h).*(log(t[n-2])+(β(t[n-2]))./t[n-2])).*tempn2- 4/3*t[n-1].^β(t[n-1]).*(((β(t[n])-β(t[n-1]))./h).*log(t[n-1])+(β(t[n-1])./t[n-1])).*tempn1+ 23/12* t[n].^β(t[n]).*(((β(t[n+1])-β(t[n]))./h).*log(t[n])+(β(t[n])./t[n])).*tempn)
     end
     return result
