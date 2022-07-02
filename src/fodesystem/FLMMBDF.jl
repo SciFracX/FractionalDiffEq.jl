@@ -20,18 +20,17 @@ struct FLMMBDF <: AbstractFDEAlgorithm end
 function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
     @unpack f, α, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
-    fdefun, alphas, y0 = f, α, u0
-    alpha = alphas[1]
+    alpha = α[1]
     itmax = 100
     
     # generate jacobian of input function
-    Jfdefun(t, u) = jacobian_of_fdefun(fdefun, t, u, p)
+    Jfdefun(t, u) = jacobian_of_fdefun(f, t, u, p)
 
     m_alpha::Int = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
     # Structure for storing information of the problem
     
-    problem_size = size(y0, 1)
+    problem_size = size(u0, 1)
     
     # Number of points in which to evaluate the solution or the BDFWeights
     r::Int = 16
@@ -51,13 +50,13 @@ function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
     
     # Initializing solution and proces of computation
     t = collect(0:N)*h
-    y[:, 1] = y0[:, 1]
-    temp = zeros(length(y0[:, 1]))
-    fdefun(temp, y0[:, 1], p, t0)
+    y[:, 1] = u0[:, 1]
+    temp = zeros(length(u0[:, 1]))
+    f(temp, u0[:, 1], p, t0)
     #fy[:, 1] = BDFf_vectorfield(t0, y0[:, 1], fdefun)
     fy[:, 1] = temp
-    (y, fy) = BDFFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
-    (y, fy) = BDFTriangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+    (y, fy) = BDFFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+    (y, fy) = BDFTriangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
     
     # Main process of computation by means of the FFT algorithm
     nx0::Int = 0; ny0::Int = 0
@@ -65,7 +64,7 @@ function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
     ff[1:2] = [0 2]
     for q = 0:Q
         L::Int = 2^q
-        (y, fy) = BDFDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+        (y, fy) = BDFDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fieldcount, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh

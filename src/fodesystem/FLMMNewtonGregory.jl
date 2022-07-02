@@ -20,17 +20,16 @@ struct FLMMNewtonGregory <: AbstractFDEAlgorithm end
 function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-6)
     @unpack f, α, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
-    fdefun, alphas, y0 = f, α, u0
-    alpha = alphas[1]
+    alpha = α[1]
     itmax = 100
 
-    Jfdefun(t, u) = jacobian_of_fdefun(fdefun, t, u, p)
+    Jfdefun(t, u) = jacobian_of_fdefun(f, t, u, p)
 
     m_alpha = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
     # Structure for storing information on the problem
     
-    problem_size = size(y0, 1)
+    problem_size = size(u0, 1)
     
     
     # Check compatibility size of the problem with size of the vector field
@@ -54,12 +53,12 @@ function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-
     
     # Initializing solution and proces of computation
     t = collect(0:N)*h
-    y[:, 1] = y0[:, 1]
-    temp = zeros(length(y0[:, 1]))
-    fdefun(temp, y0[:, 1], p, t0)
+    y[:, 1] = u0[:, 1]
+    temp = zeros(length(u0[:, 1]))
+    f(temp, u0[:, 1], p, t0)
     fy[:, 1] = temp#f_vectorfield(t0, y0[:, 1], fdefun)
-    (y, fy) = NGFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
-    (y, fy) = NGTriangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+    (y, fy) = NGFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+    (y, fy) = NGTriangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
     
     # Main process of computation by means of the FFT algorithm
     nx0 = 0; ny0 = 0
@@ -67,7 +66,7 @@ function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-
     ff[1:2] = [0 2]
     for q = 0:Q
         L = Int64(2^q)
-        (y, fy) = NGDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+        (y, fy) = NGDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh

@@ -15,7 +15,6 @@ Use the Adams-Bashforth-Moulton method to solve the system of FODEs.
 ```
 """
 =#
-#struct PECE <: FractionalDiffEqAlgorithm end
 
 mutable struct M
     an

@@ -61,6 +61,12 @@ FractionalDiffEq.FractionalDifferenceProblem
 FractionalDiffEq.FractionalDifferenceSystem
 ```
 
+## FFODEProblem
+
+```@docs
+FractionalDiffEq.FFODEProblem
+```
+
 ## FIEProblem
 
 ```@docs
