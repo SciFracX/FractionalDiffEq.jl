@@ -292,9 +292,9 @@ function right(f, y, α, n, h::Float64)
     return temp
 end
 
-function predictor(f::Function, y, α::Float64, n::Integer, h::Float64, u0, t0)
-    predict = 0
-    leftsum = 0
+function predictor(f::Function, y, α::Float64, n::Integer, h::Float64, u0::Union{Number, AbstractArray}, t0::Number)
+    predict = zero(Float64)
+    leftsum = zero(Float64)
 
     l::Int = ceil(Int, α)
 
