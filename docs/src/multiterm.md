@@ -11,6 +11,12 @@ All we need to do is passing the parameters and orders of the fractional ordinar
 
 ## Detailed Usage
 
+We need to first define our multi-terms FODE problem:
+
+```julia-repl
+julia> prob = MultiTermsFODEProblem(parameters, orders, rightfun, u0, tspan)
+```
+
 Let's see if we have an equation like:
 
 ```math
