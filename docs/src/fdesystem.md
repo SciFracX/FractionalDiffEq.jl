@@ -2,6 +2,13 @@
 
 Many real life situations are governed by a system of fractional differential equations.
 
+The usage of system of fractional differential equations solvers is quite similiar with DifferentialEquations.jl, all we need to do is to define our ```FODESystem``` and choose a solver to solve the problem:
+
+
+```julia-repl
+julia> sol = solve(FODESystem, α, u0, tspan)
+```
+
 ## Fractional Order Chua System Example
 
 So here, we will look at an example: [Chua circuit](https://en.wikipedia.org/wiki/Chua%27s_circuit).
