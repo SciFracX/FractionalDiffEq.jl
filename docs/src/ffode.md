@@ -4,6 +4,26 @@ The concept of fractal–fractional differentiation has appeared as a combinatio
 mathematical concepts: fractal differentiation and fractional differentiation. These operators are helpful for modeling more complex problems, also
 they allow us to understand many physical problems which have fractal properties.
 
+
+Fractal-fractional derivative with power law:
+
+```math
+{^{FFP}_aD^{\gamma,\theta}_t}u(t)=\frac{1}{\Gamma(1-\gamma)}\frac{d}{dt^\theta}\int_a^tu(y)(t-y)^{-\gamma}dy,\ 0<\gamma, \theta\leq1
+```
+
+Fractal-fractional derivative with exponential decay kernel:
+
+```math
+{^{FFE}_aD^{\gamma,\theta}_t}u(t)=\frac{M(\gamma)}{\Gamma(1-\gamma)}\frac{d}{dt^\theta}\int_a^tu(y)\exp(\frac{-\gamma}{1-\gamma}(t-y))dy,\ 0<\gamma, \theta\leq1
+```
+
+Fractal-fractional derivative with Mittag Leffler kernel:
+
+```math
+{^{FFM}_aD^{\gamma,\theta}_t}u(t)=\frac{AB(\gamma)}{\Gamma(1-\gamma)}\frac{d}{dt^\theta}\int_a^tu(y)E_\gamma(\frac{-\gamma}{1-\gamma}(t-y))dy,\ 0<\gamma, \theta\leq1
+```
+
+
 ## Fractal-fractional ODE system
 
 To construct fractal-fractional differential problems, we need to use ```FFODEProblem``` to define our problem:
