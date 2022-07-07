@@ -26,13 +26,15 @@ Fractal-fractional derivative with Mittag Leffler kernel:
 
 ## Fractal-fractional ODE system
 
-To construct fractal-fractional differential problems, we need to use ```FFODEProblem``` to define our problem:
+To construct fractal-fractional differential problems, we need to use ```FFPODEProblem```, ```FFEODEProblem``` and ```FFMODEProblem``` to define our problem:
 
 ```julia-repl
-FFODEProblem(f, [α, β], u0, tspan)
+julia> FFPODEProblem(f, [α, β], u0, tspan)
+julia> FFEODEProblem(f, [α, β], u0, tspan)
+julia> FFMODEProblem(f, [α, β], u0, tspan)
 ```
 
-Let's see the Lorenz system in **Atangana-Baleanu-Caputo** sense:
+Let's see the Lorenz system in **Atangana-Baleanu-Caputo** sense with Mittag Leffler kernel:
 
 ```math
 \begin{cases}

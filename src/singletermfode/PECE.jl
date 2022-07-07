@@ -127,11 +127,11 @@ FODESystem(f, α, u0, tspan) = FODESystem(f, α, u0, tspan, nothing)
 
 
 """
-    FFODEProblem(f, α, u0, tspan, p)
+    FFPODEProblem(f, α, u0, tspan, p)
 
-Define fractal-fractional differential equations problems.
+Define fractal-fractional differential equations problems with power law kernel.
 """
-struct FFODEProblem <: FDEProblem
+struct FFPODEProblem <: FDEProblem
     f::Function
     order::Union{AbstractArray, Function}
     u0::Union{AbstractArray, Number}
@@ -140,8 +140,39 @@ struct FFODEProblem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-FFODEProblem(f, order, u0, tspan) = FFODEProblem(f, order, u0, tspan, nothing)
+FFPODEProblem(f, order, u0, tspan) = FFPODEProblem(f, order, u0, tspan, nothing)
 
+"""
+    FFEODEProblem(f, α, u0, tspan, p)
+
+Define fractal-fractional differential equations problems with expoenntial decay kernel.
+"""
+struct FFEODEProblem <: FDEProblem
+    f::Function
+    order::Union{AbstractArray, Function}
+    u0::Union{AbstractArray, Number}
+    tspan::Union{Tuple, Number}
+    p::Union{AbstractArray, Number, Nothing}
+end
+
+# If the there are no parameters, we do this:
+FFEODEProblem(f, order, u0, tspan) = FFEODEProblem(f, order, u0, tspan, nothing)
+
+"""
+    FFMODEProblem(f, α, u0, tspan, p)
+
+Define fractal-fractional differential equations problems with Mittag Leffler kernel.
+"""
+struct FFMODEProblem <: FDEProblem
+    f::Function
+    order::Union{AbstractArray, Function}
+    u0::Union{AbstractArray, Number}
+    tspan::Union{Tuple, Number}
+    p::Union{AbstractArray, Number, Nothing}
+end
+
+# If the there are no parameters, we do this:
+FFMODEProblem(f, order, u0, tspan) = FFMODEProblem(f, order, u0, tspan, nothing)
 
 
 
