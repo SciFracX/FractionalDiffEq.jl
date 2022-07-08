@@ -164,7 +164,7 @@ end
         du[2] = (b-u[3])*u[1]-u[2]
         du[3] = u[1]*u[2]-c*u[3]
     end
-    prob = FFODEProblem(fun, [α, β], u0, (0, tfinal))
+    prob = FFMODEProblem(fun, [α, β], u0, (0, tfinal))
 
     @test_nowarn show(prob)
 end
