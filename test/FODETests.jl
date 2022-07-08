@@ -476,7 +476,7 @@ end
         du[2] = (b-u[3])*u[1]-u[2]
         du[3] = u[1]*u[2]-c*u[3]
     end
-    prob = FFODEProblem(fun, [α, β], u0, (0, tfinal))
+    prob = FFMODEProblem(fun, [α, β], u0, (0, tfinal))
     sol = solve(prob, h, AtanganaSeda())
 
     @test isapprox(sol, [ -2.0   1.0       -9.35      31.0271   -160.86      637.491
@@ -494,7 +494,7 @@ end
         du[2] = u[1]-u[2]+u[3]
         du[3] = -lambda*u[2]
     end
-    prob = FFODEProblem(fun, [alpha, bet], u0, (1, tfinal))
+    prob = FFMODEProblem(fun, [alpha, bet], u0, (1, tfinal))
     result = solve(prob, h, AtanganaSeda())
     @test isapprox(result, [-0.2   0.381227   0.706487   0.705708   0.709295   0.712962   0.716751   0.720653   0.724658   0.72876   0.73295
     0.5   0.45       0.389684   0.388033   0.387055   0.386023   0.384947   0.383829   0.382669   0.38147   0.380232
