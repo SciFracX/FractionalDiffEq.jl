@@ -9,7 +9,7 @@ function solve(prob::FFMODEProblem, h, ::AtanganaSeda)
         end
     end
 end
-function solve_singletermffode(prob::FFODEProblem, h)
+function solve_singletermffode(prob::FFMODEProblem, h)
     @unpack f, order, u0, tspan, p = prob
     α = order[1] # Fractional order
     β = order[2] # Fractal dimension
@@ -34,7 +34,7 @@ function solve_singletermffode(prob::FFODEProblem, h)
     return FFODESolution(t, u[1:N])
 end
 
-function solve_ffodesystem(prob::FFODEProblem, h)
+function solve_ffodesystem(prob::FFMODEProblem, h)
     @unpack f, order, u0, tspan, p = prob
     α = order[1]; β = order[2]
     t0 = tspan[1]; tfinal = tspan[2]
@@ -69,7 +69,7 @@ function solve_ffodesystem(prob::FFODEProblem, h)
     return result
 end
 
-function solve_cf_variable_ffodeproblem(prob::FFODEProblem, h)
+function solve_cf_variable_ffodeproblem(prob::FFMODEProblem, h)
     @unpack f, order, u0, tspan, p = prob
     α = order[1]; β = order[2]
     t0 = tspan[1]; tfinal = tspan[2]
