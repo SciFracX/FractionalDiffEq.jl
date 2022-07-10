@@ -1,8 +1,8 @@
-# Fractional Order Delayed Differential Equations
+# Fractional Order Delay Differential Equations
 
-In real world systems, delay is very often encountered in many practical systems, such as automatic control, biology, economics and long transmission lines. The delayed differential equation is used to describe these dynamical systems. Fractional order delayed differential equations as the generalization of the delayed differential equations, provide more freedom when we describing these systems, let's see how we can use FractionalDiffEq.jl to accelerate the simulation of fractional order delayed differential equations.
+In real world systems, delay is very often encountered in many practical systems, such as automatic control, biology, economics and long transmission lines. The delayed differential equation is used to describe these dynamical systems. Fractional order delay differential equations as the generalization of the delay differential equations, provide more freedom when we describing these systems, let's see how we can use FractionalDiffEq.jl to accelerate the simulation of fractional order delay differential equations.
 
-The fractional delayed differential equations has the general form:
+The fractional delay differential equations has the general form:
 
 ```math
 D^\alpha_ty(t)=f(t,\ y(t),\ y(t-\tau)),\quad t\geq\xi
@@ -12,7 +12,7 @@ D^\alpha_ty(t)=f(t,\ y(t),\ y(t-\tau)),\quad t\geq\xi
 y(t)=\phi(t),\quad t\in[\xi-\tau,\ \xi]
 ```
 
-While only given the initial condition is not enough to solve the delayed differential equations, a history function ``\phi(t)`` must be provided to describe the history of the system(``\phi(t)`` should be a continuous function).
+While only given the initial condition is not enough to solve the delay differential equations, a history function ``\phi(t)`` must be provided to describe the history of the system(``\phi(t)`` should be a continuous function).
 
 All we need to do is to pass the function ``f(t,\ y(t),\ y(t-\tau))``, and history function ``\phi(t)`` to the ```FDDEProblem``` definition:
 
@@ -22,7 +22,7 @@ prob = FDDEProblem(f, ϕ, α, τ, T)
 
 And choose an algorithm to solve problem.
 
-Here, we consider the fractional order version of the four year life cycle of a population of lemmings[^1]:
+Here, we consider the fractional order version of the four year life cycle of a population of lemmings[^1] (A classical test example for delay differential equations):
 
 ```math
 D^\alpha_ty(t)=3.5y(t)(1-\frac{y(t-0.74)}{19}),\ y(0)=19.00001
@@ -46,7 +46,7 @@ plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 
 ## FDDE with multiple lags
 
-For FDDE with multiple lags, we need to specify the lags term by entering the array of lags ``\tau``, and call the `DelayPECE` method to solve the multiple lags FDDE.
+As for FDDE with multiple lags, we need to specify the lag terms by entering the array of lags ``\tau``, and call the `DelayPECE` method to solve the multiple lags FDDE.
 
 ```math
 {_0^CD_t^\alpha}y(t)=\frac{2y(t-2)}{1+y(t-2.6)^{9.65}}-y(t)\\
@@ -73,19 +73,17 @@ plot(p1, p2, layout=(1, 2))
 
 ## FDDE with variable order
 
-Variable order fractional differential operators give modeling more freedom when we describe the systems. FractionalDiffEq.jl can solve FDDE with variable order derivative no matter single lags or multiple lags. To provide a comprehensive interface, all we need to do is just define customized ```FDDEProblem``` according to our model.
+Variable order fractional differential operators give modeling more freedom when we describe the systems. FractionalDiffEq.jl can solve FDDE with variable order derivative no matter single lags or multiple lags. To provide a comprehensive interface, all we need to do is just defining customized ```FDDEProblem``` according to our model.
 
 ```julia
 FDDEProblem(f, ϕ, α, τ, tspan)
 ```
 
-we can pass ```α``` as a number or a function to tell FractionalDiffEq.jl it it is a normal constant order fractional derivative FDDE or variable order FDDE.
+we can pass ```α``` as a ```Number``` or a ```Function``` to tell FractionalDiffEq.jl it it is a normal constant fractional order FDDE or variable order FDDE.
 
 ## System of FDDE
 
-Time delay [Chen system](https://en.wikipedia.org/wiki/Multiscroll_attractor) as a famous chaotic system with time delay, has important applications in many fields.
-
-As the generalization of the delayed Chen system, we can use FractionalDiffEq.jl to solve the system.
+Time delay [Chen system](https://en.wikipedia.org/wiki/Multiscroll_attractor) as a famous chaotic system with time delay, has important applications in many fields. As for the simulation of time delay FDDE sysstem, FractionalDiffEq.jl is also a powerful tool to do the simulation, we would illustrate the usage via code below:
 
 ```math
 \begin{cases}
@@ -145,7 +143,7 @@ plot!(tspan, sol[:, 4])
 
 ## Fractional matrix differential equations with delay
 
-FractionalDiffEq.jl is also capable of solving fractional matrix delayed differential equations:
+FractionalDiffEq.jl is also capable of solving fractional matrix delay differential equations:
 
 ```math
 D_{t_0}^\alpha\textbf{x}(t)=\textbf{A}(t)\textbf{x}(t)+\textbf{B}(t)\textbf{x}(t-\tau)+\textbf{f}(t)
