@@ -267,6 +267,36 @@ end
 end
 
 
+@testset "Test implicit Product integration trapezoidal type method for multi-terms FODE with more precise steps" begin
+    tspan = (0, 30); h = 0.01
+    rightfun(x, y) = 172/125*cos(4/5*x)
+    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], tspan)
+    sol = solve(prob, h, PIIMTrap())
+
+    @test isapprox(sol.u[end-20:end], [0.2062614941629048
+    0.21034012743472855
+    0.21433273142169978
+    0.21823954838305873
+    0.22206083656949055
+    0.22579687013768238
+    0.2294479390502145
+    0.23301434898224194
+    0.23649642122087866
+    0.23989449256556789
+    0.24320891522328197
+    0.24644005670048225
+    0.2495882996962482
+    0.25265404199064473
+    0.2556376963304972
+    0.25853969031464596
+    0.2613604662731697
+    0.2641004811488366
+    0.266760206373581
+    0.26934012774288163
+    0.27184074528802615]; atol=1e-4)
+end
+
+
 @testset "Test Product integration with predictor-corrector method for multi-terms FODE" begin
     tspan = (0, 1); h = 0.01
     rightfun(x, y) = 172/125*cos(4/5*x)
@@ -316,6 +346,36 @@ end
     1.9791244106539438
     1.9009297334987802
     1.447593455242784]; atol=1e-4)
+end
+
+@testset "Test implicit Product integration rectangular type method for multi-terms FODE with more precise steps" begin
+    T = 30; h = 0.01
+    rightfun(x, y) = 172/125*cos(4/5*x)
+    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], (0, T))
+    
+    sol = solve(prob, h, PIIMRect())
+
+    @test isapprox(sol.u[end-20:end], [0.16675726971457058
+    0.17176357358985567
+    0.17668977521149823
+    0.18153598448758948
+    0.18630232641110522
+    0.19098894098656477
+    0.19559598315439394
+    0.20012362271686987
+    0.2045720442531887
+    0.2089414470422814
+    0.2132310482116031
+    0.21744309867908648
+    0.22157681490935055
+    0.22563245421407044
+    0.22961028818223225
+    0.2335106024963484
+    0.2373336968672225
+    0.24107988495355626
+    0.244749494257382
+    0.24834286603206457
+    0.251860355168466]; atol=1e-4)
 end
 
 @testset "Test implicit Product integration trapezoidal type method for multi-terms FODE" begin
