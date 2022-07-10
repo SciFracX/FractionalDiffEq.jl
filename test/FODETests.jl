@@ -267,6 +267,27 @@ end
 end
 
 
+@testset "Test Product integration with predictor-corrector method for multi-terms FODE" begin
+    tspan = (0, 1); h = 0.01
+    rightfun(x, y) = 172/125*cos(4/5*x)
+    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], tspan)
+    sol = solve(prob, h, PIPECE())
+
+    @test isapprox(sol.u[end-10:end], [0.12517053205360132
+    0.128867333370644
+    0.13262214977857692
+    0.13643478752690427
+    0.14030503437613553
+    0.1442326596506723
+    0.14821741429463087
+    0.15225903093059495
+    0.15635722392129503
+    0.1605116894342043
+    0.16472210550904948]; atol=1e-4)
+end
+
+
+
 @testset "Test implicit Product integration rectangular type method for multi-terms FODE" begin
     T = 10; h = 0.5
     rightfun(x, y) = 172/125*cos(4/5*x)
