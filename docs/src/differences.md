@@ -43,7 +43,7 @@ And plot the solution:
 
 ## System of Fractional Difference Equations
 
-Let's see if we have a system of fractional difference equations:
+Let's see if we have a system of fractional difference equations[^1]:
 
 ```math
 \begin{cases}
@@ -70,3 +70,5 @@ plot(result[1, :], result[2, :], result[3, :], seriestype=:scatter)
 ```
 
 ![FNN](./assets/fractionalneuralnetwork.png)
+
+[^1]: Yiheng Wei, Jinde Cao, Chuang Li, Yang Quan Chen: How to empower Grunwald–Letnikov fractional difference equations with available initial condition?

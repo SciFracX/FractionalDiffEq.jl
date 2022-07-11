@@ -360,8 +360,8 @@ function mlds(z,al,be,k)
     return E, Err_Round
 end
 
-function mldr(t, s, α, β, k)
-    omega = zeros(k+2)
+function mldr(t, s, α, β, k::Int)
+    omega = zeros(Float64, k+2)
     omega[1] = 1
     jj = collect(0:k)
     p = (α.-jj)
@@ -376,7 +376,7 @@ function mldr(t, s, α, β, k)
         ll = collect(1:j)
         Hk[j+1] = -1 ./α.*sum(omega[ll.+2].*(k.*ll./j.+1).*Hk[j.-ll.+1])
     end
-    ck = zeros(k+1)
+    ck = zeros(Float64, k+1)
     for j = 0:k
         temp = 0
         for l = 0 : k-j

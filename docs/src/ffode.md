@@ -4,15 +4,37 @@ The concept of fractal–fractional differentiation has appeared as a combinatio
 mathematical concepts: fractal differentiation and fractional differentiation. These operators are helpful for modeling more complex problems, also
 they allow us to understand many physical problems which have fractal properties.
 
-## Fractal-fractional ODE system
 
-To construct fractal-fractional differential problems, we need to use ```FFODESystem``` to define our problem:
+Fractal-fractional derivative with power law:
 
-```julia-repl
-FFODESystem(f, [α, β], u0, tspan)
+```math
+{^{FFP}_aD^{\gamma,\theta}_t}u(t)=\frac{1}{\Gamma(1-\gamma)}\frac{d}{dt^\theta}\int_a^tu(y)(t-y)^{-\gamma}dy,\ 0<\gamma, \theta\leq1
 ```
 
-Let's see the Lorenz system in Atangana-Baleanu-Caputo sense:
+Fractal-fractional derivative with exponential decay kernel:
+
+```math
+{^{FFE}_aD^{\gamma,\theta}_t}u(t)=\frac{M(\gamma)}{\Gamma(1-\gamma)}\frac{d}{dt^\theta}\int_a^tu(y)\exp(\frac{-\gamma}{1-\gamma}(t-y))dy,\ 0<\gamma, \theta\leq1
+```
+
+Fractal-fractional derivative with Mittag Leffler kernel:
+
+```math
+{^{FFM}_aD^{\gamma,\theta}_t}u(t)=\frac{AB(\gamma)}{\Gamma(1-\gamma)}\frac{d}{dt^\theta}\int_a^tu(y)E_\gamma(\frac{-\gamma}{1-\gamma}(t-y))dy,\ 0<\gamma, \theta\leq1
+```
+
+
+## Fractal-fractional ODE system
+
+To construct fractal-fractional differential problems, we need to use ```FFPODEProblem```, ```FFEODEProblem``` and ```FFMODEProblem``` to define our problem:
+
+```julia-repl
+julia> FFPODEProblem(f, [α, β], u0, tspan)
+julia> FFEODEProblem(f, [α, β], u0, tspan)
+julia> FFMODEProblem(f, [α, β], u0, tspan)
+```
+
+Let's see the Lorenz system in **Atangana-Baleanu-Caputo** sense with Mittag Leffler kernel:
 
 ```math
 \begin{cases}
@@ -24,7 +46,7 @@ Let's see the Lorenz system in Atangana-Baleanu-Caputo sense:
 
 ```julia
 using FractionalDiffEq, Plots
-α=1;β=1;h=0.01;tfinal=50
+α=1;β=1;h=0.01;tspan=(0, 50)
 u0 = [-2, 1, -1]
 function fun(du, u, p, t)
     a=10;b=28;c=8/3
@@ -32,7 +54,7 @@ function fun(du, u, p, t)
     du[2] = (b-u[3])*u[1]-u[2]
     du[3] = u[1]*u[2]-c*u[3]
 end
-prob = FFODESystem(fun, [α, β], u0, (0, tfinal))
+prob = FFODEProblem(fun, [α, β], u0, tspan)
 sol = solve(prob, h, AtanganaSeda())
 plot3d(sol[1, :], sol[2, :], sol[3, :], title="Fractal-fractional Order Lorenz System")
 ```

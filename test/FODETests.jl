@@ -209,31 +209,32 @@ end
 end
 
 @testset "Test Product Integration explicit method for multi-terms FODE" begin
-    rightfunex(x, y) = 172/125*cos(4/5*x)
-    PIEXMultiprob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfunex, [0, 0, 0, 0, 0, 0], (0, 10))
-    PIEXMultisol = solve(PIEXMultiprob, 0.5, PIEX())
+    tspan = (0, 30); h = 0.01
+    rightfun(x, y) = 172/125*cos(4/5*x)
+    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], tspan)
+    sol = solve(prob, h, PIEX())
 
-    @test isapprox(PIEXMultisol.u, [  0.0
-    0.028666666666666663
-    0.20802154481466284
-    0.5777512805039694
-    1.032617182281499
-    1.3542099549416406
-    1.2992204949109856
-    0.7162691469691946
-   -0.35553236137048394
-   -1.6531692565209024
-   -2.748115186408473
-   -3.188228316718636
-   -2.6777963530465527
-   -1.226608005191384
-    0.7994418493409547
-    2.76345190855897
-    3.9650094859689915
-    3.9040343901844707
-    2.5017274305718367
-    0.18249065149394283
-   -2.23584183347657]; atol=1e-4)
+    @test isapprox(sol.u[end-20:end], [0.2441313200142332
+    0.24719587414026023
+    0.25016860604787894
+    0.25304990316172393
+    0.2558401698074988
+    0.25853982709645607
+    0.2611493128113693
+    0.2636690812886542
+    0.26609960329935234
+    0.26844136592362133
+    0.2706948724283791
+    0.2728606421363793
+    0.27493921029876844
+    0.2769311279569564
+    0.2788369618131128
+    0.28065729408669426
+    0.28239272237789237
+    0.28404385952073596
+    0.2856113334413095
+    0.28709578700743066
+    0.288497877879621]; atol=1e-4)
 end
 
 @testset "Test Product integration with predictor-corrector method for multi-terms FODE" begin
@@ -267,6 +268,57 @@ end
 end
 
 
+@testset "Test implicit Product integration trapezoidal type method for multi-terms FODE with more precise steps" begin
+    tspan = (0, 30); h = 0.01
+    rightfun(x, y) = 172/125*cos(4/5*x)
+    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], tspan)
+    sol = solve(prob, h, PIIMTrap())
+
+    @test isapprox(sol.u[end-20:end], [0.2062614941629048
+    0.21034012743472855
+    0.21433273142169978
+    0.21823954838305873
+    0.22206083656949055
+    0.22579687013768238
+    0.2294479390502145
+    0.23301434898224194
+    0.23649642122087866
+    0.23989449256556789
+    0.24320891522328197
+    0.24644005670048225
+    0.2495882996962482
+    0.25265404199064473
+    0.2556376963304972
+    0.25853969031464596
+    0.2613604662731697
+    0.2641004811488366
+    0.266760206373581
+    0.26934012774288163
+    0.27184074528802615]; atol=1e-4)
+end
+
+
+@testset "Test Product integration with predictor-corrector method for multi-terms FODE" begin
+    tspan = (0, 1); h = 0.01
+    rightfun(x, y) = 172/125*cos(4/5*x)
+    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], tspan)
+    sol = solve(prob, h, PIPECE())
+
+    @test isapprox(sol.u[end-10:end], [0.12517053205360132
+    0.128867333370644
+    0.13262214977857692
+    0.13643478752690427
+    0.14030503437613553
+    0.1442326596506723
+    0.14821741429463087
+    0.15225903093059495
+    0.15635722392129503
+    0.1605116894342043
+    0.16472210550904948]; atol=1e-4)
+end
+
+
+
 @testset "Test implicit Product integration rectangular type method for multi-terms FODE" begin
     T = 10; h = 0.5
     rightfun(x, y) = 172/125*cos(4/5*x)
@@ -295,6 +347,36 @@ end
     1.9791244106539438
     1.9009297334987802
     1.447593455242784]; atol=1e-4)
+end
+
+@testset "Test implicit Product integration rectangular type method for multi-terms FODE with more precise steps" begin
+    T = 30; h = 0.01
+    rightfun(x, y) = 172/125*cos(4/5*x)
+    prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], (0, T))
+    
+    sol = solve(prob, h, PIIMRect())
+
+    @test isapprox(sol.u[end-20:end], [0.16675726971457058
+    0.17176357358985567
+    0.17668977521149823
+    0.18153598448758948
+    0.18630232641110522
+    0.19098894098656477
+    0.19559598315439394
+    0.20012362271686987
+    0.2045720442531887
+    0.2089414470422814
+    0.2132310482116031
+    0.21744309867908648
+    0.22157681490935055
+    0.22563245421407044
+    0.22961028818223225
+    0.2335106024963484
+    0.2373336968672225
+    0.24107988495355626
+    0.244749494257382
+    0.24834286603206457
+    0.251860355168466]; atol=1e-4)
 end
 
 @testset "Test implicit Product integration trapezoidal type method for multi-terms FODE" begin
@@ -351,14 +433,14 @@ end
     end
     
     alpha = [0.8, 0.7]
-    tspan = (0, 0.1); h=0.01
+    tspan = (0, 0.2); h=0.015
     y0=[1.2; 2.8]
     param=[1 3]
     prob = FODESystem(test, alpha, y0, tspan)
     (t, y) = solve(prob, h, PIEX())
 
-    @test isapprox(y, [ 1.2  1.20626  1.21061  1.21444  1.21793  1.22118  1.22424  1.22713  1.22989  1.23252  1.23504
-    2.8  2.78107  2.76943  2.75949  2.75052  2.74221  2.7344   2.72697  2.71988  2.71305  2.70647]; atol=1e-4)
+    @test isapprox(y, [1.2  1.20865  1.21458  1.21975  1.22443  1.22874  1.23276  1.23652  1.24006  1.24339  1.24653  1.2495   1.25229  1.25493  1.25575
+    2.8  2.77486  2.75941  2.74621  2.73429  2.72326  2.71291  2.70309  2.69373  2.68477  2.67616  2.66786  2.65986  2.65213  2.64964]; atol=1e-4)
 end
 
 @testset "Test FLMMNewtonGregory method" begin
@@ -476,7 +558,7 @@ end
         du[2] = (b-u[3])*u[1]-u[2]
         du[3] = u[1]*u[2]-c*u[3]
     end
-    prob = FFODEProblem(fun, [α, β], u0, (0, tfinal))
+    prob = FFMODEProblem(fun, [α, β], u0, (0, tfinal))
     sol = solve(prob, h, AtanganaSeda())
 
     @test isapprox(sol, [ -2.0   1.0       -9.35      31.0271   -160.86      637.491
@@ -494,7 +576,7 @@ end
         du[2] = u[1]-u[2]+u[3]
         du[3] = -lambda*u[2]
     end
-    prob = FFODEProblem(fun, [alpha, bet], u0, (1, tfinal))
+    prob = FFMODEProblem(fun, [alpha, bet], u0, (1, tfinal))
     result = solve(prob, h, AtanganaSeda())
     @test isapprox(result, [-0.2   0.381227   0.706487   0.705708   0.709295   0.712962   0.716751   0.720653   0.724658   0.72876   0.73295
     0.5   0.45       0.389684   0.388033   0.387055   0.386023   0.384947   0.383829   0.382669   0.38147   0.380232

@@ -96,7 +96,7 @@ export FPDEProblem
 export FDDEProblem, FDDESystem, FDDEMatrixProblem
 
 # FODE problems
-export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FFODEProblem
+export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FFPODEProblem, FFEODEProblem, FFMODEProblem
 
 # Fractional Difference probelms
 export FractionalDifferenceProblem, FractionalDifferenceSystem

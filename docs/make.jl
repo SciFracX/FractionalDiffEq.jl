@@ -15,7 +15,7 @@ makedocs(;
     pages = [
         "FractionalDiffEq.jl" => "index.md",
         "Get Started" => "get_started.md",
-        "Multi-term Fractional Differential Equations" => "multiterm.md",
+        "Multi-terms Fractional Differential Equations" => "multiterm.md",
         "System of Fractional Differential Equations" => "fdesystem.md",
         "Fractional Partial Differential Equations" => "fpde.md",
         "Fractional Delay Differential Equations" => "fdde.md",

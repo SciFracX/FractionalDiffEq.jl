@@ -74,7 +74,7 @@ function Base.show(io::IO, prob::FIEProblem)
     println("timespan: $(prob.tspan)")
 end
 
-function Base.show(io::IO, prob::FFODEProblem)
+function Base.show(io::IO, prob::FFPODEProblem)
     printstyled("FFODEProblem", color=:light_blue)
     printstyled(" with order ")
     printstyled("$(prob.order[1])", color=:red)
@@ -83,6 +83,23 @@ function Base.show(io::IO, prob::FFODEProblem)
     println("timespan: $(prob.tspan)")
 end
 
+function Base.show(io::IO, prob::FFEODEProblem)
+    printstyled("FFODEProblem", color=:light_blue)
+    printstyled(" with order ")
+    printstyled("$(prob.order[1])", color=:red)
+    printstyled(" and $(prob.order[2])", color=:red)
+    println()
+    println("timespan: $(prob.tspan)")
+end
+
+function Base.show(io::IO, prob::FFMODEProblem)
+    printstyled("FFODEProblem", color=:light_blue)
+    printstyled(" with order ")
+    printstyled("$(prob.order[1])", color=:red)
+    printstyled(" and $(prob.order[2])", color=:red)
+    println()
+    println("timespan: $(prob.tspan)")
+end
 
 
 """
@@ -95,5 +112,3 @@ Fractional differential equation solutions visulization hooks.
 @recipe f(sol::FIESolution) = sol.t, sol.u
 
 @recipe f(sol::DODESolution) = sol.t, sol.u
-
-@recipe f(sol::FFODESolution) = sol.t, sol.u

@@ -18,23 +18,22 @@ Use [Trapezoidal](https://en.wikipedia.org/wiki/Trapezoidal_rule_(differential_e
 struct FLMMTrap <: AbstractFDEAlgorithm end
 
 function solve(prob::FODESystem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
-    @unpack f, α, u0, tspan = prob
+    @unpack f, α, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
-    fdefun, alphas, y0 = f, α, u0
-    alpha = alphas[1]
+    u0 = u0
+    alpha = α[1]
     itmax = 100
 
-    Jfdefun(t, u) = jacobian_of_fdefun(fdefun, t, u)
+    Jfdefun(t, u) = jacobian_of_fdefun(f, t, u, p)
 
     m_alpha::Int = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
     # Structure for storing information on the problem
     
-    problem_size = size(y0, 1)
+    problem_size = size(u0, 1)
     
     
     # Check compatibility size of the problem with size of the vector field
-    #f_temp = f_vectorfield(t0, y0[:, 1], fdefun)
     
     # Number of points in which to evaluate the solution or the weights
     r::Int = 16
@@ -54,12 +53,12 @@ function solve(prob::FODESystem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
     
     # Initializing solution and proces of computation
     t = collect(0:N)*h
-    y[:, 1] = y0[:, 1]
+    y[:, 1] = u0[:, 1]
     temp = zeros(problem_size)
-    fdefun(temp, y0[:, 1], nothing, t0)
-    fy[:, 1] = temp#f_vectorfield(t0, y0[:, 1], fdefun)
-    (y, fy) = TrapFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
-    (y, fy) = TrapTriangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+    f(temp, u0[:, 1], p, t0)
+    fy[:, 1] = temp
+    (y, fy) = TrapFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+    (y, fy) = TrapTriangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
     
     # Main process of computation by means of the FFT algorithm
     nx0 = 0; ny0 = 0
@@ -67,7 +66,7 @@ function solve(prob::FODESystem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
     ff[1:2] = [0 2]
     for q = 0:Q
         L::Int = 2^q
-        (y, fy) = TrapDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial) ;
+        (y, fy) = TrapDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
@@ -81,7 +80,7 @@ function solve(prob::FODESystem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
 end
 
 
-function TrapDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N::Int, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function TrapDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N::Int, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     nxi::Int = copy(nx0); nxf::Int = copy(nx0 + L*r - 1)
     nyi::Int = copy(ny0); nyf::Int = copy(ny0 + L*r - 1)
     is::Int = 1
@@ -94,7 +93,7 @@ function TrapDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N::Int, abstol
     while ~stop
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         zn = TrapQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
-        (y, fy) = TrapTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+        (y, fy) = TrapTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
         i_triangolo = i_triangolo + 1
         
         if ~stop
@@ -125,7 +124,7 @@ function TrapQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     return zn
 end
 
-function TrapTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function TrapTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     for n = nxi:min(N, nxf)
         n1::Int = n+1
         St = TrapStartingTerm(t[n1], y0, m_alpha, t0, m_alpha_factorial)
@@ -141,7 +140,7 @@ function TrapTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega
         
         yn0 = y[:, n]
         temp = zeros(length(yn0))
-        fdefun(temp, yn0, nothing, t[n1])
+        fdefun(temp, yn0, p, t[n1])
         fn0 = temp#f_vectorfield(t[n1], yn0, fdefun)
         Jfn0 = Jf_vectorfield(t[n1], yn0, Jfdefun)
         Gn0 = yn0 - halpha*omega[1]*fn0 - Phi_n
@@ -150,7 +149,7 @@ function TrapTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega
             JGn0 = zeros(problem_size, problem_size)+I - halpha*omega[1]*Jfn0
             global yn1 = yn0 - JGn0\Gn0
             global fn1 = zeros(length(yn1))#f_vectorfield(t[n1], yn1, fdefun)
-            fdefun(fn1, yn1, nothing, t[n1])
+            fdefun(fn1, yn1, p, t[n1])
             Gn1 = yn1 - halpha*omega[1]*fn1 - Phi_n
             it = it + 1
             
@@ -172,14 +171,14 @@ function TrapTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega
     return y, fy
 end
 
-function TrapFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial)
+function TrapFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     m = problem_size
     Im = zeros(m, m)+I ; Ims = zeros(m*s, m*s)+I
     Y0 = zeros(s*m, 1); F0 = copy(Y0); B0 = copy(Y0)
     for j = 1 : s
         Y0[(j-1)*m+1:j*m, 1] = y[:, 1]
         temp = zeros(length(y[:, 1]))
-        fdefun(temp, y[:, 1], nothing, t[j+1])
+        fdefun(temp, y[:, 1], p, t[j+1])
         F0[(j-1)*m+1:j*m, 1] = temp#f_vectorfield(t[j+1], y[:, 1], fdefun)
         St = TrapStartingTerm(t[j+1], y0, m_alpha, t0, m_alpha_factorial)
         B0[(j-1)*m+1:j*m, 1] = St + halpha*(omega[j+1]+w[1, j+1])*fy[:, 1]
@@ -208,7 +207,7 @@ function TrapFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, p
         
         for j in 1:s
             temp = zeros(length(Y1[(j-1)*m+1:j*m, 1]))
-            fdefun(temp, Y1[(j-1)*m+1:j*m, 1], nothing, t[j+1])
+            fdefun(temp, Y1[(j-1)*m+1:j*m, 1], p, t[j+1])
             F1[(j-1)*m+1:j*m, 1] = temp#f_vectorfield(t[j+1], Y1[(j-1)*m+1:j*m, 1], fdefun)
         end
         G1 = Y1 - B0 - W*F1
