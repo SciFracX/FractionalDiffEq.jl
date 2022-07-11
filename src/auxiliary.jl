@@ -1,5 +1,7 @@
 function FastConv(x, y)
-    Lx = length(x); Ly = size(y, 2); problem_size = size(y, 1)
+    Lx = length(x)
+    #Ly = size(y, 2)
+    problem_size = size(y, 1)
 
     r = Lx
     z = zeros(Number, problem_size, r)

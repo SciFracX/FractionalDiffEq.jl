@@ -1,5 +1,8 @@
 # Fractional Order Partial Differential Equations
 
+!!! warning
+    Supports for FPDE are still WIP......
+
 Several models of physical and biological processes are better described using fractional PDEs than the corresponding integer-order PDEs. They serve as a generalization of the integer-order PDEs and give some degree of freedom in varying the rate of change of these physical and biological processes.
 
 FractionalDiffEq.jl has support for solving fractional partial differential equations. Let's see an example here:

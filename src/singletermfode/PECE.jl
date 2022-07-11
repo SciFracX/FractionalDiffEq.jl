@@ -93,7 +93,7 @@ end
 """
     FDDEMatrixProblem(α, τ, A, B, f, x0, tspan)
 
-Construct a fractional matrix differential equation with delay. The general type is:
+Construct a fractional matrix differential equation with delay with general form:
 
 ```math
 D_{t_0}^\\alpha\\textbf{x}(t)=\\textbf{A}(t)\\textbf{x}(t)+\\textbf{B}(t)\\textbf{x}(t-\\tau)+\\textbf{f}(t)
@@ -127,11 +127,11 @@ FODESystem(f, α, u0, tspan) = FODESystem(f, α, u0, tspan, nothing)
 
 
 """
-    FFODEProblem(f, α, u0, tspan, p)
+    FFPODEProblem(f, α, u0, tspan, p)
 
-Define fractal-fractional differential equations problems.
+Define fractal-fractional differential equations problems with power law kernel.
 """
-struct FFODEProblem <: FDEProblem
+struct FFPODEProblem <: FDEProblem
     f::Function
     order::Union{AbstractArray, Function}
     u0::Union{AbstractArray, Number}
@@ -140,8 +140,39 @@ struct FFODEProblem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-FFODEProblem(f, order, u0, tspan) = FFODEProblem(f, order, u0, tspan, nothing)
+FFPODEProblem(f, order, u0, tspan) = FFPODEProblem(f, order, u0, tspan, nothing)
 
+"""
+    FFEODEProblem(f, α, u0, tspan, p)
+
+Define fractal-fractional differential equations problems with expoenntial decay kernel.
+"""
+struct FFEODEProblem <: FDEProblem
+    f::Function
+    order::Union{AbstractArray, Function}
+    u0::Union{AbstractArray, Number}
+    tspan::Union{Tuple, Number}
+    p::Union{AbstractArray, Number, Nothing}
+end
+
+# If the there are no parameters, we do this:
+FFEODEProblem(f, order, u0, tspan) = FFEODEProblem(f, order, u0, tspan, nothing)
+
+"""
+    FFMODEProblem(f, α, u0, tspan, p)
+
+Define fractal-fractional differential equations problems with Mittag Leffler kernel.
+"""
+struct FFMODEProblem <: FDEProblem
+    f::Function
+    order::Union{AbstractArray, Function}
+    u0::Union{AbstractArray, Number}
+    tspan::Union{Tuple, Number}
+    p::Union{AbstractArray, Number, Nothing}
+end
+
+# If the there are no parameters, we do this:
+FFMODEProblem(f, order, u0, tspan) = FFMODEProblem(f, order, u0, tspan, nothing)
 
 
 
@@ -176,7 +207,7 @@ end
 Define Fractional Difference System with the general constructure:
 
 ```math
-{_{a-m}^G\\nabla_k^\\alpha x(k+1)}=f(x(k))\\
+{^G\\nabla_k^\\alpha x(k+1)}=f(x(k))
 ```
 
 With given initial condition ``x(i)``.
@@ -292,9 +323,9 @@ function right(f, y, α, n, h::Float64)
     return temp
 end
 
-function predictor(f::Function, y, α::Float64, n::Integer, h::Float64, u0, t0)
-    predict = 0
-    leftsum = 0
+function predictor(f::Function, y, α::Float64, n::Integer, h::Float64, u0::Union{Number, AbstractArray}, t0::Number)
+    predict = zero(Float64)
+    leftsum = zero(Float64)
 
     l::Int = ceil(Int, α)
 

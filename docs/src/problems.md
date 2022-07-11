@@ -28,10 +28,10 @@ FractionalDiffEq.MultiTermsFODEProblem
 FractionalDiffEq.FODESystem
 ```
 
-### FFODE problem
+### FFODE Problem
 
 ```@docs
-FractionalDiffEq.FFODESystem
+FractionalDiffEq.FFODEProblem
 ```
 
 ## FPDE Problem
@@ -40,7 +40,7 @@ FractionalDiffEq.FFODESystem
 FractionalDiffEq.FPDEProblem
 ```
 
-## FDDEProblem
+## FDDE Problem
 
 ```@docs
 FractionalDiffEq.FDDEProblem
@@ -48,7 +48,7 @@ FractionalDiffEq.FDDEMatrixProblem
 FractionalDiffEq.FDDESystem
 ```
 
-## DODEProblem
+## DODE Problem
 
 ```@docs
 FractionalDiffEq.DODEProblem
@@ -61,7 +61,7 @@ FractionalDiffEq.FractionalDifferenceProblem
 FractionalDiffEq.FractionalDifferenceSystem
 ```
 
-## FIEProblem
+## FIE Problem
 
 ```@docs
 FractionalDiffEq.FIEProblem

@@ -15,7 +15,7 @@ function solve(prob::FODESystem, h, ::NonLinearAlg, L0=1e10)
     @unpack f, α, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
     n = length(u0)
-    m = round(Int, (T-t0)/h)+1
+    m::Int = round(Int, (T-t0)/h)+1
     g = genfun(1)
     g = g[:]
     u0 = u0[:]

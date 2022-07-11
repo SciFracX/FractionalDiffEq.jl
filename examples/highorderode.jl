@@ -8,7 +8,7 @@ end
 prob = SecondOrderODEProblem(fun, 0, 0, (0, 5))
 sol = OrdinaryDiffEq.solve(prob, Tsit5())
 
-fodeprob = SingleTermFODEProblem((x, u)->u+2*x^2-x-3, 2, 0, (0, 5))
+fodeprob = SingleTermFODEProblem((x, u)->u+2*x^2-x-3, 2, [0, 0], (0, 5))
 fodesol = FractionalDiffEq.solve(fodeprob, 0.001, PECE())
 
 analytical(x)=-2*x^2+x+exp(-x)-1
