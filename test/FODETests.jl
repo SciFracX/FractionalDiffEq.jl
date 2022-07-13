@@ -191,22 +191,7 @@ end
     0.652951997319657]; atol=1e-4)
 end
 =#
-@testset "Test ChebSpectral method" begin
-    n = 10
-    rightfun(x) = gamma(7+9/17)/gamma(7+9/17-0.5)*(1+x)^(6+9/17-0.5)
-    prob = SingleTermFODEProblem(rightfun, 0.5, 0, 1)
-    sol = solve(prob, n, ChebSpectral())
 
-    @test isapprox(sol.u, [-2.103832955612273e-8
-    7.611080159690798e-5
-    0.01082543428432764
-    0.2878301921177669
-    2.8447345612767694
-   14.117972832745936
-   40.9991958543131
-   75.6356722636105
-   92.37379693143299]; atol=1e-4)
-end
 
 @testset "Test Product Integration explicit method for multi-terms FODE" begin
     tspan = (0, 30); h = 0.01

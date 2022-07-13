@@ -114,7 +114,6 @@ export FODESolution, FIESolution, FDifferenceSolution, DODESolution, FFODESoluti
 # FODE solvers
 export PIEX, PIPECE, PIIMRect, PIIMTrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, GL
-export ChebSpectral
 export AtanganaSeda, AtanganaSedaAB
 export Euler
 
