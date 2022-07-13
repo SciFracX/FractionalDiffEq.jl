@@ -8,5 +8,6 @@ using Test
     include("FDifferenceTests.jl")
     include("FIETests.jl")
     include("DODETests.jl")
+    include("FFODETests.jl")
     include("auxillary.jl")
 end

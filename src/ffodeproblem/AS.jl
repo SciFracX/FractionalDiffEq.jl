@@ -31,7 +31,7 @@ function solve_singletermffode(prob::FFMODEProblem, h)
         end
     u[n+1] = u[1]+((1-α)/AB)*β.*t[n].^(β-1).*u[n]+((h^(α).*α)./(AB*gamma(α+1))).*temp1+((h.^(α).*α)./(AB*gamma(α+2))).*temp2+((h.^(α).*α)./(AB*(2*gamma(α+3)))).*temp3
     end
-    return FFODESolution(t, u[1:N])
+    return FFMODESolution(t, u[1:N])
 end
 
 function solve_ffodesystem(prob::FFMODEProblem, h)

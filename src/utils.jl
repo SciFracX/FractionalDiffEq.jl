@@ -112,3 +112,5 @@ Fractional differential equation solutions visulization hooks.
 @recipe f(sol::FIESolution) = sol.t, sol.u
 
 @recipe f(sol::DODESolution) = sol.t, sol.u
+
+@recipe f(sol::FFMODESolution) = sol.t, sol.u

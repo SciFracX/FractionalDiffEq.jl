@@ -257,7 +257,7 @@ struct DODESolution <: AbstractFDESolution
     u::AbstractArray
 end
 
-struct FFODESolution <: AbstractFDESolution
+struct FFMODESolution <: AbstractFDESolution
     t::AbstractArray
     u::AbstractArray
 end
