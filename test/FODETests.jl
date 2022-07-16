@@ -134,7 +134,7 @@ end
     prob = FODESystem(chua!, α, x0, tspan)
     result = solve(prob, h, NonLinearAlg())
 
-    @test isapprox(result, [  0.2   0.11749     0.074388  0.0733938  0.117483   0.210073
+    @test isapprox(result.u, [  0.2   0.11749     0.074388  0.0733938  0.117483   0.210073
     -0.1  -0.0590683  -0.018475  0.0192931  0.0534393  0.0844175
      0.1   0.224134    0.282208  0.286636   0.246248   0.168693]; atol=1e-3)
 end

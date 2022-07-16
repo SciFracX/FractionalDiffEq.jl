@@ -14,6 +14,7 @@ struct NonLinearAlg <: AbstractFDEAlgorithm end
 function solve(prob::FODESystem, h, ::NonLinearAlg, L0=1e10)
     @unpack f, α, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
+    time = collect(t0:h:T)
     n = length(u0)
     m::Int = round(Int, (T-t0)/h)+1
     g = genfun(1)
@@ -44,7 +45,7 @@ function solve(prob::FODESystem, h, ::NonLinearAlg, L0=1e10)
         z[:, k] = x1 - u0
     end
     result = z + repeat(u0, 1, m)
-    return result
+    return FODESystemSolution(time, result)
 end
 
 """
