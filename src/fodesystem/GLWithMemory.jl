@@ -25,6 +25,7 @@ function solve(prob::FODESystem, h, ::GL)
     # GL method is only for same order FODE
     @unpack f, α, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
+    t = collect(Float64, t0:h:T)
     α = α[1]
     hα = h^α[1]
     n::Int64 = floor(Int64, (T-t0)/h)+1
@@ -56,5 +57,5 @@ function solve(prob::FODESystem, h, ::GL)
         f(du, result[:, k-1], p, t0+(k-1)*h)
         result[:, k] = @. hα*du-summation
     end
-    return result
+    return FODESystemSolution(t, result)
 end
