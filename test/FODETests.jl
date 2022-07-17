@@ -94,8 +94,8 @@ end
         du[3] = u[1]*u[2]-c*u[3]
     end
     prob = FODESystem(testf!, alpha, x0, (0, tf))
-    result = solve(prob, h, GL())
-    @test isapprox(result, [1.0  -4.04478    84.8074
+    sol = solve(prob, h, GL())
+    @test isapprox(sol.u, [1.0  -4.04478    84.8074
     0.0  13.5939    -51.1251
     1.0  -0.352607  -27.5541]; atol=1e-4)
 end
@@ -405,9 +405,9 @@ end
     y0=[1.2; 2.8]
     param=[1 3]
     prob = FODESystem(test, alpha, y0, tspan)
-    (t, y) = solve(prob, h, PECE())
+    sol = solve(prob, h, PECE())
 
-    @test isapprox(y, [1.2  1.2061   1.21042  1.21421  1.21767  1.22089  1.22392  1.22678  1.2295   1.2321   1.23459
+    @test isapprox(sol.u, [1.2  1.2061   1.21042  1.21421  1.21767  1.22089  1.22392  1.22678  1.2295   1.2321   1.23459
     2.8  2.78118  2.76953  2.7596   2.75064  2.74235  2.73455  2.72715  2.72008  2.71329  2.70673]; atol=1e-3)
 end
 
@@ -422,9 +422,9 @@ end
     y0=[1.2; 2.8]
     param=[1 3]
     prob = FODESystem(test, alpha, y0, tspan)
-    (t, y) = solve(prob, h, PIEX())
+    sol = solve(prob, h, PIEX())
 
-    @test isapprox(y, [1.2  1.20865  1.21458  1.21975  1.22443  1.22874  1.23276  1.23652  1.24006  1.24339  1.24653  1.2495   1.25229  1.25493  1.25575
+    @test isapprox(sol.u, [1.2  1.20865  1.21458  1.21975  1.22443  1.22874  1.23276  1.23652  1.24006  1.24339  1.24653  1.2495   1.25229  1.25493  1.25575
     2.8  2.77486  2.75941  2.74621  2.73429  2.72326  2.71291  2.70309  2.69373  2.68477  2.67616  2.66786  2.65986  2.65213  2.64964]; atol=1e-4)
 end
 
@@ -438,9 +438,9 @@ end
     y0=[0.2; 0.03]
     h=0.1; tspan=(0, 0.5)
     prob = FODESystem(Brusselator, alpha, y0, tspan)
-    (t, y) = solve(prob, h, FLMMNewtonGregory())
+    sol = solve(prob, h, FLMMNewtonGregory())
 
-    @test isapprox(y, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
+    @test isapprox(sol.u, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
     0.03  0.165554  0.265678  0.355635  0.439544  0.519211]; atol=1e-4)
 end
 
@@ -454,9 +454,9 @@ end
     y0=[0.2; 0.03]
     h=0.1; tspan=(0, 0.5)
     prob = FODESystem(Brusselator, alpha, y0, tspan)
-    (t, y) = solve(prob, h, FLMMBDF())
+    sol = solve(prob, h, FLMMBDF())
 
-    @test isapprox(y, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
+    @test isapprox(sol.u, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
     0.03  0.165554  0.265678  0.355635  0.439544  0.519211]; atol=1e-4)
 end
 
@@ -470,9 +470,9 @@ end
     y0=[0.2; 0.03]
     h=0.1; tspan=(0, 0.5)
     prob = FODESystem(Brusselator, alpha, y0, tspan)
-    (t, y) = solve(prob, h, FLMMTrap())
+    sol = solve(prob, h, FLMMTrap())
 
-    @test isapprox(y, [0.2   0.200531  0.201161  0.201808  0.202452  0.203088
+    @test isapprox(sol.u, [0.2   0.200531  0.201161  0.201808  0.202452  0.203088
     0.03  0.165554  0.265678  0.355635  0.439545  0.519211]; atol=1e-4)
 end
 
@@ -490,7 +490,7 @@ end
     prob = FODESystem(fun, α, u0, (t0, tfinal))
     sol = solve(prob, h, NewtonPolynomial())
 
-    @test isapprox(sol, [-1.0  -1.37074   -1.46124    -1.21771   -0.884241  -0.49327   -0.0897447   0.338635   0.793532   1.2323    1.55187
+    @test isapprox(sol.u, [-1.0  -1.37074   -1.46124    -1.21771   -0.884241  -0.49327   -0.0897447   0.338635   0.793532   1.2323    1.55187
     1.0   0.529265  -0.0101035  -0.430956  -0.733314  -0.916321  -1.06158    -1.2647    -1.5767    -1.99613  -2.37772
     1.0   1.37074    1.8176      2.17624    2.48899    2.67047    2.6624      2.46322    2.07376    1.55057   1.0049]; atol=1e-4)
 end
@@ -527,7 +527,7 @@ end
     prob = FODESystem(fun, α, u0, (t0, tfinal))
     sol = solve(prob, h, AtanganaSedaAB())
 
-    @test isapprox(sol, [ -0.1   0.7    1.18511  -1.41522  -31.0872
+    @test isapprox(sol.u, [ -0.1   0.7    1.18511  -1.41522  -31.0872
     0.1   0.525  1.08088  -4.03383   32.0085
    -0.1  -0.065  1.03463   4.10537   13.3441]; atol=1e-2)
 end
@@ -545,7 +545,7 @@ end
     prob = FODESystem(LotkaVolterra, α, u0, tspan)
     sol = solve(prob, 0.5, AtanganaSedaCF())
 
-    isapprox(sol, [ 0.0   1.375   3.37602   -5.46045    449.712
+    isapprox(sol.u, [ 0.0   1.375   3.37602   -5.46045    449.712
     0.0  -0.45   -0.492188  -3.4828      62.7789
     0.0   0.61    3.94806   96.048    -5989.62]; atol=1e-3)
 end

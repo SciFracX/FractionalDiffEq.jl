@@ -9,6 +9,7 @@ function solve(prob::FODESystem, h, ::AtanganaSedaAB)
     @unpack f, α, u0, tspan, p = prob
     α = α[1]
     t0 = tspan[1]; tfinal = tspan[2]
+    t = collect(t0:h:tfinal)
     N::Int = ceil(Int, (tfinal-t0)/h)
     AB = 1-α+α/gamma(α)
     t = collect(Float64, t0:h:tfinal)
@@ -46,5 +47,5 @@ function solve(prob::FODESystem, h, ::AtanganaSedaAB)
 
         result[:, n+1] = u0+(1-α)/AB*temptemptemp+((h^α)*α/(AB*gamma(α+1)))*temptemp1 + ((h^α)*α/(AB*gamma(α+2)))*temptemp2+((h^α)*α/(2*AB*gamma(α+3)))*temptemp3
     end
-    return result
+    return FODESystemSolution(t, result)
 end

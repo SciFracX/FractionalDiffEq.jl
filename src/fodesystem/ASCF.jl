@@ -34,5 +34,5 @@ function solve(prob::FODESystem, h, ::AtanganaSedaCF)
         f(tempn2, result[:, n-2], p, t[n-2])
         result[:, n+1] = result[:, n] + (1-α)/M*(tempn-tempn1)+α*M*h*(23/12*tempn-4/3*tempn1+5/12*tempn2)
     end
-    return result
+    return FODESystemSolution(t, result)
 end
