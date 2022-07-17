@@ -241,6 +241,10 @@ struct FODESolution <: AbstractFDESolution
     u::AbstractArray
 end
 
+struct FODESystemSolution <: AbstractFDESolution
+    t::AbstractArray
+    u::AbstractArray
+end
 
 struct FDifferenceSolution <: AbstractFDESolution
     t::AbstractArray
