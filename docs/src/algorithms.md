@@ -12,7 +12,6 @@ Pages = ["algorithms.md"]
 FractionalDiffEq.PECE
 FractionalDiffEq.GLFractionalDiffEq.Euler
 FractionalDiffEq.PIEX
-FractionalDiffEq.ChebSpectral
 FractionalDiffEq.AtanganaSeda
 ```
 

@@ -76,7 +76,7 @@ function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-
         y[:, N+1] = (1-c)*y[:, N] + c*y[:, N+1]
     end
     t = t[1:N+1]; y = y[:, 1:N+1]
-    return t, y
+    return FODESystemSolution(t, y)
 end
 
 

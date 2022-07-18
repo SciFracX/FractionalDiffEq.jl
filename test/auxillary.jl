@@ -154,7 +154,7 @@ end
     @test_nowarn show(fiesol)
 end
 
-@testset "Test FFODEProblem show method" begin
+@testset "Test FFMODEProblem show method" begin
     α=1;β=1;h=0.1;tfinal=0.5
     u0 = [-2, 1, -1]
     a=10;b=28;c=8/3

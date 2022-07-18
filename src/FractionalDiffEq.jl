@@ -21,7 +21,6 @@ using Reexport
 include("singletermfode/PECE.jl")
 include("singletermfode/PI.jl")
 include("singletermfode/GL.jl")
-include("singletermfode/ChebSpectral.jl")
 include("singletermfode/AtanganaSeda.jl")
 include("singletermfode/Euler.jl")
 
@@ -109,12 +108,11 @@ export FIEProblem
 
 
 export AbstractFDESolution
-export FODESolution, FIESolution, FDifferenceSolution, DODESolution, FFODESolution
+export FODESolution, FIESolution, FDifferenceSolution, DODESolution, FFMODESolution
 
 # FODE solvers
 export PIEX, PIPECE, PIIMRect, PIIMTrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, GL
-export ChebSpectral
 export AtanganaSeda, AtanganaSedaAB
 export Euler
 

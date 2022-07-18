@@ -33,7 +33,7 @@ function solve(FODE::SingleTermFODEProblem, h, ::PIEX)
     t = collect(Float64, t0:h:T)
     return FODESolution(t, y)
 end
-
+#=
 function acoefficients(n, α)
     if n == 0
         return 1
@@ -41,5 +41,6 @@ function acoefficients(n, α)
         return ((n-1)^(α+1)-2*n^(α+1)+(n+1)^(α+1))
     end
 end
+=#
 
 bcoefficients(n, α) = ((n+1)^α-n^α)

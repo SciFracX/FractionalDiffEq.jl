@@ -40,5 +40,5 @@ function solve(prob::FODESystem, h, ::NewtonPolynomial)
         f(temp3, result[:, n-2], p, t[n-2])
         result[:, n+1] = result[:, n] + (1-α)/M*(temp1-temp2)+α.*M.*h.*(23/12*temp1-4/3*temp2+5/12*temp3)
     end
-    return result
+    return FODESystemSolution(t, result)
 end

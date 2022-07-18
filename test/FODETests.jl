@@ -94,8 +94,8 @@ end
         du[3] = u[1]*u[2]-c*u[3]
     end
     prob = FODESystem(testf!, alpha, x0, (0, tf))
-    result = solve(prob, h, GL())
-    @test isapprox(result, [1.0  -4.04478    84.8074
+    sol = solve(prob, h, GL())
+    @test isapprox(sol.u, [1.0  -4.04478    84.8074
     0.0  13.5939    -51.1251
     1.0  -0.352607  -27.5541]; atol=1e-4)
 end
@@ -134,7 +134,7 @@ end
     prob = FODESystem(chua!, α, x0, tspan)
     result = solve(prob, h, NonLinearAlg())
 
-    @test isapprox(result, [  0.2   0.11749     0.074388  0.0733938  0.117483   0.210073
+    @test isapprox(result.u, [  0.2   0.11749     0.074388  0.0733938  0.117483   0.210073
     -0.1  -0.0590683  -0.018475  0.0192931  0.0534393  0.0844175
      0.1   0.224134    0.282208  0.286636   0.246248   0.168693]; atol=1e-3)
 end
@@ -191,22 +191,7 @@ end
     0.652951997319657]; atol=1e-4)
 end
 =#
-@testset "Test ChebSpectral method" begin
-    n = 10
-    rightfun(x) = gamma(7+9/17)/gamma(7+9/17-0.5)*(1+x)^(6+9/17-0.5)
-    prob = SingleTermFODEProblem(rightfun, 0.5, 0, 1)
-    sol = solve(prob, n, ChebSpectral())
 
-    @test isapprox(sol.u, [-2.103832955612273e-8
-    7.611080159690798e-5
-    0.01082543428432764
-    0.2878301921177669
-    2.8447345612767694
-   14.117972832745936
-   40.9991958543131
-   75.6356722636105
-   92.37379693143299]; atol=1e-4)
-end
 
 @testset "Test Product Integration explicit method for multi-terms FODE" begin
     tspan = (0, 30); h = 0.01
@@ -420,9 +405,9 @@ end
     y0=[1.2; 2.8]
     param=[1 3]
     prob = FODESystem(test, alpha, y0, tspan)
-    (t, y) = solve(prob, h, PECE())
+    sol = solve(prob, h, PECE())
 
-    @test isapprox(y, [1.2  1.2061   1.21042  1.21421  1.21767  1.22089  1.22392  1.22678  1.2295   1.2321   1.23459
+    @test isapprox(sol.u, [1.2  1.2061   1.21042  1.21421  1.21767  1.22089  1.22392  1.22678  1.2295   1.2321   1.23459
     2.8  2.78118  2.76953  2.7596   2.75064  2.74235  2.73455  2.72715  2.72008  2.71329  2.70673]; atol=1e-3)
 end
 
@@ -437,9 +422,9 @@ end
     y0=[1.2; 2.8]
     param=[1 3]
     prob = FODESystem(test, alpha, y0, tspan)
-    (t, y) = solve(prob, h, PIEX())
+    sol = solve(prob, h, PIEX())
 
-    @test isapprox(y, [1.2  1.20865  1.21458  1.21975  1.22443  1.22874  1.23276  1.23652  1.24006  1.24339  1.24653  1.2495   1.25229  1.25493  1.25575
+    @test isapprox(sol.u, [1.2  1.20865  1.21458  1.21975  1.22443  1.22874  1.23276  1.23652  1.24006  1.24339  1.24653  1.2495   1.25229  1.25493  1.25575
     2.8  2.77486  2.75941  2.74621  2.73429  2.72326  2.71291  2.70309  2.69373  2.68477  2.67616  2.66786  2.65986  2.65213  2.64964]; atol=1e-4)
 end
 
@@ -453,9 +438,9 @@ end
     y0=[0.2; 0.03]
     h=0.1; tspan=(0, 0.5)
     prob = FODESystem(Brusselator, alpha, y0, tspan)
-    (t, y) = solve(prob, h, FLMMNewtonGregory())
+    sol = solve(prob, h, FLMMNewtonGregory())
 
-    @test isapprox(y, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
+    @test isapprox(sol.u, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
     0.03  0.165554  0.265678  0.355635  0.439544  0.519211]; atol=1e-4)
 end
 
@@ -469,9 +454,9 @@ end
     y0=[0.2; 0.03]
     h=0.1; tspan=(0, 0.5)
     prob = FODESystem(Brusselator, alpha, y0, tspan)
-    (t, y) = solve(prob, h, FLMMBDF())
+    sol = solve(prob, h, FLMMBDF())
 
-    @test isapprox(y, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
+    @test isapprox(sol.u, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
     0.03  0.165554  0.265678  0.355635  0.439544  0.519211]; atol=1e-4)
 end
 
@@ -485,9 +470,9 @@ end
     y0=[0.2; 0.03]
     h=0.1; tspan=(0, 0.5)
     prob = FODESystem(Brusselator, alpha, y0, tspan)
-    (t, y) = solve(prob, h, FLMMTrap())
+    sol = solve(prob, h, FLMMTrap())
 
-    @test isapprox(y, [0.2   0.200531  0.201161  0.201808  0.202452  0.203088
+    @test isapprox(sol.u, [0.2   0.200531  0.201161  0.201808  0.202452  0.203088
     0.03  0.165554  0.265678  0.355635  0.439545  0.519211]; atol=1e-4)
 end
 
@@ -505,7 +490,7 @@ end
     prob = FODESystem(fun, α, u0, (t0, tfinal))
     sol = solve(prob, h, NewtonPolynomial())
 
-    @test isapprox(sol, [-1.0  -1.37074   -1.46124    -1.21771   -0.884241  -0.49327   -0.0897447   0.338635   0.793532   1.2323    1.55187
+    @test isapprox(sol.u, [-1.0  -1.37074   -1.46124    -1.21771   -0.884241  -0.49327   -0.0897447   0.338635   0.793532   1.2323    1.55187
     1.0   0.529265  -0.0101035  -0.430956  -0.733314  -0.916321  -1.06158    -1.2647    -1.5767    -1.99613  -2.37772
     1.0   1.37074    1.8176      2.17624    2.48899    2.67047    2.6624      2.46322    2.07376    1.55057   1.0049]; atol=1e-4)
 end
@@ -542,47 +527,10 @@ end
     prob = FODESystem(fun, α, u0, (t0, tfinal))
     sol = solve(prob, h, AtanganaSedaAB())
 
-    @test isapprox(sol, [ -0.1   0.7    1.18511  -1.41522  -31.0872
+    @test isapprox(sol.u, [ -0.1   0.7    1.18511  -1.41522  -31.0872
     0.1   0.525  1.08088  -4.03383   32.0085
    -0.1  -0.065  1.03463   4.10537   13.3441]; atol=1e-2)
 end
-
-
-@testset "Test AtanganaSeda method for FFODEProblem" begin
-    α=1;β=1;h=0.1;tfinal=0.5
-    u0 = [-2, 1, -1]
-    a=10;b=28;c=8/3
-    function fun(du, u, p, t)
-        a=10;b=28;c=8/3
-        du[1] = a*(u[2]-u[1])
-        du[2] = (b-u[3])*u[1]-u[2]
-        du[3] = u[1]*u[2]-c*u[3]
-    end
-    prob = FFMODEProblem(fun, [α, β], u0, (0, tfinal))
-    sol = solve(prob, h, AtanganaSeda())
-
-    @test isapprox(sol, [ -2.0   1.0       -9.35      31.0271   -160.86      637.491
-    1.0  -4.9        3.125    -59.1272    190.243  -11690.4
-   -1.0  -0.933333  -1.32833   -5.57208  -351.022   -5795.54]; atol=1e-2)
-end
-
-@testset "Test AtanganaSeda method for Caputo-Fabrizio sense variable order FFODE" begin
-    alpha=0.96;h=0.1;tfinal=2;
-    bet(t) = 0.01+0.01*t
-    u0=[-0.2; 0.5; 0.2]
-    function fun(du, u, p, t)
-        gama=10.814;lambda=14;a=0.2;b=0.15;
-        du[1] = gama*(u[2]-a*sin(2*pi*b*u[1]))
-        du[2] = u[1]-u[2]+u[3]
-        du[3] = -lambda*u[2]
-    end
-    prob = FFMODEProblem(fun, [alpha, bet], u0, (1, tfinal))
-    result = solve(prob, h, AtanganaSeda())
-    @test isapprox(result, [-0.2   0.381227   0.706487   0.705708   0.709295   0.712962   0.716751   0.720653   0.724658   0.72876   0.73295
-    0.5   0.45       0.389684   0.388033   0.387055   0.386023   0.384947   0.383829   0.382669   0.38147   0.380232
-    0.2  -0.5       -1.095     -1.09861   -1.10538   -1.11243   -1.11973   -1.12727   -1.13504   -1.14303  -1.15123]; atol=1e-3)
-end
-
 
 @testset "Test AtanganaSedaCF method" begin
     a₁, a₂, a₃, a₄, a₅, a₆, a₇ = 3, 0.5, 4, 3, 4, 9, 4
@@ -597,7 +545,7 @@ end
     prob = FODESystem(LotkaVolterra, α, u0, tspan)
     sol = solve(prob, 0.5, AtanganaSedaCF())
 
-    isapprox(sol, [ 0.0   1.375   3.37602   -5.46045    449.712
+    isapprox(sol.u, [ 0.0   1.375   3.37602   -5.46045    449.712
     0.0  -0.45   -0.492188  -3.4828      62.7789
     0.0   0.61    3.94806   96.048    -5989.62]; atol=1e-3)
 end
