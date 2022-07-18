@@ -53,6 +53,7 @@ abstract type FPDEAlgorithm <: AbstractFDEAlgorithm end
 abstract type FODESystemAlgorithm <: AbstractFDEAlgorithm end
 abstract type MultiTermsFDEAlgorithm <: AbstractFDEAlgorithm end
 abstract type SingleTermFDEAlgorithm <: AbstractFDEAlgorithm end
+abstract type FDiffAlgorithm <: AbstractFDEAlgorithm end
 
 
 
