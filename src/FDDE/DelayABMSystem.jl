@@ -16,6 +16,7 @@ function solve(FDDESys::FDDESystem, h, ::DelayABM)
     len = length(ϕ)
     N::Int = round(Int, T/h)
     Ndelay = round(Int, τ/h)
+    t = collect(Float64, 0:h:(T-τ))
     x1 = zeros(Ndelay+N+1, len)
     x = zeros(Ndelay+N+1, len)
     du = zeros(len)
@@ -78,5 +79,6 @@ function solve(FDDESys::FDDESystem, h, ::DelayABM)
        yresult[n-2*Ndelay, :] = x[n-Ndelay, :]
     end
 
-    return xresult, yresult
+    #return xresult, yresult
+    return FDDESystemSolution(t, yresult')
 end

@@ -109,6 +109,7 @@ export FIEProblem
 
 export AbstractFDESolution
 export FODESolution, FIESolution, FDifferenceSolution, DODESolution, FFMODESolution
+export FODESystemSolution, FDDESystemSolution
 
 # FODE solvers
 export PIEX, PIPECE, PIIMRect, PIIMTrap
