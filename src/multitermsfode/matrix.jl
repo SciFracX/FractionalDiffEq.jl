@@ -15,7 +15,7 @@ Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matri
 }
 ```
 """
-struct FODEMatrixDiscrete <: AbstractFDEAlgorithm end
+struct FODEMatrixDiscrete <: MultiTermsFDEAlgorithm end
 
 
 """

@@ -20,7 +20,7 @@ Use implicit finite difference to discrete equations.
 
 Matlab version: https://github.com/awstown/Fractional-Derivative
 """
-struct FiniteDiffIm <: AbstractFDEAlgorithm end
+struct FiniteDiffIm <: FPDEAlgorithm end
 
 
 function solve(α, dx, dt, xStart, xEnd, n, κ, u0t, uendt, u0, ::FiniteDiffIm)

@@ -15,7 +15,15 @@ using RecipesBase
 using ForwardDiff
 using DiffEqBase
 using Reexport
+using Interpolations
 @reexport using DiffEqBase
+
+# FDE problems
+include("problems/fde_problems.jl")
+
+# FDE solutions
+include("solutions/fde_solutions.jl")
+
 
 # Single-term fractional ordinary differential equations
 include("singletermfode/PECE.jl")

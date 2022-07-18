@@ -13,7 +13,7 @@
 }
 ```
 """
-struct PIEX <: AbstractFDEAlgorithm end
+struct PIEX <: SingleTermFDEAlgorithm end
 
 function solve(FODE::SingleTermFODEProblem, h, ::PIEX)
     @unpack f, α, u0, tspan = FODE

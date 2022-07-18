@@ -12,7 +12,7 @@ Use Closed-Form solution to obtain numerical solution at zero initial condition.
 Dingyu Xue, Northeastern University, China
 ISBN:9787030543981
 """
-struct ClosedForm <: AbstractFDEAlgorithm end
+struct ClosedForm <: MultiTermsFDEAlgorithm end
 
 
 function solve(prob::MultiTermsFODEProblem, h, ::ClosedForm)

@@ -19,7 +19,7 @@ Use the PECE algorithm to solve fractional difference equations
 }
 ```
 """
-struct PECEDifference <: AbstractFDEAlgorithm end
+struct PECEDifference <: FDiffAlgorithm end
 
 function solve(FDProb::FractionalDifferenceProblem, T, h, ::PECEDifference)
     @unpack fun, α, u0 = FDProb

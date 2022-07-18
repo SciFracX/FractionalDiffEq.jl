@@ -11,7 +11,7 @@ J.X. Cao, C.P. Li, Y.Q. Chen. High-order approximation to Caputo derivatives and
 H.F. Li, J.X. Cao, C.P. Li. High-order approximation to Caputo derivatives and Caputo-type advection-diffusion equations (III).submitted.
 ```
 """
-struct ADV_DIF <: AbstractFDEAlgorithm end
+struct ADV_DIF <: FPDEAlgorithm end
 
 function solve(order::Integer, α, T, N, X, i, κ, v, fx0, fgz, f0t, flt, ::ADV_DIF)
     h = X/i
