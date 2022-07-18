@@ -15,7 +15,6 @@ using RecipesBase
 using ForwardDiff
 using DiffEqBase
 using Reexport
-using Interpolations
 @reexport using DiffEqBase
 
 # FDE problems

@@ -3,13 +3,11 @@ abstract type AbstractFDESolution end
 struct FODESolution <: AbstractFDESolution
     t::AbstractArray
     u::AbstractArray
-    interp::AbstractInterpolation
 end
 
 struct FODESystemSolution <: AbstractFDESolution
     t::AbstractArray
     u::AbstractArray
-    interp::AbstractInterpolation
 end
 
 struct FDifferenceSolution <: AbstractFDESolution
