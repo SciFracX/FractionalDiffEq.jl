@@ -19,7 +19,7 @@ doi={https://doi.org/10.1023/A:1016592219341}
 }
 ```
 """
-struct PECE <: SingleTermFDEAlgorithm end
+struct PECE <: SingleTermFODEAlgorithm end
 #TODO: Use Richardson extrapolation to refine the PECE algorithms 
 #TODO: Rename as ABM
 
