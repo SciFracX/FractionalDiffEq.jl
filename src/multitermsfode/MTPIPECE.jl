@@ -3,7 +3,7 @@
 
 Use product integration predictor-corrector method to solve multi-terms FODE.
 """
-struct PIPECE <: AbstractFDEAlgorithm end
+struct PIPECE <: MultiTermsFODEAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, h, ::PIPECE; abstol=1e-6)
     @unpack parameters, orders, rightfun, u0, tspan = prob

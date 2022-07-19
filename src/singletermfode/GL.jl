@@ -13,7 +13,7 @@ year={2019},
 doi={10.1109/MOCAST.2019.8742063}}
 ```
 """
-struct GL <: AbstractFDEAlgorithm end
+struct GL <: SingleTermFODEAlgorithm end
 
 function solve(FODE::SingleTermFODEProblem, h, ::GL)
     @unpack f, α, u0, tspan = FODE

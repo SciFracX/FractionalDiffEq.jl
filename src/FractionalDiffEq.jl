@@ -17,6 +17,13 @@ using DiffEqBase
 using Reexport
 @reexport using DiffEqBase
 
+# FDE problems
+include("problems/fde_problems.jl")
+
+# FDE solutions
+include("solutions/fde_solutions.jl")
+
+
 # Single-term fractional ordinary differential equations
 include("singletermfode/PECE.jl")
 include("singletermfode/PI.jl")

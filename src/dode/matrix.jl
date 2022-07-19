@@ -16,7 +16,7 @@ Use distributed order strip matrix algorithm to solve distriubted order problem.
 }
 ```
 """
-struct DOMatrixDiscrete <: AbstractFDEAlgorithm end
+struct DOMatrixDiscrete <: FDODEAlgorithm end
 
 
 isFunction(x) = isa(x, Function) ? true : false

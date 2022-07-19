@@ -15,7 +15,7 @@ Use [Backward Differentiation Formula](https://en.wikipedia.org/wiki/Backward_di
 }
 ```
 """
-struct FLMMBDF <: AbstractFDEAlgorithm end
+struct FLMMBDF <: FODESystemAlgorithm end
 
 function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
     @unpack f, α, u0, tspan, p = prob

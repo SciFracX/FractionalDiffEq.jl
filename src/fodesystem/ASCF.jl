@@ -10,7 +10,7 @@ Atagana Seda method for Caputo-Fabrizio fractional order differential equations.
 https://doi.org/10.1016/c2020-0-02711-8
 ```
 """
-struct AtanganaSedaCF <: AbstractFDEAlgorithm end
+struct AtanganaSedaCF <: FODESystemAlgorithm end
 #FIXME: Tests
 function solve(prob::FODESystem, h, ::AtanganaSedaCF)
     @unpack f, α, u0, tspan, p = prob

@@ -23,7 +23,7 @@ Use explicit Caputo discretization method to solve the diffusion equations.
 
 Matlab version: https://github.com/awstown/Fractional-Derivative
 """
-struct FiniteDiffEx <: AbstractFDEAlgorithm end
+struct FiniteDiffEx <: FPDEAlgorithm end
 
 function solve(α, dx, dt, xStart, xEnd, n, κ, u0t, uendt, u0, ::FiniteDiffEx)
     x = collect(0:dx:xEnd)
