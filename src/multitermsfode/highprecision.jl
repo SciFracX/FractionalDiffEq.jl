@@ -5,7 +5,7 @@
 
 Closed form high precision algorithms for multi term ordinary differential equations.
 """
-struct ClosedFormHighPercision <: MultiTermsFDEAlgorithm end
+struct ClosedFormHighPercision <: MultiTermsFODEAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, h, p, ::ClosedFormHighPercision)
     @unpack parameters, orders, rightfun, rparameters, rorders, tspan =  prob
