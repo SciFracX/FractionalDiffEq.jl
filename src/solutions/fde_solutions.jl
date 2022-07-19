@@ -10,6 +10,11 @@ struct FODESystemSolution <: AbstractFDESolution
     u::AbstractArray
 end
 
+struct FDDESystemSolution <: AbstractFDESolution
+    t::AbstractArray
+    u::AbstractArray
+end
+
 struct FDifferenceSolution <: AbstractFDESolution
     t::AbstractArray
     u::AbstractArray
