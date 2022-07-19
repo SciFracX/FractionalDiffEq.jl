@@ -11,7 +11,7 @@ The basic forward Euler method for fractional ordinary differential equations.
 }
 ```
 """
-struct Euler <: SingleTermFDEAlgorithm end
+struct Euler <: SingleTermFODEAlgorithm end
 
 function solve(prob::SingleTermFODEProblem, h, ::Euler)
     @unpack f, α, u0, tspan = prob
