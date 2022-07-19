@@ -7,5 +7,7 @@ function delaychen!(dy, y, ϕ, t)
 	dy[3] = y[1]*y[2]-b*ϕ[3]
 end
 prob = FDDESystem(delaychen!, ϕ, α, τ, T)
-y, x=solve(prob, h, DelayABM())
-plot(x[:, 1], x[:, 2], x[:, 3], title="Fractional Order Chen Delayed System")
+#y, x=solve(prob, h, DelayABM())
+#plot(x[:, 1], x[:, 2], x[:, 3], title="Fractional Order Chen Delayed System")
+sol=solve(prob, h, DelayABM())
+plot(sol)

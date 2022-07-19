@@ -103,8 +103,8 @@ function delaychen!(dy, y, ϕ, t)
 	dy[3] = y[1]*y[2]-b*ϕ[3]
 end
 prob = FDDESystem(delaychen!, ϕ, α, τ, T)
-y, x=solve(prob, h, DelayABM())
-plot(x[:, 1], x[:, 2], x[:, 3], title="Fractional Order Chen Delayed System")
+sol=solve(prob, h, DelayABM())
+plot(sol, title="Fractional Order Chen Delayed System")
 ```
 
 ![FOChen](./assets/fodelaychen.png)
@@ -120,7 +120,7 @@ y(t)=[60, 10, 10, 20],\ t\leq0
 ```
 
 ```julia
-using FractionalDiffEq
+using FractionalDiffEq, Plots
 function EnzymeKinetics!(dy, y, ϕ, t)
     dy[1] = 10.5-y[1]/(1+0.0005*ϕ[4]^3)
     dy[2] = y[1]/(1+0.0005*ϕ[4]^3)-y[2]
@@ -129,13 +129,8 @@ function EnzymeKinetics!(dy, y, ϕ, t)
 end
 q = [60, 10, 10, 20]; α = [0.95, 0.95, 0.95, 0.95]
 prob = FDDESystem(EnzymeKinetics!, q, α, 4, 150)
-sold, sol = solve(prob, 0.01, DelayABM())
-tspan = collect(0:0.01:146)
-using Plots
-plot(tspan, sol[:, 1])
-plot!(tspan, sol[:, 2])
-plot!(tspan, sol[:, 3])
-plot!(tspan, sol[:, 4])
+sol = solve(prob, 0.01, DelayABM())
+plot(sol)
 ```
 
 ![Enzyme](./assets/enzyme_kinetics.png)
