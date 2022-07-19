@@ -3,7 +3,7 @@
 
 Atangana-Seda method for Caputo single term FODE.
 """
-struct AtanganaSeda <: SingleTermFDEAlgorithm end
+struct AtanganaSeda <: SingleTermFODEAlgorithm end
 
 function solve(prob::SingleTermFODEProblem, h, ::AtanganaSeda)
     @unpack f, α, u0, tspan = prob
