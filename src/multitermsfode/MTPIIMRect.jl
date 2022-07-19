@@ -3,7 +3,7 @@
 
 Use implicit product integration rectangular type method to solve multi-terms FODE.
 """
-struct PIIMRect <: MultiTermsFDEAlgorithm end
+struct PIIMRect <: MultiTermsFODEAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, h, ::PIIMRect; abstol=1e-6)
     @unpack parameters, orders, rightfun, u0, tspan = prob
