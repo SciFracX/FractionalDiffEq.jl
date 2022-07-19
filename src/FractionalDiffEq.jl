@@ -3,7 +3,6 @@ module FractionalDiffEq
 using LinearAlgebra
 using SpecialFunctions
 using SparseArrays
-using ApproxFun: Fun, Ultraspherical, coefficients
 using InvertedIndices
 using SpecialMatrices
 using FFTW: fft, ifft
