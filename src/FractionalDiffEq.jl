@@ -17,11 +17,9 @@ using DiffEqBase
 using Reexport
 @reexport using DiffEqBase
 
-# FDE problems
-include("problems/fde_problems.jl")
-
-# FDE solutions
-include("solutions/fde_solutions.jl")
+include("types/problems.jl")
+include("types/algorithms.jl")
+include("types/solutions.jl")
 
 
 # Single-term fractional ordinary differential equations
@@ -88,9 +86,6 @@ include("mlfun.jl")
 
 include("utils.jl")
 include("auxiliary.jl")
-
-
-export AbstractFDEAlgorithm
 
 # General types
 export solve, FDEProblem

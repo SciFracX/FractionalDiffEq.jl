@@ -41,23 +41,6 @@ struct SingleTermFODEProblem <: FDEProblem
     tspan::Union{Tuple, Number}
 end
 
-
-"""
-Base type for all of the FractionalDiffEq algorithms
-"""
-abstract type AbstractFDEAlgorithm end
-abstract type FDODEAlgorithm <: AbstractFDEAlgorithm end
-abstract type FDDEAlgorithm <: AbstractFDEAlgorithm end
-abstract type FIEAlgorithm <: AbstractFDEAlgorithm end
-abstract type FPDEAlgorithm <: AbstractFDEAlgorithm end
-abstract type FODESystemAlgorithm <: AbstractFDEAlgorithm end
-abstract type MultiTermsFODEAlgorithm <: AbstractFDEAlgorithm end
-abstract type SingleTermFODEAlgorithm <: AbstractFDEAlgorithm end
-abstract type FDiffAlgorithm <: AbstractFDEAlgorithm end
-
-
-
-
 """
     FPDEProblem(α, β, T, M, N)
 
