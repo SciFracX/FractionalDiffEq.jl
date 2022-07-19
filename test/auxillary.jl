@@ -145,15 +145,6 @@ end
     @test_nowarn show(differencesol)
 end
 
-@testset "Test FIEProblem show method" begin
-    fietspan = LinRange(-1, 1, 5)
-    fieprob = FIEProblem([1, 1], [1, 0.5], 1, fietspan)
-    fiesol = solve(fieprob, 20, SpectralUltraspherical())
-
-    @test_nowarn show(fieprob)
-    @test_nowarn show(fiesol)
-end
-
 @testset "Test FFMODEProblem show method" begin
     α=1;β=1;h=0.1;tfinal=0.5
     u0 = [-2, 1, -1]
