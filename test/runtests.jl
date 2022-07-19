@@ -6,7 +6,6 @@ using Test
     include("FDDETests.jl")
     include("FPDETests.jl")
     include("FDifferenceTests.jl")
-    include("FIETests.jl")
     include("DODETests.jl")
     include("FFODETests.jl")
     include("auxillary.jl")

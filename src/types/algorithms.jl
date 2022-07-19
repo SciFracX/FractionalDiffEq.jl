@@ -14,11 +14,6 @@ Base type for fractional delay differential equations algorithms.
 abstract type FDDEAlgorithm <: AbstractFDEAlgorithm end
 
 """
-Base type for fractional order integral equations algorithms.
-"""
-abstract type FIEAlgorithm <: AbstractFDEAlgorithm end
-
-"""
 Base type for fractional order partial differential equations algorithms.
 """
 abstract type FPDEAlgorithm <: AbstractFDEAlgorithm end

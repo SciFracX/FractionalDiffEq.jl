@@ -66,14 +66,6 @@ function Base.show(io::IO, prob::FractionalDifferenceProblem)
     println("u0: $(prob.u0)")
 end
 
-function Base.show(io::IO, prob::FIEProblem)
-    printstyled("FIEProblem", color=:light_blue)
-    printstyled(" with order ")
-    printstyled("$(prob.orders)", color=:red)
-    println()
-    println("timespan: $(prob.tspan)")
-end
-
 function Base.show(io::IO, prob::FFPODEProblem)
     printstyled("FFODEProblem", color=:light_blue)
     printstyled(" with order ")
@@ -108,8 +100,6 @@ Fractional differential equation solutions visulization hooks.
 @recipe f(sol::FODESolution) = sol.t, sol.u
 
 @recipe f(sol::FDifferenceSolution) = sol.t, sol.u
-
-@recipe f(sol::FIESolution) = sol.t, sol.u
 
 @recipe f(sol::DODESolution) = sol.t, sol.u
 

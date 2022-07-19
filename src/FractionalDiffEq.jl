@@ -76,11 +76,6 @@ include("dode/matrix.jl")
 include("FractionalDifferences/PECE.jl")
 include("FractionalDifferences/GL.jl")
 
-# Fractional integral equations
-include("FIE/Qmat.jl")
-include("FIE/mycoeffs.jl")
-include("FIE/main.jl")
-
 # Mittag Leffler function
 include("mlfun.jl")
 
@@ -102,15 +97,12 @@ export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FF
 # Fractional Difference probelms
 export FractionalDifferenceProblem, FractionalDifferenceSystem
 
-# FIE problems
-export FIEProblem
-
 
 ###################################################
 
 
 export AbstractFDESolution
-export FODESolution, FIESolution, FDifferenceSolution, DODESolution, FFMODESolution
+export FODESolution, FDifferenceSolution, DODESolution, FFMODESolution
 export FODESystemSolution, FDDESystemSolution
 
 # FODE solvers
@@ -152,6 +144,6 @@ export mittleff, mittleffderiv
 # Distributed order auxiliary SpecialFunctions
 export DOB, DOF, DORANORT, isFunction
 
-export myeval, ourfft, ourifft, rowfft, FastConv
+export ourfft, ourifft, rowfft, FastConv
 
 end

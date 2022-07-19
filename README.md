@@ -166,27 +166,6 @@ plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 
 ![Delayed](docs/src/assets/fdde_example.png)
 
-## Fractional Integral Equations
-
-To solve fractional integral equations with FractionalDiffEq.jl, we only need to follow the previous process:
-
-$$ u(x)+{_{-1}I_x^{1/2}}u(x)=1 $$
-
-
-```julia
-using FractionalDiffEq, Plots, SpecialFunctions
-analytical(x)=exp(1+x)*erfc(sqrt(1+x))
-tspan = LinRange(-1, 1, 100)
-prob = FIEProblem([1, 1], [0, 0.5], 1, tspan)
-sol = solve(prob, 20, SpectralUltraspherical())
-solanalytical = analytical.(xx)
-plot(sol, title="Second kind Abel integral equation", label="Numerical")
-plot!(tspan, solanalytical, ls=:dash, label="Analytical")
-```
-
-![Second kind Abel IE](docs/src/assets/abelinteqexample.png)
-
-
 # Available Solvers
 
 For more performant solvers, please refer to the [FractionalDiffEq.jl Solvers](https://scifracx.org/FractionalDiffEq.jl/dev/algorithms/) page.
