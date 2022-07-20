@@ -29,7 +29,8 @@ struct PECE <: SingleTermFODEAlgorithm end
 Generalproblem solving API for solving FDE problems.
 """
 function solve(FODE::SingleTermFODEProblem, h::Float64, ::PECE)
-    @unpack f, α, u0, tspan = FODE
+    @unpack f, α, u0, tspan, p = FODE
+    fun(t, u) = f(u, p, t)
     t0 = tspan[1]; T = tspan[2]
     N::Int64 = round(Int, (T-t0)/h)
     y = zeros(Float64, N+1) # Initialize the solution array
@@ -41,24 +42,24 @@ function solve(FODE::SingleTermFODEProblem, h::Float64, ::PECE)
         for k in 0:ceil(Int, α)-1
             temp += u0[k+1]*(t0+(n+1)*h)^k/factorial(k)
         end
-        y[n+1] = temp + h^α/gamma(α+2)*(f(t0+(n+1)*h, predictor(f, y, α, n, h, u0, t0)) + right(f, y, α, n, h))
+        y[n+1] = temp + h^α/gamma(α+2)*(fun(t0+(n+1)*h, predictor(fun, y, α, n, h, u0, t0)) + right(fun, y, α, n, h))
     end
 
     tspan = collect(Float64, t0:h:T)
     return FODESolution(tspan, y)
 end
 
-function right(f, y, α, n, h::Float64)
+function right(fun, y, α, n, h::Float64)
     temp = zero(Float64)
 
     @fastmath @inbounds @simd for j = 0:n
-        temp += A(j, n, α)*f(j*h, y[j+1])
+        temp += A(j, n, α)*fun(j*h, y[j+1])
     end
 
     return temp
 end
 
-function predictor(f::Function, y, α::Float64, n::Integer, h::Float64, u0::Union{Number, AbstractArray}, t0::Number)
+function predictor(fun::Function, y, α::Float64, n::Integer, h::Float64, u0::Union{Number, AbstractArray}, t0::Number)
     predict = zero(Float64)
     leftsum = zero(Float64)
 
@@ -69,8 +70,8 @@ function predictor(f::Function, y, α::Float64, n::Integer, h::Float64, u0::Unio
         leftsum += u0[k+1]*(t0+(n+1)*h)^k/factorial(k)
     end
 
-    @turbo for j in 0:n
-        predict += B(j, n, α)*f(j*h, y[j+1])
+    @fastmath @inbounds @simd for j in 0:n
+        predict += B(j, n, α)*fun(j*h, y[j+1])
     end
 
     return leftsum + h^α/α*predict

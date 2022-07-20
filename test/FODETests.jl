@@ -1,5 +1,5 @@
 @testset "Test Diethelm PECE algorithms" begin
-    fun(x, y) = 1-y
+    fun(y, p, t) = 1-y
     prob = SingleTermFODEProblem(fun, 1.8, [0, 0], (0, 5))
     sol = solve(prob, 0.5, PECE())
 
@@ -17,7 +17,7 @@
 end
 
 @testset "Test forward Euler method" begin
-    fun(x, y) = 1-y
+    fun(y, p, t) = 1-y
     prob = SingleTermFODEProblem(fun, 0.5, 0, (0, 5))
     sol = solve(prob, 0.5, Euler())
 
@@ -101,7 +101,7 @@ end
 end
 
 @testset "Test GL method" begin
-    fun(x, y) = 1-y
+    fun(y, p, t) = 1-y
     prob = SingleTermFODEProblem(fun, 0.5, 0, (0, 1))
     sol = solve(prob, 0.1, GL())
 
@@ -140,7 +140,7 @@ end
 end
 
 @testset "Test Product Integral Explicit method" begin
-    fun(t, y)=1-y
+    fun(y, p, t)=1-y
     prob = SingleTermFODEProblem(fun, 0.5, 0, (0, 5))
     sol=solve(prob, 0.5, PIEX())
 
@@ -497,7 +497,7 @@ end
 
 
 @testset "Test Atangana Seda method" begin
-    fun(x, y) = 1-y
+    fun(y, p, t) = 1-y
     prob = SingleTermFODEProblem(fun, 0.5, 0, (0, 5))
     sol = solve(prob, 0.5, AtanganaSeda())
 

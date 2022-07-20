@@ -16,7 +16,8 @@ doi={10.1109/MOCAST.2019.8742063}}
 struct GL <: SingleTermFODEAlgorithm end
 
 function solve(FODE::SingleTermFODEProblem, h::Float64, ::GL)
-    @unpack f, α, u0, tspan = FODE
+    @unpack f, α, u0, tspan, p = FODE
+    fun(t, u) = f(u, p, t)
     t0 = tspan[1]; T = tspan[2]
     N::Int = floor(Int, (T-t0)/h)+1
     c = zeros(Float64, N)
@@ -29,14 +30,14 @@ function solve(FODE::SingleTermFODEProblem, h::Float64, ::GL)
 
     # Initialization
     y = zeros(Float64, N)
-    y[1] = u0
+    y[1] = sum(u0)
 
     @fastmath @inbounds @simd for i = 2:N
         right = 0
         @fastmath @inbounds @simd for j=1:i-1
             right += c[j]*y[i-j]
         end
-        y[i] = f(t0+(i-1)*h, y[i-1])*h^α - right
+        y[i] = fun(t0+(i-1)*h, y[i-1])*h^α - right
     end
     return FODESolution(collect(t0:h:T), y)
 end

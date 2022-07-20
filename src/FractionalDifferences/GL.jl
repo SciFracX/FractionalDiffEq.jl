@@ -13,13 +13,13 @@
 
 
 function solve(prob::FractionalDifferenceSystem, N, ::GL)
-    @unpack fun, α, u0 = prob
+    @unpack fun, α, u0, p = prob
     result = zeros(Float64, length(u0), N)# Initialization
     result[:, 1] = u0
 
     for j=2:N
         du = zeros(Float64, length(u0))
-        fun(du, result[:, j-1], nothing, 0)
+        fun(du, result[:, j-1], p, 0)
         result[:, j] = du
         # I think this way would be faster, but if I pass the result[:, j] to fun,
         # that would create a copy, which is not what I want.

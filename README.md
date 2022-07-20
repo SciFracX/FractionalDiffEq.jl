@@ -61,7 +61,7 @@ So we can use FractionalDiffEq.jl to solve the problem:
 
 ```julia
 using FractionalDiffEq, Plots
-fun(x, y) = 1-y
+fun(u, p, t) = 1-u
 u0 = 0; tspan = (0, 5); h = 0.001;
 prob = SingleTermFODEProblem(fun, 0.5, u0, tspan)
 sol = solve(prob, h, PECE())

@@ -14,7 +14,8 @@ The basic forward Euler method for fractional ordinary differential equations.
 struct Euler <: SingleTermFODEAlgorithm end
 
 function solve(prob::SingleTermFODEProblem, h::Float64, ::Euler)
-    @unpack f, α, u0, tspan = prob
+    @unpack f, α, u0, tspan, p = prob
+    fun(t, u) = f(u, p, t)
     t0 = tspan[1]; tfinal = tspan[2]
     t = collect(Float64, t0:h:tfinal)
     N::Int = ceil(Int, (tfinal-t0)/h)
@@ -23,7 +24,7 @@ function solve(prob::SingleTermFODEProblem, h::Float64, ::Euler)
     for n=1:N
         temp = zero(Float64)
         for j=1:n
-            temp += ((n-j+1)^α-(n-j)^α)*f(t[j], y[j])
+            temp += ((n-j+1)^α-(n-j)^α)*fun(t[j], y[j])
         end
         y[n+1] = y[1] + h^α/gamma(α+1)*temp
     end

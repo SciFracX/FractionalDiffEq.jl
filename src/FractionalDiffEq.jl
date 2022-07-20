@@ -30,7 +30,6 @@ include("singletermfode/Euler.jl")
 include("multitermsfode/matrix.jl")
 include("multitermsfode/hankelmatrix.jl")
 include("multitermsfode/ClosedForm.jl")
-include("multitermsfode/highprecision.jl")
 include("multitermsfode/MTPIEX.jl")
 include("multitermsfode/MTPIPECE.jl")
 include("multitermsfode/MTPIIMTrap.jl")
@@ -104,7 +103,7 @@ export FODESystemSolution, FDDESystemSolution
 
 # FODE solvers
 export PIEX, PIPECE, PIIMRect, PIIMTrap
-export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, GL
+export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, GL
 export AtanganaSeda, AtanganaSedaAB
 export Euler
 

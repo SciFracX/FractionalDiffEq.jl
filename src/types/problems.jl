@@ -39,7 +39,11 @@ struct SingleTermFODEProblem <: FDEProblem
     α::Float64
     u0::Union{AbstractArray, Number}
     tspan::Union{Tuple, Number}
+    p::Union{AbstractArray, Number, Nothing}
 end
+
+SingleTermFODEProblem(f, α, u0, tspan) = SingleTermFODEProblem(f, α, u0, tspan, nothing)
+
 
 """
     FPDEProblem(α, β, T, M, N)
@@ -194,6 +198,7 @@ struct FractionalDifferenceProblem <: FDEProblem
     u0
 end
 
+
 """
     FractionalDifferenceSystem(f, α, u0)
 
@@ -209,8 +214,10 @@ struct FractionalDifferenceSystem <: FDEProblem
     fun::Function
     α
     u0
+    p::Union{AbstractArray, Number, Nothing}
 end
 
+FractionalDifferenceSystem(fun, α, u0) = FractionalDifferenceSystem(fun, α, u0, nothing)
 
 """
     FIEProblem(parameters, orders, rightfun, tspan)

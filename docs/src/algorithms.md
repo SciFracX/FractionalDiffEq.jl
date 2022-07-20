@@ -10,7 +10,7 @@ Pages = ["algorithms.md"]
 
 ```@docs
 FractionalDiffEq.PECE
-FractionalDiffEq.GLFractionalDiffEq.Euler
+FractionalDiffEq.Euler
 FractionalDiffEq.PIEX
 FractionalDiffEq.AtanganaSeda
 ```
@@ -70,10 +70,4 @@ FractionalDiffEq.DOMatrixDiscrete
 ```@docs
 FractionalDiffEq.PECEDifference
 FractionalDiffEq.GL
-```
-
-## Fractional Integral Equations
-
-```@docs
-FractionalDiffEq.SpectralUltraspherical
 ```
