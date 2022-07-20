@@ -1,4 +1,4 @@
-function solve(prob::FFMODEProblem, h, ::AtanganaSeda)
+function solve(prob::FFMODEProblem, h::Float64, ::AtanganaSeda)
     if typeof(prob.order[2]) <: Function
         solve_cf_variable_ffodeproblem(prob, h)
     else

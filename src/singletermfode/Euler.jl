@@ -13,7 +13,7 @@ The basic forward Euler method for fractional ordinary differential equations.
 """
 struct Euler <: SingleTermFODEAlgorithm end
 
-function solve(prob::SingleTermFODEProblem, h, ::Euler)
+function solve(prob::SingleTermFODEProblem, h::Float64, ::Euler)
     @unpack f, α, u0, tspan = prob
     t0 = tspan[1]; tfinal = tspan[2]
     t = collect(Float64, t0:h:tfinal)

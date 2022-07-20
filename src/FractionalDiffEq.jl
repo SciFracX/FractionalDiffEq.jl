@@ -3,8 +3,8 @@ module FractionalDiffEq
 using LinearAlgebra
 using SpecialFunctions
 using SparseArrays
-using InvertedIndices
-using SpecialMatrices
+using InvertedIndices: Not
+using SpecialMatrices: Vandermonde
 using FFTW: fft, ifft
 using UnPack: @unpack
 using LoopVectorization: @turbo
@@ -12,6 +12,7 @@ using HypergeometricFunctions
 using ToeplitzMatrices
 using RecipesBase
 using ForwardDiff
+using Polynomials: Polynomial
 
 include("types/problems.jl")
 include("types/algorithms.jl")
@@ -49,7 +50,7 @@ include("fodesystem/AS.jl")
 include("fodesystem/ASCF.jl")
 
 # System of fractal-fractional ordinary differential equations
-include("ffodeproblem/AS.jl")
+include("ffode/AS.jl")
 
 # Fractional partial differential equations
 include("FPDE/FiniteDiffEx.jl")

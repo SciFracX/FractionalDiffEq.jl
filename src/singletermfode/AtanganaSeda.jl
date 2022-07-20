@@ -5,7 +5,7 @@ Atangana-Seda method for Caputo single term FODE.
 """
 struct AtanganaSeda <: SingleTermFODEAlgorithm end
 
-function solve(prob::SingleTermFODEProblem, h, ::AtanganaSeda)
+function solve(prob::SingleTermFODEProblem, h::Float64, ::AtanganaSeda)
     @unpack f, α, u0, tspan = prob
     t0 = tspan[1]; tfinal = tspan[2]
     N::Int = ceil(Int, (tfinal-t0)/h)

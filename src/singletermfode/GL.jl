@@ -15,7 +15,7 @@ doi={10.1109/MOCAST.2019.8742063}}
 """
 struct GL <: SingleTermFODEAlgorithm end
 
-function solve(FODE::SingleTermFODEProblem, h, ::GL)
+function solve(FODE::SingleTermFODEProblem, h::Float64, ::GL)
     @unpack f, α, u0, tspan = FODE
     t0 = tspan[1]; T = tspan[2]
     N::Int = floor(Int, (T-t0)/h)+1

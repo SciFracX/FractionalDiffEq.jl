@@ -15,7 +15,7 @@
 """
 struct PIEX <: SingleTermFODEAlgorithm end
 
-function solve(FODE::SingleTermFODEProblem, h, ::PIEX)
+function solve(FODE::SingleTermFODEProblem, h::Float64, ::PIEX)
     @unpack f, α, u0, tspan = FODE
     t0 = tspan[1]; T = tspan[2]
     N::Int64 = round(Int, (T-t0)/h)
