@@ -1,5 +1,11 @@
 # FractionalDiffEq.jl
 
+
+<p align="center">
+<img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/logo.svg"/>
+</p>
+
+
 <p align="center">
   <a href="https://github.com/SciFracX/FractionalDiffEq.jl/actions?query=workflow%3ACI">
     <img alt="building" src="https://github.com/SciFracX/FractionalDiffEq.jl/workflows/CI/badge.svg">

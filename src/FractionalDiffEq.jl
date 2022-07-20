@@ -12,9 +12,6 @@ using HypergeometricFunctions
 using ToeplitzMatrices
 using RecipesBase
 using ForwardDiff
-using DiffEqBase
-using Reexport
-@reexport using DiffEqBase
 
 include("types/problems.jl")
 include("types/algorithms.jl")
