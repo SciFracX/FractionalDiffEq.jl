@@ -183,3 +183,43 @@ end
         end
     end
 end
+
+
+@recipe function f(sol::FFMODESystemSolution; vars=nothing)
+    if typeof(vars) == Nothing # When vars is not specified, show time versus each variable.
+        l = size(sol.u, 1)
+        for i in 1:l
+            @series begin
+                sol.t, sol.u[i, :]
+            end
+        end
+    else
+        index = Int[]
+        for i in vars
+            append!(index, i)
+        end
+        len = length(index)
+        index0 = findall(x->x==0, index) # Find the 0 index, which is the time index.
+        if length(index0) == 0
+            if len == 3
+                sol.u[index[1], :], sol.u[index[2], :], sol.u[index[3], :]
+            elseif len == 2
+                sol.u[index[1], :], sol.u[index[2], :]
+            else
+                error("Plots variable index is not correct.")
+            end
+        elseif length(index0) == 1
+            newindex = deleteat!(index, index0)
+            newlen = length(newindex)
+            if newlen == 2
+                for i in newindex
+                    @series begin
+                        sol.t, sol.u[i, :]
+                    end
+                end
+            elseif newlen == 1
+                sol.t, sol.u[newindex[1], :]
+            end
+        end
+    end
+end

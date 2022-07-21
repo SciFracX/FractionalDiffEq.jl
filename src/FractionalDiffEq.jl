@@ -99,7 +99,7 @@ export FractionalDifferenceProblem, FractionalDifferenceSystem
 
 export AbstractFDESolution
 export FODESolution, FDifferenceSolution, DODESolution, FFMODESolution
-export FODESystemSolution, FDDESystemSolution
+export FODESystemSolution, FDDESystemSolution, FFMODESystem
 
 # FODE solvers
 export PIEX, PIPECE, PIIMRect, PIIMTrap

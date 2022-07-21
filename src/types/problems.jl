@@ -171,7 +171,16 @@ end
 # If the there are no parameters, we do this:
 FFMODEProblem(f, order, u0, tspan) = FFMODEProblem(f, order, u0, tspan, nothing)
 
+struct FFMODESystem <: FDEProblem
+    f::Function
+    order::Union{AbstractArray, Function}
+    u0::Union{AbstractArray, Number}
+    tspan::Union{Tuple, Number}
+    p::Union{AbstractArray, Number, Nothing}
+end
 
+# If the there are no parameters, we do this:
+FFMODESystem(f, order, u0, tspan) = FFMODESystem(f, order, u0, tspan, nothing)
 
 """
     DODEProblem(parameters, orders, interval, tspan, rightfun)
@@ -218,18 +227,6 @@ struct FractionalDifferenceSystem <: FDEProblem
 end
 
 FractionalDifferenceSystem(fun, α, u0) = FractionalDifferenceSystem(fun, α, u0, nothing)
-
-"""
-    FIEProblem(parameters, orders, rightfun, tspan)
-
-Define fractional integral equation problems.
-"""
-struct FIEProblem <: FDEProblem
-    parameters::AbstractArray
-    orders::AbstractArray
-    rightfun::Union{Function, Number}
-    tspan
-end
 
 
 ################################################################################

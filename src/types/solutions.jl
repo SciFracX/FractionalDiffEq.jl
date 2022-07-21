@@ -34,3 +34,8 @@ struct FFMODESolution <: AbstractFDESolution
     t::AbstractArray
     u::AbstractArray
 end
+
+struct FFMODESystemSolution <: AbstractFDESolution
+    t::AbstractArray
+    u::AbstractArray
+end
