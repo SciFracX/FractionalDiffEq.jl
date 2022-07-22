@@ -9,7 +9,7 @@ function solve(prob::Union{FFMODEProblem, FFMODESystem}, h::Float64, ::AtanganaS
         end
     end
 end
-function solve_singletermffode(prob::FFMODEProblem, h)
+function solve_singletermffode(prob::Union{FFMODEProblem, FFMODESystem}, h)
     @unpack f, order, u0, tspan, p = prob
     α = order[1] # Fractional order
     β = order[2] # Fractal dimension
