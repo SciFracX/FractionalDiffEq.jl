@@ -18,6 +18,8 @@ While we can know the analytical solution of this equation is:
 u(t)=t^{1.8}E_{1.8,\ 2.8}(-t^{1.8})
 ```
 
+Here ``E_{\alpha, \beta}(z)`` is the [Mittag Leffler function](https://scifracx.org/FractionalDiffEq.jl/stable/mittagleffler/).
+
 We can solve this problem by the following code using FractionalDiffEq.jl:
 
 ```julia

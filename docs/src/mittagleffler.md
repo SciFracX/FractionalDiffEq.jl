@@ -22,7 +22,7 @@ E_{\alpha,\ \beta}(z)=\sum_{k=0}^{\infty}\frac{z^k}{\Gamma(\alpha k+\beta)},\ (\
 
 ### Three-Parametric Mittag Leffler function
 
-FractionalDiffEq.jl also supports the three-parametric Mittag Leffler function:
+FractionalDiffEq.jl also supports the three-parametric Mittag Leffler function(The Prabhakar function):
 
 ```math
 E_{\alpha,\ \beta}^\gamma(z)=\sum_{k=0}^{\infty}\frac{(\gamma)_k z^k}{k!\Gamma(\alpha k+\beta)},\ (\mathfrak{Re}(\alpha)>0,\ \mathfrak{Re}(\beta)>0,\ \gamma\in\mathbb{C})
