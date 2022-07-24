@@ -14,8 +14,4 @@ prob = FODESystem(Brusselator!, α, u0, (0, 100))
 result = solve(prob, h, GL())
 
 # Phase plane
-plot(result[:, 1], result[:, 2])
-
-# Time plane
-plot(collect(0:h:100), result[:, 1])
-plot!(collect(0:h:100), result[:, 2])
+plot(result, vars=(1, 2))

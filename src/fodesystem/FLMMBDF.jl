@@ -64,7 +64,7 @@ function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
     ff[1:2] = [0 2]
     for q = 0:Q
         L::Int = 2^q
-        (y, fy) = BDFDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fieldcount, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+        (y, fy) = BDFDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
@@ -139,7 +139,6 @@ function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega,
         yn0 = y[:, n]
         temp = zeros(length(yn0))
         fdefun(temp, yn0, p, t[n1])
-        #fn0 = BDFf_vectorfield(t[n1], yn0, fdefun)
         fn0 = temp
         Jfn0 = Jf_vectorfield(t[n1], yn0, Jfdefun)
         Gn0 = yn0 - halpha*omega[1]*fn0 - Phi_n
@@ -147,7 +146,7 @@ function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega,
         while ~stop            
             JGn0 = zeros(problem_size, problem_size)+I - halpha*omega[1]*Jfn0
             global yn1 = yn0 - JGn0\Gn0
-            global fn1 = zeros(length(yn1)) #BDFf_vectorfield(t[n1], yn1, fdefun)
+            global fn1 = zeros(length(yn1))
             fdefun(fn1, yn1, p, t[n1])
             Gn1 = yn1 - halpha*omega[1]*fn1 - Phi_n
             it = it + 1

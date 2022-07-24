@@ -10,5 +10,4 @@ u0 = [1.2, 2.8]
 h=0.01
 prob = FODESystem(classical!, α, u0)
 result = solve(prob, h, 10, NonLinearAlg())
-tspan = collect(0:h:10)
-plot(result[:, 1], result[:, 2])
+plot(result, vars=(1,2))

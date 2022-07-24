@@ -15,4 +15,4 @@ tspan = (0, 500);
 prob = FODESystem(chua, α, u0, tspan)
 memory = 10000
 result = solve(prob, h, tn, NonLinearAlg(), memory)
-plot(result[:, 1], result[:, 2], title="Chua System with Short Memory Effect", legend=:bottomright)
+plot(result, vars=(1,2), title="Chua System with Short Memory Effect", legend=:bottomright)
