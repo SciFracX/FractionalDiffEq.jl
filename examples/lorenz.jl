@@ -1,34 +1,14 @@
-using FractionalDiffEq
-
-function lorenz(t, x, y, z, k)
-    a=40
-    b=3
-    c=10
-    d=15
-    if k==1
-        return a*(y-x)
-    elseif k==2
-        return c*x-x*z+d*y
-    elseif k==3
-        return x*y-b*z
-    end
+using FractionalDiffEq, Plots
+function lorenz(du, u, p, t)
+    a, b, c, d = p
+    du[1] = a*(u[2]-u[1])
+    du[2] = c*u[1]-u[1]*u[3]+d*u[2]
+    du[3] = u[1]*u[2]-b*u[3]
 end
-
 α0 = [0.96, 0.96, 0.96]
-x0 = [1, 2, 3]
-h=0.001
-prob=FODESystem(lorenz, α0, x0)
-T=20
-x, y, z=solve(prob, h, T, GLWithMemory())
-using Plots
-plot(x, z)
+x0 = [1, 2, 3]; tspan=(0, 20)
+h=0.01; p=[40, 3, 10, 15]
+prob=FODESystem(lorenz, α0, x0, tspan, p)
 
-####################################
-# Or use the detailed model in FractionalDiffEq.jl
-
-a=40; b=3; c=10; d=15
-prob = FractionalLorenz(a, b, c, d, 0.96)
-x, y, z = solve(prob, h, T, LorenzADM())
-
-using Plots
-plot(x, z)
+sol=solve(prob, h, GL())
+plot(sol, vars=(1, 3))
