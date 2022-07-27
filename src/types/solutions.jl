@@ -1,41 +1,41 @@
 abstract type AbstractFDESolution end
 
 struct FODESolution <: AbstractFDESolution
-    t::AbstractArray
-    u::AbstractArray
+    t::AbstractMatrix
+    u::AbstractMatrix
 end
 
 struct FODESystemSolution <: AbstractFDESolution
-    t::AbstractArray
-    u::AbstractArray
+    t::AbstractMatrix
+    u::AbstractMatrix
 end
 
 struct FDDESystemSolution <: AbstractFDESolution
-    t::AbstractArray
-    u::AbstractArray
+    t::AbstractMatrix
+    u::AbstractMatrix
 end
 
 struct FDifferenceSolution <: AbstractFDESolution
-    t::AbstractArray
-    u::AbstractArray
+    t::AbstractMatrix
+    u::AbstractMatrix
 end
 
 struct FIESolution <: AbstractFDESolution
-    t::AbstractArray
-    u::AbstractArray
+    t::AbstractMatrix
+    u::AbstractMatrix
 end
 
 struct DODESolution <: AbstractFDESolution
-    t::AbstractArray
-    u::AbstractArray
+    t::AbstractMatrix
+    u::AbstractMatrix
 end
 
 struct FFMODESolution <: AbstractFDESolution
-    t::AbstractArray
-    u::AbstractArray
+    t::AbstractMatrix
+    u::AbstractMatrix
 end
 
 struct FFMODESystemSolution <: AbstractFDESolution
-    t::AbstractArray
-    u::AbstractArray
+    t::AbstractMatrix
+    u::AbstractMatrix
 end
