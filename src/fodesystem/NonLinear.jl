@@ -16,14 +16,13 @@ function solve(prob::FODESystem, h, ::NonLinearAlg, L0=1e10)
     t0 = tspan[1]; T = tspan[2]
     time = collect(t0:h:T)
     n = length(u0)
-    m::Int = round(Int, (T-t0)/h)+1
+    m = round(Int, (T-t0)/h)+1
     g = genfun(1)
     g = g[:]
     u0 = u0[:]
     ha = h.^α
     z = zeros(Float64, n, m)
-    x1 = copy(u0) # Here we pass the value of x0 to x1. Honestly, I kept finding this bug for almost a whole night😅
-
+    x1::Vector{Float64} = u0
 
     # All of the min(m, L0+1) is to set the memory effect.
     SetMemoryEffect = Int64(min(m, L0+1))
@@ -34,12 +33,12 @@ function solve(prob::FODESystem, h, ::NonLinearAlg, L0=1e10)
     end
 
     du = zeros(n)
-    @fastmath @inbounds @simd for k = 2:m
+    for k = 2:m
         tk = t0+(k-1)*h
         L = min(Int64(k-1), Int64(L0))
         f(du, x1, p, tk)
 
-        @fastmath @inbounds @simd for i = 1:n
+        for i = 1:n
             x1[i] = du[i]*ha[i] - W[i, 2:L+1]'*z[i, k-1:-1:k-L] + u0[i]
         end
         z[:, k] = x1 - u0

@@ -7,8 +7,8 @@ function lorenz(du, u, p, t)
 end
 α0 = [0.96, 0.96, 0.96]
 x0 = [1, 2, 3]; tspan=(0, 20)
-h=0.01; p=[40, 3, 10, 15]
+h=0.001; p=[40, 3, 10, 15]
 prob=FODESystem(lorenz, α0, x0, tspan, p)
 
-sol=solve(prob, h, GL())
-plot(sol, vars=(1, 3))
+sol=solve(prob, h, NonLinearAlg())
+plot(sol, vars=(1, 2, 3))
