@@ -14,17 +14,17 @@ abstract type FDEProblem end
 Define a multi-terms fractional ordinary differential equation.
 """
 struct MultiTermsFODEProblem <: FDEProblem
-    parameters::AbstractArray
-    orders::AbstractArray
+    parameters::AbstractArray{Float64}
+    orders::AbstractArray{Float64}
     rightfun::Union{Function, Number}
     rparameters::Union{AbstractArray, Nothing}
     rorders::Union{AbstractArray, Nothing}
-    u0::AbstractArray
+    u0::AbstractArray{Float64}
     tspan::Union{Tuple{Number, Number}, Number}
 end
 
 #=MultiTermsFODEProblem constructor, dispatch for closedform problem=#
-MultiTermsFODEProblem(parameters, orders, rightfun, u0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, u0, T)
+MultiTermsFODEProblem(parameters::AbstractArray{Float64}, orders::AbstractArray{Float64}, rightfun::Union{Function, Number}, u0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, u0, T)
 #MultiTermsFODEProblem(parameters, orders, rightfun, u0, t0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, u0, T)
 
 
@@ -42,7 +42,7 @@ struct SingleTermFODEProblem <: FDEProblem
     p::Union{AbstractArray, Number, Nothing}
 end
 
-SingleTermFODEProblem(f, α, u0, tspan) = SingleTermFODEProblem(f, α, u0, tspan, nothing)
+SingleTermFODEProblem(f::Function, α::Float64, u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number}) = SingleTermFODEProblem(f, α, u0, tspan, nothing)
 
 
 """
@@ -72,7 +72,7 @@ struct FDDEProblem <: FDEProblem
 end
 
 #=FDDEProblem constructor=#
-FDDEProblem(f, ϕ, α, τ, T) = FDDEProblem(f, ϕ, α, τ, T, nothing)
+FDDEProblem(f::Function, ϕ::Union{Number, Function}, α::Union{Number, Function}, τ::Union{Number, AbstractArray, Function}, T::Union{Tuple, Number}) = FDDEProblem(f, ϕ, α, τ, T, nothing)
 
 """
     FDDESystem(f, ϕ, α, τ, T)
@@ -120,7 +120,7 @@ struct FODESystem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-FODESystem(f, α, u0, tspan) = FODESystem(f, α, u0, tspan, nothing)
+FODESystem(f::Function, α::AbstractArray, u0::AbstractArray, tspan::Union{Tuple, Number}) = FODESystem(f, α, u0, tspan, nothing)
 
 
 """
@@ -137,7 +137,7 @@ struct FFPODEProblem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-FFPODEProblem(f, order, u0, tspan) = FFPODEProblem(f, order, u0, tspan, nothing)
+FFPODEProblem(f::Function, order::Union{AbstractArray, Function}, u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number}) = FFPODEProblem(f, order, u0, tspan, nothing)
 
 """
     FFEODEProblem(f, α, u0, tspan, p)
@@ -153,7 +153,7 @@ struct FFEODEProblem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-FFEODEProblem(f, order, u0, tspan) = FFEODEProblem(f, order, u0, tspan, nothing)
+FFEODEProblem(f::Function, order::Union{AbstractArray, Function}, u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number}) = FFEODEProblem(f, order, u0, tspan, nothing)
 
 """
     FFMODEProblem(f, α, u0, tspan, p)
@@ -169,7 +169,7 @@ struct FFMODEProblem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-FFMODEProblem(f, order, u0, tspan) = FFMODEProblem(f, order, u0, tspan, nothing)
+FFMODEProblem(f::Function, order::Union{AbstractArray, Function}, u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number}) = FFMODEProblem(f, order, u0, tspan, nothing)
 
 struct FFMODESystem <: FDEProblem
     f::Function
@@ -180,7 +180,7 @@ struct FFMODESystem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-FFMODESystem(f, order, u0, tspan) = FFMODESystem(f, order, u0, tspan, nothing)
+FFMODESystem(f::Function, order::Union{AbstractArray, Function}, u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number}) = FFMODESystem(f, order, u0, tspan, nothing)
 
 """
     DODEProblem(parameters, orders, interval, tspan, rightfun)
@@ -221,7 +221,7 @@ With given initial condition ``x(i)``.
 """
 struct FractionalDifferenceSystem <: FDEProblem
     fun::Function
-    α
+    α::AbstractArray{Float64}
     u0
     p::Union{AbstractArray, Number, Nothing}
 end
