@@ -52,7 +52,7 @@ pkg> add FractionalDiffEq
 
 Let's see if we have an initial value problem:
 
-$$ D^{0.5}y(x)=1-y $$
+$$ D^{1.8}y(x)=1-y $$
 
 
 $$ y(0)=0 $$
@@ -62,15 +62,15 @@ So we can use FractionalDiffEq.jl to solve the problem:
 ```julia
 using FractionalDiffEq, Plots
 fun(u, p, t) = 1-u
-u0 = 0; tspan = (0, 5); h = 0.001;
-prob = SingleTermFODEProblem(fun, 0.5, u0, tspan)
+u0 = 0; tspan = (0, 20); h = 0.001;
+prob = SingleTermFODEProblem(fun, 1.8, u0, tspan)
 sol = solve(prob, h, PECE())
 plot(sol)
 ```
 
 And if you plot the result, you can see the result of the fractional differential equation:
 
-![Example](/docs/src/assets/simple_example.png)
+![Example](/docs/src/assets/example.png)
 
 ### A sophisticated example
 

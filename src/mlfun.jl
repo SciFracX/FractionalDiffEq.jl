@@ -314,7 +314,7 @@ function OptimalParam_RB(t, phi_s_star_j, phi_s_star_j1, pj, qj, log_epsilon)
 end
 
 
-function mlds(z,al,be,k)
+function mlds(z, al, be, k)
     max_gamma_arg = 171.624
     Jmax = floor(Int, (max_gamma_arg - be)/al)
     G = gamma.(al.*(collect(0:Jmax)).+be)
@@ -328,7 +328,7 @@ function mlds(z,al,be,k)
     Err_Round = zeros(size(z))
     Err_Round1 = copy(Err_Round)
     Err_Round2 = copy(Err_Round)
-    for n = 1 : length(z)
+    for n=1:length(z)
         if abs(z[n]) < eps()
             E[n] = factorial(k)/G[k+1]
         else
