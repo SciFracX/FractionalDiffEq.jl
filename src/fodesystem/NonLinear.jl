@@ -22,7 +22,7 @@ function solve(prob::FODESystem, h, ::NonLinearAlg, L0=1e10)
     u0 = u0[:]
     ha = h.^α
     z = zeros(Float64, n, m)
-    x1::Vector{Float64} = u0
+    x1::Vector{Float64} = copy(u0)
 
     # All of the min(m, L0+1) is to set the memory effect.
     SetMemoryEffect = Int64(min(m, L0+1))

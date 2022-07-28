@@ -25,7 +25,7 @@ prob = FODESystem(Liu!, alpha, x0, tf)
 result = solve(prob, h, GL())
 
 using Plots
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Liu System")
+plot(result, vars=(1,2,3), title="Fractional Order Liu System")
 
 
 #=======Fractional Order Duffing System=======#
@@ -44,7 +44,7 @@ prob = FODESystem(Duffing!, alpha, x0, tf)
 result = solve(prob, h, GL())
 
 using Plots
-plot(result[:, 1], result[:, 2], title="Fractional Order Duffing System")
+plot(result, vars=(1,2), title="Fractional Order Duffing System")
 
 
 #=======Fractional Order Chen System=======#
@@ -64,7 +64,7 @@ prob = FODESystem(Chen!, alpha, x0, tf)
 result = solve(prob, h, GL())
 
 using Plots
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Chen System")
+plot3d(result, vars=(1,2,3), title="Fractional Order Chen System")
 
 
 #=======Fractional Order Van der Pol Oscillator=======#
@@ -83,7 +83,7 @@ prob = FODESystem(VanderPol!, alpha, x0, tf)
 result = solve(prob, h, GL())
 
 using Plots
-plot(result[:, 1], result[:, 2], title="Fractional Order Van der Pol Oscillator")
+plot(result, vars=(1,2), title="Fractional Order Van der Pol Oscillator")
 
 
 #=======Fractional Order Lotka Volterra System=======#
@@ -103,7 +103,7 @@ prob = FODESystem(LotkaVolterra!, alpha, x0, tf)
 result = solve(prob, h, GL())
 
 using Plots
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Lotka Volterra System")
+plot(result, vars=(1,2,3), title="Fractional Order Lotka Volterra System")
 
 
 #=======Fractional Order Lu System=======#
@@ -123,7 +123,7 @@ prob = FODESystem(Lu!, alpha, x0, tf)
 result = solve(prob, h, GL())
 
 using Plots
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Lu System")
+plot(result, vars=(1,2,3), title="Fractional Order Lu System")
 
 
 #=======Fractional Order Rossler System=======#
@@ -143,7 +143,7 @@ prob = FODESystem(Rossler!, alpha, x0, tf)
 result = solve(prob, h, GL())
 
 using Plots
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Rossler System")
+plot(result, vars=(1,2,3), title="Fractional Order Rossler System")
 
 
 #=======Fractional Order Arneodo System=======#
@@ -163,7 +163,7 @@ prob = FODESystem(Arneodo!, alpha, x0, tf)
 result = solve(prob, h, GL())
 
 using Plots
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Arneodo System")
+plot(result, vars=(1,2,3), title="Fractional Order Arneodo System")
 
 
 #=======Fractional Order Genesio-Tesi System=======#
@@ -183,4 +183,4 @@ prob = FODESystem(GenesioTesi!, alpha, x0, tf)
 result = solve(prob, h, GL())
 
 using Plots
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Genesio-Tesi System")
+plot3d(result, vars=(1,2,3), title="Fractional Order Genesio-Tesi System")

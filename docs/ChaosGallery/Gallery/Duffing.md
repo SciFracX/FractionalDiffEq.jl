@@ -16,7 +16,7 @@ prob = FODESystem(Duffing!, alpha, x0, tspan)
 result = solve(prob, h, GL())
 
 using Plots
-plot(result[:, 1], result[:, 2], title="Fractional Order Duffing System")
+plot(result, vars=(1,2), title="Fractional Order Duffing System")
 ```
 
 ![Duffing](./assets/Duffing.png)

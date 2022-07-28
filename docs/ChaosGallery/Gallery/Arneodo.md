@@ -17,7 +17,7 @@ prob = FODESystem(Arneodo!, alpha, x0, tspan)
 result = solve(prob, h, GL())
 
 using Plots
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Arneodo System")
+plot3d(result, vars=(1,2,3), title="Fractional Order Arneodo System")
 ```
 
 ![Arneodo](./assets/Arneodo.png)
