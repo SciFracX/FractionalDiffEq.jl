@@ -14,17 +14,17 @@ abstract type FDEProblem end
 Define a multi-terms fractional ordinary differential equation.
 """
 struct MultiTermsFODEProblem <: FDEProblem
-    parameters::AbstractArray{Float64}
-    orders::AbstractArray{Float64}
-    rightfun::Union{Function, Number}
-    rparameters::Union{AbstractArray, Nothing}
-    rorders::Union{AbstractArray, Nothing}
-    u0::AbstractArray{Float64}
-    tspan::Union{Tuple{Number, Number}, Number}
+    parameters
+    orders
+    rightfun
+    rparameters
+    rorders
+    u0
+    tspan
 end
 
 #=MultiTermsFODEProblem constructor, dispatch for closedform problem=#
-MultiTermsFODEProblem(parameters::AbstractArray{Float64}, orders::AbstractArray{Float64}, rightfun::Union{Function, Number}, u0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, u0, T)
+MultiTermsFODEProblem(parameters, orders, rightfun, u0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, u0, T)
 #MultiTermsFODEProblem(parameters, orders, rightfun, u0, t0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, u0, T)
 
 
@@ -221,7 +221,7 @@ With given initial condition ``x(i)``.
 """
 struct FractionalDifferenceSystem <: FDEProblem
     fun::Function
-    α::AbstractArray{Float64}
+    α
     u0
     p::Union{AbstractArray, Number, Nothing}
 end

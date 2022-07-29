@@ -8,8 +8,6 @@
 \end{cases}
 ```
 
-Fractional differential equations with Atangana-Baleanu fractional operator ``{_{t_0}^{ABC}D_t^\alpha}`` in the sense of Caputo.
-
 ```julia
 using FractionalDiffEq
 
