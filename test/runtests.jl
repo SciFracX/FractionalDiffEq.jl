@@ -9,4 +9,5 @@ using Test
     include("DODETests.jl")
     include("FFODETests.jl")
     include("auxillary.jl")
+    include("FOLEtest.jl")
 end

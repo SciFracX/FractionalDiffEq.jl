@@ -75,6 +75,9 @@ include("FractionalDifferences/GL.jl")
 # Mittag Leffler function
 include("mlfun.jl")
 
+# Lyapunov exponents
+include("FOLE.jl")
+
 include("utils.jl")
 include("auxiliary.jl")
 
@@ -136,6 +139,9 @@ export bagleytorvik, diffusion
 
 # Auxiliary functions
 export mittleff, mittleffderiv
+
+# Lyapunov exponents
+export FOLyapunov
 
 # Distributed order auxiliary SpecialFunctions
 export DOB, DOF, DORANORT, isFunction
