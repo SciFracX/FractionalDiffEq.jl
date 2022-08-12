@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Lyapunov Exponents · FractionalDiffEq.jl</title><script data-outdated-warner src="../assets/warner.js"></script><link rel="canonical" href="https://SciFracX.github.io/FractionalDiffEq.jl/flyapunovexp/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script><link href="../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img src="../assets/logo.svg" alt="FractionalDiffEq.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../">FractionalDiffEq.jl</a></span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">FractionalDiffEq.jl</a></li><li><a class="tocitem" href="../get_started/">Get Started</a></li><li><a class="tocitem" href="../multiterm/">Multi-terms Fractional Differential Equations</a></li><li><a class="tocitem" href="../fdesystem/">System of Fractional Differential Equations</a></li><li><a class="tocitem" href="../fpde/">Fractional Partial Differential Equations</a></li><li><a class="tocitem" href="../fdde/">Fractional Delay Differential Equations</a></li><li><a class="tocitem" href="../dode/">Distributed Order Differential Equations</a></li><li><a class="tocitem" href="../differences/">Fractional Differences Equations</a></li><li><a class="tocitem" href="../ffode/">Fractal-Fractional Differential Equations</a></li><li class="is-active"><a class="tocitem" href>Lyapunov Exponents</a><ul class="internal"><li><a class="tocitem" href="#Another-4-D-example:"><span>Another 4-D example:</span></a></li></ul></li><li><a class="tocitem" href="../ode/">Ordinary Differential Equations</a></li><li><a class="tocitem" href="../ChaosGallery/">Fractional Order Chaos Gallery</a></li><li><a class="tocitem" href="../problems/">Problems</a></li><li><a class="tocitem" href="../algorithms/">Algorithms</a></li><li><a class="tocitem" href="../mittagleffler/">Mittag Leffler Function</a></li><li><a class="tocitem" href="../comparison/">Comparison</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Lyapunov Exponents</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Lyapunov Exponents</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/docs/src/flyapunovexp.md#" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Lyapunov-Epxponent"><a class="docs-heading-anchor" href="#Lyapunov-Epxponent">Lyapunov Epxponent</a><a id="Lyapunov-Epxponent-1"></a><a class="docs-heading-anchor-permalink" href="#Lyapunov-Epxponent" title="Permalink"></a></h1><p><a href="https://en.wikipedia.org/wiki/Lyapunov_exponent">Lyapunov exponent</a> is a quantity we can use to determine the property of a fractional order systems. In  FractionalSystems.jl, we provide performant and easy-to-use API to compute the Lyapunov exponent of the given fractional order system.</p><p>Let&#39;s see, if given a Rabinovich-Fabrikant system:</p><p class="math-container">\[D^{\alpha_1} x=y(z-1+z^2)+\gamma x\\
+D^{\alpha_2} y=x(3z+1-x^2)+\gamma y\\
+D^{\alpha_3} z=-2z(\alpha+xy)\]</p><pre><code class="language-julia hljs">using FractionalSystems
+
+function RF(du, u, t)
+    du[1] = u[2]*(u[3]-1+u[1]*u[1])+0.1*u[1];
+    du[2] = u[1]*(3*u[3]+1-u[1]*u[1])+0.1*u[2];
+    du[3] = -2*u[3]*(0.98+u[1]*u[2]);
+end
+LE, tspan = FOLyapunov(RF, 0.98, 0, 0.02, 300, [0.1; 0.1; 0.1], 0.005, 1000)</code></pre><p>The output would be:</p><pre><code class="language-julia-repl hljs">[0.24348568050729053; 0.007633838815648884; -2.01869669467999]
+[0.07157300142223447; 0.006017955472054196; -1.8449594097070114]
+[0.02954807020615554; 0.005293698652556152; -1.8022533152602607]
+[0.052957613549810205; -0.008645340965388692; -1.811729795783463]
+[0.012973090534610711; -0.007161228086636709; -1.7732510305991271]
+[0.031221399670846705; 0.014443534887429972; -1.813104301211669]
+[0.060185947864662345; -0.008121864429315997; -1.8194985262036134]
+[0.05827747678224907; -0.02236380502528364; -1.8033534921771472]
+[0.05562485202522532; 0.012690387635387365; -1.8357552036479894]
+[0.04968563412570279; -0.0009995900467388353; -1.8161301570507935]
+[0.07100223089628108; 0.0019123252012412822; -1.8403598219695858]
+[0.06326817286599998; -0.019433471090304896; -1.8112809983953584]
+[0.06705094763635554; -0.0015939955503458177; -1.8329059006298087]
+[0.059724759994251635; -0.0031386869537530426; -1.8240358860199872]
+[0.06111650166568285; 0.0038981396237095034; -1.8324646820425692]</code></pre><p>The computed <strong>LE</strong> is the Lyapunov exponent of this system.</p><pre><code class="language-julia-repl hljs">julia&gt; LE[end-2:end]
+3×1 Matrix{Float64}:
+  0.06111650166568285
+  0.0038981396237095034
+ -1.8324646820425692</code></pre><p>To visualize the Lyapunov exponent, what just need to plot our <code>LE</code>:</p><pre><code class="language-julia hljs">plot(tspan, LE[1, :])
+plot!(tspan, LE[2, :])
+plot!(tspan, LE[3, :])</code></pre><p><img src="../assets/RFLE.png" alt="RFLE"/></p><h2 id="Another-4-D-example:"><a class="docs-heading-anchor" href="#Another-4-D-example:">Another 4-D example:</a><a id="Another-4-D-example:-1"></a><a class="docs-heading-anchor-permalink" href="#Another-4-D-example:" title="Permalink"></a></h2><p>Let&#39;s see the Piece-Wise Continuous (PWC) fractional order system:</p><p class="math-container">\[D^{q} x_1=-x_1+x_2\\
+D^{q} x_2=-x_3\text{sgn}(x_1)+x_4\\
+D^{q} x_3=|x_1|-a\\
+D^{q} x_4=-bx_2\]</p><p>By following what we have done before, we can easily get the Lyapunov exponent of this PWC system.</p><pre><code class="language-julia hljs">using FractionalSystems, Plots
+
+function Danca(du, u, t)
+    du[1] = -u[1]+u[2]
+    du[2] = -u[3]*sign(u[1])+u[4]
+    du[3] = abs(u[1])-1
+    du[4] = -0.5*u[2]
+end
+
+LE, tspan=FOLyapunov(Danca, 0.98, 0, 0.02, 300, [0.1; 0.1; 0.1; 0.1], 0.005, 1000)
+
+plot(tspan, LE[1, :])
+plot!(tspan, LE[2, :])
+plot!(tspan, LE[3, :])
+plot!(tspan, LE[4, :])</code></pre><p>By plot the Lyapunov exponent spectrum:</p><p><img src="../assets/PWCLE.png" alt="PWC"/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../ffode/">« Fractal-Fractional Differential Equations</a><a class="docs-footer-nextpage" href="../ode/">Ordinary Differential Equations »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.22 on <span class="colophon-date" title="Friday 12 August 2022 13:26">Friday 12 August 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
