@@ -26,7 +26,7 @@ function FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)# TODO: Gener
     function extend_fun(t, temp)
         temp=reshape(temp, ne, ne+1)
         result = zeros(ne)
-        fun(result, temp[:, 1], nothing, t)
+        fun(result, temp[:, 1], t)
         for i=2:ne+1
             result = [result; Jfdefun(t, temp[:, 1])*temp[:, i]]
         end
@@ -436,7 +436,7 @@ end
 function jacobian_of_fdefun(f, t, y)
     ForwardDiff.jacobian(y) do y
     du = similar(y)
-    f(du, y, nothing, t)
+    f(du, y, t)
     du
     end
 end
