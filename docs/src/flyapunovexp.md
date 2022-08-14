@@ -12,7 +12,7 @@ D^{\alpha_3} z=-2z(\alpha+xy)
 ```
 
 ```julia
-using FractionalSystems
+using FractionalDiffEq
 
 function RF(du, u, t)
     du[1] = u[2]*(u[3]-1+u[1]*u[1])+0.1*u[1];
@@ -76,7 +76,7 @@ D^{q} x_4=-bx_2
 By following what we have done before, we can easily get the Lyapunov exponent of this PWC system.
 
 ```julia
-using FractionalSystems, Plots
+using FractionalDiffEq, Plots
 
 function Danca(du, u, t)
     du[1] = -u[1]+u[2]

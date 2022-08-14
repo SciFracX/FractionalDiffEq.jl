@@ -167,6 +167,24 @@ plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 
 ![Delayed](docs/src/assets/fdde_example.png)
 
+## Lyapunov exponents of fractional order system
+
+FractionalDiffEq.jl is capable of generating lyapunov exponents of a fractional order system:
+
+Rabinovich-Fabrikant system:
+
+$$
+D^{\alpha_1} x=y(z-1+z^2)+\gamma x\\
+D^{\alpha_2} y=x(3z+1-x^2)+\gamma y\\
+D^{\alpha_3} z=-2z(\alpha+xy)
+$$
+
+```julia
+julia>LE, tspan = FOLyapunov(RF, 0.98, 0, 0.02, 300, [0.1; 0.1; 0.1], 0.005, 1000)
+```
+
+![RF](docs/src/assets/RFLE.png)
+
 # Available Solvers
 
 For more performant solvers, please refer to the [FractionalDiffEq.jl Solvers](https://scifracx.org/FractionalDiffEq.jl/dev/algorithms/) page.
