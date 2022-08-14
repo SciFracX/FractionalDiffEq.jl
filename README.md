@@ -174,9 +174,10 @@ FractionalDiffEq.jl is capable of generating lyapunov exponents of a fractional 
 Rabinovich-Fabrikant system:
 
 $$
-D^{\alpha_1} x=y(z-1+z^2)+\gamma x\\
+\begin{cases} D^{\alpha_1} x=y(z-1+z^2)+\gamma x\\
 D^{\alpha_2} y=x(3z+1-x^2)+\gamma y\\
 D^{\alpha_3} z=-2z(\alpha+xy)
+\end{cases}
 $$
 
 ```julia
