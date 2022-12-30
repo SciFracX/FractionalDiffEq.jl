@@ -2,7 +2,7 @@
 
 We would use the simple example -- [Relaxation Oscillation Process](https://encyclopediaofmath.org/wiki/Relaxation_oscillation) example to show you how to use FractionalDiffEq.jl🙂
 
-The mathematical model of the Relaxation Oscillation can be abstracted as IVP:
+The mathematical model of the fractional order Relaxation Oscillation can be abstracted as an IVP:
 
 ```math
 D^{1.8}y(t)+y(t)=1,\ (t>0)

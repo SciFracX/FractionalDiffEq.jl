@@ -33,17 +33,17 @@ Capable of solving both single term FDDE and multiple FDDE, support time varying
 ```
 """
 struct DelayPECE <: FDDEAlgorithm end
-#FIXME: What if we have an FDDE with both variable order and time varying lag??😂
+#FIXME: What if we have an FDDE with both variable order and time varying lag??
 function solve(FDDE::FDDEProblem, h, ::DelayPECE)
     # If the delays are time varying, we need to specify single delay and multiple delay
-    if  typeof(FDDE.τ) <: Function
+    if  FDDE.τ isa Function
         # Here is the PECE solver for single time varying lag
         solve_fdde_with_single_lag(FDDE, h)
-    elseif typeof(FDDE.τ) <: AbstractArray{Function}
+    elseif FDDE.τ isa AbstractArray{Function}
         # Here is the PECE solver for multiple time varying lags
         solve_fdde_with_multiple_lags(FDDE, h) #TODO: implement this
     # Varying order fractional delay differential equations
-    elseif typeof(FDDE.α) <: Function
+    elseif FDDE.α isa Function
         if length(FDDE.τ) == 1
             # Here is the PECE solver for single lag with variable order
             solve_fdde_with_single_lag_and_variable_order(FDDE, h)
