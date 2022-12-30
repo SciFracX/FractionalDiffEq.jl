@@ -152,7 +152,7 @@ using FractionalDiffEq
 h=0.005
 alpha = [0.97, 0.97, 0.96]
 x0 = [-0.2, 0.5, 0.2]
-tf=100
+tf=(0,100)
 function Arneodo!(du, u, p, t)
     b1, b2, b3, b4 = -5.5, 3.5, 0.8, -1.0
     du[1] = u[2]
@@ -160,10 +160,10 @@ function Arneodo!(du, u, p, t)
     du[3] = -b1*u[1]-b2*u[2]-b3*u[3]+b4*u[1]^3
 end
 prob = FODESystem(Arneodo!, alpha, x0, tf)
-result = solve(prob, h, GLWithMemory())
+result = solve(prob, h, GL())
 
 using Plots
-plot3d(result[1, :], result[2, :], result[3, :], title="Fractional Order Arneodo System")
+plot3d(result, vars=(1, 2, 3), title="Fractional Order Arneodo System")
 
 
 #=======Fractional Order Genesio-Tesi System=======#
@@ -172,7 +172,7 @@ using FractionalDiffEq
 h=0.005
 alpha = [0.95, 0.95, 0.95]
 x0 = [-0.1, 0.5, 0.2]
-tf=100
+tf=(0,100)
 function GenesioTesi!(du, u, p, t)
     b1, b2, b3, b4 = 1, 1.1, 0.4, 1.0
     du[1] = u[2]
@@ -180,10 +180,10 @@ function GenesioTesi!(du, u, p, t)
     du[3] -b1*u[1]-b2*u[2]-b3*u[3]+b4*u[1]^2
 end
 prob = FODESystem(GenesioTesi!, alpha, x0, tf)
-result = solve(prob, h, GLWithMemory())
+result = solve(prob, h, GL())
 
 using Plots
-plot3d(result[1, :], result[2, :], result[3, :], title="Fractional Order Genesio-Tesi System")
+plot3d(result, title="Fractional Order Genesio-Tesi System")
 
 
 #=======Fractional Order Labyrinth System=======#
