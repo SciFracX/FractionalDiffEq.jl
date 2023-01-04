@@ -40,16 +40,6 @@ FractionalDiffEq.NewtonPolynomial
 FractionalDiffEq.AtanganaSedaAB
 ```
 
-## Fractional Partial Differential Equations
-
-```@docs
-FractionalDiffEq.FPDEMatrixDiscrete
-FractionalDiffEq.FiniteDiffEx
-FractionalDiffEq.FiniteDiffIm
-FractionalDiffEq.ADV_DIF
-FractionalDiffEq.GLDiff
-```
-
 ## Fractional Delay Differential Equatinos
 
 ```@docs

@@ -27,7 +27,6 @@ While most fractional differential equations solvers are implemented using Matla
 * Fractional delay differential equations(FDDE), single lag FDDE, multiple lags FDDE, time varying lags FDDE, variable order FDDE, nonlinear system of FDDE.
 * Fractional difference equations, single-term fractional difference equations and nonlinear system of fractional difference equations.
 * Distributed order differential equations(DODE), single-term DODE and multi-term DODE.
-* Fractional partial differential equations(FPDE).
 * Fractional integral equations(FIE)
 
 ## Roadmap

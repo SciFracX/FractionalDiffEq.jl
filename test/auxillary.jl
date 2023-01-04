@@ -46,12 +46,6 @@ end
     @test isapprox(imag(m), 0.4596976941318611; atol=1e-5)
 end
 
-@testset "Test meshgrid" begin
-    a, b = meshgrid(0:1, 0:1)
-    isapprox(a, [0 1; 0 1]; atol=1e-2)
-    isapprox(b, [0 0; 1 1]; atol=1e-2)
-end
-
 @testset "Test isFunction" begin
     @test isFunction(x->x)==true
     @test isFunction("Hello")==false

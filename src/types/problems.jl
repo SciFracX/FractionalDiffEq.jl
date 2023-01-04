@@ -44,20 +44,6 @@ end
 
 SingleTermFODEProblem(f::Function, α::Float64, u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number}) = SingleTermFODEProblem(f, α, u0, tspan, nothing)
 
-
-"""
-    FPDEProblem(α, β, T, M, N)
-
-Define fractional order partial differential equations problem
-"""
-struct FPDEProblem <: FDEProblem
-    α
-    β
-    T
-    M
-    N
-end
-
 """
     FDDEProblem(f, ϕ, α, τ, tspan)
 

@@ -126,22 +126,6 @@ And plot the result:
 
 ![Chua](docs/src/assets/chua.png)
 
-## Fractional Partial Differential Equations
-
-FractionalDiffEq.jl provides powerful algorithms to solve fractional partial differential equations, let's see a diffusion equation here:
-
-$$ _{0}^{C}\!D_{t}^{\alpha}y- \frac{\partial^\beta y}{\partial |x|^\beta} = f(x,t) $$
-
-With initial and boundry conditions:
-
-$$ y(0,t) = 0, \quad y(1,t) = 0 \quad y(x,0) = 0 $$
-
-
-Use the FPDE solvers in FractionalDiffEq.jl and plot the numerical approximation:
-
-![diffusion](docs/src/assets/diffusion.png)
-
-
 ## Fractional Delay Differential Equations
 
 There are also many powerful solvers for solving fractional delay differential equations.

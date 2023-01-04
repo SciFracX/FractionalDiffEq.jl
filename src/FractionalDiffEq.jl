@@ -51,12 +51,6 @@ include("fodesystem/ASCF.jl")
 # System of fractal-fractional ordinary differential equations
 include("ffode/AS.jl")
 
-# Fractional partial differential equations
-include("FPDE/FiniteDiffEx.jl")
-include("FPDE/FiniteDiffIm.jl")
-include("FPDE/CaputoDiscrete.jl")
-include("FPDE/GL.jl")
-
 # Fractional delay differential equations
 include("FDDE/DelayPECE.jl")
 include("FDDE/DelayPI.jl")
@@ -84,9 +78,6 @@ include("auxiliary.jl")
 # General types
 export solve, FDEProblem
 
-# FPDE problems
-export FPDEProblem
-
 # FDDE problems
 export FDDEProblem, FDDESystem, FDDEMatrixProblem
 
@@ -109,9 +100,6 @@ export PIEX, PIPECE, PIIMRect, PIIMTrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, GL
 export AtanganaSeda, AtanganaSedaAB
 export Euler
-
-# FPDE solvers
-export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF, GLDiff
 
 # System of FODE solvers
 export NonLinearAlg, GLWithMemory, FLMMBDF, FLMMNewtonGregory, FLMMTrap, PIEX, NewtonPolynomial
