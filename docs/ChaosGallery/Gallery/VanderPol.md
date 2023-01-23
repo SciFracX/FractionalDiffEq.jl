@@ -1,7 +1,7 @@
 # Fractional Order Van der Pol Oscillator
 
 ```julia
-using FractionalDiffEq
+using FractionalDiffEq, Plots
 
 h=0.005
 alpha = [1.2, 0.8]
@@ -13,10 +13,9 @@ function VanderPol!(du, u, p, t)
     du[2] = -u[1]-ϵ*(u[1]^2-1)*u[2]
 end
 prob = FODESystem(VanderPol!, alpha, x0, tspan)
-result = solve(prob, h, GL())
+sol = solve(prob, h, GL())
 
-using Plots
-plot(result[:, 1], result[:, 2], title="Fractional Order Van der Pol Oscillator")
+plot(sol, vars=(1,2), title="Fractional Order Van der Pol Oscillator")
 ```
 
 ![VanderPol](./assets/VanderPol.png)
