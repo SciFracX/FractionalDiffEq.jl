@@ -225,7 +225,7 @@ struct FractionalDiscreteProblem <: FDEProblem
     α
     u0
     tspan::Union{Tuple, Real, Nothing}
-    p::{AbstractArray, Nothing}
+    p::Union{AbstractArray, Nothing}
 end
 
 FractionalDiscreteProblem(fun, α, u0, tspan) = FractionalDiscreteProblem(fun, α, u0, tspan, nothing)
