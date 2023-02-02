@@ -105,6 +105,7 @@ function FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)# TODO: Gener
 end
 
 #FOLyapunov(sys::FODESystem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out)
+FOLyapunov(sys::FODESystem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out)
 
 mutable struct M
     an

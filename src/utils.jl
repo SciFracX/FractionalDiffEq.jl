@@ -2,7 +2,7 @@ function Base.show(io::IO, sol::FODESolution)
     println("Time span $(typeof(sol.t))")
     println(sol.t)
     println("Solution $(typeof(sol.u))")
-    print(sol.u)
+    println(sol.u)
 end
 
 function Base.show(io::IO, prob::SingleTermFODEProblem)

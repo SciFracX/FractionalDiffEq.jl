@@ -38,7 +38,7 @@ function solve(FODE::SingleTermFODEProblem, h::Float64, ::PECE)
 
     @fastmath @inbounds @simd for n ∈ 0:N
         # Handling initial value
-        temp=0
+        temp = zero(Float64)
         for k in 0:ceil(Int, α)-1
             temp += u0[k+1]*(t0+(n+1)*h)^k/factorial(k)
         end
@@ -49,7 +49,7 @@ function solve(FODE::SingleTermFODEProblem, h::Float64, ::PECE)
     return FODESolution(tspan, y)
 end
 
-function right(fun, y, α, n, h::Float64)
+function right(fun::Function, y, α::Float64, n::Int64, h::Float64)
     temp = zero(Float64)
 
     @fastmath @inbounds @simd for j = 0:n
@@ -66,7 +66,7 @@ function predictor(fun::Function, y, α::Float64, n::Integer, h::Float64, u0::Un
     l::Int = ceil(Int, α)
 
     # Handling initial value
-    for k in 0:l-1
+    @fastmath @inbounds @simd for k in 0:l-1
         leftsum += u0[k+1]*(t0+(n+1)*h)^k/factorial(k)
     end
 
@@ -78,7 +78,7 @@ function predictor(fun::Function, y, α::Float64, n::Integer, h::Float64, u0::Un
 end
 
 
-function A(j, n, α)
+function A(j::Int64, n::Int64, α::Float64)
     if j == 0
         return n^(α+1) - (n-α)*(n+1)^α
     elseif 1 ≤ j ≤ n
@@ -88,4 +88,4 @@ function A(j, n, α)
     end
 end
 
-B(j, n, α) = ((n + 1 - j)^α - (n - j)^α) # Moved the h^α/α to the end of predictor: return leftsum + h^α/α*predict
+B(j::Int64, n::Int64, α::Float64) = ((n + 1 - j)^α - (n - j)^α) # Moved the h^α/α to the end of predictor: return leftsum + h^α/α*predict
