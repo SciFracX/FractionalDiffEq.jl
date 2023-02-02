@@ -24,16 +24,16 @@ Let's see an example here, we have a fractional differences equation with initia
 x(0)=1
 ```
 
-By using the ```PECEDifference``` solver in FractionalDiffEq.jl:
+By using the ```PECE``` solver in FractionalDiffEq.jl:
 
 ```julia
 using FractionalDiffEq, Plots
 
 fun(x) = 0.5*x+1
 α=0.5; x0=1;
-T=1; h=0.1
-prob = FractionalDifferenceProblem(fun, α, x0)
-sol=solve(prob, T, h, PECEDifference())
+tspan=(0.0, 1.0); h=0.1
+prob = FractionalDiscreteProblem(fun, α, x0, tspan)
+sol=solve(prob, h, PECE())
 plot(sol, seriestype=:scatter, legend=:bottomright)
 ```
 
@@ -63,7 +63,7 @@ function sys!(du, u, p, t)
     du[2] = 0.05*u[1] + 0.02*u[2] + 0.01*tanh(u[1])
     du[3] = 0.1 - 0.2*u[3] + 0.05*u[1]*u[3] + 0.01*tanh(u[3])
 end
-prob = FractionalDifferenceSystem(sys!, 0.98, [1, -1, 0])
+prob = FractionalDsicreteSystem(sys!, 0.98, [1, -1, 0])
 result = solve(prob, 7, GL())
 
 plot(result[1, :], result[2, :], result[3, :], seriestype=:scatter)

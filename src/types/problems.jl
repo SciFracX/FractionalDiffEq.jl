@@ -224,8 +224,12 @@ struct FractionalDiscreteProblem <: FDEProblem
     fun::Function
     α
     u0
+    tspan::Union{Tuple, Real, Nothing}
+    p::{AbstractArray, Nothing}
 end
 
+FractionalDiscreteProblem(fun, α, u0, tspan) = FractionalDiscreteProblem(fun, α, u0, tspan, nothing)
+FractionalDiscreteProblem(fun, α, u0) = FractionalDiscreteProblem(fun, α, u0, nothing)
 
 """
     FractionalDifferenceSystem(f, α, u0)
@@ -242,11 +246,12 @@ struct FractionalDiscreteSystem <: FDEProblem
     fun::Function
     α
     u0
+    tspan::Union{Tuple, Real, Nothing}
     p::Union{AbstractArray, Number, Nothing}
 end
 
+FractionalDiscreteSystem(fun, α, u0, tspan) = FractionalDiscreteSystem(fun, α, u0, tspan, nothing)
 FractionalDiscreteSystem(fun, α, u0) = FractionalDiscreteSystem(fun, α, u0, nothing)
-
 
 ################################################################################
 

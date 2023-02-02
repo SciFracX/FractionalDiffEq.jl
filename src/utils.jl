@@ -58,8 +58,8 @@ function Base.show(io::IO, prob::DODEProblem)
     println("timespan: $(prob.tspan)")
 end
 
-function Base.show(io::IO, prob::FractionalDifferenceProblem)
-    printstyled("FractionalDifferenceProblem", color=:light_blue)
+function Base.show(io::IO, prob::FractionalDiscreteProblem)
+    printstyled("FractionalDiscreteProblem", color=:light_blue)
     printstyled(" with order ")
     printstyled("$(prob.α)", color=:red)
     println()

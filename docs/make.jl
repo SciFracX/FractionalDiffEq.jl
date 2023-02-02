@@ -19,7 +19,7 @@ makedocs(;
         "System of Fractional Differential Equations" => "fdesystem.md",
         "Fractional Delay Differential Equations" => "fdde.md",
         "Distributed Order Differential Equations" => "dode.md",
-        "Fractional Differences Equations" => "differences.md",
+        "Fractional Differences Equations" => "discrete.md",
         "Fractal-Fractional Differential Equations" => "ffode.md",
         "Lyapunov Exponents" => "flyapunovexp.md",
         "Ordinary Differential Equations" => "ode.md",

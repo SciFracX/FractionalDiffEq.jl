@@ -20,8 +20,13 @@ Use the PECE algorithm to solve fractional difference equations
 ```
 =#
 
-function solve(FDProb::FractionalDiscreteProblem, T, h, ::PECE)
-    @unpack fun, α, u0 = FDProb
+function solve(FDProb::FractionalDiscreteProblem, h, ::PECE)
+    @unpack fun, α, u0, tspan = FDProb
+    if tspan isa Tuple
+        T = tspan[end]
+    elseif tspan isa Real
+        T = copy(tspan)
+    end
     N = round(Int, T/h)
 
     # Initialize
