@@ -1,7 +1,7 @@
-"""
+#=
 # Usage
 
-    solve(FDProb::FractionalDifferenceProblem, T, h, PECEDifference())
+    solve(FDProb::FractionalDiscreteProblem, T, h, PECE())
 
 Use the PECE algorithm to solve fractional difference equations
 
@@ -18,10 +18,9 @@ Use the PECE algorithm to solve fractional difference equations
   year={2011}
 }
 ```
-"""
-struct PECEDifference <: FDifferenceAlgorithm end
+=#
 
-function solve(FDProb::FractionalDifferenceProblem, T, h, ::PECEDifference)
+function solve(FDProb::FractionalDiscreteProblem, T, h, ::PECE)
     @unpack fun, α, u0 = FDProb
     N = round(Int, T/h)
 

@@ -141,8 +141,7 @@ end
 
 @testset "Test FFMODEProblem show method" begin
     α=1;β=1;h=0.1;tfinal=0.5
-    u0 = [-2, 1, -1]
-    a=10;b=28;c=8/3
+    u0=[-2, 1, -1]
     function fun(du, u, p, t)
         a=10;b=28;c=8/3
         du[1] = a*(u[2]-u[1])

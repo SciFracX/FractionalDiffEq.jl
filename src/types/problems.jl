@@ -180,7 +180,7 @@ end
 # If the there are no parameters, we do this:
 function FFMODEProblem(f::Function,
                        order::Union{AbstractArray, Function},
-                       ::Union{AbstractArray, Number},
+                       u0::Union{AbstractArray, Number},
                        tspan::Union{Tuple, Number})
     FFMODEProblem(f, order, u0, tspan, nothing)
 end
@@ -220,7 +220,7 @@ end
 
 Define fractional difference equation problems.
 """
-struct FractionalDifferenceProblem <: FDEProblem
+struct FractionalDiscreteProblem <: FDEProblem
     fun::Function
     α
     u0
@@ -238,14 +238,14 @@ Define Fractional Difference System with the general constructure:
 
 With given initial condition ``x(i)``.
 """
-struct FractionalDifferenceSystem <: FDEProblem
+struct FractionalDiscreteSystem <: FDEProblem
     fun::Function
     α
     u0
     p::Union{AbstractArray, Number, Nothing}
 end
 
-FractionalDifferenceSystem(fun, α, u0) = FractionalDifferenceSystem(fun, α, u0, nothing)
+FractionalDiscreteSystem(fun, α, u0) = FractionalDiscreteSystem(fun, α, u0, nothing)
 
 
 ################################################################################

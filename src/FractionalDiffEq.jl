@@ -63,8 +63,8 @@ include("dode/utils.jl")
 include("dode/matrix.jl")
 
 # Fractional Differences equations
-include("FractionalDifferences/PECE.jl")
-include("FractionalDifferences/GL.jl")
+include("discrete/PECE.jl")
+include("discrete/GL.jl")
 
 # Mittag Leffler function
 include("mlfun.jl")
@@ -84,8 +84,8 @@ export FDDEProblem, FDDESystem, FDDEMatrixProblem
 # FODE problems
 export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FFPODEProblem, FFEODEProblem, FFMODEProblem
 
-# Fractional Difference probelms
-export FractionalDifferenceProblem, FractionalDifferenceSystem
+# Fractional Discrete probelms
+export FractionalDiscreteProblem, FractionalDiscreteSystem
 
 
 ###################################################
@@ -112,7 +112,7 @@ export DelayPECE, DelayPI, DelayABM, MatrixForm
 export DOMatrixDiscrete
 
 # Fractional Differences Equations solvers
-export PECEDifference
+# export PECE
 
 # Fractional Integral Equations solvers
 export SpectralUltraspherical

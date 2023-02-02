@@ -12,7 +12,7 @@
 """
 
 
-function solve(prob::FractionalDifferenceSystem, N, ::GL)
+function solve(prob::FractionalDiscreteSystem, N, ::GL)
     @unpack fun, α, u0, p = prob
     result = zeros(Float64, length(u0), N)# Initialization
     result[:, 1] = u0
