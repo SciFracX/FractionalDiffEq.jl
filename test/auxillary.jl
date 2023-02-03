@@ -128,15 +128,15 @@ end
     @test_nowarn show(dodesol)
 end
 
-@testset "Test FractionalDifferenceProblem" begin
-    differencefun(x) = 0.5*x+1
+@testset "Test FractionalDiscreteProblem" begin
+    discretefun(x) = 0.5*x+1
     α=0.5;x0=1;
     T=1; h=0.1
-    differenceprob = FractionalDifferenceProblem(differencefun, α, x0)
-    differencesol = solve(differenceprob, T, h, PECEDifference())
+    discreteprob = FractionalDiscreteProblem(discretefun, α, x0, T)
+    discretesol = solve(discreteprob, h, PECE())
 
-    @test_nowarn show(differenceprob)
-    @test_nowarn show(differencesol)
+    @test_nowarn show(discreteprob)
+    @test_nowarn show(discretesol)
 end
 
 @testset "Test FFMODEProblem show method" begin
