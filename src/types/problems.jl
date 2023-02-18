@@ -58,16 +58,16 @@ struct FDDEProblem <: FDEProblem
     τ::Union{Number, AbstractArray, Function}
     tspan::Union{Number, Tuple}
 end
-
+#=
 #=FDDEProblem constructor=#
 function FDDEProblem(f::Function,
                      ϕ::Union{Number, Function},
                      α::Union{Number, Function},
                      τ::Union{Number, AbstractArray, Function},
                      T::Union{Tuple, Number})
-    FDDEProblem(f, ϕ, α, τ, T)
+    return FDDEProblem(f, ϕ, α, τ, T)
 end
-
+=#
 """
     FDDESystem(f, ϕ, α, τ, T)
 
