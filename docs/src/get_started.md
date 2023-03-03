@@ -1,6 +1,6 @@
 # Get Start
 
-We would use the simple example -- [Relaxation Oscillation Process](https://encyclopediaofmath.org/wiki/Relaxation_oscillation) example to show you how to use FractionalDiffEq.jl🙂
+We would use a simple example -- [Relaxation Oscillation Process](https://encyclopediaofmath.org/wiki/Relaxation_oscillation) to show you how to use FractionalDiffEq.jl to solve fractional differential equations.🙂
 
 The mathematical model of the fractional order Relaxation Oscillation can be abstracted as an IVP:
 

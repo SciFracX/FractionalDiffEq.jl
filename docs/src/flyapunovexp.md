@@ -1,6 +1,6 @@
 # Lyapunov Epxponent
 
-[Lyapunov exponent](https://en.wikipedia.org/wiki/Lyapunov_exponent) is a quantity we can use to determine the property of a fractional order systems. In  FractionalSystems.jl, we provide performant and easy-to-use API to compute the Lyapunov exponent of the given fractional order system.
+[Lyapunov exponent](https://en.wikipedia.org/wiki/Lyapunov_exponent) is a quantity we can use to determine the property of a fractional order systems. If there are positive Lyapunov exponents in a given system, that means the given system is chaotic, if there are also negative exponents, that means there are attractors in this given chaotic system. In FractionalDiffEq.jl, we provide performant and easy-to-use API to compute the Lyapunov exponent of the given fractional order system.
 
 
 Let's see, if given a Rabinovich-Fabrikant system:
@@ -93,6 +93,6 @@ plot!(tspan, LE[3, :])
 plot!(tspan, LE[4, :])
 ```
 
-By plot the Lyapunov exponent spectrum:
+By plotting the Lyapunov exponent spectrum:
 
 ![PWC](./assets/PWCLE.png)
