@@ -52,11 +52,11 @@ include("fodesystem/ASCF.jl")
 include("ffode/AS.jl")
 
 # Fractional delay differential equations
-include("FDDE/DelayPECE.jl")
-include("FDDE/DelayPI.jl")
-include("FDDE/Matrix.jl")
-include("FDDE/DelayABM.jl")
-include("FDDE/DelayABMSystem.jl")
+include("delay/DelayPECE.jl")
+include("delay/DelayPI.jl")
+include("delay/Matrix.jl")
+include("delay/DelayABM.jl")
+include("delay/DelayABMSystem.jl")
 
 # Distributed order differential equations
 include("dode/utils.jl")
@@ -70,7 +70,7 @@ include("discrete/GL.jl")
 include("mlfun.jl")
 
 # Lyapunov exponents
-include("FOLE.jl")
+include("lyapunov.jl")
 
 include("utils.jl")
 include("auxiliary.jl")
