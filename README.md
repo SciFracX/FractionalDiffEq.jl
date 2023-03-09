@@ -36,7 +36,7 @@
   </a>
 </p>
 
-FractionalDiffEq.jl provides FDE solvers to [DifferentialEquations.jl](https://diffeq.sciml.ai/dev/) ecosystem. There are many performant solvers available, capable of solving many kinds of fractional differential equations.
+FractionalDiffEq.jl provides FDE solvers to [DifferentialEquations.jl](https://diffeq.sciml.ai/dev/) ecosystem, including FODE(Fractional Ordianry Differential Equations), FDDE(Fractional Delay Differential Equations) and many more. There are many performant solvers available, capable of solving many kinds of fractional differential equations.
 
 # Installation
 
@@ -62,13 +62,13 @@ So we can use FractionalDiffEq.jl to solve the problem:
 ```julia
 using FractionalDiffEq, Plots
 fun(u, p, t) = 1-u
-u0 = 0; tspan = (0, 20); h = 0.001;
+u0 = [0, 0]; tspan = (0, 20); h = 0.001;
 prob = SingleTermFODEProblem(fun, 1.8, u0, tspan)
 sol = solve(prob, h, PECE())
 plot(sol)
 ```
 
-And if you plot the result, you can see the result of the fractional differential equation:
+And if you plot the result, you can see the result of the above IVP:
 
 ![Example](/docs/src/assets/example.png)
 

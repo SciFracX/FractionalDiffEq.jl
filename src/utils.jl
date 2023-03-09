@@ -6,7 +6,7 @@ function Base.show(io::IO, sol::FODESolution)
 end
 
 function Base.show(io::IO, prob::SingleTermFODEProblem)
-    printstyled("SingleTermFODEProblem", color=:light_blue)
+    printstyled(typeof(prob), color=:light_blue)
     printstyled(" with order ")
     printstyled("$(prob.α)", color=:red)
     println()
@@ -15,7 +15,7 @@ function Base.show(io::IO, prob::SingleTermFODEProblem)
 end
 
 function Base.show(io::IO, prob::MultiTermsFODEProblem)
-    printstyled("MultiTermsFODEProblem", color=:light_blue)
+    printstyled(typeof(prob), color=:light_blue)
     printstyled(" with order ")
     printstyled("$(prob.orders)", color=:red)
     println()
@@ -24,7 +24,7 @@ function Base.show(io::IO, prob::MultiTermsFODEProblem)
 end
 
 function Base.show(io::IO, prob::FODESystem)
-    printstyled("FODESystem", color=:light_blue)
+    printstyled(typeof(prob), color=:light_blue)
     printstyled(" with order ")
     printstyled("$(prob.α)", color=:red)
     println()
@@ -33,7 +33,7 @@ function Base.show(io::IO, prob::FODESystem)
 end
 
 function Base.show(io::IO, prob::FDDEProblem)
-    printstyled("FDDEProblem", color=:light_blue)
+    printstyled(typeof(prob), color=:light_blue)
     printstyled(" with order ")
     printstyled("$(prob.α)", color=:red)
     println()
@@ -42,7 +42,7 @@ function Base.show(io::IO, prob::FDDEProblem)
 end
 
 function Base.show(io::IO, prob::FDDESystem)
-    printstyled("FDDESystem", color=:light_blue)
+    printstyled(typeof(prob), color=:light_blue)
     printstyled(" with order ")
     printstyled("$(prob.α)", color=:red)
     println()
@@ -51,7 +51,7 @@ function Base.show(io::IO, prob::FDDESystem)
 end
 
 function Base.show(io::IO, prob::DODEProblem)
-    printstyled("DODEProblem", color=:light_blue)
+    printstyled(typeof(prob), color=:light_blue)
     printstyled(" with order ")
     printstyled("$(prob.orders)", color=:red)
     println()
@@ -59,7 +59,7 @@ function Base.show(io::IO, prob::DODEProblem)
 end
 
 function Base.show(io::IO, prob::FractionalDiscreteProblem)
-    printstyled("FractionalDiscreteProblem", color=:light_blue)
+    printstyled(typeof(prob), color=:light_blue)
     printstyled(" with order ")
     printstyled("$(prob.α)", color=:red)
     println()
@@ -67,7 +67,7 @@ function Base.show(io::IO, prob::FractionalDiscreteProblem)
 end
 
 function Base.show(io::IO, prob::FFPODEProblem)
-    printstyled("FFODEProblem", color=:light_blue)
+    printstyled(typeof(prob), color=:light_blue)
     printstyled(" with order ")
     printstyled("$(prob.order[1])", color=:red)
     printstyled(" and $(prob.order[2])", color=:red)
@@ -76,7 +76,7 @@ function Base.show(io::IO, prob::FFPODEProblem)
 end
 
 function Base.show(io::IO, prob::FFEODEProblem)
-    printstyled("FFODEProblem", color=:light_blue)
+    printstyled(typeof(prob), color=:light_blue)
     printstyled(" with order ")
     printstyled("$(prob.order[1])", color=:red)
     printstyled(" and $(prob.order[2])", color=:red)
@@ -85,7 +85,7 @@ function Base.show(io::IO, prob::FFEODEProblem)
 end
 
 function Base.show(io::IO, prob::FFMODEProblem)
-    printstyled("FFODEProblem", color=:light_blue)
+    printstyled(typeof(prob), color=:light_blue)
     printstyled(" with order ")
     printstyled("$(prob.order[1])", color=:red)
     printstyled(" and $(prob.order[2])", color=:red)

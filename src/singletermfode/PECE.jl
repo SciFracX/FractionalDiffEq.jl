@@ -88,4 +88,5 @@ function A(j::Int64, n::Int64, α::Float64)
     end
 end
 
+# Generalized binomials
 B(j::Int64, n::Int64, α::Float64) = ((n + 1 - j)^α - (n - j)^α) # Moved the h^α/α to the end of predictor: return leftsum + h^α/α*predict
