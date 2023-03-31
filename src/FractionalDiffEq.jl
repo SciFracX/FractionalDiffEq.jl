@@ -102,7 +102,7 @@ export AtanganaSeda, AtanganaSedaAB
 export Euler
 
 # System of FODE solvers
-export NonLinearAlg, GLWithMemory, FLMMBDF, FLMMNewtonGregory, FLMMTrap, PIEX, NewtonPolynomial
+export NonLinearAlg, FLMMBDF, FLMMNewtonGregory, FLMMTrap, PIEX, NewtonPolynomial
 export AtanganaSedaCF
 
 # FDDE solvers
@@ -113,9 +113,6 @@ export DOMatrixDiscrete
 
 # Fractional Differences Equations solvers
 # export PECE
-
-# Fractional Integral Equations solvers
-export SpectralUltraspherical
 
 ###################################################
 
