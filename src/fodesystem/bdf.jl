@@ -22,6 +22,12 @@ function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
     t0 = tspan[1]; tfinal = tspan[2]
     alpha = α[1]
     itmax = 100
+
+    # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
+    max_order = findmax(α)[1]
+    if max_order > 1
+        @error "This method doesn't support high order FDEs"
+    end
     
     # generate jacobian of input function
     Jfdefun(t, u) = jacobian_of_fdefun(f, t, u, p)

@@ -38,6 +38,12 @@ function solve(prob::FODESystem, h, ::PECE)
     mu = 1
     α = α[:]
 
+    # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
+    max_order = findmax(α)[1]
+    if max_order > 1
+        @error "This method doesn't support high order FDEs"
+    end
+
 
     # Check compatibility size of the problem with number of fractional orders
     alpha_length = length(α)

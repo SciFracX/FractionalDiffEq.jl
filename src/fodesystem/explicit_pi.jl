@@ -24,6 +24,12 @@ function solve(prob::FODESystem, h, ::PIEX)
 
     t0 = tspan[1]; T = tspan[2]
 
+    # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
+    max_order = findmax(α)[1]
+    if max_order > 1
+        @error "This method doesn't support high order FDEs"
+    end
+
     METH = M(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)# Initialization
     α = α[:]
     # Check compatibility size of the problem with number of fractional orders
