@@ -28,7 +28,7 @@ end
     element1 = order[1]
     i = 2
     @inbounds for i=2:length(order)
-        x[i] == element1 || return false
+        order[i] == element1 || return false
     end
     return true
 end
