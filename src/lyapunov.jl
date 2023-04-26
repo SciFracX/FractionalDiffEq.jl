@@ -16,18 +16,19 @@ Computing fractional order Lyapunov exponent of a fractionl order system.
 """
 function FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)
     if is_all_equal(order)
-        LE, tspan = commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)
+
+        LE = commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)
     else
-        LE, tspan = noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)
+        LE = noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)
     end
-    return LE, tspan
+    return LE
+
 end
 
 @inline function is_all_equal(order::AbstractArray)
     length(order) < 2 && return true
     element1 = order[1]
-    i = 2
-    @inbounds for i=2:length(order)
+    @inbounds for i in eachindex(order)
         order[i] == element1 || return false
     end
     return true
@@ -118,7 +119,7 @@ function noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out
         tspan = [tspan; t]
     end
     LE = reshape(LE, ne, :)
-    return LE, tspan
+    return FOLE(tspan, LE)
 end
 
 function jacobian_of_fdefun(f, t, y, p)
@@ -217,7 +218,7 @@ function commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)# 
         tspan = [tspan; t]
     end
     LE = reshape(LE, ne, :)
-    return LE, tspan
+    return FOLE(tspan, LE)
 end
 
 #FOLyapunov(sys::FODESystem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out)

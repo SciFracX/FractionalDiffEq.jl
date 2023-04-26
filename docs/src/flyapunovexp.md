@@ -2,6 +2,7 @@
 
 [Lyapunov exponent](https://en.wikipedia.org/wiki/Lyapunov_exponent) is a quantity we can use to determine the property of a fractional order systems. If there are positive Lyapunov exponents in a given system, that means the given system is chaotic, if there are also negative exponents, that means there are attractors in this given chaotic system. In FractionalDiffEq.jl, we provide performant and easy-to-use API to compute the Lyapunov exponent of the given fractional order system.
 
+## Commensurate order system
 
 Let's see, if given a Rabinovich-Fabrikant system:
 
@@ -19,7 +20,7 @@ function RF(du, u, t)
     du[2] = u[1]*(3*u[3]+1-u[1]*u[1])+0.1*u[2];
     du[3] = -2*u[3]*(0.98+u[1]*u[2]);
 end
-LE, tspan = FOLyapunov(RF, 0.98, 0, 0.02, 300, [0.1; 0.1; 0.1], 0.005, 1000)
+LE = FOLyapunov(RF, [0.98, 0.98, 0.98], 0, 0.02, 300, [0.1; 0.1; 0.1], 0.005, 1000)
 ```
 
 The output would be:
@@ -45,7 +46,7 @@ The output would be:
 The computed **LE** is the Lyapunov exponent of this system.
 
 ```julia-repl
-julia> LE[end-2:end]
+julia> LE.LE[end-2:end]
 3×1 Matrix{Float64}:
   0.06111650166568285
   0.0038981396237095034
@@ -55,9 +56,7 @@ julia> LE[end-2:end]
 To visualize the Lyapunov exponent, what just need to plot our ```LE```:
 
 ```julia
-plot(tspan, LE[1, :])
-plot!(tspan, LE[2, :])
-plot!(tspan, LE[3, :])
+plot(LE)
 ```
 
 ![RFLE](./assets/RFLE.png)
@@ -85,14 +84,27 @@ function Danca(du, u, t)
     du[4] = -0.5*u[2]
 end
 
-LE, tspan=FOLyapunov(Danca, 0.98, 0, 0.02, 300, [0.1; 0.1; 0.1; 0.1], 0.005, 1000)
+LE = FOLyapunov(Danca, [0.98, 0.98, 0.98], 0, 0.02, 300, [0.1; 0.1; 0.1; 0.1], 0.005, 1000)
 
-plot(tspan, LE[1, :])
-plot!(tspan, LE[2, :])
-plot!(tspan, LE[3, :])
-plot!(tspan, LE[4, :])
+plot(LE)
 ```
 
 By plotting the Lyapunov exponent spectrum:
 
 ![PWC](./assets/PWCLE.png)
+
+
+## Noncommensurate order system
+
+If the fractional of the given system is not commensurate, we can still use FractionalDiffEq.jl to generate Lyapunov exponents, usage is the same as the commensurate case:
+
+```julia
+using FractionalDiffEq, Plots
+function LE_RF_TEST(du, u, p, t)
+    du[1] = u[2]*(u[3]-1+u[1]^2) + 0.1*u[1]
+    du[2] = u[1]*(3*u[3]+1-u[1]^2) + 0.1*u[2]
+    du[3] = -2*u[3]*(0.98+u[1]*u[2])
+end
+LE = FOLyapunov(LE_RF_TEST, [0.995, 0.992, 0.996], 0, 0.1, 1000, [1,1,1], 0.01, 1000)
+plot(LE)
+```
