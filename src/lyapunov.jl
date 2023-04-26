@@ -16,17 +16,18 @@ Computing fractional order Lyapunov exponent of a fractionl order system.
 """
 function FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)
     if is_all_equal(order)
+
         LE = commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)
     else
         LE = noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)
     end
     return LE
+
 end
 
 @inline function is_all_equal(order::AbstractArray)
     length(order) < 2 && return true
     element1 = order[1]
-
     @inbounds for i in eachindex(order)
         order[i] == element1 || return false
     end
