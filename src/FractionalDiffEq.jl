@@ -126,7 +126,7 @@ export bagleytorvik, diffusion
 export mittleff, mittleffderiv
 
 # Lyapunov exponents
-export FOLyapunov
+export FOLyapunov, FOLE
 
 # Distributed order auxiliary SpecialFunctions
 export DOB, DOF, DORANORT, isFunction
