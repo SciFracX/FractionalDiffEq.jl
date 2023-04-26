@@ -24,7 +24,7 @@ function FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)
 end
 
 @inline function is_all_equal(order::AbstractArray)
-    length(x) < 2 && return true
+    length(order) < 2 && return true
     element1 = order[1]
     i = 2
     @inbounds for i=2:length(order)
