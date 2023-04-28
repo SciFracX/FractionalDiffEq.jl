@@ -22,8 +22,14 @@ function FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)
         LE = noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)
     end
     return LE
-
 end
+
+# Dispatch for parameters not specified
+FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out) = FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, nothing)
+
+#FOLyapunov(sys::FODESystem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out)
+FOLyapunov(sys::FODESystem, h_norm, h, out, p) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out, p)
+FOLyapunov(sys::FODESystem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out, nothing)
 
 @inline function is_all_equal(order::AbstractArray)
     length(order) < 2 && return true
@@ -220,10 +226,6 @@ function commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p
     LE = reshape(LE, ne, :)
     return FOLE(tspan, LE)
 end
-
-#FOLyapunov(sys::FODESystem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out)
-FOLyapunov(sys::FODESystem, h_norm, h, out, p) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out, p)
-FOLyapunov(sys::FODESystem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out, nothing)
 
 mutable struct M
     an
