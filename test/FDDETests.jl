@@ -70,7 +70,7 @@ end
     @test y≈[19.00001, 19.00001, 37.274176448220274]
 end
 
-@testset "Test DelayPI method" begin
+@testset "Test Product Integral method" begin
     function ϕ(x)
         if x == 0
             return 19.00001
@@ -82,7 +82,7 @@ end
         return 3.5*y*(1-ϕ/19)
     end
     prob = FDDEProblem(f, ϕ, 0.97, 0.8, (0, 2))
-    result = solve(prob, 0.5, DelayPI())
+    result = solve(prob, 0.5, PIEX())
     @test result≈[19.00001, 19.00001, 19.00001, 18.99999190949352, 18.99997456359874]
 end
 
