@@ -222,7 +222,8 @@ function commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p
 end
 
 #FOLyapunov(sys::FODESystem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out)
-FOLyapunov(sys::FODESystem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out)
+FOLyapunov(sys::FODESystem, h_norm, h, out, p) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out, p)
+FOLyapunov(sys::FODESystem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out, nothing)
 
 mutable struct M
     an
