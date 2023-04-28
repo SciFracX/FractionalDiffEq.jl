@@ -14,12 +14,12 @@ Computing fractional order Lyapunov exponent of a fractionl order system.
 }
 ```
 """
-function FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)
+function FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)
     if is_all_equal(order)
 
-        LE = commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)
+        LE = commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)
     else
-        LE = noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)
+        LE = noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)
     end
     return LE
 
@@ -34,7 +34,7 @@ end
     return true
 end
 
-function noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)# TODO: Generate the Lyapunov exponent plot
+function noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)# TODO: Generate the Lyapunov exponent plot
     ne::Int = length(u0) # System dimension
 
     tspan = Float64[]
@@ -63,7 +63,7 @@ function noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out
     t = t_start
     LExp = zeros(ne)
     for it=1:n_it
-        prob = FODESystem(extend_fun, q[:], x[:], (t, t+h_norm))
+        prob = FODESystem(extend_fun, q[:], x[:], (t, t+h_norm), p)
         sol = solve(prob, h, PECE())
         Y = sol.u
         t = t+h_norm
@@ -130,7 +130,7 @@ function jacobian_of_fdefun(f, t, y, p)
     end
 end
 
-function commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)# TODO: Generate the Lyapunov exponent plot
+function commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)# TODO: Generate the Lyapunov exponent plot
     ne::Int = length(u0) # System dimension
     order = order[1] # Since this is the commensurate case, we only need one element in order array
     
