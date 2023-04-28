@@ -52,7 +52,7 @@ include("ffode/atangana_seda.jl")
 
 # Fractional delay differential equations
 include("delay/DelayPECE.jl")
-include("delay/DelayPI.jl")
+include("delay/product_integral.jl")
 include("delay/matrix_form.jl")
 include("delay/DelayABM.jl")
 
@@ -104,7 +104,7 @@ export NonLinearAlg, FLMMBDF, FLMMNewtonGregory, FLMMTrap, PIEX, NewtonPolynomia
 export AtanganaSedaCF
 
 # FDDE solvers
-export DelayPECE, DelayPI, DelayABM, MatrixForm
+export DelayPECE, DelayABM, MatrixForm
 
 # DODE solvers
 export DOMatrixDiscrete

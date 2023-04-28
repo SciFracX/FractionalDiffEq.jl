@@ -1,4 +1,4 @@
-"""
+#=
 # Usage
 
     solve(FDDE::FDDEProblem, h, DelayPI())
@@ -18,10 +18,9 @@ Use explicit rectangular product integration algorithm to solve an FDDE problem.
    year={2020},
 }
 ```
-"""
-struct DelayPI <: FDDEAlgorithm end
+=#
 
-function solve(FDDE::FDDEProblem, h, ::DelayPI)
+function solve(FDDE::FDDEProblem, h, ::PIEX)
     @unpack f, ϕ, α, τ, tspan = FDDE
     t0 = tspan[1]; T = tspan[2]
     N::Int = ceil(Int, (T-t0)/h)
