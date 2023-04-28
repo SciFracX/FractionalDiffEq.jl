@@ -2,7 +2,7 @@ using FractionalDiffEq
 using Test
 
 @testset "Test Commensurate Lyapunov exponents" begin
-    function RF(du, u, t)
+    function RF(du, u, p, t)
         du[1] = u[2]*(u[3]-1+u[1]*u[1])+0.1*u[1]
         du[2] = u[1]*(3*u[3]+1-u[1]*u[1])+0.1*u[2]
         du[3] = -2*u[3]*(0.98+u[1]*u[2])
@@ -17,10 +17,11 @@ using Test
 end
 
 @testset "Test Commensurate Lyapunov exponents with parameters specification" begin
-    function RF(du, u, t)
-        du[1] = u[2]*(u[3]-1+u[1]*u[1])+0.1*u[1]
-        du[2] = u[1]*(3*u[3]+1-u[1]*u[1])+0.1*u[2]
-        du[3] = -2*u[3]*(0.98+u[1]*u[2])
+    function RF(du, u, p, t)
+        a, b, c = p
+        du[1] = u[2]*(u[3]-a+u[1]*u[1])+b*u[1]
+        du[2] = u[1]*(3*u[3]+1-u[1]*u[1])+b*u[2]
+        du[3] = -2*u[3]*(c+u[1]*u[2])
     end
 
     p = [1, 0.1, 0.98]
