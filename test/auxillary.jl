@@ -99,7 +99,7 @@ end
         return 3.5*y*(1-ϕ/19)
     end
     fddeprob = FDDEProblem(delayf, ϕ, 0.97, 0.8, (0, 2))
-    fddesol = solve(fddeprob, 0.5, DelayPI())
+    fddesol = solve(fddeprob, 0.5, PIEX())
 
     @test_nowarn show(fddeprob)
     @test_nowarn show(fddesol)
