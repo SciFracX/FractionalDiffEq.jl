@@ -1,7 +1,9 @@
 """
-    FOLyapunov()
+    FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)
+    FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out)
 
 Computing fractional order Lyapunov exponent of a fractionl order system.
+With supporting for both commensurate order and noncommensurate order cases.
 
 ```tex
 @article{Danca2018MatlabCF,
@@ -12,11 +14,24 @@ Computing fractional order Lyapunov exponent of a fractionl order system.
   volume={28},
   pages={1850067:1-1850067:14}
 }
+
+@article{Danca_2021,
+    title = {Matlab Code for Lyapunov Exponents of Fractional-Order Systems, Part {II}: The Noncommensurate Case},
+    author = {Marius-F. Danca},
+    journal = {International Journal of Bifurcation and Chaos},
+	doi = {10.1142/s021812742150187x},
+	url = {https://doi.org/10.1142%2Fs021812742150187x},
+	year = 2021,
+	month = {sep},
+	publisher = {World Scientific Pub Co Pte Ltd},
+	volume = {31},
+	number = {12},
+	pages = {2150187}
+}
 ```
 """
 function FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)
     if is_all_equal(order)
-
         LE = commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)
     else
         LE = noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)
@@ -40,7 +55,7 @@ FOLyapunov(sys::FODESystem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspa
     return true
 end
 
-function noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)# TODO: Generate the Lyapunov exponent plot
+function noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)
     ne::Int = length(u0) # System dimension
 
     tspan = Float64[]
@@ -62,13 +77,14 @@ function noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out
     zn = zeros(Float64, ne)
     n_it = round(Int, (t_end-t_start)/h_norm)
     x[1:ne] = u0
-    q = repeat(order, ne+1, 1) # fractional order of the extend system
+    q = repeat(order, ne+1, 1) # fractional order of the extend system(both the original system and jacobian of the given system)
     for i=1:ne
         x[(ne+1)*i]=1.0
     end
     t = t_start
     LExp = zeros(ne)
     for it=1:n_it
+        # Here we directly use the buildin PECE algorithm to solve the extend system, SO FAST!!!
         prob = FODESystem(extend_fun, q[:], x[:], (t, t+h_norm), p)
         sol = solve(prob, h, PECE())
         Y = sol.u
@@ -136,22 +152,22 @@ function jacobian_of_fdefun(f, t, y, p)
     end
 end
 
-function commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)# TODO: Generate the Lyapunov exponent plot
+function commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)
     ne::Int = length(u0) # System dimension
     order = order[1] # Since this is the commensurate case, we only need one element in order array
     
-    Jfdefun(t, u) = jacobian_of_fdefun(fun, t, u)
+    Jfdefun(t, u, p) = jacobian_of_fdefun(fun, t, u, p) #TODO:可能有点问题
 
     tspan = Float64[]
     LE = Float64[]
 
     # Generate extend system with jacobian
-    function extend_fun(t, temp)
+    function extend_fun(t, temp, p)
         temp=reshape(temp, ne, ne+1)
         result = zeros(ne)
-        fun(result, temp[:, 1], t)
+        fun(result, temp[:, 1], p, t)
         for i=2:ne+1
-            result = [result; Jfdefun(t, temp[:, 1])*temp[:, i]]
+            result = [result; Jfdefun(t, temp[:, 1], p)*temp[:, i]]
         end
         return result
     end
@@ -169,7 +185,8 @@ function commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p
     t = t_start
     LExp = zeros(ne)
     for it=1:n_it
-        (_, Y) = pc(q, extend_fun, t, t+h_norm, x, h) # Solve the extend system
+        #TODO: Substitute this routine for buildin solvers
+        (_, Y) = pc(q, extend_fun, t, t+h_norm, x, h, p) # Solve the extend system
         t = t+h_norm
         Y = Y'
 
@@ -241,7 +258,7 @@ mutable struct M
     bn_fft
 end
 #TODO: Decouple ABM methods for FODESystems from FractionalSystems.jl to FractionalDiffEq.jl
-function pc(alpha, f_fun, t0, T, y0, h)
+function pc(alpha, f_fun, t0, T, y0, h, p)
     METH = M(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
     mu_tol = 1.0e-6
     mu = 1
@@ -261,7 +278,7 @@ function pc(alpha, f_fun, t0, T, y0, h)
     end
 
 
-    f_temp = f_vectorfield(t0, y0[:, 1], f_fun)
+    f_temp = f_vectorfield(t0, y0[:, 1], f_fun, p)
 
     r = 16
     N = ceil(Int64, (T-t0)/h)
@@ -343,7 +360,7 @@ function pc(alpha, f_fun, t0, T, y0, h)
     t = t0 .+ collect(0:N)*h
     y[:, 1] = y0[:, 1]
     fy[:, 1] = f_temp
-    (y, fy) = Triangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, y0, t0, f_fun) ;
+    (y, fy) = Triangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, y0, t0, f_fun, p) ;
 
     # Main process of computation by means of the FFT algorithm
     ff = zeros(1, 2^(Qr+2)) ; ff[1:2] = [0; 2] ; card_ff = 2
@@ -450,7 +467,7 @@ end
 
 
 
-function Triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, y0, t0, f_fun)
+function Triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, y0, t0, f_fun, p)
 
     for n = Int64(nxi) : Int64(min(N, nxf))
         
@@ -466,7 +483,7 @@ function Triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, 
         end
         St = StartingTerm(t[n+1], y0, m_alpha, t0, m_alpha_factorial)
         y_pred = St + METH.halpha1.*(zn_pred[:, n+1] + Phi)
-        f_pred = f_vectorfield(t[n+1], y_pred, f_fun)
+        f_pred = f_vectorfield(t[n+1], y_pred, f_fun, p)
         
         # Evaluation of the corrector
         if METH.mu == 0
@@ -492,7 +509,7 @@ function Triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, 
                 else
                     stop = mu_it == METH.mu ;
                 end
-                global fn1 = f_vectorfield(t[n+1], yn1, f_fun)
+                global fn1 = f_vectorfield(t[n+1], yn1, f_fun, p)
                 yn0 = yn1 ; fn0 = fn1 ;
             end
             y[:, n+1] = yn1
@@ -503,8 +520,8 @@ function Triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, 
 end
 
 
-function f_vectorfield(t, y, f_fun!)
-    f = f_fun!(t, y)
+function f_vectorfield(t, y, f_fun!, p)
+    f = f_fun!(t, y, p)
     return f
 end
 
