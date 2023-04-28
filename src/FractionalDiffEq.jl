@@ -21,9 +21,9 @@ include("types/solutions.jl")
 
 # Single-term fractional ordinary differential equations
 include("singletermfode/PECE.jl")
-include("singletermfode/PI.jl")
+include("singletermfode/product_integral.jl")
 include("singletermfode/GL.jl")
-include("singletermfode/AtanganaSeda.jl")
+include("singletermfode/atangana_seda.jl")
 include("singletermfode/Euler.jl")
 
 # Multi-terms fractional ordinary differential equations
@@ -45,18 +45,16 @@ include("fodesystem/Euler.jl")
 include("fodesystem/GLWithMemory.jl")
 include("fodesystem/NonLinear.jl")
 include("fodesystem/newton_polynomials.jl")
-include("fodesystem/AS.jl")
-include("fodesystem/ASCF.jl")
+include("fodesystem/atangana_seda.jl")
 
 # System of fractal-fractional ordinary differential equations
-include("ffode/AS.jl")
+include("ffode/atangana_seda.jl")
 
 # Fractional delay differential equations
 include("delay/DelayPECE.jl")
 include("delay/DelayPI.jl")
-include("delay/Matrix.jl")
+include("delay/matrix_form.jl")
 include("delay/DelayABM.jl")
-include("delay/DelayABMSystem.jl")
 
 # Distributed order differential equations
 include("dode/utils.jl")
