@@ -22,7 +22,7 @@ function solve(prob::FODESystem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
     t0 = tspan[1]; tfinal = tspan[2]
     u0 = u0
     alpha = α[1]
-    itmax = 100
+    maxiters = 100
 
     # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
     max_order = findmax(α)[1]
@@ -63,8 +63,8 @@ function solve(prob::FODESystem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
     temp = zeros(problem_size)
     f(temp, u0[:, 1], p, t0)
     fy[:, 1] = temp
-    (y, fy) = TrapFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
-    (y, fy) = TrapTriangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+    (y, fy) = TrapFirstApproximations(t, y, fy, abstol, maxiters, s, halpha, omega, w, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+    (y, fy) = TrapTriangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, maxiters, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
     
     # Main process of computation by means of the FFT algorithm
     nx0 = 0; ny0 = 0
@@ -72,7 +72,7 @@ function solve(prob::FODESystem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
     ff[1:2] = [0 2]
     for q = 0:Q
         L::Int = 2^q
-        (y, fy) = TrapDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+        (y, fy) = TrapDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, maxiters, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
@@ -86,7 +86,7 @@ function solve(prob::FODESystem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
 end
 
 
-function TrapDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N::Int, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function TrapDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N::Int, abstol, maxiters, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     nxi::Int = copy(nx0); nxf::Int = copy(nx0 + L*r - 1)
     nyi::Int = copy(ny0); nyf::Int = copy(ny0 + L*r - 1)
     is::Int = 1
@@ -99,7 +99,7 @@ function TrapDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N::Int, abstol
     while ~stop
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         zn = TrapQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
-        (y, fy) = TrapTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+        (y, fy) = TrapTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, abstol, maxiters, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
         i_triangolo = i_triangolo + 1
         
         if ~stop
@@ -130,7 +130,7 @@ function TrapQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     return zn
 end
 
-function TrapTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function TrapTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, maxiters, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     for n = nxi:min(N, nxf)
         n1::Int = n+1
         St = TrapStartingTerm(t[n1], y0, m_alpha, t0, m_alpha_factorial)
@@ -160,7 +160,7 @@ function TrapTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega
             it = it + 1
             
             stop = (norm(yn1-yn0, Inf) < abstol) || (norm(Gn1, Inf)<abstol)
-            if it > itmax && ~stop
+            if it > maxiters && ~stop
                 @warn "Non Convergence"
                 stop = true
             end
@@ -177,7 +177,7 @@ function TrapTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega
     return y, fy
 end
 
-function TrapFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function TrapFirstApproximations(t, y, fy, abstol, maxiters, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     m = problem_size
     Im = zeros(m, m)+I ; Ims = zeros(m*s, m*s)+I
     Y0 = zeros(s*m, 1); F0 = copy(Y0); B0 = copy(Y0)
@@ -221,7 +221,7 @@ function TrapFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, p
         it = it + 1
         
         stop = (norm(Y1-Y0, Inf) < abstol) || (norm(G1, Inf) <  abstol)
-        if it > itmax && ~stop
+        if it > maxiters && ~stop
             @warn "Non Convergence"
             stop = 1
         end

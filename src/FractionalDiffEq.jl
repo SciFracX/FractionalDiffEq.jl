@@ -94,7 +94,7 @@ export FODESolution, FDifferenceSolution, DODESolution, FFMODESolution
 export FODESystemSolution, FDDESystemSolution, FFMODESystem
 
 # FODE solvers
-export PIEX, PIPECE, PIIMRect, PIIMTrap
+export PIEX, PIPECE, PIRect, PITrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, GL
 export AtanganaSeda, AtanganaSedaAB
 export Euler

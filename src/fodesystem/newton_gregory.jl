@@ -17,11 +17,10 @@ Use [Newton Gregory](https://www.geeksforgeeks.org/newton-forward-backward-inter
 """
 struct FLMMNewtonGregory <: FODESystemAlgorithm end
 
-function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-6)
+function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-6, maxiters = 100)
     @unpack f, α, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     alpha = α[1]
-    itmax = 100
 
     # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
     max_order = findmax(α)[1]
@@ -63,8 +62,8 @@ function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-
     temp = zeros(length(u0[:, 1]))
     f(temp, u0[:, 1], p, t0)
     fy[:, 1] = temp#f_vectorfield(t0, y0[:, 1], fdefun)
-    (y, fy) = NG_first_approximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
-    (y, fy) = NG_triangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+    (y, fy) = NG_first_approximations(t, y, fy, abstol, maxiters, s, halpha, omega, w, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+    (y, fy) = NG_triangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, maxiters, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
     
     # Main process of computation by means of the FFT algorithm
     nx0 = 0; ny0 = 0
@@ -72,7 +71,7 @@ function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-
     ff[1:2] = [0 2]
     for q = 0:Q
         L = Int64(2^q)
-        (y, fy) = NG_disegna_blocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+        (y, fy) = NG_disegna_blocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, maxiters, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
@@ -86,7 +85,7 @@ function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-
 end
 
 
-function NG_disegna_blocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function NG_disegna_blocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, maxiters, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     nxi::Int = copy(nx0); nxf::Int = copy(nx0 + L*r - 1)
     nyi::Int = copy(ny0); nyf::Int = copy(ny0 + L*r - 1)
     is::Int = 1
@@ -99,7 +98,7 @@ function NG_disegna_blocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, it
     while ~stop
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         zn = NG_quadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
-        (y, fy) = NG_triangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+        (y, fy) = NG_triangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, abstol, maxiters, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
         i_triangolo = i_triangolo + 1
         
         if ~stop
@@ -130,7 +129,7 @@ function NG_quadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     return zn
 end
 
-function NG_triangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function NG_triangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, maxiters, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     for n = nxi:min(N, nxf)
         n1::Int = Int64(n+1)
         St = NG_starting_term(t[n1], y0, m_alpha, t0, m_alpha_factorial)
@@ -160,7 +159,7 @@ function NG_triangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega,
             it = it + 1
             
             stop = (norm(yn1-yn0, Inf) < abstol) || (norm(Gn1, Inf)<abstol)
-            if it > itmax && ~stop
+            if it > maxiters && ~stop
                 @warn "Non Convergence"
                 stop = true
             end
@@ -177,7 +176,7 @@ function NG_triangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega,
     return y, fy
 end
 
-function NG_first_approximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function NG_first_approximations(t, y, fy, abstol, maxiters, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     m = problem_size
     Im = zeros(m, m)+I ; Ims = zeros(m*s, m*s)+I
     Y0 = zeros(s*m, 1); F0 = copy(Y0); B0 = copy(Y0)
@@ -221,7 +220,7 @@ function NG_first_approximations(t, y, fy, abstol, itmax, s, halpha, omega, w, p
         it = it + 1
         
         stop = (norm(Y1-Y0, Inf) < abstol) || (norm(G1, Inf) <  abstol)
-        if it > itmax && ~stop
+        if it > maxiters && ~stop
             @warn "Non Convergence"
             stop = 1
         end

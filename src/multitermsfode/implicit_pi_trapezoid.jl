@@ -1,11 +1,11 @@
 """
-    solve(prob::MultiTermsFODEProblem, h, PIIMTrap())
+    solve(prob::MultiTermsFODEProblem, h, PITrap())
 
 Use implicit product integration trapezoidal type method to solve multi-terms FODE.
 """
-struct PIIMTrap <: MultiTermsFODEAlgorithm end
+struct PITrap <: MultiTermsFODEAlgorithm end
 
-function solve(prob::MultiTermsFODEProblem, h, ::PIIMTrap; abstol=1e-6)
+function solve(prob::MultiTermsFODEProblem, h, ::PITrap; abstol=1e-6, maxiters=100)
     @unpack parameters, orders, rightfun, u0, tspan = prob
     t0 = tspan[1]; T = tspan[2]
     u0 = u0[:]'
@@ -24,8 +24,6 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMTrap; abstol=1e-6)
     m_Q = ceil(Int64, al_Q)
     m_i = ceil.(Int64, orders[1:end-1])
     bet = [al_Q .- al_i; al_Q]
-    
-    itmax = 100
     
     gamma_val = zeros(Q, m_Q)
     for i = 1 : Q-1
@@ -63,13 +61,13 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMTrap; abstol=1e-6)
     t = collect(0:N)*h
     y[:, 1] = u0[:, 1]
     fy[:, 1] .= rightfun(t0, u0[:, 1])
-    (y, fy) = PIExTriangolo(1, r-1, t, y, fy, zn, N, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, itmax, J_fun)
+    (y, fy) = PIExTriangolo(1, r-1, t, y, fy, zn, N, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, maxiters, J_fun)
     
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0 2]; card_ff = 2
     nx0 = 0; nu0 = 0
     for qr = 0 : Qr
         L = 2^qr
-        (y, fy) = PIIMTrapDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, N, zn, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, abstol)
+        (y, fy) = PIIMTrapDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, N, zn, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, maxiters, abstol)
         ff[1:2*card_ff] = [ff[1:card_ff] ff[1:card_ff]]
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -86,7 +84,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMTrap; abstol=1e-6)
 end
     
 
-function PIIMTrapDisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, N, zn, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, abstol)
+function PIIMTrapDisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, N, zn, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, maxiters, abstol)
     
     nxi::Int = nx0
     nxf::Int = nx0 + L*r - 1
@@ -108,7 +106,7 @@ function PIIMTrapDisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, N, zn, a0, an,
         
         zn = PIIMTrapQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, an, problem_size, Q)
         
-        (y, fy) = PIExTriangolo(nxi, nxi+r-1, t, y, fy, zn, N, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, itmax, J_fun)
+        (y, fy) = PIExTriangolo(nxi, nxi+r-1, t, y, fy, zn, N, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, maxiters, J_fun)
         i_triangolo = i_triangolo + 1
         
         if stop==false
@@ -163,7 +161,7 @@ end
     
     
  
-function PIExTriangolo(nxi, nxf, t, y, fy, zn, N, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, itmax, J_fun)
+function PIExTriangolo(nxi, nxf, t, y, fy, zn, N, a0, an, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, maxiters, J_fun)
 
     for n = nxi:min(N, nxf)
         St = PIIMTrapStartingTerm_Multi(t[n+1], t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
@@ -197,7 +195,7 @@ function PIExTriangolo(nxi, nxf, t, y, fy, zn, N, a0, an, t0, problem_size, u0, 
             it = it + 1
             
             stop = (norm(yn1-yn0, Inf) < abstol) || (norm(Gn1, Inf) < abstol)
-            if it > itmax && ~stop
+            if it > maxiters && ~stop
                 @warn "Non Convergence"
                 stop = true
             end
