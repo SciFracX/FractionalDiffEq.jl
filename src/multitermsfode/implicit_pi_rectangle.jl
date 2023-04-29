@@ -153,7 +153,7 @@ function PIIMRectQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn,  problem_size, Q)
                 vett_funz = [fy[:, funz_beg:funz_end] zeros(problem_size, funz_end-funz_beg+1)]
             end
         end
-        zzn = real.(FastConv(vett_coef, vett_funz))
+        zzn = real.(fast_conv(vett_coef, vett_funz))
         zn[:, nxi+1:nxf+1, i] = zn[:, nxi+1:nxf+1, i] + zzn[:, nxf-nyf+1:end]
     end
     return zn

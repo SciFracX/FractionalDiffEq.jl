@@ -60,7 +60,7 @@ function solve(prob::FODESystem, h, ::PIEX)
 
     # Evaluation of coefficients of the PECE method
     nvett = 0:NNr+1 |> collect
-    bn = zeros(alpha_length, NNr+1); an = copy(bn); a0 = copy(bn)
+    bn = zeros(alpha_length, NNr+1)#; an = copy(bn); a0 = copy(bn)
     for i_alpha = 1:alpha_length
         find_alpha = Float64[]
         if α[i_alpha] == α[1:i_alpha-1]
@@ -113,14 +113,14 @@ function solve(prob::FODESystem, h, ::PIEX)
     t = t0 .+ collect(0:N)*h
     y[:, 1] = u0[:, 1]
     fy[:, 1] = f_temp
-    (y, fy) = PIEXTriangolo(1, r-1, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, α, p)
+    (y, fy) = PIEX_system_triangolo(1, r-1, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, α, p)
 
     # Main process of computation by means of the FFT algorithm
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0; 2] ; card_ff = 2
     nx0::Int = 0; ny0::Int = 0
     for qr = 0 : Qr
         L = 2^qr 
-        (y, fy) = PIDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, α, p)
+        (y, fy) = PIEX_system_disegna_blocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, α, p)
         ff[1:2*card_ff] = [ff[1:card_ff]; ff[1:card_ff]] 
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -138,7 +138,7 @@ function solve(prob::FODESystem, h, ::PIEX)
 end
 
 
-function PIDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, alpha, p)
+function PIEX_system_disegna_blocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, alpha, p)
 
     nxi::Int = nx0; nxf::Int = nx0 + L*r - 1
     nyi::Int = ny0; nyf::Int = ny0 + L*r - 1
@@ -154,9 +154,9 @@ function PIDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N, METH, problem
         
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         
-        zn = PIEXQuadrato(nxi, nxf, nyi, nyf, fy, zn, N, METH, problem_size, alpha_length, alpha)
+        zn = PIEX_system_quadrato(nxi, nxf, nyi, nyf, fy, zn, N, METH, problem_size, alpha_length, alpha)
         
-        (y, fy) = PIEXTriangolo(nxi, nxi+r-1, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, alpha, p)
+        (y, fy) = PIEX_system_triangolo(nxi, nxi+r-1, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, alpha, p)
         i_triangolo = i_triangolo + 1
         
         if stop == false
@@ -177,7 +177,7 @@ function PIDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N, METH, problem
     return y, fy
 end
 
-function PIEXQuadrato(nxi, nxf, nyi, nyf, fy, zn, N, METH, problem_size, alpha_length, alpha)
+function PIEX_system_quadrato(nxi, nxf, nyi, nyf, fy, zn, N, METH, problem_size, alpha_length, alpha)
     coef_end::Int = nxf-nyi+1
     i_fft::Int = log2(coef_end/METH.r) 
     funz_beg::Int = nyi+1; funz_end::Int = nyf+1
@@ -201,10 +201,10 @@ end
 
 
 
-function PIEXTriangolo(nxi, nxf, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, alpha, p)
+function PIEX_system_triangolo(nxi, nxf, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, alpha, p)
 
     for n = nxi:min(N, nxf)
-        St = StartingTerm(t[n+1], u0, m_alpha, t0, m_alpha_factorial)        
+        St = PIEX_system_starting_term(t[n+1], u0, m_alpha, t0, m_alpha_factorial)        
         # Evaluation of the predictor
         Phi = zeros(problem_size, 1)
         if nxi == 1 # Case of the first triangle
@@ -232,7 +232,7 @@ end
 
 sysf_vectorfield(t, y, f_fun) = f_fun(t, y)
 
-function  StartingTerm(t, u0, m_alpha, t0, m_alpha_factorial)
+function  PIEX_system_starting_term(t, u0, m_alpha, t0, m_alpha_factorial)
     ys = zeros(size(u0, 1), 1)
     for k = 1 : maximum(m_alpha)
         if length(m_alpha) == 1
