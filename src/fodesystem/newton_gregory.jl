@@ -54,7 +54,7 @@ function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-
     zn = zeros(problem_size, NNr+1)
 
     # Evaluation of convolution and starting weights of the FLMM
-    (omega, w, s) = NGWeights(alpha, NNr+1)
+    (omega, w, s) = NG_weights(alpha, NNr+1)
     halpha = h^alpha
     
     # Initializing solution and proces of computation
@@ -63,8 +63,8 @@ function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-
     temp = zeros(length(u0[:, 1]))
     f(temp, u0[:, 1], p, t0)
     fy[:, 1] = temp#f_vectorfield(t0, y0[:, 1], fdefun)
-    (y, fy) = NGFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
-    (y, fy) = NGTriangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+    (y, fy) = NG_first_approximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+    (y, fy) = NG_triangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
     
     # Main process of computation by means of the FFT algorithm
     nx0 = 0; ny0 = 0
@@ -72,7 +72,7 @@ function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-
     ff[1:2] = [0 2]
     for q = 0:Q
         L = Int64(2^q)
-        (y, fy) = NGDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+        (y, fy) = NG_disegna_blocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
@@ -86,7 +86,7 @@ function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-
 end
 
 
-function NGDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function NG_disegna_blocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     nxi::Int = copy(nx0); nxf::Int = copy(nx0 + L*r - 1)
     nyi::Int = copy(ny0); nyf::Int = copy(ny0 + L*r - 1)
     is::Int = 1
@@ -98,8 +98,8 @@ function NGDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, itma
     i_triangolo::Int = 0;  stop = false
     while ~stop
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
-        zn = NGQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
-        (y, fy) = NGTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+        zn = NG_quadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
+        (y, fy) = NG_triangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
         i_triangolo = i_triangolo + 1
         
         if ~stop
@@ -120,20 +120,20 @@ function NGDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, itma
     return y, fy
 end
 
-function NGQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
+function NG_quadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     coef_beg::Int = nxi-nyf; coef_end::Int = nxf-nyi+1
     funz_beg::Int = nyi+1; funz_end::Int = nyf+1
     vett_coef = omega[coef_beg+1:coef_end+1]
     vett_funz = [fy[:, funz_beg:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]
-    zzn = real(FastConv(vett_coef, vett_funz))
+    zzn = real(fast_conv(vett_coef, vett_funz))
     zn[:, nxi+1:nxf+1] = zn[:, nxi+1:nxf+1] + zzn[:, nxf-nyf:end-1]
     return zn
 end
 
-function NGTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function NG_triangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     for n = nxi:min(N, nxf)
         n1::Int = Int64(n+1)
-        St = NGStartingTerm(t[n1], y0, m_alpha, t0, m_alpha_factorial)
+        St = NG_starting_term(t[n1], y0, m_alpha, t0, m_alpha_factorial)
         
         Phi = zeros(problem_size, 1)
         for j = 0:s
@@ -177,7 +177,7 @@ function NGTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega, 
     return y, fy
 end
 
-function NGFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function NG_first_approximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     m = problem_size
     Im = zeros(m, m)+I ; Ims = zeros(m*s, m*s)+I
     Y0 = zeros(s*m, 1); F0 = copy(Y0); B0 = copy(Y0)
@@ -186,7 +186,7 @@ function NGFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, pro
         temp = zeros(length(y[:, 1]))
         fdefun(temp, y[:, 1], p, t[j+1])
         F0[(j-1)*m+1:j*m, 1] = temp#f_vectorfield(t[j+1], y[:, 1], fdefun)
-        St = NGStartingTerm(t[j+1], y0, m_alpha, t0, m_alpha_factorial)
+        St = NG_starting_term(t[j+1], y0, m_alpha, t0, m_alpha_factorial)
         B0[(j-1)*m+1:j*m, 1] = St + halpha*(omega[j+1]+w[1, j+1])*fy[:, 1]
     end
     W = zeros(s, s)
@@ -241,7 +241,7 @@ function NGFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, pro
     return y, fy
 end
 
-function NGWeights(alpha, N)
+function NG_weights(alpha, N)
     # Newton-Gregory formula with generating function (1-x)^(-alpha)*(1-alpha/2*(1-x))
     omega1 = zeros(1, N+1); omega = copy(omega1)
     alphameno1 = alpha - 1
@@ -277,7 +277,7 @@ function NGWeights(alpha, N)
         end
     end
 
-    temp = FastConv([omega  zeros(size(omega))], [jj_nu zeros(size(jj_nu))])
+    temp = fast_conv([omega  zeros(size(omega))], [jj_nu zeros(size(jj_nu))])
     temp = real.(temp)
     b = nn_nu_alpha - temp[:, 1:N+1]
     # Solution of the linear system with multiple right-hand side
@@ -292,7 +292,7 @@ function Jf_vectorfield(t, y, Jfdefun)
     return f
 end
 
-function NGStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)
+function NG_starting_term(t,y0, m_alpha, t0, m_alpha_factorial)
     ys = zeros(size(y0, 1), 1)
     for k = 1:Int64(m_alpha)
         ys = ys + (t-t0)^(k-1)/m_alpha_factorial[k]*y0[:, k]

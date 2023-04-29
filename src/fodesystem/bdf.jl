@@ -38,7 +38,7 @@ function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
     
     problem_size = size(u0, 1)
     
-    # Number of points in which to evaluate the solution or the BDFWeights
+    # Number of points in which to evaluate the solution or the BDF_weights
     r::Int = 16
     N::Int = ceil(Int, (tfinal-t0)/h)
     Nr::Int = ceil(Int, (N+1)/r)*r
@@ -50,8 +50,8 @@ function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
     fy = zeros(problem_size, N+1)
     zn = zeros(problem_size, NNr+1)
 
-    # Evaluation of convolution and starting BDFWeights of the FLMM
-    (omega, w, s) = BDFWeights(alpha, NNr+1)
+    # Evaluation of convolution and starting BDF_weights of the FLMM
+    (omega, w, s) = BDF_weights(alpha, NNr+1)
     halpha = h^alpha
     
     # Initializing solution and proces of computation
@@ -61,8 +61,8 @@ function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
     f(temp, u0[:, 1], p, t0)
     #fy[:, 1] = BDFf_vectorfield(t0, y0[:, 1], fdefun)
     fy[:, 1] = temp
-    (y, fy) = BDFFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
-    (y, fy) = BDFTriangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+    (y, fy) = BDF_first_approximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+    (y, fy) = BDF_triangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
     
     # Main process of computation by means of the FFT algorithm
     nx0::Int = 0; ny0::Int = 0
@@ -70,7 +70,7 @@ function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
     ff[1:2] = [0 2]
     for q = 0:Q
         L::Int = 2^q
-        (y, fy) = BDFDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+        (y, fy) = BDF_disegna_blocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
@@ -84,7 +84,7 @@ function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6)
 end
 
 
-function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function BDF_disegna_blocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     nxi::Int = copy(nx0); nxf::Int = copy(nx0 + L*r - 1)
     nyi::Int = copy(ny0); nyf::Int = copy(ny0 + L*r - 1)
     is::Int = 1
@@ -96,8 +96,8 @@ function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, itm
     i_triangolo = 0;  stop = false
     while ~stop
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
-        zn = BDFQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
-        (y, fy) = BDFTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+        zn = BDF_quadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
+        (y, fy) = BDF_triangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
         i_triangolo = i_triangolo + 1
         
         if ~stop
@@ -118,20 +118,20 @@ function BDFDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N , abstol, itm
     return y, fy
 end
 
-function BDFQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
+function BDF_quadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     coef_beg::Int = nxi-nyf; coef_end::Int = nxf-nyi+1
     funz_beg::Int = nyi+1; funz_end::Int = nyf+1
     vett_coef = omega[coef_beg+1:coef_end+1]
     vett_funz = [fy[:, funz_beg:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]
-    zzn = real(FastConv(vett_coef, vett_funz))
+    zzn = real(fast_conv(vett_coef, vett_funz))
     zn[:, nxi+1:nxf+1] = zn[:, nxi+1:nxf+1] + zzn[:, nxf-nyf:end-1]
     return zn
 end
 
-function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function BDF_triangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     for n = nxi:min(N, nxf)
         n1::Int = n+1
-        St = ABMStartingTerm(t[n1], y0, m_alpha, t0, m_alpha_factorial)
+        St = ABM_starting_term(t[n1], y0, m_alpha, t0, m_alpha_factorial)
         
         Phi = zeros(problem_size, 1)
         for j = 0:s
@@ -175,7 +175,7 @@ function BDFTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, itmax, s, w, omega,
     return y, fy
 end
 
-function BDFFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function BDF_first_approximations(t, y, fy, abstol, itmax, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
     m = problem_size
     Im = zeros(m, m)+I; Ims = zeros(m*s, m*s)+I
     Y0 = zeros(s*m, 1); F0 = copy(Y0); B0 = copy(Y0)
@@ -184,7 +184,7 @@ function BDFFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, pr
         temp = zeros(length(y[:, 1]))
         fdefun(temp, y[:, 1], p, t[j+1])
         F0[(j-1)*m+1:j*m, 1] = temp#BDFf_vectorfield(t[j+1], y[:, 1], fdefun)
-        St = ABMStartingTerm(t[j+1], y0, m_alpha, t0, m_alpha_factorial)
+        St = ABM_starting_term(t[j+1], y0, m_alpha, t0, m_alpha_factorial)
         B0[(j-1)*m+1:j*m, 1] = St + halpha*(omega[j+1]+w[1, j+1])*fy[:, 1]
     end
     W = zeros(s, s)
@@ -239,7 +239,7 @@ function BDFFirstApproximations(t, y, fy, abstol, itmax, s, halpha, omega, w, pr
     return y, fy
 end
 
-function BDFWeights(alpha, N)
+function BDF_weights(alpha, N)
     # BDF-2 with generating function (2/3/(1-4x/3+x^2/3))^alpha
     omega = zeros(1, N+1)
     onethird = 1/3; fourthird = 4/3
@@ -276,7 +276,7 @@ function BDFWeights(alpha, N)
         end
     end
 
-    temp = FastConv([omega  zeros(size(omega))], [jj_nu zeros(size(jj_nu))])
+    temp = fast_conv([omega  zeros(size(omega))], [jj_nu zeros(size(jj_nu))])
     temp = real.(temp)
     b = nn_nu_alpha - temp[:, 1:N+1]
     # Solution of the linear system with multiple right-hand side
@@ -286,7 +286,7 @@ end
 
 Jf_vectorfield(t, y, Jfdefun) = Jfdefun(t, y)
 
-function ABMStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)
+function ABM_starting_term(t,y0, m_alpha, t0, m_alpha_factorial)
     ys = zeros(size(y0, 1), 1)
     for k = 1:Int64(m_alpha)
         ys = ys + (t-t0)^(k-1)/m_alpha_factorial[k]*y0[:, k]

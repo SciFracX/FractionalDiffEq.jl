@@ -53,13 +53,13 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIEX)
     t = collect(0:N)*h
     y[:, 1] = u0[:, 1]
     fy[:, 1] .= rightfun(t0, u0[:, 1])
-    (y, fy) = PIExTriangolo(1, r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q)
+    (y, fy) = PIEX_multiterms_triangolo(1, r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q)
     
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0 2]; card_ff = 2
     nx0 = 0; nu0 = 0
     for qr = 0 : Qr
         L = 2^qr
-        (y, fy) = DisegnaBlocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q) ;
+        (y, fy) = PIEX_multiterms_disegna_blocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q) ;
         ff[1:2*card_ff] = [ff[1:card_ff] ff[1:card_ff]]
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -76,7 +76,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIEX)
 end
     
 
-function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q)
+function PIEX_multiterms_disegna_blocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q)
     
     nxi::Int = nx0
     nxf::Int = nx0 + L*r - 1
@@ -96,9 +96,9 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N, bn, t0, problem
     while stop == false
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1 >= Nr-1)
         
-        zn = PIExQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn, problem_size, Q)
+        zn = PIEX_multiterms_quadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn, problem_size, Q)
         
-        (y, fy) = PIExTriangolo(nxi, nxi+r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q) ;
+        (y, fy) = PIEX_multiterms_triangolo(nxi, nxi+r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q) ;
         i_triangolo = i_triangolo + 1
         
         if stop==false
@@ -125,7 +125,7 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N, bn, t0, problem
     return y, fy
 end
 
-function PIExQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn,  problem_size, Q)
+function PIEX_multiterms_quadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn,  problem_size, Q)
     coef_beg = nxi-nyf; coef_end = nxf-nyi+1
     funz_beg = nyi+1; funz_end = nyf+1
     
@@ -136,7 +136,7 @@ function PIExQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn,  problem_size, Q)
         else
             vett_funz = [fy[:, funz_beg:funz_end] zeros(problem_size, funz_end-funz_beg+1)]
         end
-        zzn = real.(FastConv(vett_coef, vett_funz))
+        zzn = real.(fast_conv(vett_coef, vett_funz))
         zn[:, nxi+1:nxf+1, i] = zn[:, nxi+1:nxf+1, i] + zzn[:, nxf-nyf:end-1]
     end
     return zn
@@ -145,10 +145,10 @@ end
     
     
  
-function PIExTriangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q)
+function PIEX_multiterms_triangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q)
 
     for n = nxi:min(N, nxf)
-        Phi_n = PIExStartingTerm_Multi(t[n+1], t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
+        Phi_n = PIEX_multiterms_starting_term(t[n+1], t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
         if nxi == 1
             j_beg = 0
         else
@@ -183,7 +183,7 @@ function process_rightfun(t, y, rightfun)
     end
 end
 
-function PIExStartingTerm_Multi(t, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
+function PIEX_multiterms_starting_term(t, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
     ys = zeros(problem_size)
 
     for k = 0:m_Q-1

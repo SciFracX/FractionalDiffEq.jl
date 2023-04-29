@@ -65,13 +65,13 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIPECE; abstol=1e-6)
     t = collect(0:N)*h
     y[:, 1] = u0[:, 1]
     fy[:, 1] .= rightfun(t0, u0[:, 1])
-    (y, fy) = PIPECETriangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
+    (y, fy) = PIPECE_triangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
     
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0 2]; card_ff = 2
     nx0 = 0; nu0 = 0
     for qr in 0:Qr
         L = 2^qr
-        (y, fy) = DisegnaBlocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, zn_pred, zn_corr, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
+        (y, fy) = PIPECE_disegna_blocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, zn_pred, zn_corr, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
         ff[1:2*card_ff] = [ff[1:card_ff] ff[1:card_ff]]
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -88,7 +88,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIPECE; abstol=1e-6)
 end
     
 
-function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn_pred, zn_corr, N , bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
+function PIPECE_disegna_blocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn_pred, zn_corr, N , bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
     
     nxi::Int = nx0
     nxf::Int = nx0 + L*r - 1
@@ -108,9 +108,9 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn_pred, zn_corr, N , 
     while stop == false
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1 >= Nr-1)
         
-        (zn_pred, zn_corr) = PIPECEQuadrato(nxi, nxf, nyi, nyf, y, fy, zn_pred, zn_corr, bn, problem_size, Q, an, mu)
+        (zn_pred, zn_corr) = PIPECE_quadrato(nxi, nxf, nyi, nyf, y, fy, zn_pred, zn_corr, bn, problem_size, Q, an, mu)
         
-        (y, fy) = PIPECETriangolo(nxi, nxi+r-1, t, y, fy, zn_pred, zn_corr, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
+        (y, fy) = PIPECE_triangolo(nxi, nxi+r-1, t, y, fy, zn_pred, zn_corr, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
         i_triangolo = i_triangolo + 1
         
         if stop==false
@@ -137,7 +137,7 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn_pred, zn_corr, N , 
     return y, fy
 end
 
-function PIPECEQuadrato(nxi, nxf, nyi, nyf, y, fy, zn_pred, zn_corr, bn,  problem_size, Q, an, mu)
+function PIPECE_quadrato(nxi, nxf, nyi, nyf, y, fy, zn_pred, zn_corr, bn,  problem_size, Q, an, mu)
     coef_beg = nxi-nyf; coef_end = nxf-nyi+1
     funz_beg = nyi+1; funz_end = nyf+1
     
@@ -148,7 +148,7 @@ function PIPECEQuadrato(nxi, nxf, nyi, nyf, y, fy, zn_pred, zn_corr, bn,  proble
         else
             vett_funz = [fy[:, funz_beg:funz_end] zeros(problem_size, funz_end-funz_beg+1)]
         end
-        zzn_pred = real.(FastConv(vett_coef, vett_funz))
+        zzn_pred = real.(fast_conv(vett_coef, vett_funz))
         zn_pred[:, nxi+1:nxf+1, i] = zn_pred[:, nxi+1:nxf+1, i] + zzn_pred[:, nxf-nyf:end-1]
     end
 
@@ -168,7 +168,7 @@ function PIPECEQuadrato(nxi, nxf, nyi, nyf, y, fy, zn_pred, zn_corr, bn,  proble
                     vett_funz = [fy[:, funz_beg:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]
                 end
             end
-            zzn_corr = real(FastConv(vett_coef, vett_funz))
+            zzn_corr = real(fast_conv(vett_coef, vett_funz))
             zn_corr[:, nxi+1:nxf+1, i] = zn_corr[:, nxi+1:nxf+1, i] + zzn_corr[:, nxf-nyf+1:end]
         end
     else
@@ -180,9 +180,9 @@ end
     
     
  
-function PIPECETriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
+function PIPECE_triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
     for n in nxi:min(N, nxf)
-        St = PIPECEStartingTerm_Multi(t[n+1], t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
+        St = PIPECE_starting_term_multi(t[n+1], t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
         
         Phi_n = copy(St)
         if nxi == 1
@@ -250,7 +250,7 @@ function PIPECETriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, bn, t0, proble
     return y, fy
 end
 
-function PIPECEStartingTerm_Multi(t,t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
+function PIPECE_starting_term_multi(t,t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
     ys = zeros(problem_size)
 
     for k in 0:m_Q-1

@@ -125,7 +125,7 @@ function TrapQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     funz_beg::Int = nyi+1; funz_end::Int = nyf+1
     vett_coef = omega[coef_beg+1:coef_end+1]
     vett_funz = [fy[:, funz_beg:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]
-    zzn = real(FastConv(vett_coef, vett_funz))
+    zzn = real(fast_conv(vett_coef, vett_funz))
     zn[:, nxi+1:nxf+1] = zn[:, nxi+1:nxf+1] + zzn[:, nxf-nyf:end-1]
     return zn
 end
@@ -281,7 +281,7 @@ function TrapWeights(alpha, N)
         end
     end
 
-    temp = FastConv([omega  zeros(size(omega))], [jj_nu zeros(size(jj_nu))])
+    temp = fast_conv([omega  zeros(size(omega))], [jj_nu zeros(size(jj_nu))])
     temp = real.(temp)
     b = nn_nu_alpha - temp[:, 1:N+1]
     # Solution of the linear system with multiple right-hand side
