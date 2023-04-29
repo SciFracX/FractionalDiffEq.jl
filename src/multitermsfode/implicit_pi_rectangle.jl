@@ -1,11 +1,11 @@
 """
-    solve(prob::MultiTermsFODEProblem, h, PIIMRect())
+    solve(prob::MultiTermsFODEProblem, h, PIRect())
 
 Use implicit product integration rectangular type method to solve multi-terms FODE.
 """
-struct PIIMRect <: MultiTermsFODEAlgorithm end
+struct PIRect <: MultiTermsFODEAlgorithm end
 
-function solve(prob::MultiTermsFODEProblem, h, ::PIIMRect; abstol=1e-6)
+function solve(prob::MultiTermsFODEProblem, h, ::PIRect; abstol=1e-6, maxiters=100)
     @unpack parameters, orders, rightfun, u0, tspan = prob
     t0 = tspan[1]; T = tspan[2]
     u0 = u0[:]'
@@ -24,8 +24,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMRect; abstol=1e-6)
     m_Q = ceil(Int64, al_Q)
     m_i = ceil.(Int64, orders[1:end-1])
     bet = [al_Q .- al_i; al_Q]
-    
-    itmax = 100
+
     
     gamma_val = zeros(Q, m_Q)
     for i = 1 : Q-1
@@ -62,13 +61,13 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMRect; abstol=1e-6)
     t = collect(0:N)*h
     y[:, 1] = u0[:, 1]
     fy[:, 1] .= rightfun(t0, u0[:, 1])
-    (y, fy) = PIIMRectTriangolo(1, r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, itmax, J_fun)
+    (y, fy) = PIRect_triangolo(1, r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, maxiters, J_fun)
     
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0 2]; card_ff = 2
     nx0 = 0; nu0 = 0
     for qr = 0 : Qr
         L = 2^qr
-        (y, fy) = PIIMRectDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, abstol)
+        (y, fy) = PIRect_disegna_blocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, maxiters, abstol)
         ff[1:2*card_ff] = [ff[1:card_ff] ff[1:card_ff]]
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -85,7 +84,7 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIIMRect; abstol=1e-6)
 end
     
 
-function PIIMRectDisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N , bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, itmax, abstol)
+function PIRect_disegna_blocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N , bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, J_fun, maxiters, abstol)
     
     nxi::Int = nx0
     nxf::Int = nx0 + L*r - 1
@@ -105,9 +104,9 @@ function PIIMRectDisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N , bn, t0
     while stop == false
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1 >= Nr-1)
         
-        zn = PIIMRectQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn, problem_size, Q)
+        zn = PIRect_quadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn, problem_size, Q)
         
-        (y, fy) = PIIMRectTriangolo(nxi, nxi+r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, itmax, J_fun)
+        (y, fy) = PIRect_triangolo(nxi, nxi+r-1, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, maxiters, J_fun)
         i_triangolo = i_triangolo + 1
         
         if stop==false
@@ -134,7 +133,7 @@ function PIIMRectDisegnaBlocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn, N , bn, t0
     return y, fy
 end
 
-function PIIMRectQuadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn,  problem_size, Q)
+function PIRect_quadrato(nxi, nxf, nyi, nyf, y, fy, zn, bn,  problem_size, Q)
     coef_beg = nxi-nyf; coef_end = nxf-nyi+1
     funz_beg = nyi+1; funz_end = nyf+1
     
@@ -162,9 +161,9 @@ end
     
     
  
-function PIIMRectTriangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, itmax, J_fun)
+function PIRect_triangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, C, abstol, maxiters, J_fun)
     for n = nxi:min(N, nxf)
-        St = PIExStartingTerm_Multi(t[n+1], t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
+        St = PIRect_startingterm_multi(t[n+1], t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
         Phi_n = copy(St)
 
         for i = 1:Q-1
@@ -194,7 +193,7 @@ function PIIMRectTriangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, u0, 
             it = it + 1
             
             stop = (norm(yn1-yn0, Inf) < abstol) || (norm(Gn1, Inf) < abstol)
-            if it > itmax && ~stop
+            if it > maxiters && ~stop
                 @warn "Non Convergence"
                 stop = true
             end
@@ -210,7 +209,7 @@ function PIIMRectTriangolo(nxi, nxf, t, y, fy, zn, N, bn, t0, problem_size, u0, 
     return y, fy
 end
 
-function PIExStartingTerm_Multi(t,t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
+function PIRect_startingterm_multi(t,t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
     ys = zeros(problem_size)
 
     for k = 0:m_Q-1

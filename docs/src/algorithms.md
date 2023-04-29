@@ -22,8 +22,8 @@ FractionalDiffEq.FODEMatrixDiscrete
 FractionalDiffEq.ClosedForm
 FractionalDiffEq.ClosedFormHankelM
 FractionalDiffEq.PIPECE
-FractionalDiffEq.PIIMRect
-FractionalDiffEq.PIIMTrap
+FractionalDiffEq.PIRect
+FractionalDiffEq.PITrap
 ```
 
 ### System of FODE

@@ -257,7 +257,7 @@ end
     tspan = (0, 30); h = 0.01
     rightfun(x, y) = 172/125*cos(4/5*x)
     prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], tspan)
-    sol = solve(prob, h, PIIMTrap())
+    sol = solve(prob, h, PITrap())
 
     @test isapprox(sol.u[end-20:end], [0.2062614941629048
     0.21034012743472855
@@ -309,7 +309,7 @@ end
     rightfun(x, y) = 172/125*cos(4/5*x)
     prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], (0, T))
     
-    sol = solve(prob, h, PIIMRect())
+    sol = solve(prob, h, PIRect())
 
     @test isapprox(sol.u, [0.0
     0.01586240520261297
@@ -339,7 +339,7 @@ end
     rightfun(x, y) = 172/125*cos(4/5*x)
     prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], (0, T))
     
-    sol = solve(prob, h, PIIMRect())
+    sol = solve(prob, h, PIRect())
 
     @test isapprox(sol.u[end-20:end], [0.16675726971457058
     0.17176357358985567
@@ -369,7 +369,7 @@ end
     rightfun(x, y) = 172/125*cos(4/5*x)
     prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], (0, T))
     
-    sol = solve(prob, h, PIIMTrap())
+    sol = solve(prob, h, PITrap())
 
     @test isapprox(sol.u, [0.0
     0.02157284502548659
