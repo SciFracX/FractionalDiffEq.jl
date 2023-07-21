@@ -275,8 +275,8 @@ function solve_fdde_with_multiple_lags_and_variable_order(FDDE::FDDEProblem, h)
         push!(V, multiv(ϕ, n, τ, h, y, yp))
     end
 
-    delayed = zeros(Float64, length(τ), length(V))
-    for i=1:length(V)
+    delayed = zeros(Float, length(τ), length(V))
+    for i in eachindex(V)
         delayed[:, i] = V[i]
     end    
     return delayed, y

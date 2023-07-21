@@ -21,8 +21,8 @@ function solve(prob::MultiTermsFODEProblem, h, ::PIRect; abstol=1e-6, maxiters=1
     al_i = orders[1:end-1]
     lam_Q = parameters[end]
     lam_rat_i = parameters[1:end-1]/lam_Q
-    m_Q = ceil(Int64, al_Q)
-    m_i = ceil.(Int64, orders[1:end-1])
+    m_Q = ceil(Int, al_Q)
+    m_i = ceil.(Int, orders[1:end-1])
     bet = [al_Q .- al_i; al_Q]
 
     
