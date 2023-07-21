@@ -2,7 +2,7 @@
 
 By specifying different orders in the equation, we can handle multi-terms FODE now!
 
-Let's see if we have an initial value problem with multiple terms derivative containing both fractional and integer, we can use the **FODEMatrixDiscrete** algorithm to solve the equation.
+Let's see if we have an initial value problem with multiple terms derivative containing both fractional and integer, we can use the **PIEX** algorithm to solve the equation.
 
 All we need to do is passing the parameters and orders of the fractional ordinary differential equation to the API ```solve``` as two arrays.
 
@@ -28,7 +28,7 @@ To solve the multi-terms fractional order  equation, you can use the code:
 ```julia
 rightside = 1
 prob = MultiTermsFODEProblem([2, 4], [2, 1.5], rightside, [0, 0], (0, 30))
-sol = solve(prob, 0.01, FODEMatrixDiscrete())
+sol = solve(prob, 0.01, PIEX())
 ```
 
 Bingo! The result ```sol``` is the numerical solution of this equation!!!!
@@ -52,7 +52,7 @@ using FractionalDiffEq, Plots
 tspan = (0, 30); h = 0.01
 rightfun(x, y) = 172/125*cos(4/5*x)
 prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], tspan)
-sol = solve(prob, h, PIEx())
+sol = solve(prob, h, PIEX())
 plot(sol, legend=:bottomright)
 ```
 

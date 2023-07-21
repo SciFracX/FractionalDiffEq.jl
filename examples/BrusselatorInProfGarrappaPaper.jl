@@ -1,4 +1,4 @@
-using FractionalDiffEq, Plots, BenchmarkTools
+using FractionalDiffEq, Plots
 
 function test(du, u, p, t)
     du[1] = 1-4*u[1]+u[1]^2*u[2]
