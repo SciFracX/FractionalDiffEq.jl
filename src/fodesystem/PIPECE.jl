@@ -1,6 +1,6 @@
 #=
 """
-    solve(prob::FODESystem, h, PECE())
+    solve(prob::FODEProblem, h, PECE())
 
 Use the Adams-Bashforth-Moulton method to solve the system of FODEs.
 
@@ -29,27 +29,30 @@ mutable struct M
     an_fft
     bn_fft
 end
+
+struct PECE <: FODESystemAlgorithm end
+
 #TODO: Rename as PIPECE
-function solve(prob::FODESystem, h, ::PECE)
-    @unpack f, α, u0, tspan, p = prob
+function solve(prob::FODEProblem, h, ::PECE)
+    @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
     METH = M(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)# Initialization
     mu_tol = 1.0e-6
     mu = 1
-    α = α[:]
+    order = order[:]
 
     # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
-    max_order = findmax(α)[1]
+    max_order = findmax(order)[1]
     if max_order > 1
         @error "This method doesn't support high order FDEs"
     end
 
 
     # Check compatibility size of the problem with number of fractional orders
-    alpha_length = length(α)
+    alpha_length = length(order)
     problem_size = size(u0, 1)
 
-    m_alpha = ceil.(Int, α)
+    m_alpha = ceil.(Int, order)
     m_alpha_factorial = zeros(alpha_length, maximum(m_alpha))
     for i = 1 : alpha_length
         for j = 0 : m_alpha[i]-1
@@ -78,7 +81,7 @@ function solve(prob::FODESystem, h, ::PECE)
     bn = zeros(alpha_length, NNr+1); an = copy(bn); a0 = copy(bn)
     for i_alpha = 1:alpha_length
         find_alpha = Float64[]
-        if α[i_alpha] == α[1:i_alpha-1]
+        if order[i_alpha] == order[1:i_alpha-1]
             push!(find_alpha, i_alpha)
         end
 
@@ -87,16 +90,16 @@ function solve(prob::FODESystem, h, ::PECE)
             an[i_alpha, :] = an[find_alpha[1], :]
             a0[i_alpha, :] = a0[find_alpha[1], :]
         else
-            nalpha = nvett.^α[i_alpha]
+            nalpha = nvett.^order[i_alpha]
             nalpha1 = nalpha.*nvett
             bn[i_alpha, :] = nalpha[2:end] - nalpha[1:end-1]
             an[i_alpha, :] = [1; (nalpha1[1:end-2] - 2*nalpha1[2:end-1] + nalpha1[3:end]) ]
-            a0[i_alpha, :] = [0; nalpha1[1:end-2]-nalpha[2:end-1].*(nvett[2:end-1].-α[i_alpha].-1)]
+            a0[i_alpha, :] = [0; nalpha1[1:end-2]-nalpha[2:end-1].*(nvett[2:end-1].-order[i_alpha].-1)]
         end
     end
     METH.bn = bn; METH.an = an; METH.a0 = a0
-    METH.halpha1 = h.^α./gamma.(α.+1)
-    METH.halpha2 = h.^α./gamma.(α.+2)
+    METH.halpha1 = h.^order./gamma.(order.+1)
+    METH.halpha2 = h.^order./gamma.(order.+2)
     METH.mu = mu; METH.mu_tol = mu_tol
 
     # Evaluation of FFT of coefficients of the PECE method
@@ -116,7 +119,7 @@ function solve(prob::FODESystem, h, ::PECE)
             coef_end = 2^l*r
             for i_alpha = 1 : alpha_length
                 find_alpha = Float64[]
-                if α[i_alpha] == α[1:i_alpha-1]
+                if order[i_alpha] == order[1:i_alpha-1]
                     push!(find_alpha, i_alpha)
                 end
                 if isempty(find_alpha) == false

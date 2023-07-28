@@ -1,18 +1,8 @@
-"""
-    FDEProblem
-
-General type for all kinds of problems in FractionalDiffEq.jl.
-"""
+using SciMLBase, DiffEqBase
+abstract type AbstractFDEProblem <: SciMLBase.AbstractDEProblem end
+abstract type AbstractFODEProblem{uType, tType, oType, isinplace} <: AbstractFDEProblem end
+abstract type AbstractFDDEProblem{uType, tType, oType, lType, isinplace} <: AbstractFDEProblem end
 abstract type FDEProblem end
-
-
-"""
-    MultiTermsFODEProblem(parameters, orders, rightfun, u0, T)
-
-    MultiTermsFODEProblem(parameters, orders, rightfun, rparameters, rorders, u0, T)
-
-Define a multi-terms fractional ordinary differential equation.
-"""
 struct MultiTermsFODEProblem <: FDEProblem
     parameters
     orders
@@ -34,15 +24,52 @@ MultiTermsFODEProblem(parameters, orders, rightfun, u0, T) = MultiTermsFODEProbl
 
 Define a single term fractional ordinary differential equation, there are only one fractional differential operator in this problem.
 """
-struct SingleTermFODEProblem <: FDEProblem
-    f::Function
-    α::Float64
-    u0::Union{AbstractArray, Number}
-    tspan::Union{Tuple, Number}
-    p::Union{AbstractArray, Number, Nothing}
+#=
+abstract type AbstractTestProblem{uType, tType, isinplace} <: SciMLBase.AbstractODEProblem{uType, tType, isinplace} end
+=#
+
+
+SciMLBase.isinplace(prob::AbstractFODEProblem{uType, tType, oType, iip}) where {uType, tType, oType, iip} = iip
+SciMLBase.isinplace(prob::AbstractFDDEProblem{uType, tType, oType, lType, isinplace}) where {uType, tType, oType, lType, isinplace} = iip
+
+struct StandardFODEProblem end
+
+struct FODEProblem{uType, tType, oType, isinplace, P, F, bF, PT, K} <:
+        AbstractFODEProblem{uType, tType, oType, isinplace}
+    f::F
+    order::oType
+    u0::uType
+    tspan::tType
+    p::P
+    problem_type::PT
+    kwargs::K
+    SciMLBase.@add_kwonly function FODEProblem{iip}(f::SciMLBase.AbstractODEFunction, order, u0, tspan,
+        p = SciMLBase.NullParameters(),
+        problem_type = StandardFODEProblem();
+        kwargs...) where {iip}
+        _tspan = SciMLBase.promote_tspan(tspan)
+        #warn_paramtype(p)
+        new{typeof(u0), typeof(_tspan), typeof(order), iip, typeof(p),
+            typeof(f), typeof(order),
+            typeof(problem_type), typeof(kwargs)}(f, order, u0, _tspan, p,
+            problem_type, kwargs)
+    end
+
+    function FODEProblem{iip}(f, order, u0, tspan, p = SciMLBase.NullParameters(); kwargs...) where {iip}
+        FODEProblem(ODEFunction{iip}(f), order, u0, tspan, p; kwargs...)
+    end
 end
 
-SingleTermFODEProblem(f::Function, α::Float64, u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number}) = SingleTermFODEProblem(f, α, u0, tspan, nothing)
+TruncatedStacktraces.@truncate_stacktrace SingleTermFODEProblem 3 1 2
+
+function FODEProblem(f::SciMLBase.AbstractODEFunction, order, u0, tspan, args...; kwargs...)
+    FODEProblem{SciMLBase.isinplace(f, 4)}(f, order, u0, tspan, args...; kwargs...)
+end
+
+function FODEProblem(f, order, u0, tspan, p = SciMLBase.NullParameters(); kwargs...)
+    FODEProblem(ODEFunction(f), order, u0, tspan, p; kwargs...)
+end
+
 
 """
     FDDEProblem(f, ϕ, α, τ, tspan)

@@ -1,6 +1,7 @@
 module FractionalDiffEq
 
 using LinearAlgebra
+using SciMLBase, DiffEqBase
 using SpecialFunctions
 using SparseArrays
 using InvertedIndices: Not
@@ -13,18 +14,11 @@ using ToeplitzMatrices
 using RecipesBase
 using ForwardDiff
 using Polynomials: Polynomial
+using TruncatedStacktraces
 
 include("types/problems.jl")
 include("types/algorithms.jl")
 include("types/solutions.jl")
-
-
-# Single-term fractional ordinary differential equations
-include("singletermfode/PECE.jl")
-include("singletermfode/product_integral.jl")
-include("singletermfode/GL.jl")
-include("singletermfode/atangana_seda.jl")
-include("singletermfode/Euler.jl")
 
 # Multi-terms fractional ordinary differential equations
 include("multitermsfode/matrix.jl")
@@ -80,7 +74,7 @@ export solve, FDEProblem
 export FDDEProblem, FDDESystem, FDDEMatrixProblem
 
 # FODE problems
-export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FFPODEProblem, FFEODEProblem, FFMODEProblem
+export FODEProblem, MultiTermsFODEProblem, DODEProblem, FFPODEProblem, FFEODEProblem, FFMODEProblem
 
 # Fractional Discrete probelms
 export FractionalDiscreteProblem, FractionalDiscreteSystem
@@ -94,14 +88,15 @@ export FODESolution, FDifferenceSolution, DODESolution, FFMODESolution
 export FODESystemSolution, FDDESystemSolution, FFMODESystem
 
 # FODE solvers
-export PIEX, PIPECE, PIRect, PITrap
+export PIPECE, PIRect, PITrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, GL
-export AtanganaSeda, AtanganaSedaAB
-export Euler
+export AtanganaSedaAB
+#export Euler
 
 # System of FODE solvers
 export NonLinearAlg, FLMMBDF, FLMMNewtonGregory, FLMMTrap, PIEX, NewtonPolynomial
 export AtanganaSedaCF
+export AtanganaSeda
 
 # FDDE solvers
 export DelayPECE, DelayABM, MatrixForm
@@ -128,7 +123,5 @@ export FOLyapunov, FOLE
 
 # Distributed order auxiliary SpecialFunctions
 export DOB, DOF, DORANORT, isFunction
-
-export ourfft, ourifft, rowfft, FastConv
 
 end

@@ -1,5 +1,5 @@
 """
-    solve(prob::FODEsystem, FLMMTrap())
+    solve(prob::FODEProblem, FLMMTrap())
 
 Use [Trapezoidal](https://en.wikipedia.org/wiki/Trapezoidal_rule_(differential_equations)) with generating function ``f(x)=\\frac{1+x}{2(1-x)^\\alpha}`` generated weights fractional linear multiple steps method to solve system of FODE.
 
@@ -17,15 +17,15 @@ Use [Trapezoidal](https://en.wikipedia.org/wiki/Trapezoidal_rule_(differential_e
 """
 struct FLMMTrap <: FODESystemAlgorithm end
 
-function solve(prob::FODESystem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
-    @unpack f, α, u0, tspan, p = prob
+function solve(prob::FODEProblem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
+    @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     u0 = u0
-    alpha = α[1]
+    alpha = order[1]
     maxiters = 100
 
     # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
-    max_order = findmax(α)[1]
+    max_order = findmax(order)[1]
     if max_order > 1
         @error "This method doesn't support high order FDEs"
     end

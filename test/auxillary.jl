@@ -51,13 +51,6 @@ end
     @test isFunction("Hello")==false
 end
 
-@testset "Test singleterm show method" begin
-    # SingleTermFODEProblem
-    singlefun(x, y) = 1-y
-    singletermprob = SingleTermFODEProblem(singlefun, 1.8, 0, 5)
-    @test_nowarn show(singletermprob)
-end
-
 @testset "Test Multiterms show method" begin
     # MultiTermsFODEProblem
     rightfun(x, y) = 172/125*cos(4/5*x)
@@ -68,7 +61,7 @@ end
     @test_nowarn show(multitermssol)
 end
 
-@testset "Test FODESystem show method" begin
+@testset "Test FODEProblem show method" begin
     # FODESystem
     h=0.5; tspan=(0, 1)
     alpha = [0.99, 0.99, 0.99]
@@ -79,7 +72,7 @@ end
         du[2] = u[1]*(b-u[3])-u[2]
         du[3] = u[1]*u[2]-c*u[3]
     end
-    fodesystemprob = FODESystem(testf!, alpha, x0, tspan)
+    fodesystemprob = FODEProblem(testf!, alpha, x0, tspan)
     fodesystemsol = solve(fodesystemprob, h, GL())
 
     @test_nowarn show(fodesystemprob)

@@ -1,6 +1,7 @@
 
+
 """
-    solve(prob::FODESystem, h, PIEX())
+    solve(prob::FODEProblem, h, PIEX())
 
 Use explicit Product integration method to solve system of FODE.
 """
@@ -19,24 +20,24 @@ mutable struct M
     bn_fft
 end
 
-function solve(prob::FODESystem, h, ::PIEX)
-    @unpack f, α, u0, tspan, p = prob
+function solve(prob::FODEProblem, h, ::PIEX)
+    @unpack f, order, u0, tspan, p = prob
 
     t0 = tspan[1]; T = tspan[2]
 
     # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
-    max_order = findmax(α)[1]
+    max_order = findmax(order)[1]
     if max_order > 1
         @error "This method doesn't support high order FDEs"
     end
 
     METH = M(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)# Initialization
-    α = α[:]
+    order = order[:]
     # Check compatibility size of the problem with number of fractional orders
-    alpha_length = length(α)
+    alpha_length = length(order)
     problem_size = size(u0, 1)
 
-    m_alpha = ceil.(Int, α)
+    m_alpha = ceil.(Int, order)
     m_alpha_factorial = zeros(alpha_length, maximum(m_alpha))
     for i = 1 : alpha_length
         for j = 0 : m_alpha[i]-1
@@ -63,21 +64,21 @@ function solve(prob::FODESystem, h, ::PIEX)
     bn = zeros(alpha_length, NNr+1)#; an = copy(bn); a0 = copy(bn)
     for i_alpha = 1:alpha_length
         find_alpha = Float64[]
-        if α[i_alpha] == α[1:i_alpha-1]
+        if order[i_alpha] == order[1:i_alpha-1]
             push!(find_alpha, i_alpha)
         end
 
         if isempty(find_alpha) == false
             bn[i_alpha, :] = bn[find_alpha[1], :]
-        elseif abs(α[i_alpha]-1) < 1e-14
+        elseif abs(order[i_alpha]-1) < 1e-14
             bn[i_alpha, :] = [1; zeros(NNr)]
         else
-            nalpha = nvett.^α[i_alpha]
+            nalpha = nvett.^order[i_alpha]
             bn[i_alpha, :] = nalpha[2:end] - nalpha[1:end-1]
         end
     end
     METH.bn = bn
-    METH.halpha1 = h.^α./gamma.(α.+1)
+    METH.halpha1 = h.^order./gamma.(order.+1)
 
     # Evaluation of FFT of coefficients of the PECE method
     METH.r = r 
@@ -96,7 +97,7 @@ function solve(prob::FODESystem, h, ::PIEX)
             coef_end = 2^l*r
             for i_alpha = 1 : alpha_length
                 find_alpha = Float64[]
-                if α[i_alpha] == α[1:i_alpha-1]
+                if order[i_alpha] == order[1:i_alpha-1]
                     push!(find_alpha, i_alpha)
                 end
                 if isempty(find_alpha) == false
@@ -113,14 +114,14 @@ function solve(prob::FODESystem, h, ::PIEX)
     t = t0 .+ collect(0:N)*h
     y[:, 1] = u0[:, 1]
     fy[:, 1] = f_temp
-    (y, fy) = PIEX_system_triangolo(1, r-1, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, α, p)
+    (y, fy) = PIEX_system_triangolo(1, r-1, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, order, p)
 
     # Main process of computation by means of the FFT algorithm
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0; 2] ; card_ff = 2
     nx0::Int = 0; ny0::Int = 0
     for qr = 0 : Qr
         L = 2^qr 
-        (y, fy) = PIEX_system_disegna_blocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, α, p)
+        (y, fy) = PIEX_system_disegna_blocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, order, p)
         ff[1:2*card_ff] = [ff[1:card_ff]; ff[1:card_ff]] 
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
