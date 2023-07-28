@@ -1,3 +1,5 @@
+struct AtanganaSeda <: FODESystemAlgorithm end
+
 function solve(prob::Union{FFMODEProblem, FFMODESystem}, h::Float64, ::AtanganaSeda)
     if typeof(prob.order[2]) <: Function
         solve_cf_variable_ffodesystem(prob, h)

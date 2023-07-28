@@ -1,5 +1,5 @@
 """
-    solve(prob::FODESystem, h, FLMMBDF())
+    solve(prob::FODEProblem, h, FLMMBDF())
 
 Use [Backward Differentiation Formula](https://en.wikipedia.org/wiki/Backward_differentiation_formula) generated weights fractional linear multi-steps method to solve system of FODE.
 
@@ -17,13 +17,13 @@ Use [Backward Differentiation Formula](https://en.wikipedia.org/wiki/Backward_di
 """
 struct FLMMBDF <: FODESystemAlgorithm end
 
-function solve(prob::FODESystem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6, maxiters = 100)
-    @unpack f, α, u0, tspan, p = prob
+function solve(prob::FODEProblem, h, ::FLMMBDF; reltol=1e-6, abstol=1e-6, maxiters = 100)
+    @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
-    alpha = α[1]
+    alpha = order[1]
 
     # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
-    max_order = findmax(α)[1]
+    max_order = findmax(order)[1]
     if max_order > 1
         @error "This method doesn't support high order FDEs"
     end

@@ -1,5 +1,5 @@
 """
-    solve(prob::FODESystem, h, FLMMNewtonGregory())
+    solve(prob::FODEProblem, h, FLMMNewtonGregory())
 
 Use [Newton Gregory](https://www.geeksforgeeks.org/newton-forward-backward-interpolation/) generated weights fractional linear multiple steps method to solve system of FODE.
 
@@ -17,13 +17,13 @@ Use [Newton Gregory](https://www.geeksforgeeks.org/newton-forward-backward-inter
 """
 struct FLMMNewtonGregory <: FODESystemAlgorithm end
 
-function solve(prob::FODESystem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-6, maxiters = 100)
-    @unpack f, α, u0, tspan, p = prob
+function solve(prob::FODEProblem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-6, maxiters = 100)
+    @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
-    alpha = α[1]
+    alpha = order[1]
 
     # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
-    max_order = findmax(α)[1]
+    max_order = findmax(order)[1]
     if max_order > 1
         @error "This method doesn't support high order FDEs"
     end

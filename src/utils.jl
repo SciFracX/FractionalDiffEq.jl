@@ -5,28 +5,10 @@ function Base.show(io::IO, sol::FODESolution)
     println(sol.u)
 end
 
-function Base.show(io::IO, prob::SingleTermFODEProblem)
-    printstyled(typeof(prob), color=:light_blue)
-    printstyled(" with order ")
-    printstyled("$(prob.α)", color=:red)
-    println()
-    println("timespan: $(prob.tspan)")
-    println("u0: $(prob.u0)")
-end
-
 function Base.show(io::IO, prob::MultiTermsFODEProblem)
     printstyled(typeof(prob), color=:light_blue)
     printstyled(" with order ")
     printstyled("$(prob.orders)", color=:red)
-    println()
-    println("timespan: $(prob.tspan)")
-    println("u0: $(prob.u0)")
-end
-
-function Base.show(io::IO, prob::FODESystem)
-    printstyled(typeof(prob), color=:light_blue)
-    printstyled(" with order ")
-    printstyled("$(prob.α)", color=:red)
     println()
     println("timespan: $(prob.tspan)")
     println("u0: $(prob.u0)")

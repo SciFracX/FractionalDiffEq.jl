@@ -42,9 +42,9 @@ end
 # Dispatch for parameters not specified
 FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out) = FOLyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, nothing)
 
-#FOLyapunov(sys::FODESystem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out)
-FOLyapunov(sys::FODESystem, h_norm, h, out, p) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out, p)
-FOLyapunov(sys::FODESystem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out, nothing)
+#FOLyapunov(sys::FODEProblem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out)
+FOLyapunov(sys::FODEProblem, h_norm, h, out, p) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out, p)
+FOLyapunov(sys::FODEProblem, h_norm, h, out) = FOLyapunov(sys.f, sys.α, sys.tspan[1], h_norm, sys.tspan[2], sys.u0, h, out, nothing)
 
 @inline function is_all_equal(order::AbstractArray)
     length(order) < 2 && return true
@@ -85,7 +85,7 @@ function noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out
     LExp = zeros(ne)
     for it=1:n_it
         # Here we directly use the buildin PECE algorithm to solve the extend system, SO FAST!!!
-        prob = FODESystem(extend_fun, q[:], x[:], (t, t+h_norm), p)
+        prob = FODEProblem(extend_fun, q[:], x[:], (t, t+h_norm), p)
         sol = solve(prob, h, PECE())
         Y = sol.u
         t = t+h_norm
@@ -257,7 +257,7 @@ mutable struct M
     an_fft
     bn_fft
 end
-#TODO: Decouple ABM methods for FODESystems from FractionalSystems.jl to FractionalDiffEq.jl
+#TODO: Decouple ABM methods for FODEProblems from FractionalSystems.jl to FractionalDiffEq.jl
 function pc(alpha, f_fun, t0, T, y0, h, p)
     METH = M(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
     mu_tol = 1.0e-6
