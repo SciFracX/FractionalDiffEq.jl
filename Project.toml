@@ -33,6 +33,7 @@ RecipesBase = "1.2"
 SpecialFunctions = "1.6.2, 2"
 SpecialMatrices = "2.0.0"
 ToeplitzMatrices = "0.7.0, 0.8"
+TruncatedStacktraces = "1"
 UnPack = "1.0.0"
 julia = "1.2"
 
