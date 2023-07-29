@@ -22,6 +22,7 @@ TruncatedStacktraces = "781d530d-4396-4725-bb49-402e4bee1e77"
 UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
 
 [compat]
+DiffEqBase = "6"
 FFTW = "1.0.0"
 ForwardDiff = "0.10"
 HypergeometricFunctions = "0.3.8"
