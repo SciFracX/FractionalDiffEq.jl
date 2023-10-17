@@ -1,7 +1,7 @@
 # Fractional Order Lotka Volterra System
 
 ```julia
-using FractionalDiffEq
+using FractionalDiffEq, Plots
 
 h=0.005
 alpha = [0.95, 0.95, 0.95]
@@ -14,10 +14,9 @@ function LotkaVolterra!(du, u, p, t)
     du[3] = -p*u[3]+s*u[3]*u[1]^2
 end
 prob = FODESystem(LotkaVolterra!, alpha, x0, tspan)
-result = solve(prob, h, GL())
+sol = solve(prob, h, GL())
 
-using Plots
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Lotka Volterra System")
+plot(sol, vars=(1,2,3), title="Fractional Order Lotka Volterra System")
 ```
 
 ![LotkaVolterra](./assets/LotkaVolterra.png)

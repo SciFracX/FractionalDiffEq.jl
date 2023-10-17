@@ -1,18 +1,8 @@
-"""
-    FDEProblem
-
-General type for all kinds of problems in FractionalDiffEq.jl.
-"""
+using SciMLBase, DiffEqBase
+abstract type AbstractFDEProblem <: SciMLBase.AbstractDEProblem end
+abstract type AbstractFODEProblem{uType, tType, oType, isinplace} <: AbstractFDEProblem end
+abstract type AbstractFDDEProblem{uType, tType, oType, lType, isinplace} <: AbstractFDEProblem end
 abstract type FDEProblem end
-
-
-"""
-    MultiTermsFODEProblem(parameters, orders, rightfun, u0, T)
-
-    MultiTermsFODEProblem(parameters, orders, rightfun, rparameters, rorders, u0, T)
-
-Define a multi-terms fractional ordinary differential equation.
-"""
 struct MultiTermsFODEProblem <: FDEProblem
     parameters
     orders
@@ -34,33 +24,58 @@ MultiTermsFODEProblem(parameters, orders, rightfun, u0, T) = MultiTermsFODEProbl
 
 Define a single term fractional ordinary differential equation, there are only one fractional differential operator in this problem.
 """
-struct SingleTermFODEProblem <: FDEProblem
-    f::Function
-    α::Float64
-    u0::Union{AbstractArray, Number}
-    tspan::Union{Tuple, Number}
-    p::Union{AbstractArray, Number, Nothing}
+#=
+abstract type AbstractTestProblem{uType, tType, isinplace} <: SciMLBase.AbstractODEProblem{uType, tType, isinplace} end
+=#
+
+
+SciMLBase.isinplace(prob::AbstractFODEProblem{uType, tType, oType, iip}) where {uType, tType, oType, iip} = iip
+SciMLBase.isinplace(prob::AbstractFDDEProblem{uType, tType, oType, lType, isinplace}) where {uType, tType, oType, lType, isinplace} = iip
+
+struct StandardFODEProblem end
+
+struct FODEProblem{uType, tType, oType, isinplace, P, F, bF, PT, K} <:
+        AbstractFODEProblem{uType, tType, oType, isinplace}
+    f::F
+    order::oType
+    u0::uType
+    tspan::tType
+    p::P
+    problem_type::PT
+    kwargs::K
+    SciMLBase.@add_kwonly function FODEProblem{iip}(f::SciMLBase.AbstractODEFunction, order, u0, tspan,
+        p = SciMLBase.NullParameters(),
+        problem_type = StandardFODEProblem();
+        kwargs...) where {iip}
+        _tspan = SciMLBase.promote_tspan(tspan)
+        #warn_paramtype(p)
+        new{typeof(u0), typeof(_tspan), typeof(order), iip, typeof(p),
+            typeof(f), typeof(order),
+            typeof(problem_type), typeof(kwargs)}(f, order, u0, _tspan, p,
+            problem_type, kwargs)
+    end
+
+    function FODEProblem{iip}(f, order, u0, tspan, p = SciMLBase.NullParameters(); kwargs...) where {iip}
+        FODEProblem(ODEFunction{iip}(f), order, u0, tspan, p; kwargs...)
+    end
 end
 
-SingleTermFODEProblem(f::Function, α::Float64, u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number}) = SingleTermFODEProblem(f, α, u0, tspan, nothing)
+TruncatedStacktraces.@truncate_stacktrace SingleTermFODEProblem 3 1 2
 
-
-"""
-    FPDEProblem(α, β, T, M, N)
-
-Define fractional order partial differential equations problem
-"""
-struct FPDEProblem <: FDEProblem
-    α
-    β
-    T
-    M
-    N
+function FODEProblem(f::SciMLBase.AbstractODEFunction, order, u0, tspan, args...; kwargs...)
+    FODEProblem{SciMLBase.isinplace(f, 4)}(f, order, u0, tspan, args...; kwargs...)
 end
+
+function FODEProblem(f, order, u0, tspan, p = SciMLBase.NullParameters(); kwargs...)
+    FODEProblem(ODEFunction(f), order, u0, tspan, p; kwargs...)
+end
+
 
 """
     FDDEProblem(f, ϕ, α, τ, tspan)
 
+- `f`: The function describing fractional delay differential equations.
+- `ϕ`: History function
 Construct a fractional delayed differential equation problem.
 """
 struct FDDEProblem <: FDEProblem
@@ -70,10 +85,16 @@ struct FDDEProblem <: FDEProblem
     τ::Union{Number, AbstractArray, Function}
     tspan::Union{Number, Tuple}
 end
-
+#=
 #=FDDEProblem constructor=#
-FDDEProblem(f::Function, ϕ::Union{Number, Function}, α::Union{Number, Function}, τ::Union{Number, AbstractArray, Function}, T::Union{Tuple, Number}) = FDDEProblem(f, ϕ, α, τ, T, nothing)
-
+function FDDEProblem(f::Function,
+                     ϕ::Union{Number, Function},
+                     α::Union{Number, Function},
+                     τ::Union{Number, AbstractArray, Function},
+                     T::Union{Tuple, Number})
+    return FDDEProblem(f, ϕ, α, τ, T)
+end
+=#
 """
     FDDESystem(f, ϕ, α, τ, T)
 
@@ -120,7 +141,12 @@ struct FODESystem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-FODESystem(f::Function, α::AbstractArray, u0::AbstractArray, tspan::Union{Tuple, Number}) = FODESystem(f, α, u0, tspan, nothing)
+function FODESystem(f::Function,
+                    α::AbstractArray,
+                    u0::AbstractArray,
+                    tspan::Union{Tuple, Number})
+    FODESystem(f, α, u0, tspan, nothing)
+end
 
 
 """
@@ -137,7 +163,12 @@ struct FFPODEProblem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-FFPODEProblem(f::Function, order::Union{AbstractArray, Function}, u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number}) = FFPODEProblem(f, order, u0, tspan, nothing)
+function FFPODEProblem(f::Function,
+                       order::Union{AbstractArray, Function},
+                       u0::Union{AbstractArray, Number},
+                       tspan::Union{Tuple, Number})
+    FFPODEProblem(f, order, u0, tspan, nothing)
+end
 
 """
     FFEODEProblem(f, α, u0, tspan, p)
@@ -153,7 +184,12 @@ struct FFEODEProblem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-FFEODEProblem(f::Function, order::Union{AbstractArray, Function}, u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number}) = FFEODEProblem(f, order, u0, tspan, nothing)
+function FFEODEProblem(f::Function,
+                       order::Union{AbstractArray, Function},
+                       u0::Union{AbstractArray, Number},
+                       tspan::Union{Tuple, Number})
+    FFEODEProblem(f, order, u0, tspan, nothing)
+end
 
 """
     FFMODEProblem(f, α, u0, tspan, p)
@@ -169,7 +205,12 @@ struct FFMODEProblem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-FFMODEProblem(f::Function, order::Union{AbstractArray, Function}, u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number}) = FFMODEProblem(f, order, u0, tspan, nothing)
+function FFMODEProblem(f::Function,
+                       order::Union{AbstractArray, Function},
+                       u0::Union{AbstractArray, Number},
+                       tspan::Union{Tuple, Number})
+    FFMODEProblem(f, order, u0, tspan, nothing)
+end
 
 struct FFMODESystem <: FDEProblem
     f::Function
@@ -180,7 +221,12 @@ struct FFMODESystem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-FFMODESystem(f::Function, order::Union{AbstractArray, Function}, u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number}) = FFMODESystem(f, order, u0, tspan, nothing)
+function FFMODESystem(f::Function,
+                      order::Union{AbstractArray, Function},
+                      u0::Union{AbstractArray, Number},
+                      tspan::Union{Tuple, Number})
+    FFMODESystem(f, order, u0, tspan, nothing)
+end
 
 """
     DODEProblem(parameters, orders, interval, tspan, rightfun)
@@ -201,12 +247,16 @@ end
 
 Define fractional difference equation problems.
 """
-struct FractionalDifferenceProblem <: FDEProblem
+struct FractionalDiscreteProblem <: FDEProblem
     fun::Function
     α
     u0
+    tspan::Union{Tuple, Real, Nothing}
+    p::Union{AbstractArray, Nothing}
 end
 
+FractionalDiscreteProblem(fun, α, u0, tspan) = FractionalDiscreteProblem(fun, α, u0, tspan, nothing)
+FractionalDiscreteProblem(fun, α, u0) = FractionalDiscreteProblem(fun, α, u0, nothing)
 
 """
     FractionalDifferenceSystem(f, α, u0)
@@ -219,15 +269,16 @@ Define Fractional Difference System with the general constructure:
 
 With given initial condition ``x(i)``.
 """
-struct FractionalDifferenceSystem <: FDEProblem
+struct FractionalDiscreteSystem <: FDEProblem
     fun::Function
     α
     u0
+    tspan::Union{Tuple, Real, Nothing}
     p::Union{AbstractArray, Number, Nothing}
 end
 
-FractionalDifferenceSystem(fun, α, u0) = FractionalDifferenceSystem(fun, α, u0, nothing)
-
+FractionalDiscreteSystem(fun, α, u0, tspan) = FractionalDiscreteSystem(fun, α, u0, tspan, nothing)
+FractionalDiscreteSystem(fun, α, u0) = FractionalDiscreteSystem(fun, α, u0, nothing)
 
 ################################################################################
 

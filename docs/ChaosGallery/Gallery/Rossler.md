@@ -1,7 +1,7 @@
 # Fractional Order Rossler System
 
 ```julia
-using FractionalDiffEq
+using FractionalDiffEq, Plots
 
 h=0.005
 alpha = [0.9, 0.85, 0.95]
@@ -14,10 +14,9 @@ function Rossler!(du, u, p, t)
     du[3] = b+u[3]*(u[1]-c)
 end
 prob = FODESystem(Rossler!, alpha, x0, tspan)
-result = solve(prob, h, GL())
+sol = solve(prob, h, GL())
 
-using Plots
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Rossler System")
+plot(sol, vars=(1,2,3), title="Fractional Order Rossler System")
 
 ```
 

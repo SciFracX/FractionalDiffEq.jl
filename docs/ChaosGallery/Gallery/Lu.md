@@ -1,7 +1,7 @@
 # Fractional Order Lu System
 
 ```julia
-using FractionalDiffEq
+using FractionalDiffEq, Plots
 
 h=0.005
 alpha = [0.985, 0.99, 0.98]
@@ -14,10 +14,9 @@ function Lu!(du, u, p, t)
     du[3] = u[1]*u[2]-b*u[3]
 end
 prob = FODESystem(Lu!, alpha, x0, tspan)
-result = solve(prob, h, GL())
+sol = solve(prob, h, GL())
 
-using Plots
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Lu System")
+plot(sol, vars=(1,2,3), title="Fractional Order Lu System")
 ```
 
 ![Lu](./assets/Lu.png)

@@ -24,13 +24,13 @@ function Brusselator!(du, u, p, t)
 end
 
 prob = FODESystem(Brusselator!, α, u0, tspan)
-result = solve(prob, h, GL())
+sol = solve(prob, h, GL())
 
 # Phase plane
-plot(result, vars=(1,2))
+plot(sol, vars=(1,2))
 
 # Time plane
-plot(result, vars=(0,1,2))
+plot(sol, vars=(0,1,2))
 ```
 
 ![BrusselatorPhase](./assets/Brusselator.png)

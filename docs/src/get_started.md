@@ -1,6 +1,6 @@
 # Get Start
 
-We would use the simple example -- [Relaxation Oscillation Process](https://encyclopediaofmath.org/wiki/Relaxation_oscillation) example to show you how to use FractionalDiffEq.jl🙂
+We would use a simple example -- [Relaxation Oscillation Process](https://encyclopediaofmath.org/wiki/Relaxation_oscillation) to show you how to use FractionalDiffEq.jl to solve fractional differential equations.🙂
 
 The mathematical model of the fractional order Relaxation Oscillation can be abstracted as an IVP:
 
@@ -58,7 +58,7 @@ After defining a problem, we can solve it by calling the ```solve``` function:
 sol = solve(prob, h, Alg())
 ```
 
-Note that there are different algorithms for differential fractional differential equations, such as FODE, FPDE, FDDE and FIE, we need to choose a suitable algorithm for specific problem. For all the algorithms, please refer to [algorithms documentation](@ref algorithms).
+Note that there are different algorithms for differential fractional differential equations, such as FODE, FDDE and DODE, we need to choose a suitable algorithm for specific problem. For all the algorithms, please refer to [algorithms documentation](@ref algorithms).
 
 ## Step3 : Analyzing the Solution
 

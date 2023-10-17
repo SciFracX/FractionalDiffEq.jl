@@ -36,4 +36,4 @@ abstract type SingleTermFODEAlgorithm <: AbstractFDEAlgorithm end
 """
 Base type for fractional order difference equations algorithms.
 """
-abstract type FDifferenceAlgorithm <: AbstractFDEAlgorithm end
+abstract type FractionalDiscreteAlgorithm <: AbstractFDEAlgorithm end

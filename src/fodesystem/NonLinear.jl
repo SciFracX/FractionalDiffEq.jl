@@ -1,7 +1,7 @@
 """
 # Usage
 
-    solve(prob::FODESystem, h, NonLinearAlg())
+    solve(prob::FODEProblem, h, NonLinearAlg())
 
 Nonlinear algorithm for nonlinear fractional differential equations.
 
@@ -11,8 +11,8 @@ Dingyu Xue, Northeastern University, China ISBN:9787030543981
 """
 struct NonLinearAlg <: FODESystemAlgorithm end
 
-function solve(prob::FODESystem, h, ::NonLinearAlg, L0=1e10)
-    @unpack f, α, u0, tspan, p = prob
+function solve(prob::FODEProblem, h, ::NonLinearAlg, L0=1e10)
+    @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
     time = collect(t0:h:T)
     n = length(u0)
@@ -20,7 +20,7 @@ function solve(prob::FODESystem, h, ::NonLinearAlg, L0=1e10)
     g = genfun(1)
     g = g[:]
     u0 = u0[:]
-    ha = h.^α
+    ha = h.^order
     z = zeros(Float64, n, m)
     x1::Vector{Float64} = copy(u0)
 
@@ -29,7 +29,7 @@ function solve(prob::FODESystem, h, ::NonLinearAlg, L0=1e10)
     W = zeros(n, SetMemoryEffect) #Initializing W a n*m matrix
 
     @fastmath @inbounds @simd for i = 1:n
-        W[i, :] = getvec(α[i], SetMemoryEffect, g)
+        W[i, :] = getvec(order[i], SetMemoryEffect, g)
     end
 
     du = zeros(n)
@@ -60,12 +60,12 @@ function genfun(p)
     return (1 .-a')*inv(A')
 end
 
-function getvec(α, n, g)
+function getvec(order, n, g)
     p = length(g)-1
-    b = 1 + α
+    b = 1 + order
     g0 = g[1]
     w = Float64[]
-    push!(w, g[1]^α)
+    push!(w, g[1]^order)
 
     @fastmath @inbounds @simd for m = 2:p
         M = m-1

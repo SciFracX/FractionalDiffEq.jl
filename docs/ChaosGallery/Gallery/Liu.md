@@ -1,7 +1,7 @@
 # Fractional Order Liu System
 
 ```julia
-using FractionalDiffEq
+using FractionalDiffEq, Plots
 
 h=0.005
 alpha = [0.95, 0.95, 0.95]
@@ -14,10 +14,9 @@ function Liu!(du, u, p, t)
     du[3] = -c*u[3]+m*u[1]*u[2]
 end
 prob = FODESystem(Liu!, alpha, x0, tspan)
-result = solve(prob, h, GL())
+sol = solve(prob, h, GL())
 
-using Plots
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Liu System")
+plot3d(sol, vars=(1,2,3), title="Fractional Order Liu System")
 ```
 
 ![Liu](./assets/Liu.png)

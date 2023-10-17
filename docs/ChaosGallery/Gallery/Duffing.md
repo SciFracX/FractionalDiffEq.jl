@@ -1,7 +1,7 @@
 # Fractional Order Duffing System
 
 ```julia
-using FractionalDiffEq
+using FractionalDiffEq, Plots
 
 h=0.005
 alpha = [0.9, 1]
@@ -13,10 +13,9 @@ function Duffing!(du, u, p, t)
     du[2] = u[1]-α*u[2]-u[1]^3+δ*cos(ω*t)
 end
 prob = FODESystem(Duffing!, alpha, x0, tspan)
-result = solve(prob, h, GL())
+sol = solve(prob, h, GL())
 
-using Plots
-plot(result, vars=(1,2), title="Fractional Order Duffing System")
+plot(sol, vars=(1,2), title="Fractional Order Duffing System")
 ```
 
 ![Duffing](./assets/Duffing.png)

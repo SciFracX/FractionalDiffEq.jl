@@ -22,8 +22,8 @@ FractionalDiffEq.FODEMatrixDiscrete
 FractionalDiffEq.ClosedForm
 FractionalDiffEq.ClosedFormHankelM
 FractionalDiffEq.PIPECE
-FractionalDiffEq.PIIMRect
-FractionalDiffEq.PIIMTrap
+FractionalDiffEq.PIRect
+FractionalDiffEq.PITrap
 ```
 
 ### System of FODE
@@ -38,16 +38,6 @@ FractionalDiffEq.FLMMTrap
 FractionalDiffEq.PIEX
 FractionalDiffEq.NewtonPolynomial
 FractionalDiffEq.AtanganaSedaAB
-```
-
-## Fractional Partial Differential Equations
-
-```@docs
-FractionalDiffEq.FPDEMatrixDiscrete
-FractionalDiffEq.FiniteDiffEx
-FractionalDiffEq.FiniteDiffIm
-FractionalDiffEq.ADV_DIF
-FractionalDiffEq.GLDiff
 ```
 
 ## Fractional Delay Differential Equatinos

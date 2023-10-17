@@ -39,3 +39,11 @@ struct FFMODESystemSolution <: AbstractFDESolution
     t::AbstractArray
     u::AbstractArray
 end
+
+
+
+
+struct FOLE
+    t::AbstractArray
+    LE::AbstractArray
+end

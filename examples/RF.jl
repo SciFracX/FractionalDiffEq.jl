@@ -1,7 +1,5 @@
 using FractionalDiffEq, Plots
 
-plotlyjs()
-
 function RF(du, u, t, p)
     du[1] = u[2]*(u[3]-1+u[1]*u[1])+0.1*u[1];
     du[2] = u[1]*(3*u[3]+1-u[1]*u[1])+0.1*u[2];

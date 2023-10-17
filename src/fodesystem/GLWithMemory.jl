@@ -1,7 +1,7 @@
 """
 # Usage
 
-    solve(prob::FODESystem, h, GL())
+    solve(prob::FODEProblem, h, GL())
 
 Use Grunwald Letnikov difference method to solve system of system of FODE.
 
@@ -18,16 +18,17 @@ doi={10.1109/MOCAST.2019.8742063}}
 
 Python version by https://github.com/DClementeL/Grunwald_Letnikov
 """
-# Grunwald Letnikov discretization method dispatch for FODESystem
+# Grunwald Letnikov discretization method dispatch for FODEProblem
 # struct GLWithMemory <: FractionalDiffEqAlgorithm end
+struct GL <: FODESystemAlgorithm end
 
-function solve(prob::FODESystem, h, ::GL)
+function solve(prob::FODEProblem, h, ::GL)
     # GL method is only for same order FODE
-    @unpack f, α, u0, tspan, p = prob
+    @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
     t = collect(Float64, t0:h:T)
-    α = α[1]
-    hα = h^α[1]
+    order = order[1]
+    horder = h^order[1]
     n::Int64 = floor(Int64, (T-t0)/h)+1
     l = length(u0)
 
@@ -35,12 +36,12 @@ function solve(prob::FODESystem, h, ::GL)
     result = zeros(Float64, length(u0), n)
     result[:, 1] = u0
 
-    # generating generalized binomial Cα
-    Cα = zeros(Float64, n)
-    Cα[1] = 1
+    # generating generalized binomial Corder
+    Corder = zeros(Float64, n)
+    Corder[1] = 1
 
     @fastmath @inbounds @simd for j in range(2, n, step=1)
-        Cα[j] = (1-(1+α)/(j-1))*Cα[j-1]
+        Corder[j] = (1-(1+order)/(j-1))*Corder[j-1]
     end
 
     du = zeros(Float64, l)
@@ -50,12 +51,12 @@ function solve(prob::FODESystem, h, ::GL)
 
         @fastmath @inbounds @simd for j in range(1, k-1, step=1)
             for i in eachindex(summation)
-                summation[i] += Cα[j+1]*result[i, k-j]
+                summation[i] += Corder[j+1]*result[i, k-j]
             end
         end
 
         f(du, result[:, k-1], p, t0+(k-1)*h)
-        result[:, k] = @. hα*du-summation
+        result[:, k] = @. horder*du-summation
     end
     return FODESystemSolution(t, result)
 end

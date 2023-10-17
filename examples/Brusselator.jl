@@ -11,7 +11,7 @@ function Brusselator!(du, u, p, t)
 end
 
 prob = FODESystem(Brusselator!, α, u0, (0, 100))
-result = solve(prob, h, GL())
+result = solve(prob, h, PECE())
 
 # Phase plane
 plot(result, vars=(1, 2))
