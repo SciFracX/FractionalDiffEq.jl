@@ -6,22 +6,38 @@ Pages = ["algorithms.md"]
 
 ## Fractional Ordinary Differential Equations
 
+### Single Term FODE
+
 ```@docs
 FractionalDiffEq.PECE
+FractionalDiffEq.Euler
+FractionalDiffEq.PIEX
+FractionalDiffEq.AtanganaSeda
+```
+
+### Multi-Term FODE
+
+```@docs
 FractionalDiffEq.FODEMatrixDiscrete
 FractionalDiffEq.ClosedForm
 FractionalDiffEq.ClosedFormHankelM
-FractionalDiffEq.ClosedFormHighPercision
-FractionalDiffEq.G2Direct
+FractionalDiffEq.PIPECE
+FractionalDiffEq.PIRect
+FractionalDiffEq.PITrap
 ```
 
-## Fractional Partial Differential Equations
+### System of FODE
 
 ```@docs
-FractionalDiffEq.FPDEMatrixDiscrete
-FractionalDiffEq.FiniteDiffEx
-FractionalDiffEq.FiniteDiffIm
-FractionalDiffEq.ADV_DIF
+FractionalDiffEq.NonLinearAlg
+FractionalDiffEq.PECE
+FractionalDiffEq.GL
+FractionalDiffEq.FLMMBDF
+FractionalDiffEq.FLMMNewtonGregory
+FractionalDiffEq.FLMMTrap
+FractionalDiffEq.PIEX
+FractionalDiffEq.NewtonPolynomial
+FractionalDiffEq.AtanganaSedaAB
 ```
 
 ## Fractional Delay Differential Equatinos
@@ -31,14 +47,6 @@ FractionalDiffEq.DelayPECE
 FractionalDiffEq.DelayPI
 FractionalDiffEq.MatrixForm
 FractionalDiffEq.DelayABM
-```
-
-## Systems of Fractional Differential Equations
-
-```@docs
-FractionalDiffEq.NonLinearAlg
-FractionalDiffEq.GLWithMemory
-FractionalDiffEq.ModifiedTrap
 ```
 
 ## Distributed Order Differential Equations
@@ -51,4 +59,5 @@ FractionalDiffEq.DOMatrixDiscrete
 
 ```@docs
 FractionalDiffEq.PECEDifference
+FractionalDiffEq.GL
 ```

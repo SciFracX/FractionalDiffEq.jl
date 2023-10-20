@@ -1,8 +1,12 @@
-using FractionalDiffEq
+using FractionalDiffEq, SpecialFunctions
 using Test
 
 @testset "FractionalDiffEq.jl" begin
-    include("test.jl")
+    include("FODETests.jl")
+    include("FDDETests.jl")
+    include("FDiscreteTests.jl")
+    include("DODETests.jl")
+    include("FFODETests.jl")
     include("auxillary.jl")
-    include("models.jl")
+    include("FOLEtest.jl")
 end

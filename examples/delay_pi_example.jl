@@ -11,10 +11,11 @@ end
 function f(t, y, ϕ)
     return 3.5*y*(1-ϕ/19)
 end
+t0=0; T=56
+tspan = (t0, T); h=0.05; τ=0.8
+prob = FDDEProblem(f, ϕ, 0.97, 0.8, tspan)
 
-prob = FDDEProblem(f, ϕ, 0.97, 0.8, 0)
-
-result = solve(prob, 56, 0.05, DelayPI())
+result = solve(prob, h, PIEX())
 using Plots
-tspan = collect(0:0.05:56)
+tspan = collect(0:h:T)
 plot(tspan, result[:])

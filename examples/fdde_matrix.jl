@@ -1,20 +1,11 @@
-using FractionalDiffEq
+using FractionalDiffEq, Plots
 
-limit=100
-t0=0
-T=1
-tau=3.1416
-h=0.5
-alpha=0.4
-function x0(t)
-    return [sin(t)*cos(t); sin(t)*cos(t); cos(t)^2-sin(t)^2; cos(t)^2-sin(t)^2]
-end
+τ=3.1416; h=0.01; α=0.4; tspan = (0, 70)
+y0(t) = [sin(t)*cos(t); sin(t)*cos(t); cos(t)^2-sin(t)^2; cos(t)^2-sin(t)^2]
 A=[0 0 1 0; 0 0 0 1; 0 -2 0 0; -2 0 0 0]
-B=[0 0 0 0; 0 0 0 0 ;-2 0 0 0; 0 -2 0 0]
+B=[0 0 0 0; 0 0 0 0; -2 0 0 0; 0 -2 0 0]
 f=[0; 0; 0; 0]
 
-result=solve(limit, alpha, A, B, f, t0, x0, T, tau, h, MatrixForm())
-
-using Plots
-
-plot(result[:, 1], result[:, 3])
+prob = FDDEMatrixProblem(α, τ, A, B, f, y0, tspan)
+sol=solve(prob, h, MatrixForm())
+plot(sol[:, 1], sol[:, 3])

@@ -8,12 +8,8 @@ Hello there👋!
 
 FractionalDiffEq.jl is a Julia package aiming at solving Fractional Differential Equations using high performance numerical methods.
 
-While the Ordinary Differential Equations and Partial Differential Equations are widely used in enormous areas and play important roles in their theoretical analysis, someone may asks, ODE and PDE are enough for nowadays modeling, has FDE any usage in our life?
-
-Well, fractional differential equation can be seen as the generalization of ODE and PDE. In our daily life, models usually are better described in fractional differential equations.
-
 !!! tip "Star Us"
-	If you think **FractionalDiffEq.jl** is useful, please [star us in GitHub](httpd://github.com/SciFracX/FractionalDiffEq.jl), it means a lot to us!
+	If you think **FractionalDiffEq.jl** is useful, please [star us on GitHub](httpd://github.com/SciFracX/FractionalDiffEq.jl), it means a lot to us!
 
 ## Installation
 
@@ -25,13 +21,13 @@ pkg> add FractionalDiffEq
 
 ## Features
 
-* While most fractional differential equations solvers are implemented using Matlab, **FractionalDiffEq.jl** is totally driven by [Julia](https://julialang.org/) and licensed with [MIT License](https://en.wikipedia.org/wiki/MIT_License), ensuring its everlasting development and open source.
+While most fractional differential equations solvers are implemented using Matlab, **FractionalDiffEq.jl** is totally driven by [Julia](https://julialang.org/) and licensed with [MIT License](https://en.wikipedia.org/wiki/MIT_License), ensuring its everlasting development and open source. Benefit from the advancing features of JuliaLang, FractionalDiffEq.jl has impressive performance and high speed, helps the computing more efficient and robust. Also fractionalDiffEq.jl has the most solvers for FDE available.
 
-* Benefit from the advancing features of JuliaLang, FractionalDiffEq.jl has impressive performance and high speed, help the model more efficient and robust.
-
-* Capable of solving both linear and nonlinear fractional differential equations. Including fractional ordinary differential equations, fractional partial differential equations, fractional delayed differential equations, distributed order differential equations, fractional differences equations and system of fractional differential equations.
-
-* Detailed models supporting, such as Lorenz system, Bagley Torvik equations, Relaxation Oscillation equations and Diffusion equations many more.
+* Fractional ordinary differential equations(FODE), single-term FODE, Multi-term FODE, nonlinear system of FODE(Caputo sense, Caputo-Fabrizio sense, Atangana-Baleanu sense, etc), variable order FODE.
+* Fractional delay differential equations(FDDE), single lag FDDE, multiple lags FDDE, time varying lags FDDE, variable order FDDE, nonlinear system of FDDE.
+* Fractional difference equations, single-term fractional difference equations and nonlinear system of fractional difference equations.
+* Distributed order differential equations(DODE), single-term DODE and multi-term DODE.
+* Fractional integral equations(FIE)
 
 ## Roadmap
 
@@ -48,10 +44,3 @@ pkg> add FractionalDiffEq
 Just by using FractionalDiffEq.jl you're already contributing!
 
 The development of FractionalDiffEq.jl is on [GitHub](https://github.com/SciFracX/FractionalDiffEq.jl), please [report bugs](https://github.com/SciFracX/FractionalDiffEq.jl/issues) or [send pull requests](https://github.com/SciFracX/FractionalDiffEq.jl/pulls) to help FractionalDiffEq.jl grow.
-
-## Acknowledge
-
-**FractionalDiffEq.jl** is built upon the hard work of many scientific researchers, I sincerely appreciate what they have done to help the development of science and technology.
-
-!!! info "WIP"
-	FractionalDiffEq.jl is under heavy construction, some APIs or docs might change a lot.

@@ -1,96 +1,127 @@
 module FractionalDiffEq
 
-using LinearAlgebra, SpecialFunctions
-using ApproxFun
-using InvertedIndices
-using QuadGK
-using SpecialMatrices
-using Polynomials
-using FFTW
-using UnPack
+using LinearAlgebra
+using SciMLBase, DiffEqBase
+using SpecialFunctions
+using SparseArrays
+using InvertedIndices: Not
+using SpecialMatrices: Vandermonde
+using FFTW: fft, ifft
+using UnPack: @unpack
+using LoopVectorization: @turbo
+using HypergeometricFunctions
+using ToeplitzMatrices
+using RecipesBase
+using ForwardDiff
+using Polynomials: Polynomial
+using TruncatedStacktraces
 
-include("PECE.jl")
-include("matrix.jl")
-include("MTrap.jl")
-include("FLMM.jl")
-include("ClosedForm/hankelmatrix.jl")
-include("ClosedForm/ClosedForm.jl")
-include("ClosedForm/highprecision.jl")
+include("types/problems.jl")
+include("types/algorithms.jl")
+include("types/solutions.jl")
 
-include("GL/GLWithMemory.jl")
-include("Direct.jl")
+# Multi-terms fractional ordinary differential equations
+include("multitermsfode/matrix.jl")
+include("multitermsfode/hankelmatrix.jl")
+include("multitermsfode/closed_form.jl")
+include("multitermsfode/explicit_pi.jl")
+include("multitermsfode/implicit_pi_pece.jl")
+include("multitermsfode/implicit_pi_trapezoid.jl")
+include("multitermsfode/implicit_pi_rectangle.jl")
 
-include("NonLinear/NonLinear.jl")
-include("NonLinear/LorenzADM.jl")
+# System of fractional ordinary differential equations
+include("fodesystem/PIPECE.jl")
+include("fodesystem/bdf.jl")
+include("fodesystem/newton_gregory.jl")
+include("fodesystem/trapezoid.jl")
+include("fodesystem/explicit_pi.jl")
+include("fodesystem/Euler.jl")
+include("fodesystem/GLWithMemory.jl")
+include("fodesystem/NonLinear.jl")
+include("fodesystem/newton_polynomials.jl")
+include("fodesystem/atangana_seda.jl")
 
-# Fractional partial differential equations
-include("FPDE/FiniteDiffEx.jl")
-include("FPDE/FiniteDiffIm.jl")
-include("FPDE/CaputoDiscrete.jl")
+# System of fractal-fractional ordinary differential equations
+include("ffode/atangana_seda.jl")
 
 # Fractional delay differential equations
-include("FDDE/DelayPECE.jl")
-include("FDDE/DelayPI.jl")
-include("FDDE/Matrix.jl")
-include("FDDE/DelayABM.jl")
+include("delay/DelayPECE.jl")
+include("delay/product_integral.jl")
+include("delay/matrix_form.jl")
+include("delay/DelayABM.jl")
 
 # Distributed order differential equations
-include("DistributedOrder/utils.jl")
-include("DistributedOrder/matrix.jl")
+include("dode/utils.jl")
+include("dode/matrix.jl")
 
 # Fractional Differences equations
-include("FractionalDifferences/PECE.jl")
-
-# Fractional integral equations
-include("FIE/Qmat.jl")
-include("FIE/mycoeffs.jl")
+include("discrete/PECE.jl")
+include("discrete/GL.jl")
 
 # Mittag Leffler function
 include("mlfun.jl")
 
+# Lyapunov exponents
+include("lyapunov.jl")
 
-export FractionalDiffEqAlgorithm
+include("utils.jl")
+include("auxiliary.jl")
 
-# Export general types
-export solve, FDEProblem, FPDEProblem, FDDEProblem
+# General types
+export solve, FDEProblem
 
-# Detailed problem types
-export SingleTermFODEProblem, MultiTermsFODEProblem, FODESystem, DODEProblem, FractionalDifferenceProblem
+# FDDE problems
+export FDDEProblem, FDDESystem, FDDEMatrixProblem
+
+# FODE problems
+export FODEProblem, MultiTermsFODEProblem, DODEProblem, FFPODEProblem, FFEODEProblem, FFMODEProblem
+
+# Fractional Discrete probelms
+export FractionalDiscreteProblem, FractionalDiscreteSystem
+
+
+###################################################
+
+
+export AbstractFDESolution
+export FODESolution, FDifferenceSolution, DODESolution, FFMODESolution
+export FODESystemSolution, FDDESystemSolution, FFMODESystem
 
 # FODE solvers
-export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, ClosedFormHighPercision, G2Direct
+export PIPECE, PIRect, PITrap
+export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, GL
+export AtanganaSedaAB
+#export Euler
 
-# FPDE solvers
-export FPDEMatrixDiscrete, FiniteDiffEx, FiniteDiffIm, ADV_DIF
-
-# System of FDE solvers
-export NonLinearAlg, GLWithMemory, ModifiedTrap, LorenzADM
+# System of FODE solvers
+export NonLinearAlg, FLMMBDF, FLMMNewtonGregory, FLMMTrap, PIEX, NewtonPolynomial
+export AtanganaSedaCF
+export AtanganaSeda
 
 # FDDE solvers
-export DelayPECE, DelayPI, MatrixForm, DelayABM
+export DelayPECE, DelayABM, MatrixForm
 
 # DODE solvers
 export DOMatrixDiscrete
 
 # Fractional Differences Equations solvers
-export PECEDifference
+# export PECE
 
-
-
+###################################################
 
 # Export some api to construct the equation
 export eliminator, RieszMatrix, omega, meshgrid
 
 # Export some special models
-export bagleytorvik, diffusion, FractionalLorenz
+export bagleytorvik, diffusion
 
 # Auxiliary functions
-export mittleff, mittlefferr, mittleffderiv
+export mittleff, mittleffderiv
+
+# Lyapunov exponents
+export FOLyapunov, FOLE
 
 # Distributed order auxiliary SpecialFunctions
 export DOB, DOF, DORANORT, isFunction
-
-# Export auxillary functions for FLMM
-export ourfft, ourifft, Weights, FastConv
 
 end
