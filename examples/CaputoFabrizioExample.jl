@@ -11,4 +11,4 @@ tspan = (0, 2)
 prob = FODESystem(LotkaVolterra, α, u0, tspan)
 sol = solve(prob, 0.5, AtanganaSedaCF())
 
-plot(sol[1, :], sol[2, :], sol[3, :])
+plot(sol, vars=(1,2,3))

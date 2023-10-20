@@ -14,7 +14,7 @@ Behave chaotic property when ``a=35``, ``b=3``, ``c=28``.
 
 
 ```julia
-using FractionalDiffEq
+using FractionalDiffEq, Plots
 
 h=0.005
 alpha = [0.9, 0.9, 0.9]
@@ -27,10 +27,9 @@ function Chen!(du, u, p, t)
     du[3] = u[1]*u[2]-b*u[3]
 end
 prob = FODESystem(Chen!, alpha, x0, tspan)
-result = solve(prob, h, GL())
+sol = solve(prob, h, GL())
 
-using Plots
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Chen System")
+plot(sol, vars=(1,2,3), title="Fractional Order Chen System")
 ```
 
 ![Chen](./assets/Chen.png)

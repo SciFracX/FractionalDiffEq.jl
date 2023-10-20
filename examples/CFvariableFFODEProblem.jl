@@ -10,6 +10,6 @@ function fun(du, u, p, t)
     du[3] = -lambda*u[2]
 end
 
-prob = FFODEProblem(fun, [alpha, β], u0, (1, tfinal))
+prob = FFMODESystem(fun, [alpha, β], u0, (1, tfinal))
 result = solve(prob, h, AtanganaSeda())
-plot3d(result[1, :], result[2, :], result[3, :])
+plot(result, vars=(1, 2, 3))

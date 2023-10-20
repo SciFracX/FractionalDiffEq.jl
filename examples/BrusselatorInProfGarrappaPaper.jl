@@ -11,10 +11,5 @@ y0=[1.2; 2.8]
 h=0.01
 param=[1 3]
 prob = FODESystem(test, alpha, y0, (t0, T))
-#(t, y) = solve(prob, h, PECE())
-(t, y) = solve(prob, h, PIEX())
-plot(y[1, :], y[2, :])
-#=
-plot(t, y[1, :])
-plot!(t, y[2, :])
-=#
+sol = solve(prob, h, PIEX())
+plot(sol, vars=(1, 2))

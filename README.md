@@ -1,5 +1,11 @@
 # FractionalDiffEq.jl
 
+
+<p align="center">
+<img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/logo.svg"/>
+</p>
+
+
 <p align="center">
   <a href="https://github.com/SciFracX/FractionalDiffEq.jl/actions?query=workflow%3ACI">
     <img alt="building" src="https://github.com/SciFracX/FractionalDiffEq.jl/workflows/CI/badge.svg">
@@ -30,7 +36,7 @@
   </a>
 </p>
 
-FractionalDiffEq.jl provides FDE solvers to [DifferentialEquations.jl](https://diffeq.sciml.ai/dev/) ecosystem. There are many performant solvers available, capable of solving many kinds of fractional differential equations.
+FractionalDiffEq.jl provides FDE solvers to [DifferentialEquations.jl](https://diffeq.sciml.ai/dev/) ecosystem, including FODE(Fractional Ordianry Differential Equations), FDDE(Fractional Delay Differential Equations) and many more. There are many performant solvers available, capable of solving many kinds of fractional differential equations.
 
 # Installation
 
@@ -46,7 +52,7 @@ pkg> add FractionalDiffEq
 
 Let's see if we have an initial value problem:
 
-$$ D^{0.5}y(x)=1-y $$
+$$ D^{1.8}y(x)=1-y $$
 
 
 $$ y(0)=0 $$
@@ -55,16 +61,16 @@ So we can use FractionalDiffEq.jl to solve the problem:
 
 ```julia
 using FractionalDiffEq, Plots
-fun(x, y) = 1-y
-u0 = 0; tspan = (0, 5); h = 0.001;
-prob = SingleTermFODEProblem(fun, 0.5, u0, tspan)
+fun(u, p, t) = 1-u
+u0 = [0, 0]; tspan = (0, 20); h = 0.001;
+prob = SingleTermFODEProblem(fun, 1.8, u0, tspan)
 sol = solve(prob, h, PECE())
 plot(sol)
 ```
 
-And if you plot the result, you can see the result of the fractional differential equation:
+And if you plot the result, you can see the result of the above IVP:
 
-![Example](/docs/src/assets/simple_example.png)
+![Example](/docs/src/assets/example.png)
 
 ### A sophisticated example
 
@@ -78,7 +84,7 @@ $$ y(0)=0,\ y'(0)=0,\ y''(0)=0 $$
 using FractionalDiffEq, Plots
 h=0.01; tspan = (0, 30)
 rightfun(x, y) = 172/125*cos(4/5*x)
-prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], (0, T))
+prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], tspan)
 sol = solve(prob, h, PIEX())
 plot(sol, legend=:bottomright)
 ```
@@ -120,22 +126,6 @@ And plot the result:
 
 ![Chua](docs/src/assets/chua.png)
 
-## Fractional Partial Differential Equations
-
-FractionalDiffEq.jl provides powerful algorithms to solve fractional partial differential equations, let's see a diffusion equation here:
-
-$$ _{0}^{C}\!D_{t}^{\alpha}y- \frac{\partial^\beta y}{\partial |x|^\beta} = f(x,t) $$
-
-With initial and boundry conditions:
-
-$$ y(0,t) = 0, \quad y(1,t) = 0 \quad y(x,0) = 0 $$
-
-
-Use the FPDE solvers in FractionalDiffEq.jl and plot the numerical approximation:
-
-![diffusion](docs/src/assets/diffusion.png)
-
-
 ## Fractional Delay Differential Equations
 
 There are also many powerful solvers for solving fractional delay differential equations.
@@ -160,6 +150,25 @@ plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 ```
 
 ![Delayed](docs/src/assets/fdde_example.png)
+
+## Lyapunov exponents of fractional order system
+
+FractionalDiffEq.jl is capable of generating lyapunov exponents of a fractional order system:
+
+Rabinovich-Fabrikant system:
+
+$$
+\begin{cases} D^{\alpha_1} x=y(z-1+z^2)+\gamma x\\
+D^{\alpha_2} y=x(3z+1-x^2)+\gamma y\\
+D^{\alpha_3} z=-2z(\alpha+xy)
+\end{cases}
+$$
+
+```julia
+julia>LE, tspan = FOLyapunov(RF, 0.98, 0, 0.02, 300, [0.1; 0.1; 0.1], 0.005, 1000)
+```
+
+![RF](docs/src/assets/RFLE.png)
 
 # Available Solvers
 

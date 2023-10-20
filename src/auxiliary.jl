@@ -1,4 +1,4 @@
-function FastConv(x, y)
+function fast_conv(x, y)
     Lx = length(x)
     #Ly = size(y, 2)
     problem_size = size(y, 1)

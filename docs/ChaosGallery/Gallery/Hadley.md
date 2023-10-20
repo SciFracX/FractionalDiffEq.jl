@@ -8,10 +8,8 @@
 \end{cases}
 ```
 
-Fractional differential equations with Atangana-Baleanu fractional operator ``{_{t_0}^{ABC}D_t^\alpha}`` in the sense of Caputo.
-
 ```julia
-using FractionalDiffEq
+using FractionalDiffEq, Plots
 
 t0=0;tfinal=50;h=0.01
 α = [0.99, 0.99, 0.99]
@@ -25,8 +23,7 @@ end
 prob = FODESystem(fun, α, u0, (t0, tfinal))
 sol = solve(prob, h, AtanganaSedaAB())
 
-using Plots
-plot3d(sol[1, :], sol[2, :], sol[3, :], title="Fractional Order Hadley System")
+plot(sol, vars=(1,2,3) title="Fractional Order Hadley System")
 ```
 
 ![Hadley](./assets/Hadley.png)

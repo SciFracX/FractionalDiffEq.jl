@@ -34,9 +34,9 @@ h=0.001
 tspan = (0, 50)
 x0=[0.1, 0.2, 0.3]
 prob=FODESystem(Qi!, alpha, x0, tspan)
-result = solve(prob, h, GL())
+sol = solve(prob, h, GL())
 
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Qi System")
+plot(sol, vars=(1,2,3), title="Fractional Order Qi System")
 ```
 
 ![Rossler](./assets/Qi.png)

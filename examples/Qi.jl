@@ -14,4 +14,4 @@ T=50
 x0=[0.1, 0.2, 0.3]
 prob=FODESystem(Qi!, alpha, x0)
 result = solve(prob, h, T, GLWithMemory())
-plot3d(result[:, 1], result[:, 2], result[:, 3], title="Fractional Order Qi System")
+plot3d(result, vars=(1,2,3), title="Fractional Order Qi System")

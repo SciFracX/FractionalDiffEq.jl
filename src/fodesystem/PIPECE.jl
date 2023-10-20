@@ -1,6 +1,6 @@
 #=
 """
-    solve(prob::FODESystem, h, PECE())
+    solve(prob::FODEProblem, h, PECE())
 
 Use the Adams-Bashforth-Moulton method to solve the system of FODEs.
 
@@ -30,20 +30,29 @@ mutable struct M
     bn_fft
 end
 
-function solve(prob::FODESystem, h, ::PECE)
-    @unpack f, α, u0, tspan, p = prob
+struct PECE <: FODESystemAlgorithm end
+
+#TODO: Rename as PIPECE
+function solve(prob::FODEProblem, h, ::PECE)
+    @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
     METH = M(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)# Initialization
     mu_tol = 1.0e-6
     mu = 1
-    α = α[:]
+    order = order[:]
+
+    # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
+    max_order = findmax(order)[1]
+    if max_order > 1
+        @error "This method doesn't support high order FDEs"
+    end
 
 
     # Check compatibility size of the problem with number of fractional orders
-    alpha_length = length(α)
+    alpha_length = length(order)
     problem_size = size(u0, 1)
 
-    m_alpha = ceil.(Int, α)
+    m_alpha = ceil.(Int, order)
     m_alpha_factorial = zeros(alpha_length, maximum(m_alpha))
     for i = 1 : alpha_length
         for j = 0 : m_alpha[i]-1
@@ -72,7 +81,7 @@ function solve(prob::FODESystem, h, ::PECE)
     bn = zeros(alpha_length, NNr+1); an = copy(bn); a0 = copy(bn)
     for i_alpha = 1:alpha_length
         find_alpha = Float64[]
-        if α[i_alpha] == α[1:i_alpha-1]
+        if order[i_alpha] == order[1:i_alpha-1]
             push!(find_alpha, i_alpha)
         end
 
@@ -81,16 +90,16 @@ function solve(prob::FODESystem, h, ::PECE)
             an[i_alpha, :] = an[find_alpha[1], :]
             a0[i_alpha, :] = a0[find_alpha[1], :]
         else
-            nalpha = nvett.^α[i_alpha]
+            nalpha = nvett.^order[i_alpha]
             nalpha1 = nalpha.*nvett
             bn[i_alpha, :] = nalpha[2:end] - nalpha[1:end-1]
             an[i_alpha, :] = [1; (nalpha1[1:end-2] - 2*nalpha1[2:end-1] + nalpha1[3:end]) ]
-            a0[i_alpha, :] = [0; nalpha1[1:end-2]-nalpha[2:end-1].*(nvett[2:end-1].-α[i_alpha].-1)]
+            a0[i_alpha, :] = [0; nalpha1[1:end-2]-nalpha[2:end-1].*(nvett[2:end-1].-order[i_alpha].-1)]
         end
     end
     METH.bn = bn; METH.an = an; METH.a0 = a0
-    METH.halpha1 = h.^α./gamma.(α.+1)
-    METH.halpha2 = h.^α./gamma.(α.+2)
+    METH.halpha1 = h.^order./gamma.(order.+1)
+    METH.halpha2 = h.^order./gamma.(order.+2)
     METH.mu = mu; METH.mu_tol = mu_tol
 
     # Evaluation of FFT of coefficients of the PECE method
@@ -110,7 +119,7 @@ function solve(prob::FODESystem, h, ::PECE)
             coef_end = 2^l*r
             for i_alpha = 1 : alpha_length
                 find_alpha = Float64[]
-                if α[i_alpha] == α[1:i_alpha-1]
+                if order[i_alpha] == order[1:i_alpha-1]
                     push!(find_alpha, i_alpha)
                 end
                 if isempty(find_alpha) == false
@@ -129,7 +138,7 @@ function solve(prob::FODESystem, h, ::PECE)
     t = t0 .+ collect(0:N)*h
     y[:, 1] = u0[:, 1]
     fy[:, 1] = f_temp
-    (y, fy) = ABMTriangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f) ;
+    (y, fy) = ABM_triangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f) ;
 
     # Main process of computation by means of the FFT algorithm
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0; 2] ; card_ff = 2
@@ -171,9 +180,9 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N, M
         
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         
-        (zn_pred, zn_corr) = ABMQuadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length)
+        (zn_pred, zn_corr) = ABM_quadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length)
         
-        (y, fy) = ABMTriangolo(nxi, nxi+r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f)
+        (y, fy) = ABM_triangolo(nxi, nxi+r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f)
         i_triangolo = i_triangolo + 1
         
         if stop == false
@@ -194,10 +203,11 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N, M
     return y, fy
 end
 
-function ABMQuadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length)
+function ABM_quadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length)
     coef_end::Int = nxf-nyi+1
     i_fft::Int = log2(coef_end/METH.r) 
-    funz_beg::Int = nyi+1; funz_end::Int = nyf+1
+    funz_beg::Int = nyi+1
+    funz_end::Int = nyf+1
     Nnxf::Int = min(N, nxf)
 
     # Evaluation convolution segment for the predictor
@@ -234,7 +244,7 @@ end
 
 
 
-function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f)
+function ABM_triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f)
 
     for n = nxi:min(N, nxf)
         
@@ -248,7 +258,7 @@ function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_siz
         for j = j_beg:n-1
             Phi = Phi + METH.bn[1:alpha_length,n-j].*fy[:, j+1]
         end
-        St = StartingTerm(t[n+1], u0, m_alpha, t0, m_alpha_factorial)
+        St = starting_term(t[n+1], u0, m_alpha, t0, m_alpha_factorial)
         y_pred = St + METH.halpha1.*(zn_pred[:, n+1] + Phi)
         f_pred = zeros(length(y_pred))
         #f_pred = sysf_vectorfield(t[n+1], y_pred, f)
@@ -265,8 +275,10 @@ function ABMTriangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_siz
                 Phi = Phi + METH.an[1:alpha_length, n-j+1].*fy[:, j+1]
             end
             Phi_n = St + METH.halpha2.*(METH.a0[1:alpha_length, n+1].*fy[:, 1] + zn_corr[:, n+1] + Phi)
-            yn0 = y_pred; fn0 = f_pred    
-            stop = false; mu_it = 0
+            yn0 = y_pred
+            fn0 = f_pred
+            stop = false
+            mu_it = 0
             while stop == false
                 global yn1 = Phi_n + METH.halpha2.*fn0
                 mu_it = mu_it + 1
@@ -293,7 +305,7 @@ end
 
 sysf_vectorfield(t, y, f_fun) = f_fun(t, y)
 
-function  StartingTerm(t, u0, m_alpha, t0, m_alpha_factorial)
+function  starting_term(t, u0, m_alpha, t0, m_alpha_factorial)
     ys = zeros(size(u0, 1), 1)
     for k = 1 : maximum(m_alpha)
         if length(m_alpha) == 1

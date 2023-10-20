@@ -46,22 +46,9 @@ end
     @test isapprox(imag(m), 0.4596976941318611; atol=1e-5)
 end
 
-@testset "Test meshgrid" begin
-    a, b = meshgrid(0:1, 0:1)
-    isapprox(a, [0 1; 0 1]; atol=1e-2)
-    isapprox(b, [0 0; 1 1]; atol=1e-2)
-end
-
 @testset "Test isFunction" begin
     @test isFunction(x->x)==true
     @test isFunction("Hello")==false
-end
-
-@testset "Test singleterm show method" begin
-    # SingleTermFODEProblem
-    singlefun(x, y) = 1-y
-    singletermprob = SingleTermFODEProblem(singlefun, 1.8, 0, 5)
-    @test_nowarn show(singletermprob)
 end
 
 @testset "Test Multiterms show method" begin
@@ -74,7 +61,7 @@ end
     @test_nowarn show(multitermssol)
 end
 
-@testset "Test FODESystem show method" begin
+@testset "Test FODEProblem show method" begin
     # FODESystem
     h=0.5; tspan=(0, 1)
     alpha = [0.99, 0.99, 0.99]
@@ -85,7 +72,7 @@ end
         du[2] = u[1]*(b-u[3])-u[2]
         du[3] = u[1]*u[2]-c*u[3]
     end
-    fodesystemprob = FODESystem(testf!, alpha, x0, tspan)
+    fodesystemprob = FODEProblem(testf!, alpha, x0, tspan)
     fodesystemsol = solve(fodesystemprob, h, GL())
 
     @test_nowarn show(fodesystemprob)
@@ -105,7 +92,7 @@ end
         return 3.5*y*(1-ϕ/19)
     end
     fddeprob = FDDEProblem(delayf, ϕ, 0.97, 0.8, (0, 2))
-    fddesol = solve(fddeprob, 0.5, DelayPI())
+    fddesol = solve(fddeprob, 0.5, PIEX())
 
     @test_nowarn show(fddeprob)
     @test_nowarn show(fddesol)
@@ -134,21 +121,20 @@ end
     @test_nowarn show(dodesol)
 end
 
-@testset "Test FractionalDifferenceProblem" begin
-    differencefun(x) = 0.5*x+1
+@testset "Test FractionalDiscreteProblem" begin
+    discretefun(x) = 0.5*x+1
     α=0.5;x0=1;
     T=1; h=0.1
-    differenceprob = FractionalDifferenceProblem(differencefun, α, x0)
-    differencesol = solve(differenceprob, T, h, PECEDifference())
+    discreteprob = FractionalDiscreteProblem(discretefun, α, x0, T)
+    discretesol = solve(discreteprob, h, PECE())
 
-    @test_nowarn show(differenceprob)
-    @test_nowarn show(differencesol)
+    @test_nowarn show(discreteprob)
+    @test_nowarn show(discretesol)
 end
 
 @testset "Test FFMODEProblem show method" begin
     α=1;β=1;h=0.1;tfinal=0.5
-    u0 = [-2, 1, -1]
-    a=10;b=28;c=8/3
+    u0=[-2, 1, -1]
     function fun(du, u, p, t)
         a=10;b=28;c=8/3
         du[1] = a*(u[2]-u[1])

@@ -56,7 +56,7 @@ function fun(du, u, p, t)
 end
 prob = FFODEProblem(fun, [α, β], u0, tspan)
 sol = solve(prob, h, AtanganaSeda())
-plot3d(sol[1, :], sol[2, :], sol[3, :], title="Fractal-fractional Order Lorenz System")
+plot3d(sol, vars=(1,2,3) title="Fractal-fractional Order Lorenz System")
 ```
 
 ![ABCLorenz](./assets/LorenzABC.png)
@@ -77,8 +77,8 @@ function fun(du, u, p, t)
 end
 
 prob = FFODEProblem(fun, [alpha, β], u0, (1, tfinal))
-result = solve(prob, h, AtanganaSeda())
-plot3d(result[1, :], result[2, :], result[3, :])
+sol = solve(prob, h, AtanganaSeda())
+plot3d(sol, vars=(1,2,3))
 ```
 
 ![CFVariable](./assets/CFvariableFFODEProblem.png)

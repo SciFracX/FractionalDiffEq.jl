@@ -15,7 +15,7 @@ t0=0; T=56
 tspan = (t0, T); h=0.05; τ=0.8
 prob = FDDEProblem(f, ϕ, 0.97, 0.8, tspan)
 
-result = solve(prob, h, DelayPI())
+result = solve(prob, h, PIEX())
 using Plots
 tspan = collect(0:h:T)
 plot(tspan, result[:])
