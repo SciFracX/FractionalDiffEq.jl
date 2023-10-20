@@ -6,7 +6,7 @@ Being called "The Queen Function of the Fractional Calculus", Mittag Leffler fun
 
 ### Classical Mittag Leffler function(Single-Parametric version)
 
-The [Mittag Leffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function) is defined by Gösta Magnus Mittag-Leffler by a power series as:
+The [Mittag Leffler function](https://en.wikipedia.org/wiki/Mittag-Leffler_function) is defined by [Gösta Magnus Mittag-Leffler](https://en.wikipedia.org/wiki/G%C3%B6sta_Mittag-Leffler) by a power series as:
 
 ```math
 E_\alpha(z)=\sum_{k=0}^{\infty}\frac{z^k}{\Gamma(\alpha k+1)},\ (\alpha\in\mathbb{C})
@@ -22,7 +22,7 @@ E_{\alpha,\ \beta}(z)=\sum_{k=0}^{\infty}\frac{z^k}{\Gamma(\alpha k+\beta)},\ (\
 
 ### Three-Parametric Mittag Leffler function
 
-FractionalDiffEq.jl also supports the three-parametric Mittag Leffler function:
+FractionalDiffEq.jl also supports the three-parametric Mittag Leffler function(The Prabhakar function):
 
 ```math
 E_{\alpha,\ \beta}^\gamma(z)=\sum_{k=0}^{\infty}\frac{(\gamma)_k z^k}{k!\Gamma(\alpha k+\beta)},\ (\mathfrak{Re}(\alpha)>0,\ \mathfrak{Re}(\beta)>0,\ \gamma\in\mathbb{C})
@@ -60,3 +60,11 @@ Different order classical Mittag Leffler function plot(``0<\alpha<1``):
 And also ``1<\alpha<2``:
 
 ![MittagLeffler](./assets/mittlefffunhigh.png)
+
+If we input complex number to Mittag Leffler function, for example:
+
+```math
+E_{0.8, 0.9}(z)
+```
+
+![MittLeff3D](./assets/mittleff3d.png)

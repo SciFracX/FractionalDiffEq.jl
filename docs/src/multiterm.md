@@ -1,15 +1,21 @@
-# Multi term FDE
+# Multi-term FODE
 
-By specifying different orders in the equation, we can handle multi-term differential equations now!
+By specifying different orders in the equation, we can handle multi-terms FODE now!
 
-Let's see if we have an initial value problem with multiple terms derivative containing both fractional and integer, we can use the **FODEMatrixDiscrete** algorithm to solve the equation.
+Let's see if we have an initial value problem with multiple terms derivative containing both fractional and integer, we can use the **PIEX** algorithm to solve the equation.
 
 All we need to do is passing the parameters and orders of the fractional ordinary differential equation to the API ```solve``` as two arrays.
 
 !!! warning "The parameters and orders array must have the same length"
-    When we are solving the multi-terms FDE problem, please note we should keep the parameters array and orders array have the same length.
+    When we are solving the multi-terms FODE problem, please note we should keep the parameters array and orders array have the same length.
 
 ## Detailed Usage
+
+We need to first define our multi-terms FODE problem:
+
+```julia-repl
+julia> prob = MultiTermsFODEProblem(parameters, orders, rightfun, u0, tspan)
+```
 
 Let's see if we have an equation like:
 
@@ -17,15 +23,15 @@ Let's see if we have an equation like:
 2y''(t)+4D^{1.5}y(t)=1
 ```
 
-To solve this equation, you can use the code:
+To solve the multi-terms fractional order  equation, you can use the code:
 
 ```julia
 rightside = 1
-prob = MultiTermsFODEProblem([2, 4], [2, 1.5], rightside)
-solve(prob, 30, 0.01, FODEMatrixDiscrete())
+prob = MultiTermsFODEProblem([2, 4], [2, 1.5], rightside, [0, 0], (0, 30))
+sol = solve(prob, 0.01, PIEX())
 ```
 
-Bingo! the result would represent the numerical solution of this equation!!!!
+Bingo! The result ```sol``` is the numerical solution of this equation!!!!
 
 ## Example
 
@@ -42,17 +48,12 @@ y(0)=0,\ y'(0)=0,\ y''(0)=0
 Model this problem and solve the equation:
 
 ```julia
-using FractionalDiffEq
-using Plots, LaTeXStrings
-
-s="\$ A\\ complicated\\ example \$"
-
-T = 30; h = 0.05
-tspan = collect(0.05:h:T)
-rightfun(x) = 172/125*cos(4/5*x)
-prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun)
-result = solve(prob, h, T, FODEMatrixDiscrete())
-plot(tspan, result, title=s, legend=:bottomright)
+using FractionalDiffEq, Plots
+tspan = (0, 30); h = 0.01
+rightfun(x, y) = 172/125*cos(4/5*x)
+prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], tspan)
+sol = solve(prob, h, PIEX())
+plot(sol, legend=:bottomright)
 ```
 
 By solving the equation and plotting the result, we can see its solution here:
@@ -62,3 +63,4 @@ By solving the equation and plotting the result, we can see its solution here:
 
 !!! info "Example in GitHub"
     This example is an official example in the source code, please see the [example folder](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl)
+

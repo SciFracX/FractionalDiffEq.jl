@@ -25,6 +25,15 @@ D^{\alpha}y(t)=f(t, y)
 ```@docs
 FractionalDiffEq.SingleTermFODEProblem
 FractionalDiffEq.MultiTermsFODEProblem
+FractionalDiffEq.FODESystem
+```
+
+### FFODE Problem
+
+```@docs
+FractionalDiffEq.FFPODEProblem
+FractionalDiffEq.FFEODEProblem
+FractionalDiffEq.FFMODEProblem
 ```
 
 ## FPDE Problem
@@ -33,31 +42,28 @@ FractionalDiffEq.MultiTermsFODEProblem
 FractionalDiffEq.FPDEProblem
 ```
 
-## FDDEProblem
+## FDDE Problem
 
 ```@docs
 FractionalDiffEq.FDDEProblem
+FractionalDiffEq.FDDEMatrixProblem
+FractionalDiffEq.FDDESystem
 ```
 
-## DODEProblem
+## DODE Problem
 
 ```@docs
 FractionalDiffEq.DODEProblem
-```
-
-## FODESystem
-
-```@docs
-FractionalDiffEq.FODESystem
 ```
 
 ## Fractional Difference Problem
 
 ```@docs
 FractionalDiffEq.FractionalDifferenceProblem
+FractionalDiffEq.FractionalDifferenceSystem
 ```
 
-## FIEProblem
+## FIE Problem
 
 ```@docs
 FractionalDiffEq.FIEProblem

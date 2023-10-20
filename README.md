@@ -1,5 +1,6 @@
 # FractionalDiffEq.jl
 
+
 <p align="center">
 <img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/logo.svg"/>
 </p>
@@ -35,6 +36,8 @@
   </a>
 </p>
 
+FractionalDiffEq.jl provides FDE solvers to [DifferentialEquations.jl](https://diffeq.sciml.ai/dev/) ecosystem, including FODE(Fractional Ordianry Differential Equations), FDDE(Fractional Delay Differential Equations) and many more. There are many performant solvers available, capable of solving many kinds of fractional differential equations.
+
 # Installation
 
 If you have already installed Julia, you can install FractionalDiffEq.jl in REPL using Julia package manager:
@@ -45,61 +48,45 @@ pkg> add FractionalDiffEq
 
 # Quick start
 
-### An easy example
+### Fractional ordinary differential equations
 
 Let's see if we have an initial value problem:
 
-<p align="center">
+$$ D^{1.8}y(x)=1-y $$
 
-<img src="https://latex.codecogs.com/svg.image?D^{0.5}y(x)=1-y" title="D^{0.5}y(x)=1-y" />
 
-</p>
-
-<p align="center">
-
-<img src="https://latex.codecogs.com/svg.image?y(0)=0" title="y(0)=0" />
-
-</p>
-
+$$ y(0)=0 $$
 
 So we can use FractionalDiffEq.jl to solve the problem:
 
 ```julia
-fun(x, y) = 1-y
-u0 = 0; T = 5; h = 0.001
-prob = SingleTermFODEProblem(fun, 0.5, u0, T)
-result = solve(prob, h, PECE())
-tspan = collect(0:h:T)
+using FractionalDiffEq, Plots
+fun(u, p, t) = 1-u
+u0 = [0, 0]; tspan = (0, 20); h = 0.001;
+prob = SingleTermFODEProblem(fun, 1.8, u0, tspan)
+sol = solve(prob, h, PECE())
+plot(sol)
 ```
 
-And if you plot the result, you can see the result of the fractional differential equation:
+And if you plot the result, you can see the result of the above IVP:
 
-![Example](/docs/src/assets/simple_example.png)
+![Example](/docs/src/assets/example.png)
 
 ### A sophisticated example
 
 Let's see if the initial value problem like:
 
-<p align="center">
+$$ y'''(t)+\frac{1}{16}{^C_0D^{2.5}_t}y(t)+\frac{4}{5}y''(t)+\frac{3}{2}y'(t)+\frac{1}{25}{^C_0D^{0.5}_t}y(t)+\frac{6}{5}y(t)=\frac{172}{125}\cos(\frac{4t}{5}) $$
 
-<img src="https://latex.codecogs.com/svg.image?y'''(t)&plus;\frac{1}{16}{^C_0D^{2.5}_t}y(t)&plus;\frac{4}{5}y''(t)&plus;\frac{3}{2}y'(t)&plus;\frac{1}{25}{^C_0D^{0.5}_t}y(t)&plus;\frac{6}{5}y(t)=\frac{172}{125}\cos(\frac{4t}{5})" title="y'''(t)+\frac{1}{16}{^C_0D^{2.5}_t}y(t)+\frac{4}{5}y''(t)+\frac{3}{2}y'(t)+\frac{1}{25}{^C_0D^{0.5}_t}y(t)+\frac{6}{5}y(t)=\frac{172}{125}\cos(\frac{4t}{5})" />
-
-</p>
-
-<p align="center">
-
-<img src="https://latex.codecogs.com/svg.image?y(0)=0,\&space;y'(0)=0,\&space;y''(0)=0" title="y(0)=0,\ y'(0)=0,\ y''(0)=0" />
-
-</p>
+$$ y(0)=0,\ y'(0)=0,\ y''(0)=0 $$
 
 ```julia
 using FractionalDiffEq, Plots
-T=30;h=0.05
-tspan = collect(0.05:h:T)
-rightfun(x) = 172/125*cos(4/5*x)
-prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun) #pass the parameters vector and the orders vector
-result = solve(prob, h, T, FODEMatrixDiscrete())
-plot(tspan, result, title=s, legend=:bottomright)
+h=0.01; tspan = (0, 30)
+rightfun(x, y) = 172/125*cos(4/5*x)
+prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], tspan)
+sol = solve(prob, h, PIEX())
+plot(sol, legend=:bottomright)
 ```
 
 Or use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/examples/complicated_example.jl) to plot the numerical approximation, we can see the FDE solver in FractionalDiffEq.jl is amazingly powerful:
@@ -108,106 +95,80 @@ Or use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/m
 
 ### System of Fractional Differential Equations:
 
-FractionalDiffEq.jl is a powerful tool to solve system of fractional differential equations:
+FractionalDiffEq.jl is a powerful tool to solve system of fractional differential equations, if you are familiar with [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl), it would be just like out of the box.
 
 Let's see if we have a Chua chaos system:
 
-<p align="center">
-
-<img src="https://latex.codecogs.com/svg.image?\begin{cases}D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x&plus;1|-|x-1|)]\\D^{\alpha_2}y=x-y&plus;z\\D^{\alpha_3}z=-10.593y-0.268z\end{cases}" title="\begin{cases}D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x+1|-|x-1|)]\\D^{\alpha_2}y=x-y+z\\D^{\alpha_3}z=-10.593y-0.268z\end{cases}" />
-
-</p>
+$$ \begin{cases}D^{\alpha_1}x=10.725[y-1.7802x-[0.1927(|x+1|-|x-1|)]\\
+D^{\alpha_2}y=x-y+z\\
+D^{\alpha_3}z=-10.593y-0.268z\end{cases} $$
 
 By using the ```NonLinearAlg``` algorithms to solve this problem:
 
 ```julia
 using FractionalDiffEq, Plots
-function chua(t, x, k)
-    a=10.725
-    b=10.593
-    c=0.268
-    m0=-1.1726
-    m1=-0.7872
-
-    if k==1
-        f=m1*x[1]+0.5*(m0-m1)*(abs(x[1]+1)-abs(x[1]-1))
-        y=a*(x[2]-x[1]-f)
-        return y
-    elseif k==2
-        y=x[1]-x[2]+x[3]
-        return y
-    elseif k==3
-        y=-b*x[2]-c*x[3]
-        return y
-    end
+function chua!(du, x, p, t)
+    a, b, c, m0, m1 = p
+    du[1] = a*(x[2]-x[1]-(m1*x[1]+0.5*(m0-m1)*(abs(x[1]+1)-abs(x[1]-1))))
+    du[2] = x[1]-x[2]+x[3]
+    du[3] = -b*x[2]-c*x[3]
 end
-
 α = [0.93, 0.99, 0.92];
 x0 = [0.2; -0.1; 0.1];
-prob = SystemOfFDEProblem(chua, α, x0)
-tn = 200; h = 0.001;
-result = solve(prob, h, tn, NonLinearAlg())
-plot(result[:, 1], result[:, 2], title="Chua System", legend=:bottomright)
+h = 0.01; tspan = (0, 100);
+p = [10.725, 10.593, 0.268, -1.1726, -0.7872]
+prob = FODESystem(chua!, α, x0, tspan, p)
+sol = solve(prob, h, NonLinearAlg())
+plot(sol, vars=(1, 2), title="Chua System", legend=:bottomright)
 ```
 
 And plot the result:
 
 ![Chua](docs/src/assets/chua.png)
 
-## Fractional Partial Differential Equations
+## Fractional Delay Differential Equations
 
-Fractional provide powerful algorithms to solve fractional partial differential equations, let's see a diffusion example here:
+There are also many powerful solvers for solving fractional delay differential equations.
 
-<p align="center">
+$$ D^\alpha_ty(t)=3.5y(t)(1-\frac{y(t-0.74)}{19}) $$
 
-<img src="https://latex.codecogs.com/svg.image?_{0}^{C}\!D_{t}^{\alpha}y-&space;\frac{\partial^\beta&space;y}{\partial&space;|x|^\beta}&space;=&space;f(x,t)" title="_{0}^{C}\!D_{t}^{\alpha}y- \frac{\partial^\beta y}{\partial |x|^\beta} = f(x,t)" />
+$$ y(0)=19.00001 $$
 
-</p>
 
-With initial and boundry conditions:
+With history function:
 
-<p align="center">
-
-<img src="https://latex.codecogs.com/svg.image?y(0,t)&space;=&space;0,&space;\quad&space;y(1,t)&space;=&space;0&space;\qquad&space;&space;\quad&space;y(x,0)&space;=&space;0" title="y(0,t) = 0, \quad y(1,t) = 0 \qquad  \quad y(x,0) = 0" />
-
-</p>
-
-By using the FPDE solvers in FractionalDiffEq.jl and plot the numerical approximation:
-
-![diffusion](docs/src/assets/diffusion.png)
-
-### ODE Example
-
-FractionalDiffEq.jl is also able to solve ordinary differential equations~ Let's see an example here:
-
-<p align="center">
-
-<img src="https://latex.codecogs.com/svg.image?y''(x)&plus;y'(x)=\sin(x)" title="y''(x)+y'(x)=\sin(x)" />
-
-</p>
-
-<p align="center">
-
-<img src="https://latex.codecogs.com/svg.image?y(0)=0" title="y(0)=0" />
-
-</p>
-
+$$ y(t)=19,\ t<0 $$
 
 ```julia
 using FractionalDiffEq, Plots
-
-T = 30; h = 0.05
-tspan = collect(h:h:T)
-f(x) = 1/2*(-exp(-x)-sin(x)-cos(x)+2)
-target =f.(tspan)
-rightfun(x) = sin(x)
-prob = MultiTermsFODEProblem([1, 1], [2, 1], rightfun)
-result = solve(prob, h, T, FODEMatrixDiscrete())
-plot(tspan, result, title=s, legend=:bottomright, label="ODE Numerical Solution!")
-plot!(tspan, target, lw=3,ls=:dash,label="ODE Analytical Solution!")
+ϕ(x) = x == 0 ? (return 19.00001) : (return 19.0)
+f(t, y, ϕ) = 3.5*y*(1-ϕ/19)
+h = 0.05; α = 0.97; τ = 0.8; T = 56
+fddeprob = FDDEProblem(f, ϕ, α, τ, T)
+V, y = solve(fddeprob, h, DelayPECE())
+plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
 ```
 
-![ODE Example](docs/src/assets/ode_example.png)
+![Delayed](docs/src/assets/fdde_example.png)
+
+## Lyapunov exponents of fractional order system
+
+FractionalDiffEq.jl is capable of generating lyapunov exponents of a fractional order system:
+
+Rabinovich-Fabrikant system:
+
+$$
+\begin{cases} D^{\alpha_1} x=y(z-1+z^2)+\gamma x\\
+D^{\alpha_2} y=x(3z+1-x^2)+\gamma y\\
+D^{\alpha_3} z=-2z(\alpha+xy)
+\end{cases}
+$$
+
+```julia
+julia>LE, tspan = FOLyapunov(RF, 0.98, 0, 0.02, 300, [0.1; 0.1; 0.1], 0.005, 1000)
+```
+
+![RF](docs/src/assets/RFLE.png)
 
 # Available Solvers
 
