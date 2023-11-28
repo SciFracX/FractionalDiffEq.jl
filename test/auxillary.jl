@@ -93,9 +93,9 @@ end
     dt = 0.5
     α = 0.97
     τ = [0.8]
-    u0 = [19.00001]
+    u0 = 19.00001
     tspan = (0.0, 1.0)
-    fddeprob = FDDEProblem(f, α, 19.00001, h, constant_lags = [τ], tspan)
+    fddeprob = FDDEProblem(f, α, u0, h, constant_lags = τ, tspan)
     fddesol = solve(fddeprob, dt, DelayPECE())
 
     @test_nowarn show(fddeprob)
