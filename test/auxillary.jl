@@ -80,19 +80,23 @@ end
 end
 
 @testset "Test FDDEProblem show method" begin
-    # FDDEProblem
-    function ϕ(x)
-        if x == 0
+    function h(p, t)
+        if t == 0
             return 19.00001
         else
             return 19.0
         end
     end
-    function delayf(t, y, ϕ)
-        return 3.5*y*(1-ϕ/19)
-    end
-    fddeprob = FDDEProblem(delayf, ϕ, 0.97, 0.8, (0, 2))
-    fddesol = solve(fddeprob, 0.5, PIEX())
+    
+    f(y, ϕ, p, t) = 3.5*y*(1-ϕ/19)
+    
+    dt = 0.5
+    α = 0.97
+    τ = [0.8]
+    u0 = [19.00001]
+    tspan = (0.0, 1.0)
+    fddeprob = FDDEProblem(f, α, 19.00001, h, constant_lags = [τ], tspan)
+    fddesol = solve(fddeprob, dt, DelayPECE())
 
     @test_nowarn show(fddeprob)
     @test_nowarn show(fddesol)

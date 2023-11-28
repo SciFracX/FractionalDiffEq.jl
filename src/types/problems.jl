@@ -178,12 +178,11 @@ struct FDDEProblem{uType, tType, oType, lType, isinplace, P, F, H, K, PT} <:
         constant_lags = (),
         problem_type = StandardFDDEProblem(),
         kwargs...) where {iip}
-        _u0 = SciMLBase.prepare_initial_state(u0)
         _tspan = SciMLBase.promote_tspan(tspan)
         SciMLBase.warn_paramtype(p)
-        new{typeof(_u0), typeof(_tspan), typeof(order), typeof(constant_lags),
+        new{typeof(u0), typeof(_tspan), typeof(order), typeof(constant_lags),
             isinplace(f),
-            typeof(p), typeof(f), typeof(h), typeof(kwargs), typeof(problem_type)}(f, order, _u0,
+            typeof(p), typeof(f), typeof(h), typeof(kwargs), typeof(problem_type)}(f, order, u0,
             h,
             _tspan,
             p,
