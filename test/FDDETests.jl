@@ -12,9 +12,9 @@
     dt = 0.5
     α = 0.97
     τ = [0.8]
-    u0 = [19.00001]
+    u0 = 19.00001
     tspan = (0.0, 1.0)
-    fddeprob = FDDEProblem(f, α, 19.00001, h, constant_lags = [τ], tspan)
+    fddeprob = FDDEProblem(f, α, u0, h, constant_lags = τ, tspan)
     V, y = solve(fddeprob, dt, DelayPECE())
 
     @test V≈[19.0, 19.0, 1.0]
@@ -31,12 +31,13 @@ end
     end
     
     f(y, ϕ, p, t) = 3.5*y*(1-ϕ/19)    
-    h = 0.5
+    dt = 0.5
     alpha(t) = 0.99-(0.01/100)*t
     τ = [0.8]
     tspan = (0.0, 1.0)
-    fddeprob = FDDEProblem(f, alpha, h, τ, tspan)
-    V, y = solve(fddeprob, h, DelayPECE())
+    u0 = 19.00001
+    fddeprob = FDDEProblem(f, alpha, u0, h, constant_lags = τ, tspan)
+    V, y = solve(fddeprob, dt, DelayPECE())
 
     @test V≈[19.0, 19.0, 1.0]
     @test y≈[19.00001, 19.00001, 36.698681913021375]
@@ -57,7 +58,7 @@ end
     
     dt = 0.5
     alpha = 0.97
-    u0 = [19.00001]
+    u0 = 19.00001
     τ(t) = 0.8
     tspan = (0.0, 1.0)
     fddeprob = FDDEProblem(f, alpha, u0, h, constant_lags = [τ], tspan)

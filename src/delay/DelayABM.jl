@@ -85,8 +85,8 @@ DelayABM method for system of fractional delay differential equations.
 =#
 
 function solve(FDDESys::FDDESystem, dt, ::DelayABM)
-    @unpack f, h, order, τ, T = FDDESys
-    len = length(h)
+    @unpack f, ϕ, α, τ, T = FDDESys
+    len = length(ϕ)
     N::Int = round(Int, T/dt)
     Ndelay = round(Int, τ/dt)
     t = collect(Float64, 0:dt:(T-τ))
@@ -96,19 +96,19 @@ function solve(FDDESys::FDDESystem, dt, ::DelayABM)
 
     # Put the delay term in the array
     for i=1:len
-        x[1:Ndelay, i] = h[i]*ones(Ndelay)
+        x[1:Ndelay, i] = ϕ[i]*ones(Ndelay)
     end
     
     x0 = copy(x[Ndelay, :])
     
     for i=1:len
-        αi = order[i]
+        αi = α[i]
         f(du, x0, x[1, :], 0)
         x1[Ndelay+1, i] = x0[i] + dt^αi*du[i]/(gamma(αi)*αi)
     end
 
     for i=1:len
-        αi = order[i]
+        αi = α[i]
         f(du, x[Ndelay+1, :], x[1, :], 0)
         du1 = copy(du)
         f(du, x0, x[1, :], 0)
@@ -118,7 +118,7 @@ function solve(FDDESys::FDDESystem, dt, ::DelayABM)
     M1=zeros(len); N1=zeros(len)
     @fastmath @inbounds @simd for n=1:N
         for i=1:len
-            αi = order[i]
+            αi = α[i]
             f(du, x0, x[1, :], 0)
             M1[i]=(n^(αi+1)-(n-αi)*(n+1)^αi)*du[i]
             N1[i]=((n+1)^αi-n^αi)*du[i]
@@ -134,7 +134,7 @@ function solve(FDDESys::FDDESystem, dt, ::DelayABM)
         end
         
         for i=1:len
-            αi = order[i]
+            αi = α[i]
             x1[Ndelay+n+1, i] = x0[i]+dt^αi*N1[i]/(gamma(αi)*αi)
             f(du, x[Ndelay+n+1, :], x[n+1, :], 0)
             x[Ndelay+n+1, i] = x0[i]+dt^αi*(du[i]+M1[i])/gamma(αi+2)
