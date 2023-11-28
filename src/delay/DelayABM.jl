@@ -126,7 +126,7 @@ function solve(FDDESys::FDDESystem, dt, ::DelayABM)
 
         @fastmath @inbounds @simd for j=1:n
             for i=1:len
-                αi = order[i]
+                αi = α[i]
                 f(du, x[Ndelay+j, :], x[j, :], 0)
                 M1[i] = M1[i]+((n-j+2)^(αi+1)+(n-j)^(αi+1)-2*(n-j+1)^(αi+1))*du[i]
                 N1[i] = N1[i]+((n-j+1)^αi-(n-j)^αi)*du[i]

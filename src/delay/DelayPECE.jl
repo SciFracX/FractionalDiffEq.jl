@@ -44,7 +44,7 @@ function solve(FDDE::FDDEProblem, step_size, ::DelayPECE)
         solve_fdde_with_multiple_lags(FDDE, step_size) #TODO: implement this
     # Varying order fractional delay differential equations
     elseif FDDE.order isa Function
-        if length(FDDE.cpnstant_lags[1]) == 1
+        if length(FDDE.constant_lags[1]) == 1
             # Here is the PECE solver for single lag with variable order
             solve_fdde_with_single_lag_and_variable_order(FDDE, step_size)
         else
