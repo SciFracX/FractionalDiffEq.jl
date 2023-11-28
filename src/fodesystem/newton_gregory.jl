@@ -285,12 +285,6 @@ function NG_weights(alpha, N)
     return omega, w, s
 end
 
-#f_vectorfield(t, y, fdefun) = fdefun(zeros(length(y)), y, 0, t)
-function Jf_vectorfield(t, y, Jfdefun)
-    f = Jfdefun(t, y)
-    return f
-end
-
 function NG_starting_term(t,y0, m_alpha, t0, m_alpha_factorial)
     ys = zeros(size(y0, 1), 1)
     for k = 1:Int64(m_alpha)

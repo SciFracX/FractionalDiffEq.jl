@@ -1,7 +1,7 @@
 #=
 # Usage
 
-    solve(FDDE::FDDEProblem, h, DelayPI())
+    solve(FDDE::FDDEProblem, dt, DelayPI())
 
 Use explicit rectangular product integration algorithm to solve an FDDE problem.
 
@@ -20,17 +20,19 @@ Use explicit rectangular product integration algorithm to solve an FDDE problem.
 ```
 =#
 
-function solve(FDDE::FDDEProblem, h, ::PIEX)
-    @unpack f, ϕ, α, τ, tspan = FDDE
+function solve(FDDE::FDDEProblem, dt, ::PIEX)
+    @unpack f, order, h, tspan, p, constant_lags = FDDE
+    τ = constant_lags[1]
+    iip = SciMLBase.isinplace(FDDE)
     t0 = tspan[1]; T = tspan[2]
-    N::Int = ceil(Int, (T-t0)/h)
-    t = t0 .+ h*collect(0:N)
+    N::Int = ceil(Int, (T-t0)/dt)
+    t = t0 .+ dt*collect(0:N)
 
-    nn_al = collect(Float64, 0:N).^α
-    b = [0; nn_al[2:end].-nn_al[1:end-1]]/gamma(α+1)
-    h_al = h^α
+    nn_al = collect(Float64, 0:N).^order
+    b = [0; nn_al[2:end].-nn_al[1:end-1]]/gamma(order+1)
+    h_al = dt^order
 
-    y0 = ϕ(t0)
+    y0 = h(p, t0)
     y = zeros(Float64, N+1)
 
     g = zeros(Float64, N+1)
@@ -39,10 +41,10 @@ function solve(FDDE::FDDEProblem, h, ::PIEX)
     for n = 1:N
         tnm1 = t[n]
         if tnm1 <= τ
-            y_nm1_tau = ϕ(tnm1-τ)
+            y_nm1_tau = h(p, tnm1-τ)
         else
-            nm1_tau1 = floor(Int, (tnm1-τ)/h)
-            nm1_tau2 = ceil(Int, (tnm1-τ)/h)
+            nm1_tau1 = floor(Int, (tnm1-τ)/dt)
+            nm1_tau2 = ceil(Int, (tnm1-τ)/dt)
             if nm1_tau1 == nm1_tau2
                 y_nm1_tau = y[nm1_tau1+1]
             else
@@ -54,7 +56,13 @@ function solve(FDDE::FDDEProblem, h, ::PIEX)
             end
         end
 
-        g[n] = f(tnm1, y[n], y_nm1_tau)
+        if iip
+            tmp = zeros(length(g[1]))
+            f(tmp, y[n], y_nm1_tau, tnm1, p)
+            g[n] = tmp
+        else
+            g[n] = f(y[n], y_nm1_tau, tnm1, p)
+        end
         f_mem = 0
         for j = 0:n-1
             f_mem = f_mem + g[j+1]*b[n-j+1]

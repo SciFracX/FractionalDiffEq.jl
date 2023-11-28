@@ -19,7 +19,7 @@ MultiTermsFODEProblem(parameters, orders, rightfun, u0, T) = MultiTermsFODEProbl
 
 
 SciMLBase.isinplace(prob::AbstractFODEProblem{uType, tType, oType, iip}) where {uType, tType, oType, iip} = iip
-SciMLBase.isinplace(prob::AbstractFDDEProblem{uType, tType, oType, lType, isinplace}) where {uType, tType, oType, lType, isinplace} = iip
+SciMLBase.isinplace(prob::AbstractFDDEProblem{uType, tType, oType, lType, iip}) where {uType, tType, oType, lType, iip} = iip
 
 struct StandardFODEProblem end
 
@@ -136,20 +136,6 @@ function FODEProblem(f, order, u0, tspan, p = SciMLBase.NullParameters(); kwargs
 end
 
 
-"""
-    FDDEProblem(f, ϕ, α, τ, tspan)
-
-- `f`: The function describing fractional delay differential equations.
-- `ϕ`: History function
-Construct a fractional delayed differential equation problem.
-"""
-struct FDDEProblem <: FDEProblem
-    f::Function
-    ϕ::Union{Number, Function}
-    α::Union{Number, Function}
-    τ::Union{Number, AbstractArray, Function}
-    tspan::Union{Number, Tuple}
-end
 #=
 #=FDDEProblem constructor=#
 function FDDEProblem(f::Function,
@@ -165,6 +151,61 @@ end
 
 Construct system of fractional delay differential equations problem.
 """
+
+struct StandardFDDEProblem end
+
+"""
+    FDDEProblem(f, ϕ, α, τ, tspan)
+
+- `f`: The function describing fractional delay differential equations.
+- `ϕ`: History function
+Construct a fractional delayed differential equation problem.
+"""
+struct FDDEProblem{uType, tType, oType, lType, isinplace, P, F, H, K, PT} <:
+       AbstractFDDEProblem{uType, tType, oType, lType, isinplace}
+    f::F
+    order::oType
+    u0::uType
+    h::H
+    tspan::tType
+    p::P
+    constant_lags::lType
+    kwargs::K
+    problem_type::PT
+
+    SciMLBase.@add_kwonly function FDDEProblem{iip}(f::SciMLBase.AbstractDDEFunction{iip}, order, u0, h, tspan,
+        p = SciMLBase.NullParameters();
+        constant_lags = (),
+        problem_type = StandardFDDEProblem(),
+        kwargs...) where {iip}
+        _u0 = SciMLBase.prepare_initial_state(u0)
+        _tspan = SciMLBase.promote_tspan(tspan)
+        SciMLBase.warn_paramtype(p)
+        new{typeof(_u0), typeof(_tspan), typeof(order), typeof(constant_lags),
+            isinplace(f),
+            typeof(p), typeof(f), typeof(h), typeof(kwargs), typeof(problem_type)}(f, order, _u0,
+            h,
+            _tspan,
+            p,
+            constant_lags,
+            kwargs,
+            problem_type)
+    end
+
+    function FDDEProblem{iip}(f::SciMLBase.AbstractDDEFunction{iip}, h, tspan::Tuple,
+        p = SciMLBase.NullParameters(); kwargs...) where {iip}
+        FDDEProblem{iip}(f, h(p, first(tspan)), h, tspan, p; kwargs...)
+    end
+end
+
+TruncatedStacktraces.@truncate_stacktrace FDDEProblem 5 1 2
+
+FDDEProblem(f, args...; kwargs...) = FDDEProblem(DDEFunction(f), args...; kwargs...)
+
+function FDDEProblem(f::SciMLBase.AbstractDDEFunction, args...; kwargs...)
+    FDDEProblem{SciMLBase.isinplace(f)}(f, args...; kwargs...)
+end
+
 struct FDDESystem <: FDEProblem
     f::Function
     ϕ::AbstractArray

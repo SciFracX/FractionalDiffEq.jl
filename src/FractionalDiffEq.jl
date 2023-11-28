@@ -20,6 +20,8 @@ include("types/problems.jl")
 include("types/algorithms.jl")
 include("types/solutions.jl")
 
+include("types/problem_utils.jl")
+
 # Multi-terms fractional ordinary differential equations
 include("multitermsfode/matrix.jl")
 include("multitermsfode/hankelmatrix.jl")
