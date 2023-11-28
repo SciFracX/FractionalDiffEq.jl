@@ -23,7 +23,7 @@ end
 
 @testset "Test DelayPECE method with single constant lag with variable order" begin
     function h(p, t)
-        if x == 0
+        if t == 0
             return 19.00001
         else
             return 19.0
