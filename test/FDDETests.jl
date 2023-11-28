@@ -36,7 +36,7 @@ end
     τ = [0.8]
     tspan = (0.0, 1.0)
     u0 = 19.00001
-    fddeprob = FDDEProblem(f, alpha, u0, h, constant_lags = τ, tspan)
+    fddeprob = FDDEProblem(f, [alpha], u0, h, constant_lags = τ, tspan)
     V, y = solve(fddeprob, dt, DelayPECE())
 
     @test V≈[19.0, 19.0, 1.0]
