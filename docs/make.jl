@@ -13,6 +13,7 @@ makedocs(;
         assets=["assets/favicon.ico"],
     ),
     warnonly = :doctest,
+    doctest = false,
     pages = [
         "FractionalDiffEq.jl" => "index.md",
         "Get Started" => "get_started.md",

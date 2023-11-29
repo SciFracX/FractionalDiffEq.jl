@@ -3,6 +3,10 @@ abstract type AbstractFDEProblem <: SciMLBase.AbstractDEProblem end
 abstract type AbstractFODEProblem{uType, tType, oType, isinplace} <: AbstractFDEProblem end
 abstract type AbstractFDDEProblem{uType, tType, oType, lType, isinplace} <: AbstractFDEProblem end
 abstract type FDEProblem end
+
+"""
+Multiple terms fractional order differential equations.
+"""
 struct MultiTermsFODEProblem <: FDEProblem
     parameters
     orders
@@ -146,11 +150,7 @@ function FDDEProblem(f::Function,
     return FDDEProblem(f, ϕ, α, τ, T)
 end
 =#
-"""
-    FDDESystem(f, ϕ, α, τ, T)
 
-Construct system of fractional delay differential equations problem.
-"""
 
 struct StandardFDDEProblem end
 
@@ -205,6 +205,11 @@ function FDDEProblem(f::SciMLBase.AbstractDDEFunction, args...; kwargs...)
     FDDEProblem{SciMLBase.isinplace(f)}(f, args...; kwargs...)
 end
 
+"""
+    FDDESystem(f, ϕ, α, τ, T)
+
+Construct system of fractional delay differential equations problem.
+"""
 struct FDDESystem <: FDEProblem
     f::Function
     ϕ::AbstractArray

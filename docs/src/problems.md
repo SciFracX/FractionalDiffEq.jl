@@ -36,12 +36,6 @@ FractionalDiffEq.FFEODEProblem
 FractionalDiffEq.FFMODEProblem
 ```
 
-## FPDE Problem
-
-```@docs
-FractionalDiffEq.FPDEProblem
-```
-
 ## FDDE Problem
 
 ```@docs
