@@ -153,7 +153,7 @@ Use [Trapezoidal](https://en.wikipedia.org/wiki/Trapezoidal_rule_(differential_e
 }
 ```
 """
-struct Trapezoidal <: FODESystemAlgorithm end
+struct Trapezoid <: FODESystemAlgorithm end
 
 
 """
