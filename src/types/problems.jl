@@ -160,8 +160,7 @@ struct StandardFDDEProblem end
 - `ϕ`: History function
 Construct a fractional delayed differential equation problem.
 """
-struct FDDEProblem{uType, tType, oType, lType, isinplace, P, F, H, K, PT} <:
-       AbstractDDEProblem{uType, tType, lType, isinplace}
+struct FDDEProblem{uType, tType, oType, lType, isinplace, P, F, H, K, PT} <: SciMLBase.AbstractDDEProblem{uType, tType, lType, isinplace}
     f::F
     order::oType
     u0::uType
