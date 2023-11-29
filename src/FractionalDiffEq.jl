@@ -37,7 +37,6 @@ include("fodesystem/bdf.jl")
 include("fodesystem/newton_gregory.jl")
 include("fodesystem/trapezoid.jl")
 include("fodesystem/explicit_pi.jl")
-include("fodesystem/Euler.jl")
 include("fodesystem/GLWithMemory.jl")
 include("fodesystem/NonLinear.jl")
 include("fodesystem/newton_polynomials.jl")
@@ -93,7 +92,6 @@ export FODESystemSolution, FDDESystemSolution, FFMODESystem
 export PIPECE, PIRect, PITrap
 export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, GL
 export AtanganaSedaAB
-#export Euler
 
 # System of FODE solvers
 export NonLinearAlg, BDF, NewtonGregory, Trapezoid, PIEX, NewtonPolynomial

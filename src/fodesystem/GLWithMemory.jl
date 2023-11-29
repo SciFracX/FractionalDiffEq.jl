@@ -1,4 +1,4 @@
-function solve(prob::FODEProblem, ::GL; dt = 0.0)
+function solve(prob::FODEProblem, alg::GL; dt = 0.0)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     # GL method is only for same order FODE
     @unpack f, order, u0, tspan, p = prob
@@ -35,5 +35,7 @@ function solve(prob::FODEProblem, ::GL; dt = 0.0)
         f(du, result[:, k-1], p, t0+(k-1)*dt)
         result[:, k] = @. horder*du-summation
     end
-    return FODESystemSolution(t, result)
+    u = collect(Vector{eltype(u0)}, eachcol(result))
+    
+    return DiffEqBase.build_solution(prob, alg, t, u)
 end

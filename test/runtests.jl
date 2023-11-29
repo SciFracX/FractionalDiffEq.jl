@@ -1,12 +1,16 @@
 using FractionalDiffEq, SpecialFunctions
 using Test
 
+function test_sol(sol::AbstractODESolution)
+    return mapreduce(permutedims, vcat, sol.u)
+end
+
 @testset "FractionalDiffEq.jl" begin
-    include("FODETests.jl")
-    include("FDDETests.jl")
-    include("FDiscreteTests.jl")
-    include("DODETests.jl")
-    include("FFODETests.jl")
+    include("fode.jl")
+    include("fdde.jl")
+    include("discrete.jl")
+    include("dode.jl")
+    include("ffode.jl")
     include("auxillary.jl")
-    include("FOLEtest.jl")
+    include("fole.jl")
 end

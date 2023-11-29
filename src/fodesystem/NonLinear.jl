@@ -1,4 +1,4 @@
-function solve(prob::FODEProblem, ::NonLinearAlg; dt = 0.0, L0=1e10)
+function solve(prob::FODEProblem, alg::NonLinearAlg; dt = 0.0, L0=1e10)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
@@ -32,7 +32,9 @@ function solve(prob::FODEProblem, ::NonLinearAlg; dt = 0.0, L0=1e10)
         z[:, k] = x1 - u0
     end
     result = z + repeat(u0, 1, m)
-    return FODESystemSolution(time, result)
+    u = collect(Vector{eltype(result)}, eachcol(result))
+
+    return DiffEqBase.build_solution(prob, alg, time, u)
 end
 
 """

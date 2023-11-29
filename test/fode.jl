@@ -1,30 +1,4 @@
-#=
-@testset "Test Diethelm PECE algorithms" begin
-    fun(y, p, t) = 1-y
-    prob = SingleTermFODEProblem(fun, 1.8, [0, 0], (0, 5))
-    sol = solve(prob, 0.5, PECE())
 
-    @test isapprox(sol.u, [0.16153482345602124
-    0.5289988135096678
-    0.848191872231344
-    1.0899386876765813
-    1.2276684080819034
-    1.2684889407947215
-    1.2385617809129195
-    1.1700696107638846
-    1.0918355406175286
-    1.0242165055531318
-    0.977769035221195]; atol=1e-3)
-end
-
-@testset "Test forward Euler method" begin
-    fun(y, p, t) = 1-y
-    prob = SingleTermFODEProblem(fun, 0.5, 0, (0, 5))
-    sol = solve(prob, 0.5, Euler())
-
-    @test isapprox(sol.u, [0.0, 0.7978845608028654, 0.4917593947279313, 0.7259128254126388, 0.6517091834824043, 0.7289344741198424, 0.7179084631988641, 0.7483267686842404, 0.7528156154229637, 0.7681082183772983, 0.7753604356669395]; atol=1e-3)
-end
-=#
 @testset "Test Matrix discrete method" begin
     fun(x, y) = 1-y
     u0 = [0, 0]
@@ -96,7 +70,7 @@ end
     end
     prob = FODEProblem(testf!, alpha, u0, tspan)
     sol = solve(prob, GL(), dt=0.5)
-    @test isapprox(sol.u, [1.0  -4.04478    84.8074
+    @test isapprox(test_sol(sol), [1.0  -4.04478    84.8074
     0.0  13.5939    -51.1251
     1.0  -0.352607  -27.5541]; atol=1e-4)
 end
@@ -115,9 +89,9 @@ end
     u0 = [0.2; -0.1; 0.1];
     tspan = (0, 0.5);
     prob = FODEProblem(chua!, α, u0, tspan)
-    result = solve(prob, NonLinearAlg(), dt = 0.1)
+    sol = solve(prob, NonLinearAlg(), dt = 0.1)
 
-    @test isapprox(result.u, [  0.2   0.11749     0.074388  0.0733938  0.117483   0.210073
+    @test isapprox(test_sol(sol), [  0.2   0.11749     0.074388  0.0733938  0.117483   0.210073
     -0.1  -0.0590683  -0.018475  0.0192931  0.0534393  0.0844175
      0.1   0.224134    0.282208  0.286636   0.246248   0.168693]; atol=1e-3)
 end
@@ -357,7 +331,7 @@ end
     prob = FODEProblem(test, alpha, y0, tspan)
     sol = solve(prob, PECE(), dt=0.01)
 
-    @test isapprox(sol.u, [1.2  1.2061   1.21042  1.21421  1.21767  1.22089  1.22392  1.22678  1.2295   1.2321   1.23459
+    @test isapprox(test_sol(sol), [1.2  1.2061   1.21042  1.21421  1.21767  1.22089  1.22392  1.22678  1.2295   1.2321   1.23459
     2.8  2.78118  2.76953  2.7596   2.75064  2.74235  2.73455  2.72715  2.72008  2.71329  2.70673]; atol=1e-3)
 end
 
@@ -374,7 +348,7 @@ end
     prob = FODEProblem(test, alpha, y0, tspan)
     sol = solve(prob, PIEX(), dt = 0.015)
 
-    @test isapprox(sol.u, [1.2  1.20865  1.21458  1.21975  1.22443  1.22874  1.23276  1.23652  1.24006  1.24339  1.24653  1.2495   1.25229  1.25493  1.25575
+    @test isapprox(test_sol(sol), [1.2  1.20865  1.21458  1.21975  1.22443  1.22874  1.23276  1.23652  1.24006  1.24339  1.24653  1.2495   1.25229  1.25493  1.25575
     2.8  2.77486  2.75941  2.74621  2.73429  2.72326  2.71291  2.70309  2.69373  2.68477  2.67616  2.66786  2.65986  2.65213  2.64964]; atol=1e-4)
 end
 
@@ -390,7 +364,7 @@ end
     prob = FODEProblem(brusselator, alpha, u0, tspan)
     sol = solve(prob, NewtonGregory(), dt = 0.1)
 
-    @test isapprox(sol.u, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
+    @test isapprox(test_sol(sol), [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
     0.03  0.165554  0.265678  0.355635  0.439544  0.519211]; atol=1e-4)
 end
 
@@ -406,7 +380,7 @@ end
     prob = FODEProblem(brusselator, alpha, u0, tspan)
     sol = solve(prob, BDF(), dt = 0.1)
 
-    @test isapprox(sol.u, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
+    @test isapprox(test_sol(sol), [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
     0.03  0.165554  0.265678  0.355635  0.439544  0.519211]; atol=1e-4)
 end
 
@@ -422,13 +396,14 @@ end
     prob = FODEProblem(brusselator, alpha, u0, tspan)
     sol = solve(prob, Trapezoid(), dt = 0.1)
 
-    @test isapprox(sol.u, [0.2   0.200531  0.201161  0.201808  0.202452  0.203088
+    @test isapprox(test_sol(sol), [0.2   0.200531  0.201161  0.201808  0.202452  0.203088
     0.03  0.165554  0.265678  0.355635  0.439545  0.519211]; atol=1e-4)
 end
 
 
 @testset "Test Newton Polynomial" begin
     t0=0; tfinal=5
+    tspan = (0.0, 5.0)
     α = [0.98, 0.98, 0.98]
     u0 = [-1, 1, 1]
     function fun(du, u, p, t)
@@ -437,10 +412,10 @@ end
         du[2] = -sin(u[3])-b*u[2]
         du[3] = -sin(u[1])-b*u[3]
     end
-    prob = FODEProblem(fun, α, u0, (t0, tfinal))
+    prob = FODEProblem(fun, α, u0, tspan)
     sol = solve(prob, NewtonPolynomial(), dt = 0.5)
 
-    @test isapprox(sol.u, [-1.0  -1.37074   -1.46124    -1.21771   -0.884241  -0.49327   -0.0897447   0.338635   0.793532   1.2323    1.55187
+    @test isapprox(test_sol(sol), [-1.0  -1.37074   -1.46124    -1.21771   -0.884241  -0.49327   -0.0897447   0.338635   0.793532   1.2323    1.55187
     1.0   0.529265  -0.0101035  -0.430956  -0.733314  -0.916321  -1.06158    -1.2647    -1.5767    -1.99613  -2.37772
     1.0   1.37074    1.8176      2.17624    2.48899    2.67047    2.6624      2.46322    2.07376    1.55057   1.0049]; atol=1e-4)
 end
@@ -478,7 +453,7 @@ end
     prob = FODEProblem(fun, α, u0, tspan)
     sol = solve(prob, AtanganaSedaAB(), dt = 0.5)
 
-    @test isapprox(sol.u, [ -0.1   0.7    1.18511  -1.41522  -31.0872
+    @test isapprox(test_sol(sol), [ -0.1   0.7    1.18511  -1.41522  -31.0872
     0.1   0.525  1.08088  -4.03383   32.0085
    -0.1  -0.065  1.03463   4.10537   13.3441]; atol=1e-2)
 end

@@ -12,7 +12,7 @@ mutable struct M
     bn_fft
 end
 
-function solve(prob::FODEProblem, ::PECE; dt = 0.0)
+function solve(prob::FODEProblem, alg::PECE; dt = 0.0)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
@@ -139,7 +139,9 @@ function solve(prob::FODEProblem, ::PECE; dt = 0.0)
     end
 
     t = t[1:N+1]; y = y[:, 1:N+1]
-    return FODESystemSolution(t, y)
+    u = collect(Vector{eltype(u0)}, eachcol(y))
+
+    return DiffEqBase.build_solution(prob, alg, t, u)
 
 end
 

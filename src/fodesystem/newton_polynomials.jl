@@ -1,4 +1,4 @@
-function solve(prob::FODEProblem, ::NewtonPolynomial; dt = 0.0)
+function solve(prob::FODEProblem, alg::NewtonPolynomial; dt = 0.0)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
@@ -27,5 +27,7 @@ function solve(prob::FODEProblem, ::NewtonPolynomial; dt = 0.0)
         f(temp3, result[:, n-2], p, t[n-2])
         result[:, n+1] = result[:, n] + (1-order)/M*(temp1-temp2)+order.*M.*dt.*(23/12*temp1-4/3*temp2+5/12*temp3)
     end
-    return FODESystemSolution(t, result)
+    u = collect(Vector{eltype(u0)}, eachcol(result))
+
+    return DiffEqBase.build_solution(prob, alg, t, u)
 end
