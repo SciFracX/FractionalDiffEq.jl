@@ -43,7 +43,7 @@ function solve(FDDE::FDDEProblem, step_size, ::DelayPECE)
         # Here is the PECE solver for multiple time varying lags
         solve_fdde_with_multiple_lags(FDDE, step_size) #TODO: implement this
     # Varying order fractional delay differential equations
-    elseif FDDE.order isa Function
+    elseif FDDE.order[1] isa Function
         if length(FDDE.constant_lags[1]) == 1
             # Here is the PECE solver for single lag with variable order
             solve_fdde_with_single_lag_and_variable_order(FDDE, step_size)
@@ -127,6 +127,7 @@ function a(j::Int, n::Int, order, step_size)
     return result*step_size^order / (order*(order + 1))
 end
 
+#generalized_binomials(j, n, order::Number, step_size) = @. step_size^order/order*((n-j+1)^order - (n-j)^order)
 generalized_binomials(j, n, order, step_size) = @. step_size^order/order*((n-j+1)^order - (n-j)^order)
 
 function v(h, n, τ, step_size, y, yp, t, p)
@@ -252,7 +253,7 @@ function solve_fdde_with_single_lag_and_variable_order(FDDE::FDDEProblem, step_s
             if iip
                 tmp = zeros(length(yp[1]))
                 f(tmp, y[j], v(h, j, τ, step_size, y, yp, t, p), p, t[j])
-                yp[n+1] = yp[n+1]+generalized_binomials(j-1, n-1, order(t[n+1]), step_size)*tmp
+                yp[n+1] = yp[n+1] + generalized_binomials(j-1, n-1, order(t[n+1]), step_size)*tmp
             else
                 yp[n+1] = yp[n+1] + generalized_binomials(j-1, n-1, order(t[n+1]), step_size)*f(y[j], v(h, j, τ, step_size, y, yp, t, p), p, t[j])
             end
@@ -262,10 +263,22 @@ function solve_fdde_with_single_lag_and_variable_order(FDDE::FDDEProblem, step_s
         y[n+1] = 0
 
         @fastmath @inbounds @simd for j=1:n
-            y[n+1] = y[n+1]+a(j-1, n-1, order(t[n+1]), step_size)*f(t[j], y[j], v(h, j, τ, step_size, y, yp, t, p))
+            if iip
+                tmp = zeros(length(y[1]))
+                f(tmp, y[j], v(h, j, τ, step_size, y, yp, t, p), p, t[j])
+                y[n+1] = y[n+1]+a(j-1, n-1, order(t[n+1]), step_size)*tmp
+            else
+                y[n+1] = y[n+1]+a(j-1, n-1, order(t[n+1]), step_size)*f(y[j], v(h, j, τ, step_size, y, yp, t, p), p, t[j])
+            end
         end
 
-        y[n+1] = y[n+1]/gamma(order(t[n+1]))+step_size^order(t[n+1])*f(t[n+1], yp[n+1], v(h, n+1, τ, step_size, y, yp, t, p))/gamma(order(t[n+1])+2)+h(p, 0)
+        if iip
+            tmp = zeros(length(y[1]))
+            f(tmp, yp[n+1], v(h, n+1, τ, step_size, y, yp, t, p), p, t[n+1])
+            y[n+1] = y[n+1]/gamma(order(t[n+1]))+step_size^order(t[n+1])*tmp/gamma(order(t[n+1])+2)+h(p, 0)
+        else
+            y[n+1] = y[n+1]/gamma(order(t[n+1]))+step_size^order(t[n+1])*f(yp[n+1], v(h, n+1, τ, step_size, y, yp, t, p), p, t[n+1])/gamma(order(t[n+1])+2)+h(p, 0)
+        end
     end
 
     V = copy(t)
