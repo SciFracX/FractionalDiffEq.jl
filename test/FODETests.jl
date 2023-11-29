@@ -100,25 +100,7 @@ end
     0.0  13.5939    -51.1251
     1.0  -0.352607  -27.5541]; atol=1e-4)
 end
-#=
-@testset "Test GL method" begin
-    fun(y, p, t) = 1-y
-    prob = SingleTermFODEProblem(fun, 0.5, 0, (0, 1))
-    sol = solve(prob, 0.1, GL())
 
-    @test isapprox(sol.u, [0.0
-    0.31622776601683794
-    0.3743416490252569
-    0.42454983788325495
-    0.4608051796660425
-    0.4897286932245971
-    0.5136308879844076
-    0.5339402943673064
-    0.5515444532932976
-    0.5670394859746068
-    0.5808448788127054]; atol=1e-3)
-end
-=#
 @testset "Test Nonlinear method" begin
     function chua!(du, x, p, t)
         a = 10.725; b = 10.593
@@ -158,41 +140,7 @@ end
     0.8276979913681598]; atol=1e-4)
 end
 =#
-#=
-@testset "Test Product Integral Implicit method" begin
-    fun(t, y)=1-y
-    prob = SingleTermFODEProblem(fun, 0.5, 0, 1)
-    sol=solve(prob, 0.1, PIIM())
 
-    @test isapprox(sol, [ 0.0
-    0.504626504404032
-    0.543454077521492
-    0.5760954086164125
-    0.6028545521580736
-    0.6251322531561498
-    0.6440148324633577
-    0.6602762702077741
-    0.6744705915156369
-    0.6870025519994545]; atol=1e-4)
-end
-
-@testset "Test Product Integral Implicit Trapezoidal method" begin
-    fun(t, y)=1-y
-    prob = SingleTermFODEProblem(fun, 0.5, 0, 1)
-    sol=solve(prob, 0.1, PITrap())
-
-    @test isapprox(sol, [0.0
-    0.504626504404032
-    0.5185925289496215
-    0.5467126570149609
-    0.571261200170596
-    0.5923262209457972
-    0.6105232343055992
-    0.6264159719331727
-    0.6404461835166287
-    0.652951997319657]; atol=1e-4)
-end
-=#
 
 
 @testset "Test Product Integration explicit method for multi-terms FODE" begin

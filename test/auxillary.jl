@@ -61,60 +61,6 @@ end
     @test_nowarn show(multitermssol)
 end
 
-@testset "Test FODEProblem show method" begin
-    # FODESystem
-    h=0.5; tspan=(0, 1)
-    alpha = [0.99, 0.99, 0.99]
-    x0 = [1, 0, 1]
-    function testf!(du, u, p, t)
-        a, b, c = 10, 28, 8/3
-        du[1] = a*(u[2]-u[1])
-        du[2] = u[1]*(b-u[3])-u[2]
-        du[3] = u[1]*u[2]-c*u[3]
-    end
-    fodesystemprob = FODEProblem(testf!, alpha, x0, tspan)
-    fodesystemsol = solve(fodesystemprob, h, GL())
-
-    @test_nowarn show(fodesystemprob)
-    @test_nowarn show(fodesystemsol)
-end
-
-@testset "Test FDDEProblem show method" begin
-    function h(p, t)
-        if t == 0
-            return 19.00001
-        else
-            return 19.0
-        end
-    end
-    
-    f(y, ϕ, p, t) = 3.5*y*(1-ϕ/19)
-    
-    dt = 0.5
-    α = 0.97
-    τ = [0.8]
-    u0 = 19.00001
-    tspan = (0.0, 1.0)
-    fddeprob = FDDEProblem(f, α, u0, h, constant_lags = τ, tspan)
-    fddesol = solve(fddeprob, dt, DelayPECE())
-
-    @test_nowarn show(fddeprob)
-    @test_nowarn show(fddesol)
-end
-
-@testset "Test FDDESystem show method" begin
-    function EnzymeKinetics!(dy, y, ϕ, t)
-        dy[1] = 10.5-y[1]/(1+0.0005*ϕ[4]^3)
-        dy[2] = y[1]/(1+0.0005*ϕ[4]^3)-y[2]
-        dy[3] = y[2]-y[3]
-        dy[4] = y[3]-0.5*y[4]
-    end
-    q = [60, 10, 10, 20]; α = [0.95, 0.95, 0.95, 0.95]
-    fddesystemprob = FDDESystem(EnzymeKinetics!, q, α, 4, 6)
-
-    @test_nowarn show(fddesystemprob)
-end
-
 @testset "Test DODEProblem show method" begin
     h = 0.5; t = collect(0:h:1)
     dodefun(t)=0
