@@ -144,14 +144,6 @@ function noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out
     return FOLE(tspan, LE)
 end
 
-function jacobian_of_fdefun(f, t, y, p)
-    ForwardDiff.jacobian(y) do y
-    du = similar(y)
-    f(du, y, p, t)
-    du
-    end
-end
-
 function commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p)
     ne::Int = length(u0) # System dimension
     order = order[1] # Since this is the commensurate case, we only need one element in order array
@@ -244,19 +236,6 @@ function commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p
     return FOLE(tspan, LE)
 end
 
-mutable struct M
-    an
-    bn
-    a0
-    halpha1
-    halpha2
-    mu
-    mu_tol
-    r
-    index_fft
-    an_fft
-    bn_fft
-end
 #TODO: Decouple ABM methods for FODEProblems from FractionalSystems.jl to FractionalDiffEq.jl
 function pc(alpha, f_fun, t0, T, y0, h, p)
     METH = M(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)

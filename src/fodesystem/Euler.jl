@@ -1,3 +1,6 @@
+"""
+The classical Euler method extended for fractional order differential equations.
+"""
 struct Euler <: FODESystemAlgorithm end
 
 function solve(prob::FODEProblem, h, ::Euler)

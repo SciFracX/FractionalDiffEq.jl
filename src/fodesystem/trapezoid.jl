@@ -290,9 +290,6 @@ function TrapWeights(alpha, N)
     return omega, w, s
 end
 
-#f_vectorfield(t, y, fdefun) = fdefun(zeros(length(y)), y, 0, t)
-Jf_vectorfield(t, y, Jfdefun) = Jfdefun(t, y)
-
 function TrapStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)
     ys = zeros(size(y0, 1), 1)
     for k = 1:m_alpha

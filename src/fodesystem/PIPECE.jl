@@ -30,6 +30,9 @@ mutable struct M
     bn_fft
 end
 
+"""
+Predictor-Correct scheme.
+"""
 struct PECE <: FODESystemAlgorithm end
 
 #TODO: Rename as PIPECE

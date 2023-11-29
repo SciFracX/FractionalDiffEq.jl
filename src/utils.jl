@@ -14,15 +14,6 @@ function Base.show(io::IO, prob::MultiTermsFODEProblem)
     println("u0: $(prob.u0)")
 end
 
-function Base.show(io::IO, prob::FDDEProblem)
-    printstyled(typeof(prob), color=:light_blue)
-    printstyled(" with order ")
-    printstyled("$(prob.α)", color=:red)
-    println()
-    println("timespan: $(prob.tspan)")
-    println("history function: $(prob.ϕ)")
-end
-
 function Base.show(io::IO, prob::FDDESystem)
     printstyled(typeof(prob), color=:light_blue)
     printstyled(" with order ")

@@ -8,56 +8,46 @@ Pages = ["algorithms.md"]
 
 ### Single Term FODE
 
-```@docs
-FractionalDiffEq.PECE
-FractionalDiffEq.Euler
-FractionalDiffEq.PIEX
-FractionalDiffEq.AtanganaSeda
-```
+PECE
+Euler
+PIEX
+AtanganaSeda
+
 
 ### Multi-Term FODE
 
-```@docs
-FractionalDiffEq.FODEMatrixDiscrete
-FractionalDiffEq.ClosedForm
-FractionalDiffEq.ClosedFormHankelM
-FractionalDiffEq.PIPECE
-FractionalDiffEq.PIRect
-FractionalDiffEq.PITrap
-```
+FODEMatrixDiscrete
+ClosedForm
+ClosedFormHankelM
+PIPECE
+PIRect
+PITrap
 
 ### System of FODE
 
-```@docs
-FractionalDiffEq.NonLinearAlg
-FractionalDiffEq.PECE
-FractionalDiffEq.GL
-FractionalDiffEq.FLMMBDF
-FractionalDiffEq.FLMMNewtonGregory
-FractionalDiffEq.FLMMTrap
-FractionalDiffEq.PIEX
-FractionalDiffEq.NewtonPolynomial
-FractionalDiffEq.AtanganaSedaAB
-```
+NonLinearAlg
+PECE
+GL
+FLMMBDF
+FLMMNewtonGregory
+FLMMTrap
+PIEX
+NewtonPolynomial
+AtanganaSedaAB
 
-## Fractional Delay Differential Equatinos
+## Fractional Delay Differential Equations
 
-```@docs
-FractionalDiffEq.DelayPECE
-FractionalDiffEq.DelayPI
-FractionalDiffEq.MatrixForm
-FractionalDiffEq.DelayABM
-```
+DelayPECE
+DelayPI
+MatrixForm
+DelayABM
+
 
 ## Distributed Order Differential Equations
 
-```@docs
-FractionalDiffEq.DOMatrixDiscrete
-```
+DOMatrixDiscrete
 
 ## Fractional Differences Equations
 
-```@docs
-FractionalDiffEq.PECEDifference
-FractionalDiffEq.GL
-```
+PECEDifference
+GL

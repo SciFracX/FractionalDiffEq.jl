@@ -214,8 +214,6 @@ function PITrap_triangolo(nxi, nxf, t, y, fy, zn, N, a0, an, t0, problem_size, u
     return y, fy
 end
 
-Jf_vectorfield(t, y, fun)=fun(t, y)
-
 function PITrap_startingterm_multi(t,t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
     ys = zeros(problem_size)
 

@@ -5,21 +5,6 @@
 
 Use explicit Product integration method to solve system of FODE.
 """
-
-mutable struct M
-    an
-    bn
-    a0
-    halpha1
-    halpha2
-    mu
-    mu_tol
-    r
-    index_fft
-    an_fft
-    bn_fft
-end
-
 function solve(prob::FODEProblem, h, ::PIEX)
     @unpack f, order, u0, tspan, p = prob
 
@@ -229,9 +214,6 @@ function PIEX_system_triangolo(nxi, nxf, t, y, fy, zn, N, METH, problem_size, al
     end
     return y, fy
 end
-
-
-sysf_vectorfield(t, y, f_fun) = f_fun(t, y)
 
 function  PIEX_system_starting_term(t, u0, m_alpha, t0, m_alpha_factorial)
     ys = zeros(size(u0, 1), 1)
