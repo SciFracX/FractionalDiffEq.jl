@@ -12,6 +12,7 @@ makedocs(;
         canonical="https://SciFracX.github.io/FractionalDiffEq.jl",
         assets=["assets/favicon.ico"],
     ),
+    warnonly = :doctest,
     pages = [
         "FractionalDiffEq.jl" => "index.md",
         "Get Started" => "get_started.md",

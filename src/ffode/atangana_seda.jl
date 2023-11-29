@@ -1,3 +1,6 @@
+"""
+AtanganaSeda methods for 
+"""
 struct AtanganaSeda <: FODESystemAlgorithm end
 
 function solve(prob::Union{FFMODEProblem, FFMODESystem}, h::Float64, ::AtanganaSeda)
