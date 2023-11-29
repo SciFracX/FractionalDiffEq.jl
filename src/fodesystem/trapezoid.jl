@@ -25,7 +25,7 @@ function solve(prob::FODEProblem, ::Trapezoid; dt = 0.0, reltol=1e-6, abstol=1e-
     
     # Number of points in which to evaluate the solution or the weights
     r::Int = 16
-    N::Int = ceil(Int, (tfinal-t0)/h)
+    N::Int = ceil(Int, (tfinal-t0)/dt)
     Nr::Int = ceil(Int, (N+1)/r)*r
     Q::Int = ceil(Int, log2((Nr)/r))-1
     global NNr = 2^(Q+1)*r
@@ -37,10 +37,10 @@ function solve(prob::FODEProblem, ::Trapezoid; dt = 0.0, reltol=1e-6, abstol=1e-
 
     # Evaluation of convolution and starting weights of the FLMM
     (omega, w, s) = TrapWeights(alpha, NNr+1)
-    halpha = h^alpha
+    halpha = dt^alpha
     
     # Initializing solution and proces of computation
-    t = collect(0:N)*h
+    t = collect(0:N)*dt
     y[:, 1] = u0[:, 1]
     temp = zeros(problem_size)
     f(temp, u0[:, 1], p, t0)
@@ -59,7 +59,7 @@ function solve(prob::FODEProblem, ::Trapezoid; dt = 0.0, reltol=1e-6, abstol=1e-
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
     if tfinal < t[N+1]
-        c = (tfinal - t[N])/h
+        c = (tfinal - t[N])/dt
         t[N+1] = tfinal
         y[:, N+1] = (1-c)*y[:, N] + c*y[:, N+1]
     end
