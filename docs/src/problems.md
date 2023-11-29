@@ -4,15 +4,11 @@
 Pages = ["problems.md"]
 ```
 
-The general fractional differential equations problem type:
-
-```@docs
-FractionalDiffEq.FDEProblem
-```
+The general fractional differential equations problem type.
 
 ## FODE Problem
 
-Fractional ordinary problems type, we can classified them as Single-Term and Multi-Term problems:
+Fractional ordinary problems type, we can classify them as Single-Term and Multi-Term problems:
 
 ```math
 D^{\alpha}y(t)=f(t, y)
@@ -22,43 +18,31 @@ D^{\alpha}y(t)=f(t, y)
 \sum_{s=0}^pc_sD^{\beta_s}y=f
 ```
 
-```@docs
-FractionalDiffEq.SingleTermFODEProblem
-FractionalDiffEq.MultiTermsFODEProblem
-FractionalDiffEq.FODESystem
-```
+SingleTermFODEProblem
+MultiTermsFODEProblem
+FODESystem
 
 ### FFODE Problem
 
-```@docs
-FractionalDiffEq.FFPODEProblem
-FractionalDiffEq.FFEODEProblem
-FractionalDiffEq.FFMODEProblem
-```
+FFPODEProblem
+FFEODEProblem
+FFMODEProblem
 
 ## FDDE Problem
 
-```@docs
-FractionalDiffEq.FDDEProblem
-FractionalDiffEq.FDDEMatrixProblem
-FractionalDiffEq.FDDESystem
-```
+FDDEProblem
+FDDEMatrixProblem
+FDDESystem
 
 ## DODE Problem
 
-```@docs
 FractionalDiffEq.DODEProblem
-```
 
 ## Fractional Difference Problem
 
-```@docs
-FractionalDiffEq.FractionalDifferenceProblem
-FractionalDiffEq.FractionalDifferenceSystem
-```
+FractionalDifferenceProblem
+FractionalDifferenceSystem
 
 ## FIE Problem
 
-```@docs
-FractionalDiffEq.FIEProblem
-```
+FIEProblem
