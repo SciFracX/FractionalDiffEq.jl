@@ -1,4 +1,4 @@
-function solve(prob::FODEProblem, ::AtanganaSedaAB; dt = 0.0)
+function solve(prob::FODEProblem, alg::AtanganaSedaAB; dt = 0.0)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     order = order[1]
@@ -41,7 +41,9 @@ function solve(prob::FODEProblem, ::AtanganaSedaAB; dt = 0.0)
 
         result[:, n+1] = u0+(1-order)/AB*temptemptemp+((dt^order)*order/(AB*gamma(order+1)))*temptemp1 + ((dt^order)*order/(AB*gamma(order+2)))*temptemp2+((dt^order)*order/(2*AB*gamma(order+3)))*temptemp3
     end
-    return FODESystemSolution(t, result)
+    u = collect(Vector{eltype(u0)}, eachcol(result))
+
+    return DiffEqBase.build_solution(prob, alg, t, u)
 end
 
 

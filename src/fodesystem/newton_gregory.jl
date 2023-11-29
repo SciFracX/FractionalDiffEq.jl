@@ -1,4 +1,4 @@
-function solve(prob::FODEProblem, ::NewtonGregory; dt = 0.0, reltol=1e-6, abstol=1e-6, maxiters = 100)
+function solve(prob::FODEProblem, alg::NewtonGregory; dt = 0.0, reltol=1e-6, abstol=1e-6, maxiters = 100)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
@@ -63,7 +63,9 @@ function solve(prob::FODEProblem, ::NewtonGregory; dt = 0.0, reltol=1e-6, abstol
         y[:, N+1] = (1-c)*y[:, N] + c*y[:, N+1]
     end
     t = t[1:N+1]; y = y[:, 1:N+1]
-    return FODESystemSolution(t, y)
+    u = collect(Vector{eltype(u0)}, eachcol(y))
+
+    return DiffEqBase.build_solution(prob, alg, t, u)
 end
 
 
