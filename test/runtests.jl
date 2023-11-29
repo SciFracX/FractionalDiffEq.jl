@@ -1,7 +1,7 @@
 using FractionalDiffEq, SpecialFunctions
 using Test
 
-function test_sol(sol::AbstractODESolution)
+function test_sol(sol::SciMLBase.AbstractODESolution)
     return mapreduce(permutedims, vcat, sol.u)
 end
 

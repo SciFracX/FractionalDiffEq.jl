@@ -1,7 +1,8 @@
 module FractionalDiffEq
 
 using LinearAlgebra
-using SciMLBase, DiffEqBase
+using SciMLBase
+using DiffEqBase
 using SpecialFunctions
 using SparseArrays
 using InvertedIndices: Not
