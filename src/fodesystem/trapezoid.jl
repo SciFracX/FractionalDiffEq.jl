@@ -1,4 +1,4 @@
-function solve(prob::FODEProblem, ::Trapezoidal; dt = 0.0, reltol=1e-6, abstol=1e-6)
+function solve(prob::FODEProblem, ::Trapezoid; dt = 0.0, reltol=1e-6, abstol=1e-6)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
@@ -224,7 +224,7 @@ function TrapFirstApproximations(t, y, fy, abstol, maxiters, s, halpha, omega, w
 end
 
 function TrapWeights(alpha, N)
-    # Trapezoidal method with generating function ((1+x)/2/(1-x))^alpha
+    # Trapezoid method with generating function ((1+x)/2/(1-x))^alpha
     omega1 = zeros(1, N+1); omega2 = copy(omega1)
     omega1[1] = 1; omega2[1] = 1
     alpha_minus_1 = alpha - 1 ; alpha_plus_1 = alpha + 1

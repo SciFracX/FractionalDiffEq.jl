@@ -59,7 +59,8 @@ https://doi.org/10.1016/c2020-0-02711-8
 """
 struct AtanganaSedaCF <: FODESystemAlgorithm end
 #FIXME: Tests
-function solve(prob::FODEProblem, dt, ::AtanganaSedaCF)
+function solve(prob::FODEProblem, ::AtanganaSedaCF, dt = 0.0)
+    dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     t=collect(Float64, t0:dt:tfinal)

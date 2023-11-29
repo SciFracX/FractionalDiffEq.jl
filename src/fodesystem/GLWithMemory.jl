@@ -1,4 +1,5 @@
-function solve(prob::FODEProblem, dt, ::GL)
+function solve(prob::FODEProblem, ::GL, dt = 0.0)
+    dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     # GL method is only for same order FODE
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
