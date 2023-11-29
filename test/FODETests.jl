@@ -410,7 +410,7 @@ end
     0.03  0.165554  0.265678  0.355635  0.439544  0.519211]; atol=1e-4)
 end
 
-@testset "Test Trapezoidal method" begin
+@testset "Test Trapezoid method" begin
     a=1; mu=4
     function brusselator(du, u, p, t)
         du[1] = a-(mu+1)*u[1]+u[1]^2*u[2]
@@ -420,7 +420,7 @@ end
     u0=[0.2; 0.03]
     tspan=(0, 0.5)
     prob = FODEProblem(brusselator, alpha, u0, tspan)
-    sol = solve(prob, Trapezoidal(), dt = 0.1)
+    sol = solve(prob, Trapezoid(), dt = 0.1)
 
     @test isapprox(sol.u, [0.2   0.200531  0.201161  0.201808  0.202452  0.203088
     0.03  0.165554  0.265678  0.355635  0.439545  0.519211]; atol=1e-4)
