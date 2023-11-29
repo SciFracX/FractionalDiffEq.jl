@@ -60,7 +60,7 @@ end
 
 @testset "Test GL method for FODEProblem" begin
     alpha = [0.99, 0.99, 0.99]
-    u0 = [1, 0, 1]
+    u0 = [1.0, 0.0, 1.0]
     tspan = (0.0, 1.0)
     function testf!(du, u, p, t)
         a, b, c = 10, 28, 8/3

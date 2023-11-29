@@ -2,7 +2,7 @@ using FractionalDiffEq, SpecialFunctions
 using Test
 
 function test_sol(sol)
-    return mapreduce(permutedims, vcat, sol.u)
+    return transpose(mapreduce(permutedims, vcat, sol.u))
 end
 
 @testset "FractionalDiffEq.jl" begin
