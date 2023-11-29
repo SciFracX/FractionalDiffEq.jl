@@ -1,11 +1,5 @@
-
-
-"""
-    solve(prob::FODEProblem, h, PIEX())
-
-Use explicit Product integration method to solve system of FODE.
-"""
-function solve(prob::FODEProblem, h, ::PIEX)
+function solve(prob::FODEProblem, ::PIEX; dt = 0.0)
+    dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
 
     t0 = tspan[1]; T = tspan[2]
@@ -34,7 +28,7 @@ function solve(prob::FODEProblem, h, ::PIEX)
     f(f_temp, u0[:, 1], p, t0)
 
     r::Int = 16
-    N::Int = ceil(Int64, (T-t0)/h)
+    N::Int = ceil(Int64, (T-t0)/dt)
     Nr::Int = ceil(Int64, (N+1)/r)*r
     Qr::Int = ceil(Int64, log2(Nr/r)) - 1
     NNr::Int = 2^(Qr+1)*r
@@ -63,7 +57,7 @@ function solve(prob::FODEProblem, h, ::PIEX)
         end
     end
     METH.bn = bn
-    METH.halpha1 = h.^order./gamma.(order.+1)
+    METH.halpha1 = dt.^order./gamma.(order.+1)
 
     # Evaluation of FFT of coefficients of the PECE method
     METH.r = r 
@@ -96,7 +90,7 @@ function solve(prob::FODEProblem, h, ::PIEX)
     end
 
     # Initializing solution and proces of computation
-    t = t0 .+ collect(0:N)*h
+    t = t0 .+ collect(0:N)*dt
     y[:, 1] = u0[:, 1]
     fy[:, 1] = f_temp
     (y, fy) = PIEX_system_triangolo(1, r-1, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, order, p)
@@ -114,7 +108,7 @@ function solve(prob::FODEProblem, h, ::PIEX)
 
     # Evaluation solution in T when T is not in the mesh
     if T < t[N+1]
-        c = (T - t[N])/h
+        c = (T - t[N])/dt
         t[N+1] = T
         y[:, N+1] = (1-c)*y[:, N] + c*y[:, N+1]
     end

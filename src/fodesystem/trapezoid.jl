@@ -1,23 +1,5 @@
-"""
-    solve(prob::FODEProblem, FLMMTrap())
-
-Use [Trapezoidal](https://en.wikipedia.org/wiki/Trapezoidal_rule_(differential_equations)) with generating function ``f(x)=\\frac{1+x}{2(1-x)^\\alpha}`` generated weights fractional linear multiple steps method to solve system of FODE.
-
-### References
-
-```tex
-@article{Garrappa2015TrapezoidalMF,
-  title={Trapezoidal methods for fractional differential equations: Theoretical and computational aspects},
-  author={Roberto Garrappa},
-  journal={ArXiv},
-  year={2015},
-  volume={abs/1912.09878}
-}
-```
-"""
-struct FLMMTrap <: FODESystemAlgorithm end
-
-function solve(prob::FODEProblem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
+function solve(prob::FODEProblem, ::Trapezoidal; dt = 0.0, reltol=1e-6, abstol=1e-6)
+    dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     u0 = u0

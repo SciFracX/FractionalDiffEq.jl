@@ -1,35 +1,11 @@
-"""
-# Usage
-
-    solve(prob::FODEProblem, h, GL())
-
-Use Grunwald Letnikov difference method to solve system of system of FODE.
-
-### Reference
-
-```tex
-@INPROCEEDINGS{8742063,  
-author={Clemente-López, D. and Muñoz-Pacheco, J. M. and Félix-Beltrán, O. G. and Volos, C.},  
-booktitle={2019 8th International Conference on Modern Circuits and Systems Technologies (MOCAST)},   
-title={Efficient Computation of the Grünwald-Letnikov Method for ARM-Based Implementations of Fractional-Order Chaotic Systems},   
-year={2019},   
-doi={10.1109/MOCAST.2019.8742063}}
-```
-
-Python version by https://github.com/DClementeL/Grunwald_Letnikov
-"""
-# Grunwald Letnikov discretization method dispatch for FODEProblem
-# struct GLWithMemory <: FractionalDiffEqAlgorithm end
-struct GL <: FODESystemAlgorithm end
-
-function solve(prob::FODEProblem, h, ::GL)
+function solve(prob::FODEProblem, dt, ::GL)
     # GL method is only for same order FODE
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
-    t = collect(Float64, t0:h:T)
+    t = collect(Float64, t0:dt:T)
     order = order[1]
-    horder = h^order[1]
-    n::Int64 = floor(Int64, (T-t0)/h)+1
+    horder = dt^order[1]
+    n::Int64 = floor(Int64, (T-t0)/dt)+1
     l = length(u0)
 
     # Initialize solution
@@ -55,7 +31,7 @@ function solve(prob::FODEProblem, h, ::GL)
             end
         end
 
-        f(du, result[:, k-1], p, t0+(k-1)*h)
+        f(du, result[:, k-1], p, t0+(k-1)*dt)
         result[:, k] = @. horder*du-summation
     end
     return FODESystemSolution(t, result)

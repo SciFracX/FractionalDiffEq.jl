@@ -1,23 +1,5 @@
-"""
-    solve(prob::FODEProblem, h, FLMMNewtonGregory())
-
-Use [Newton Gregory](https://www.geeksforgeeks.org/newton-forward-backward-interpolation/) generated weights fractional linear multiple steps method to solve system of FODE.
-
-### References
-
-```tex
-@article{Garrappa2015TrapezoidalMF,
-  title={Trapezoidal methods for fractional differential equations: Theoretical and computational aspects},
-  author={Roberto Garrappa},
-  journal={ArXiv},
-  year={2015},
-  volume={abs/1912.09878}
-}
-```
-"""
-struct FLMMNewtonGregory <: FODESystemAlgorithm end
-
-function solve(prob::FODEProblem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e-6, maxiters = 100)
+function solve(prob::FODEProblem, ::NewtonGregory; dt = 0.0, reltol=1e-6, abstol=1e-6, maxiters = 100)
+    dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     alpha = order[1]
@@ -42,7 +24,7 @@ function solve(prob::FODEProblem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e
     
     # Number of points in which to evaluate the solution or the weights
     r::Int = 16
-    N::Int = ceil(Int, (tfinal-t0)/h)
+    N::Int = ceil(Int, (tfinal-t0)/dt)
     Nr::Int = ceil(Int, (N+1)/r)*r
     Q::Int = ceil(Int, log2((Nr)/r))-1
     global NNr = 2^(Q+1)*r
@@ -54,10 +36,10 @@ function solve(prob::FODEProblem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e
 
     # Evaluation of convolution and starting weights of the FLMM
     (omega, w, s) = NG_weights(alpha, NNr+1)
-    halpha = h^alpha
+    halpha = dt^alpha
     
     # Initializing solution and proces of computation
-    t = collect(0:N)*h
+    t = collect(0:N)*dt
     y[:, 1] = u0[:, 1]
     temp = zeros(length(u0[:, 1]))
     f(temp, u0[:, 1], p, t0)
@@ -76,7 +58,7 @@ function solve(prob::FODEProblem, h, ::FLMMNewtonGregory; reltol=1e-6, abstol=1e
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
     if tfinal < t[N+1]
-        c = (tfinal - t[N])/h
+        c = (tfinal - t[N])/dt
         t[N+1] = tfinal
         y[:, N+1] = (1-c)*y[:, N] + c*y[:, N+1]
     end
