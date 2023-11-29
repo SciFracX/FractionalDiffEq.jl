@@ -103,8 +103,7 @@ sol = solve(prob,PIEX())
 using Plots; plot(sol,vars=(1,2,3))
 ```
 """
-struct FODEProblem{uType, tType, oType, isinplace, P, F, bF, PT, K} <:
-        AbstractFODEProblem{uType, tType, oType, isinplace}
+struct FODEProblem{uType, tType, oType, isinplace, P, F, bF, PT, K} <: SciMLBase.AbstractODEProblem{uType, tType, isinplace}
     f::F
     order::oType
     u0::uType
@@ -131,7 +130,7 @@ end
 
 TruncatedStacktraces.@truncate_stacktrace SingleTermFODEProblem 3 1 2
 
-function FODEProblem(f::ODEFunction, order, u0, tspan, args...; kwargs...)
+function FODEProblem(f::SciMLBase.AbstractODEFunction, order, u0, tspan, args...; kwargs...)
     FODEProblem{SciMLBase.isinplace(f, 4)}(f, order, u0, tspan, args...; kwargs...)
 end
 
@@ -162,7 +161,7 @@ struct StandardFDDEProblem end
 Construct a fractional delayed differential equation problem.
 """
 struct FDDEProblem{uType, tType, oType, lType, isinplace, P, F, H, K, PT} <:
-       AbstractFDDEProblem{uType, tType, oType, lType, isinplace}
+       AbstractDDEProblem{uType, tType, lType, isinplace}
     f::F
     order::oType
     u0::uType
