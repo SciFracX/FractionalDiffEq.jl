@@ -1,26 +1,14 @@
-"""
-# Usage
-
-    solve(prob::FODEProblem, h, NonLinearAlg())
-
-Nonlinear algorithm for nonlinear fractional differential equations.
-
-### References
-
-Dingyu Xue, Northeastern University, China ISBN:9787030543981
-"""
-struct NonLinearAlg <: FODESystemAlgorithm end
-
-function solve(prob::FODEProblem, h, ::NonLinearAlg, L0=1e10)
+function solve(prob::FODEProblem, ::NonLinearAlg; dt = 0.0, L0=1e10)
+    dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
-    time = collect(t0:h:T)
+    time = collect(t0:dt:T)
     n = length(u0)
-    m = round(Int, (T-t0)/h)+1
+    m = round(Int, (T-t0)/dt)+1
     g = genfun(1)
     g = g[:]
     u0 = u0[:]
-    ha = h.^order
+    ha = dt.^order
     z = zeros(Float64, n, m)
     x1::Vector{Float64} = copy(u0)
 
@@ -34,7 +22,7 @@ function solve(prob::FODEProblem, h, ::NonLinearAlg, L0=1e10)
 
     du = zeros(n)
     for k = 2:m
-        tk = t0+(k-1)*h
+        tk = t0+(k-1)*dt
         L = min(Int64(k-1), Int64(L0))
         f(du, x1, p, tk)
 

@@ -86,7 +86,7 @@ function noncommensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out
     for it=1:n_it
         # Here we directly use the buildin PECE algorithm to solve the extend system, SO FAST!!!
         prob = FODEProblem(extend_fun, q[:], x[:], (t, t+h_norm), p)
-        sol = solve(prob, h, PECE())
+        sol = solve(prob, PECE(), dt = h)
         Y = sol.u
         t = t+h_norm
         Y = Y'

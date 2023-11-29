@@ -1,21 +1,3 @@
-#=
-"""
-    solve(prob::FODEProblem, h, PECE())
-
-Use the Adams-Bashforth-Moulton method to solve the system of FODEs.
-
-### References
-
-```tex
-@inproceedings{Garrappa2018NumericalSO,
-  title={Numerical Solution of Fractional Differential Equations: A Survey and a Software Tutorial},
-  author={Roberto Garrappa},
-  year={2018}
-}
-```
-"""
-=#
-
 mutable struct M
     an
     bn
@@ -30,13 +12,8 @@ mutable struct M
     bn_fft
 end
 
-"""
-Predictor-Correct scheme.
-"""
-struct PECE <: FODESystemAlgorithm end
-
-#TODO: Rename as PIPECE
-function solve(prob::FODEProblem, h, ::PECE)
+function solve(prob::FODEProblem, ::PECE; dt = 0.0)
+    dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]
     METH = M(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)# Initialization
@@ -68,7 +45,7 @@ function solve(prob::FODEProblem, h, ::PECE)
     f(f_temp, u0[:, 1], p, t0)
 
     r::Int = 16
-    N::Int = ceil(Int64, (T-t0)/h)
+    N::Int = ceil(Int64, (T-t0)/dt)
     Nr::Int = ceil(Int64, (N+1)/r)*r
     Qr::Int = ceil(Int64, log2(Nr/r)) - 1
     NNr::Int = 2^(Qr+1)*r
@@ -101,8 +78,8 @@ function solve(prob::FODEProblem, h, ::PECE)
         end
     end
     METH.bn = bn; METH.an = an; METH.a0 = a0
-    METH.halpha1 = h.^order./gamma.(order.+1)
-    METH.halpha2 = h.^order./gamma.(order.+2)
+    METH.halpha1 = dt.^order./gamma.(order.+1)
+    METH.halpha2 = dt.^order./gamma.(order.+2)
     METH.mu = mu; METH.mu_tol = mu_tol
 
     # Evaluation of FFT of coefficients of the PECE method
@@ -138,7 +115,7 @@ function solve(prob::FODEProblem, h, ::PECE)
     end
 
     # Initializing solution and proces of computation
-    t = t0 .+ collect(0:N)*h
+    t = t0 .+ collect(0:N)*dt
     y[:, 1] = u0[:, 1]
     fy[:, 1] = f_temp
     (y, fy) = ABM_triangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f) ;
@@ -156,7 +133,7 @@ function solve(prob::FODEProblem, h, ::PECE)
 
     # Evaluation solution in T when T is not in the mesh
     if T < t[N+1]
-        c = (T - t[N])/h
+        c = (T - t[N])/dt
         t[N+1] = T
         y[:, N+1] = (1-c)*y[:, N] + c*y[:, N+1]
     end

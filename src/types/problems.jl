@@ -1,7 +1,5 @@
 using SciMLBase, DiffEqBase
 abstract type AbstractFDEProblem <: SciMLBase.AbstractDEProblem end
-abstract type AbstractFODEProblem{uType, tType, oType, isinplace} <: AbstractFDEProblem end
-abstract type AbstractFDDEProblem{uType, tType, oType, lType, isinplace} <: AbstractFDEProblem end
 abstract type FDEProblem end
 
 """
@@ -20,10 +18,6 @@ end
 #=MultiTermsFODEProblem constructor, dispatch for closedform problem=#
 MultiTermsFODEProblem(parameters, orders, rightfun, u0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, u0, T)
 #MultiTermsFODEProblem(parameters, orders, rightfun, u0, t0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, u0, T)
-
-
-SciMLBase.isinplace(prob::AbstractFODEProblem{uType, tType, oType, iip}) where {uType, tType, oType, iip} = iip
-SciMLBase.isinplace(prob::AbstractFDDEProblem{uType, tType, oType, lType, iip}) where {uType, tType, oType, lType, iip} = iip
 
 struct StandardFODEProblem end
 

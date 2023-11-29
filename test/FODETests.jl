@@ -85,40 +85,22 @@ end
 end
 
 @testset "Test GL method for FODEProblem" begin
-    h=0.5; tf=1
     alpha = [0.99, 0.99, 0.99]
-    x0 = [1, 0, 1]
+    u0 = [1, 0, 1]
+    tspan = (0.0, 1.0)
     function testf!(du, u, p, t)
         a, b, c = 10, 28, 8/3
         du[1] = a*(u[2]-u[1])
         du[2] = u[1]*(b-u[3])-u[2]
         du[3] = u[1]*u[2]-c*u[3]
     end
-    prob = FODEProblem(testf!, alpha, x0, (0, tf))
-    sol = solve(prob, h, GL())
+    prob = FODEProblem(testf!, alpha, u0, tspan)
+    sol = solve(prob, GL(), dt=0.5)
     @test isapprox(sol.u, [1.0  -4.04478    84.8074
     0.0  13.5939    -51.1251
     1.0  -0.352607  -27.5541]; atol=1e-4)
 end
-#=
-@testset "Test GL method" begin
-    fun(y, p, t) = 1-y
-    prob = SingleTermFODEProblem(fun, 0.5, 0, (0, 1))
-    sol = solve(prob, 0.1, GL())
 
-    @test isapprox(sol.u, [0.0
-    0.31622776601683794
-    0.3743416490252569
-    0.42454983788325495
-    0.4608051796660425
-    0.4897286932245971
-    0.5136308879844076
-    0.5339402943673064
-    0.5515444532932976
-    0.5670394859746068
-    0.5808448788127054]; atol=1e-3)
-end
-=#
 @testset "Test Nonlinear method" begin
     function chua!(du, x, p, t)
         a = 10.725; b = 10.593
@@ -130,10 +112,10 @@ end
         du[3] = -b*x[2]-c*x[3]
     end
     α = [0.93, 0.99, 0.92];
-    x0 = [0.2; -0.1; 0.1];
-    h = 0.1; tspan = (0, 0.5);
-    prob = FODEProblem(chua!, α, x0, tspan)
-    result = solve(prob, h, NonLinearAlg())
+    u0 = [0.2; -0.1; 0.1];
+    tspan = (0, 0.5);
+    prob = FODEProblem(chua!, α, u0, tspan)
+    result = solve(prob, NonLinearAlg(), dt = 0.1)
 
     @test isapprox(result.u, [  0.2   0.11749     0.074388  0.0733938  0.117483   0.210073
     -0.1  -0.0590683  -0.018475  0.0192931  0.0534393  0.0844175
@@ -158,41 +140,7 @@ end
     0.8276979913681598]; atol=1e-4)
 end
 =#
-#=
-@testset "Test Product Integral Implicit method" begin
-    fun(t, y)=1-y
-    prob = SingleTermFODEProblem(fun, 0.5, 0, 1)
-    sol=solve(prob, 0.1, PIIM())
 
-    @test isapprox(sol, [ 0.0
-    0.504626504404032
-    0.543454077521492
-    0.5760954086164125
-    0.6028545521580736
-    0.6251322531561498
-    0.6440148324633577
-    0.6602762702077741
-    0.6744705915156369
-    0.6870025519994545]; atol=1e-4)
-end
-
-@testset "Test Product Integral Implicit Trapezoidal method" begin
-    fun(t, y)=1-y
-    prob = SingleTermFODEProblem(fun, 0.5, 0, 1)
-    sol=solve(prob, 0.1, PITrap())
-
-    @test isapprox(sol, [0.0
-    0.504626504404032
-    0.5185925289496215
-    0.5467126570149609
-    0.571261200170596
-    0.5923262209457972
-    0.6105232343055992
-    0.6264159719331727
-    0.6404461835166287
-    0.652951997319657]; atol=1e-4)
-end
-=#
 
 
 @testset "Test Product Integration explicit method for multi-terms FODE" begin
@@ -403,11 +351,11 @@ end
     end
     
     alpha = [0.8, 0.7]
-    tspan=(0, 0.1); h=0.01
+    tspan=(0, 0.1)
     y0=[1.2; 2.8]
     param=[1 3]
     prob = FODEProblem(test, alpha, y0, tspan)
-    sol = solve(prob, h, PECE())
+    sol = solve(prob, PECE(), dt=0.01)
 
     @test isapprox(sol.u, [1.2  1.2061   1.21042  1.21421  1.21767  1.22089  1.22392  1.22678  1.2295   1.2321   1.23459
     2.8  2.78118  2.76953  2.7596   2.75064  2.74235  2.73455  2.72715  2.72008  2.71329  2.70673]; atol=1e-3)
@@ -420,27 +368,27 @@ end
     end
     
     alpha = [0.8, 0.7]
-    tspan = (0, 0.2); h=0.015
+    tspan = (0, 0.2)
     y0=[1.2; 2.8]
     param=[1 3]
     prob = FODEProblem(test, alpha, y0, tspan)
-    sol = solve(prob, h, PIEX())
+    sol = solve(prob, PIEX(), dt = 0.015)
 
     @test isapprox(sol.u, [1.2  1.20865  1.21458  1.21975  1.22443  1.22874  1.23276  1.23652  1.24006  1.24339  1.24653  1.2495   1.25229  1.25493  1.25575
     2.8  2.77486  2.75941  2.74621  2.73429  2.72326  2.71291  2.70309  2.69373  2.68477  2.67616  2.66786  2.65986  2.65213  2.64964]; atol=1e-4)
 end
 
-@testset "Test FLMMNewtonGregory method" begin
+@testset "Test NewtonGregory method" begin
     a=1; mu=4
-    function Brusselator(du, u, p, t)
+    function brusselator(du, u, p, t)
         du[1] = a-(mu+1)*u[1]+u[1]^2*u[2]
         du[2] = mu*u[1]-u[1]^2*u[2]
     end
     alpha=[0.8; 0.8]
-    y0=[0.2; 0.03]
-    h=0.1; tspan=(0, 0.5)
-    prob = FODEProblem(Brusselator, alpha, y0, tspan)
-    sol = solve(prob, h, FLMMNewtonGregory())
+    u0=[0.2; 0.03]
+    tspan=(0, 0.5)
+    prob = FODEProblem(brusselator, alpha, u0, tspan)
+    sol = solve(prob, NewtonGregory(), dt = 0.1)
 
     @test isapprox(sol.u, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
     0.03  0.165554  0.265678  0.355635  0.439544  0.519211]; atol=1e-4)
@@ -448,31 +396,31 @@ end
 
 @testset "Test FLMMBDF" begin
     a=1; mu=4
-    function Brusselator(du, u, p, t)
+    function brusselator(du, u, p, t)
         du[1] = a-(mu+1)*u[1]+u[1]^2*u[2]
         du[2] = mu*u[1]-u[1]^2*u[2]
     end
     alpha=[0.8; 0.8]
-    y0=[0.2; 0.03]
-    h=0.1; tspan=(0, 0.5)
-    prob = FODEProblem(Brusselator, alpha, y0, tspan)
-    sol = solve(prob, h, FLMMBDF())
+    u0=[0.2; 0.03]
+    tspan=(0, 0.5)
+    prob = FODEProblem(brusselator, alpha, u0, tspan)
+    sol = solve(prob, BDF(), dt = 0.1)
 
     @test isapprox(sol.u, [ 0.2   0.200531  0.201161  0.201809  0.202453  0.203089
     0.03  0.165554  0.265678  0.355635  0.439544  0.519211]; atol=1e-4)
 end
 
-@testset "Test FLMMTrap" begin
+@testset "Test Trapezoid method" begin
     a=1; mu=4
-    function Brusselator(du, u, p, t)
+    function brusselator(du, u, p, t)
         du[1] = a-(mu+1)*u[1]+u[1]^2*u[2]
         du[2] = mu*u[1]-u[1]^2*u[2]
     end
     alpha=[0.8; 0.8]
-    y0=[0.2; 0.03]
-    h=0.1; tspan=(0, 0.5)
-    prob = FODEProblem(Brusselator, alpha, y0, tspan)
-    sol = solve(prob, h, FLMMTrap())
+    u0=[0.2; 0.03]
+    tspan=(0, 0.5)
+    prob = FODEProblem(brusselator, alpha, u0, tspan)
+    sol = solve(prob, Trapezoid(), dt = 0.1)
 
     @test isapprox(sol.u, [0.2   0.200531  0.201161  0.201808  0.202452  0.203088
     0.03  0.165554  0.265678  0.355635  0.439545  0.519211]; atol=1e-4)
@@ -480,7 +428,7 @@ end
 
 
 @testset "Test Newton Polynomial" begin
-    t0=0; tfinal=5; h=0.5;
+    t0=0; tfinal=5
     α = [0.98, 0.98, 0.98]
     u0 = [-1, 1, 1]
     function fun(du, u, p, t)
@@ -490,7 +438,7 @@ end
         du[3] = -sin(u[1])-b*u[3]
     end
     prob = FODEProblem(fun, α, u0, (t0, tfinal))
-    sol = solve(prob, h, NewtonPolynomial())
+    sol = solve(prob, NewtonPolynomial(), dt = 0.5)
 
     @test isapprox(sol.u, [-1.0  -1.37074   -1.46124    -1.21771   -0.884241  -0.49327   -0.0897447   0.338635   0.793532   1.2323    1.55187
     1.0   0.529265  -0.0101035  -0.430956  -0.733314  -0.916321  -1.06158    -1.2647    -1.5767    -1.99613  -2.37772
@@ -517,7 +465,8 @@ end
 end
 =#
 @testset "Test Atangana Seda method for Atangana-Baleanu FODEProblem" begin
-    t0=0;tfinal=2;h=0.5
+    tspan = (0.0, 2.0)
+    h=0.5
     α = [0.99, 0.99, 0.99]
     u0 = [-0.1; 0.1; -0.1]
     function fun(du, u, p, t)
@@ -526,8 +475,8 @@ end
         du[2] = u[1]*u[2]-b*u[1]*u[3]-u[2]+δ
         du[3] = b*u[1]*u[2]+u[1]*u[3]-u[3]
     end
-    prob = FODEProblem(fun, α, u0, (t0, tfinal))
-    sol = solve(prob, h, AtanganaSedaAB())
+    prob = FODEProblem(fun, α, u0, tspan)
+    sol = solve(prob, AtanganaSedaAB(), dt = 0.5)
 
     @test isapprox(sol.u, [ -0.1   0.7    1.18511  -1.41522  -31.0872
     0.1   0.525  1.08088  -4.03383   32.0085
@@ -542,10 +491,10 @@ end
         du[3] = u[3]*(1-a₅+a₆*u[1]+a₇*u[2])
     end
     u0 = [0.5, 0.9, 0.1]
-    tspan = (0, 2)
+    tspan = (0.0, 2.0)
     α = ones(3)*0.98;
     prob = FODEProblem(LotkaVolterra, α, u0, tspan)
-    sol = solve(prob, 0.5, AtanganaSedaCF())
+    sol = solve(prob, AtanganaSedaCF(), dt = 0.5)
 
     isapprox(sol.u, [ 0.0   1.375   3.37602   -5.46045    449.712
     0.0  -0.45   -0.492188  -3.4828      62.7789

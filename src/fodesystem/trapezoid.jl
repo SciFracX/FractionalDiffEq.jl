@@ -1,23 +1,5 @@
-"""
-    solve(prob::FODEProblem, FLMMTrap())
-
-Use [Trapezoidal](https://en.wikipedia.org/wiki/Trapezoidal_rule_(differential_equations)) with generating function ``f(x)=\\frac{1+x}{2(1-x)^\\alpha}`` generated weights fractional linear multiple steps method to solve system of FODE.
-
-### References
-
-```tex
-@article{Garrappa2015TrapezoidalMF,
-  title={Trapezoidal methods for fractional differential equations: Theoretical and computational aspects},
-  author={Roberto Garrappa},
-  journal={ArXiv},
-  year={2015},
-  volume={abs/1912.09878}
-}
-```
-"""
-struct FLMMTrap <: FODESystemAlgorithm end
-
-function solve(prob::FODEProblem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
+function solve(prob::FODEProblem, ::Trapezoid; dt = 0.0, reltol=1e-6, abstol=1e-6)
+    dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     u0 = u0
@@ -43,7 +25,7 @@ function solve(prob::FODEProblem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
     
     # Number of points in which to evaluate the solution or the weights
     r::Int = 16
-    N::Int = ceil(Int, (tfinal-t0)/h)
+    N::Int = ceil(Int, (tfinal-t0)/dt)
     Nr::Int = ceil(Int, (N+1)/r)*r
     Q::Int = ceil(Int, log2((Nr)/r))-1
     global NNr = 2^(Q+1)*r
@@ -55,10 +37,10 @@ function solve(prob::FODEProblem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
 
     # Evaluation of convolution and starting weights of the FLMM
     (omega, w, s) = TrapWeights(alpha, NNr+1)
-    halpha = h^alpha
+    halpha = dt^alpha
     
     # Initializing solution and proces of computation
-    t = collect(0:N)*h
+    t = collect(0:N)*dt
     y[:, 1] = u0[:, 1]
     temp = zeros(problem_size)
     f(temp, u0[:, 1], p, t0)
@@ -77,7 +59,7 @@ function solve(prob::FODEProblem, h, ::FLMMTrap; reltol=1e-6, abstol=1e-6)
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
     if tfinal < t[N+1]
-        c = (tfinal - t[N])/h
+        c = (tfinal - t[N])/dt
         t[N+1] = tfinal
         y[:, N+1] = (1-c)*y[:, N] + c*y[:, N+1]
     end
@@ -242,7 +224,7 @@ function TrapFirstApproximations(t, y, fy, abstol, maxiters, s, halpha, omega, w
 end
 
 function TrapWeights(alpha, N)
-    # Trapezoidal method with generating function ((1+x)/2/(1-x))^alpha
+    # Trapezoid method with generating function ((1+x)/2/(1-x))^alpha
     omega1 = zeros(1, N+1); omega2 = copy(omega1)
     omega1[1] = 1; omega2[1] = 1
     alpha_minus_1 = alpha - 1 ; alpha_plus_1 = alpha + 1

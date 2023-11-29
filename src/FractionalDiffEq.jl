@@ -96,7 +96,7 @@ export AtanganaSedaAB
 #export Euler
 
 # System of FODE solvers
-export NonLinearAlg, FLMMBDF, FLMMNewtonGregory, FLMMTrap, PIEX, NewtonPolynomial
+export NonLinearAlg, BDF, NewtonGregory, Trapezoid, PIEX, NewtonPolynomial
 export AtanganaSedaCF
 export AtanganaSeda
 
