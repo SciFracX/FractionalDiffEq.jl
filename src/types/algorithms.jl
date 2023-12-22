@@ -185,3 +185,23 @@ struct Euler <: FODESystemAlgorithm end
 Solve Atangana-Baleanu fractional order differential equations using Newton Polynomials.
 """
 struct AtanganaSedaAB <: FODESystemAlgorithm end
+
+
+###################### FDDE ######################
+
+"""
+    solve(FDDE::FDDEProblem, dt, DelayABM())
+
+Use the Adams-Bashforth-Moulton method to solve fractional delayed differential equations.
+
+### References
+
+```tex
+@inproceedings{Bhalekar2011APS,
+  title={A PREDICTOR-CORRECTOR SCHEME FOR SOLVING NONLINEAR DELAY DIFFERENTIAL EQUATIONS OF FRACTIONAL ORDER},
+  author={Sachin Bhalekar and Varsha Daftardar-Gejji},
+  year={2011}
+}
+```
+"""
+struct DelayABM <: FDDEAlgorithm end

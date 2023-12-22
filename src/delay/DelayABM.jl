@@ -1,19 +1,3 @@
-"""
-    solve(FDDE::FDDEProblem, dt, DelayABM())
-
-Use the Adams-Bashforth-Moulton method to solve fractional delayed differential equations.
-
-### References
-
-```tex
-@inproceedings{Bhalekar2011APS,
-  title={A PREDICTOR-CORRECTOR SCHEME FOR SOLVING NONLINEAR DELAY DIFFERENTIAL EQUATIONS OF FRACTIONAL ORDER},
-  author={Sachin Bhalekar and Varsha Daftardar-Gejji},
-  year={2011}
-}
-```
-"""
-struct DelayABM <: FDDEAlgorithm end
 #FIXME: There are still some improvments about initial condition
 #FIXME: Fix DelayABM method for FDDESystem : https://www.researchgate.net/publication/245538900_A_Predictor-Corrector_Scheme_For_Solving_Nonlinear_Delay_Differential_Equations_Of_Fractional_Order
 #FIXME: Also the problem definition f(t, h, y) or f(t, y, h)?

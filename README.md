@@ -62,9 +62,9 @@ So we can use FractionalDiffEq.jl to solve the problem:
 ```julia
 using FractionalDiffEq, Plots
 fun(u, p, t) = 1-u
-u0 = [0, 0]; tspan = (0, 20); h = 0.001;
+u0 = [0, 0]; tspan = (0, 20)
 prob = SingleTermFODEProblem(fun, 1.8, u0, tspan)
-sol = solve(prob, h, PECE())
+sol = solve(prob, PECE(), dt = 0.001)
 plot(sol)
 ```
 
@@ -115,10 +115,10 @@ function chua!(du, x, p, t)
 end
 α = [0.93, 0.99, 0.92];
 x0 = [0.2; -0.1; 0.1];
-h = 0.01; tspan = (0, 100);
+tspan = (0, 100);
 p = [10.725, 10.593, 0.268, -1.1726, -0.7872]
 prob = FODESystem(chua!, α, x0, tspan, p)
-sol = solve(prob, h, NonLinearAlg())
+sol = solve(prob, NonLinearAlg(), dt = 0.01)
 plot(sol, vars=(1, 2), title="Chua System", legend=:bottomright)
 ```
 

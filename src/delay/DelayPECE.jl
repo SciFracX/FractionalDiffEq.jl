@@ -34,86 +34,88 @@ Capable of solving both single term FDDE and multiple FDDE, support time varying
 """
 struct DelayPECE <: FDDEAlgorithm end
 #FIXME: What if we have an FDDE with both variable order and time varying lag??
-function solve(FDDE::FDDEProblem, step_size, ::DelayPECE)
+function solve(FDDE::FDDEProblem, step_size, alg::DelayPECE)
     # If the delays are time varying, we need to specify single delay and multiple delay
     if  FDDE.constant_lags[1] isa Function
         # Here is the PECE solver for single time varying lag
-        solve_fdde_with_single_lag(FDDE, step_size)
+        solve_fdde_with_single_lag(FDDE, step_size, alg)
     elseif FDDE.constant_lags[1] isa AbstractArray{Function}
         # Here is the PECE solver for multiple time varying lags
-        solve_fdde_with_multiple_lags(FDDE, step_size) #TODO: implement this
+        solve_fdde_with_multiple_lags(FDDE, step_size, alg) #TODO: implement this
     # Varying order fractional delay differential equations
     elseif FDDE.order[1] isa Function
         if length(FDDE.constant_lags[1]) == 1
             # Here is the PECE solver for single lag with variable order
-            solve_fdde_with_single_lag_and_variable_order(FDDE, step_size)
+            solve_fdde_with_single_lag_and_variable_order(FDDE, step_size, alg)
         else
             # Here is the PECE solver for multiple lags with variable order
-            solve_fdde_with_multiple_lags_and_variable_order(FDDE, step_size)
+            solve_fdde_with_multiple_lags_and_variable_order(FDDE, step_size, alg)
         end
     else
         # If the delays are constant
         if length(FDDE.constant_lags[1]) == 1
             # Call the DelayPECE solver for single lag FDDE
-            solve_fdde_with_single_lag(FDDE, step_size)
+            solve_fdde_with_single_lag(FDDE, step_size, alg)
         else
             # Call the DelayPECE solver for multiple lags FDDE
-            solve_fdde_with_multiple_lags(FDDE, step_size)
+            solve_fdde_with_multiple_lags(FDDE, step_size, alg)
         end
     end
 end
 
-function solve_fdde_with_single_lag(FDDE::FDDEProblem, step_size)
-    @unpack f, h, order, constant_lags, p, tspan = FDDE
+function solve_fdde_with_single_lag(prob::FDDEProblem, step_size, alg)
+    @unpack f, order, u0, h, constant_lags, p, tspan = prob
     τ = constant_lags[1]
-    iip = SciMLBase.isinplace(FDDE)
-    T = tspan[2]
-    t = collect(0:step_size:T)
-    maxn = size(t, 1)
-    yp = collect(Float64, 0:step_size:T+step_size)
-    y = copy(t)
-    y[1] = h(p, 0)
+    iip = SciMLBase.isinplace(prob)
+    t = collect(tspan[1]:step_size:tspan[2])
+    N = round(Int, (tspan[2]-tspan[1])/step_size)
+    M = length(u0)
+    y = [zeros(eltype(u0), M) for i in range(1, N+1)]
+    yp = [zeros(eltype(u0), M) for i in range(1, N+1)]
+    fill!(y[1], h(p, 0))
 
-    for n in 1:maxn-1
-        yp[n+1] = 0
+    for n in 1:N-1
         for j = 1:n
             if iip
-                tmp = zeros(length(yp[1]))
+                tmp = zeros(eltype(u0), M)
                 f(tmp, y[j], v(h, j, τ, step_size, y, yp, t, p), p, t[j])
-                yp[n+1] = yp[n+1]+generalized_binomials(j-1, n-1, order, step_size)*tmp
+                yp[n+1] += @. generalized_binomials(j-1, n-1, order, step_size)*tmp
             else
-                yp[n+1] = yp[n+1]+generalized_binomials(j-1, n-1, order, step_size)*f(y[j], v(h, j, τ, step_size, y, yp, t, p), p, t[j])
+                yp[n+1] += generalized_binomials(j-1, n-1, order, step_size)*f(y[j], v(h, j, τ, step_size, y, yp, t, p), p, t[j])
             end
         end
-        yp[n+1] = yp[n+1]/gamma(order)+h(p, 0)
+        yp[n+1] = yp[n+1]/gamma(order) .+ h(p, 0)
 
-        y[n+1] = 0
+        fill!(y[n+1], zero(eltype(u0)))
 
         @fastmath @inbounds @simd for j=1:n
             if iip
-                tmp = zeros(length(y[1]))
+                tmp = zeros(eltype(u0), M)
                 f(tmp, y[j], v(h, j, τ, step_size, y, yp, t, p), p, t[j])
-                y[n+1] = y[n+1]+a(j-1, n-1, order, step_size)*tmp
+                y[n+1] += a(j-1, n-1, order, step_size)*tmp
             else
-                y[n+1] = y[n+1]+a(j-1, n-1, order, step_size)*f(y[j], v(h, j, τ, step_size, y, yp, t, p), p, t[j])
+                y[n+1] += y[n+1] + a(j-1, n-1, order, step_size)*f(y[j], v(h, j, τ, step_size, y, yp, t, p), p, t[j])
             end
         end
 
         if iip
-            tmp = zeros(y[1])
+            tmp = zeros(eltype(u0), M)
             f(tmp, yp[n+1], v(h, n+1, τ, step_size, y, yp, t, p), p, t[n+1])
-            y[n+1] = y[n+1]/gamma(order)+step_size^order*tmp/gamma(order+2)+h(p, 0)
+            y[n+1] = @. y[n+1]/gamma(order)+step_size^order*tmp/gamma(order+2)+h(p, 0)
         else
-            y[n+1] = y[n+1]/gamma(order)+step_size^order*f(yp[n+1], v(h, n+1, τ, step_size, y, yp, t, p), p, t[n+1])/gamma(order+2)+h(p, 0)
+            y[n+1] = y[n+1] ./gamma(order) .+ step_size^order*f(yp[n+1], v(h, n+1, τ, step_size, y, yp, t, p), p, t[n+1])/gamma(order+2) .+ h(p, 0)
         end
     end
 
-    V = copy(t)
-    @fastmath @inbounds @simd for n = 1:maxn-1
+    V = copy(y)
+    @fastmath @inbounds @simd for n = 1:N-1
         # The delay term
-        V[n] = v(h, n, τ, step_size, y, yp, t, p)
+        V[n] = v.(h, n, τ, step_size, y, yp, t, p)
     end
+
     return V, y
+
+    #return DiffEqBase.build_solution(prob, alg, t, y)
 end
 
 function a(j::Int, n::Int, order, step_size)
@@ -160,16 +162,17 @@ function v(h, n, τ, step_size, y, yp, t, p)
 end
 
 
-function solve_fdde_with_multiple_lags(FDDE::FDDEProblem, step_size)
-    @unpack f, h, order, constant_lags, p, tspan = FDDE
+function solve_fdde_with_multiple_lags(prob::FDDEProblem, step_size, alg)
+    @unpack f, h, order, u0, constant_lags, p, tspan = prob
     τ = constant_lags[1]
-    t = collect(0:step_size:tspan[2])
-    maxn = length(t)
-    yp = zeros(Float64, maxn)
+    t = collect(tspan[1]:step_size:tspan[2])
+    N = length(t)
+    yp = [similar(u0) for i in range(1, N)]
+    yp = similar(yp)
     y = copy(t)
-    y[1] = h(p, 0)
+    y[1] = [h(p, 0) for i in range(1, length(u0))]
 
-    for n in 1:maxn-1
+    for n in 1:N-1
         yp[n+1] = 0
         for j = 1:n
             yp[n+1] = yp[n+1]+generalized_binomials(j-1, n-1, order, step_size)*f(t[j], y[j], multiv(h, j, τ, step_size, y, yp, p)...)
@@ -186,14 +189,15 @@ function solve_fdde_with_multiple_lags(FDDE::FDDEProblem, step_size)
     end
 
     V = []
-    for n = 1:maxn
+    for n = 1:N
         push!(V, multiv(h, n, τ, step_size, y, yp, p))
     end
-
+#=
     delayed = zeros(length(τ), length(V))
     for i=1:length(V)
         delayed[:, i] = V[i]
     end    
+    =#
     return delayed, y
 end
 
@@ -242,12 +246,12 @@ function solve_fdde_with_single_lag_and_variable_order(FDDE::FDDEProblem, step_s
     τ = constant_lags[1]
     T = tspan[2]
     t = collect(0:step_size:T)
-    maxn = size(t, 1)
+    N = size(t, 1)
     yp = collect(0:step_size:T+step_size)
     y = copy(t)
     y[1] = h(p, 0)
 
-    for n in 1:maxn-1
+    for n in 1:N-1
         yp[n+1] = 0
         for j = 1:n
             if iip
@@ -282,7 +286,7 @@ function solve_fdde_with_single_lag_and_variable_order(FDDE::FDDEProblem, step_s
     end
 
     V = copy(t)
-    @fastmath @inbounds @simd for n = 1:maxn-1
+    @fastmath @inbounds @simd for n = 1:N-1
         V[n] = v(h, n, τ, step_size, y, yp, t, p)
     end
     return V, y
@@ -293,12 +297,12 @@ function solve_fdde_with_multiple_lags_and_variable_order(FDDE::FDDEProblem, ste
     @unpack f, h, order, constant_lags, p, tspan = FDDE
     τ = constant_lags[1]
     t = collect(0:step_size:tspan[2])
-    maxn = length(t)
-    yp = zeros(maxn)
+    N = length(t)
+    yp = zeros(N)
     y = copy(t)
     y[1] = h(p, 0)
 
-    for n in 1:maxn-1
+    for n in 1:N-1
         yp[n+1] = 0
         for j = 1:n
             yp[n+1] = yp[n+1]+generalized_binomials(j-1, n-1, order(t[n+1]), step_size)*f(t[j], y[j], multiv(h, j, τ, step_size, y, yp, p)...)
@@ -313,9 +317,9 @@ function solve_fdde_with_multiple_lags_and_variable_order(FDDE::FDDEProblem, ste
 
         y[n+1] = y[n+1]/gamma(order(t[n+1]))+step_size^order(t[n+1])*f(t[n+1], yp[n+1], multiv(h, n+1, τ, step_size, y, yp, p)...)/gamma(order(t[n+1])+2) + h(p, 0)
     end
-
+#=
     V = []
-    for n = 1:maxn
+    for n = 1:N
         push!(V, multiv(h, n, τ, step_size, y, yp, p))
     end
 
@@ -323,5 +327,6 @@ function solve_fdde_with_multiple_lags_and_variable_order(FDDE::FDDEProblem, ste
     for i in eachindex(V)
         delayed[:, i] = V[i]
     end    
+    =#
     return delayed, y
 end

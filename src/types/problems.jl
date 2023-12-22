@@ -194,7 +194,7 @@ TruncatedStacktraces.@truncate_stacktrace FDDEProblem 5 1 2
 FDDEProblem(f, args...; kwargs...) = FDDEProblem(DDEFunction(f), args...; kwargs...)
 
 function FDDEProblem(f::SciMLBase.AbstractDDEFunction, args...; kwargs...)
-    FDDEProblem{SciMLBase.isinplace(f)}(f, args...; kwargs...)
+    FDDEProblem{SciMLBase.isinplace(f, 5)}(f, args...; kwargs...)
 end
 
 """
