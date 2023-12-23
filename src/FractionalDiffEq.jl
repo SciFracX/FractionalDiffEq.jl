@@ -1,21 +1,20 @@
 module FractionalDiffEq
 
-using LinearAlgebra
-using SciMLBase
-using DiffEqBase
-using SpecialFunctions
-using SparseArrays
-using InvertedIndices: Not
-using SpecialMatrices: Vandermonde
-using FFTW: fft, ifft
-using UnPack: @unpack
-using LoopVectorization: @turbo
-using HypergeometricFunctions
-using ToeplitzMatrices
-using RecipesBase
-using ForwardDiff
-using Polynomials: Polynomial
-using TruncatedStacktraces
+using LinearAlgebra, Reexport, SciMLBase, SpecialFunctions, SparseArrays, ToeplitzMatrices,
+        FFTW, LoopVectorization, RecipesBase, ForwardDiff, Polynomials, TruncatedStacktraces,
+        HypergeometricFunctions
+
+import DiffEqBase: solve
+import SciMLBase: __solve
+import InvertedIndices: Not
+import SpecialMatrices: Vandermonde
+import FFTW: fft, ifft
+import UnPack: @unpack
+import LoopVectorization: @turbo
+import Polynomials: Polynomial
+import TruncatedStacktraces: @truncate_stacktrace
+
+@reexport using DiffEqBase, SciMLBase
 
 include("types/problems.jl")
 include("types/algorithms.jl")
@@ -70,7 +69,7 @@ include("utils.jl")
 include("auxiliary.jl")
 
 # General types
-export solve, FDEProblem
+export FDEProblem
 
 # FDDE problems
 export FDDEProblem, FDDESystem, FDDEMatrixProblem
