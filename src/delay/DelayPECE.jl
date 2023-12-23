@@ -38,40 +38,40 @@ function solve(FDDE::FDDEProblem, step_size, alg::DelayPECE)
     # If the delays are time varying, we need to specify single delay and multiple delay
     if  FDDE.constant_lags[1] isa Function
         # Here is the PECE solver for single time varying lag
-        solve_fdde_with_single_lag(FDDE, step_size, alg)
+        solve_fdde_with_single_lag(FDDE, step_size)
     elseif FDDE.constant_lags[1] isa AbstractArray{Function}
         # Here is the PECE solver for multiple time varying lags
-        solve_fdde_with_multiple_lags(FDDE, step_size, alg) #TODO: implement this
+        solve_fdde_with_multiple_lags(FDDE, step_size) #TODO: implement this
     # Varying order fractional delay differential equations
     elseif FDDE.order[1] isa Function
         if length(FDDE.constant_lags[1]) == 1
             # Here is the PECE solver for single lag with variable order
-            solve_fdde_with_single_lag_and_variable_order(FDDE, step_size, alg)
+            solve_fdde_with_single_lag_and_variable_order(FDDE, step_size)
         else
             # Here is the PECE solver for multiple lags with variable order
-            solve_fdde_with_multiple_lags_and_variable_order(FDDE, step_size, alg)
+            solve_fdde_with_multiple_lags_and_variable_order(FDDE, step_size)
         end
     else
         # If the delays are constant
         if length(FDDE.constant_lags[1]) == 1
             # Call the DelayPECE solver for single lag FDDE
-            solve_fdde_with_single_lag(FDDE, step_size, alg)
+            solve_fdde_with_single_lag(FDDE, step_size)
         else
             # Call the DelayPECE solver for multiple lags FDDE
-            solve_fdde_with_multiple_lags(FDDE, step_size, alg)
+            solve_fdde_with_multiple_lags(FDDE, step_size)
         end
     end
 end
 
-function solve_fdde_with_single_lag(prob::FDDEProblem, step_size, alg)
+function solve_fdde_with_single_lag(prob::FDDEProblem, step_size)
     @unpack f, order, u0, h, constant_lags, p, tspan = prob
     τ = constant_lags[1]
     iip = SciMLBase.isinplace(prob)
     t = collect(tspan[1]:step_size:tspan[2])
     N = round(Int, (tspan[2]-tspan[1])/step_size)
     M = length(u0)
-    y = [zeros(eltype(u0), M) for i in range(1, N+1)]
-    yp = [zeros(eltype(u0), M) for i in range(1, N+1)]
+    y = [zeros(eltype(u0), M) for i in 1:(N+1)]
+    yp = [zeros(eltype(u0), M) for i in 1:(N+1)]
     fill!(y[1], h(p, 0))
 
     for n in 1:N-1
@@ -162,15 +162,15 @@ function v(h, n, τ, step_size, y, yp, t, p)
 end
 
 
-function solve_fdde_with_multiple_lags(prob::FDDEProblem, step_size, alg)
+function solve_fdde_with_multiple_lags(prob::FDDEProblem, step_size)
     @unpack f, h, order, u0, constant_lags, p, tspan = prob
     τ = constant_lags[1]
     t = collect(tspan[1]:step_size:tspan[2])
     N = length(t)
-    yp = [similar(u0) for i in range(1, N)]
+    yp = [similar(u0) for i in 1:N]
     yp = similar(yp)
     y = copy(t)
-    y[1] = [h(p, 0) for i in range(1, length(u0))]
+    y[1] = [h(p, 0) for i in 1:length(u0)]
 
     for n in 1:N-1
         yp[n+1] = 0
