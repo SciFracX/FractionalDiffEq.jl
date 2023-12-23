@@ -1,4 +1,4 @@
-function solve(prob::FODEProblem, alg::NewtonPolynomial; dt = 0.0)
+function SciMLBase.__solve(prob::FODEProblem, alg::NewtonPolynomial; dt = 0.0)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]

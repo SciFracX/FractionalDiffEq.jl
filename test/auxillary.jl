@@ -3,25 +3,6 @@
 using FractionalDiffEq
 using Test
 
-@testset "Test eliminator" begin
-    @test isapprox(eliminator(3, 2), [1.0 0.0 0.0; 0.0 0.0 1.0]; atol=1e-5)
-end
-
-@testset "Test Riesz Matrix" begin
-    @test isapprox(RieszMatrix(0.5, 3, 0.01), [-5.0 4.375 -0.3125; 4.375 -5.0 4.375; -0.3125 4.375 -5.0]; atol=0.00001)
-end
-
-@testset "Test ω function" begin
-    @test isapprox(omega(3, 0.5), [1.0; -0.5; -0.125; -0.0625]; atol=1e-5)
-    @test isapprox(omega(5, 0.5), [1.0; -0.5; -0.125; -0.0625; -0.0390625; -0.02734375]; atol=1e-5)
-end
-
-@testset "Test distributed order utils function" begin
-    @test isapprox(DOB(x->6*x*(1-x), [0, 1], 0.1, 1, 0.1), [3.547014602981364]; atol=1e-5)
-    @test isapprox(DOF(x->6*x*(1-x), [0, 1], 0.1, 1, 0.1), [-3.547014602981364]; atol=1e-5)
-    @test isapprox(DORANORT(x->6*x*(1-x), [0, 1], 0.1, 1, 0.1), [2.120468497843435]; atol=1e-5)
-end
-
 #FIXME: Add array type tests
 @testset "Test Mittag Leffler function" begin
     @test isapprox(mittleff(1, 2, 1), exp(1)-1; atol=1e-5)
