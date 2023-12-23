@@ -110,7 +110,7 @@ function solve_fdde_with_single_lag(prob::FDDEProblem, step_size)
     V = copy(y)
     @fastmath @inbounds @simd for n = 1:N-1
         # The delay term
-        V[n] = v.(h, n, τ, step_size, y, yp, t, p)
+        V[n] = v(h, n, τ, step_size, y, yp, t, p)
     end
 
     return V, y
