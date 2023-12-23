@@ -1,4 +1,4 @@
-function solve(prob::FODEProblem, alg::NonLinearAlg; dt = 0.0, L0=1e10)
+function SciMLBase.__solve(prob::FODEProblem, alg::NonLinearAlg; dt = 0.0, L0=1e10)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; T = tspan[2]

@@ -33,12 +33,12 @@ include("multitermsfode/implicit_pi_trapezoid.jl")
 include("multitermsfode/implicit_pi_rectangle.jl")
 
 # System of fractional ordinary differential equations
-include("fodesystem/PIPECE.jl")
+include("fodesystem/pi_pece.jl")
 include("fodesystem/bdf.jl")
 include("fodesystem/newton_gregory.jl")
 include("fodesystem/trapezoid.jl")
 include("fodesystem/explicit_pi.jl")
-include("fodesystem/GLWithMemory.jl")
+include("fodesystem/grunwald_letnikov.jl")
 include("fodesystem/NonLinear.jl")
 include("fodesystem/newton_polynomials.jl")
 include("fodesystem/atangana_seda.jl")
@@ -109,9 +109,6 @@ export DOMatrixDiscrete
 # export PECE
 
 ###################################################
-
-# Export some api to construct the equation
-export eliminator, RieszMatrix, omega, meshgrid
 
 # Export some special models
 export bagleytorvik, diffusion
