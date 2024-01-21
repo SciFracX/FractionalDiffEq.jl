@@ -25,7 +25,7 @@ TruncatedStacktraces = "781d530d-4396-4725-bb49-402e4bee1e77"
 UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
 
 [compat]
-ApproxFun = "0.13"
+ApproxFun = "0.13.25"
 ArrayInterface = "7"
 ConcreteStructs = "0.2.2"
 DiffEqBase = "6"
