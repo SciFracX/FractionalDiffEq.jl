@@ -6,7 +6,6 @@ using LinearAlgebra, Reexport, SciMLBase, SpecialFunctions, SparseArrays, Toepli
 
 import DiffEqBase: solve
 import SciMLBase: __solve
-import ConcreteStructs: @concrete
 import InvertedIndices: Not
 import SpecialMatrices: Vandermonde
 import FFTW: fft, ifft
