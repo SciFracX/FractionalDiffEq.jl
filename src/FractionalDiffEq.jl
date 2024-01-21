@@ -4,7 +4,6 @@ using LinearAlgebra, Reexport, SciMLBase, SpecialFunctions, SparseArrays, Toepli
         FFTW, RecipesBase, ForwardDiff, Polynomials, TruncatedStacktraces,
         HypergeometricFunctions
 
-import DiffEqBase: solve
 import SciMLBase: __solve
 import InvertedIndices: Not
 import SpecialMatrices: Vandermonde
@@ -13,7 +12,7 @@ import UnPack: @unpack
 import Polynomials: Polynomial
 import TruncatedStacktraces: @truncate_stacktrace
 
-@reexport using DiffEqBase, SciMLBase
+@reexport using SciMLBase
 
 include("types/problems.jl")
 include("types/algorithms.jl")
