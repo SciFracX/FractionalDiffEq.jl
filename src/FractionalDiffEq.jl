@@ -12,7 +12,7 @@ import UnPack: @unpack
 import Polynomials: Polynomial
 import TruncatedStacktraces: @truncate_stacktrace
 
-@reexport using SciMLBase
+@reexport using DiffEqBase, SciMLBase
 
 include("types/problems.jl")
 include("types/algorithms.jl")
