@@ -2,7 +2,7 @@ module FractionalDiffEq
 
 using LinearAlgebra, Reexport, SciMLBase, SpecialFunctions, SparseArrays, ToeplitzMatrices,
         FFTW, RecipesBase, ForwardDiff, Polynomials, TruncatedStacktraces,
-        HypergeometricFunctions
+        HypergeometricFunctions, DiffEqBase
 
 import SciMLBase: __solve
 import InvertedIndices: Not
