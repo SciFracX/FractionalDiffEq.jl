@@ -23,7 +23,7 @@ function Brusselator!(du, u, p, t)
     du[2] = μ*u[1]-(u[1])^2*u[1]
 end
 
-prob = FODESystem(Brusselator!, α, u0, tspan)
+prob = FODEProblem(Brusselator!, α, u0, tspan)
 sol = solve(prob, h, GL())
 
 # Phase plane

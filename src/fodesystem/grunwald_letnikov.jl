@@ -1,41 +1,71 @@
-function SciMLBase.__solve(prob::FODEProblem, alg::GL; dt = 0.0)
+@concrete struct GLCache{iip, T}
+    prob
+    alg
+    mesh
+    u0
+    order
+    horder
+    y
+    p
+    kwargs
+end
+
+Base.eltype(::GLCache{iip, T}) where {iip, T} = T
+
+function SciMLBase.__init(prob::FODEProblem, alg::GL; dt = 0.0, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
-    # GL method is only for same order FODE
+    # GL method is only for commensurate order FODE
     @unpack f, order, u0, tspan, p = prob
-    t0 = tspan[1]; T = tspan[2]
-    t = collect(Float64, t0:dt:T)
+    t0 = tspan[1]; tfinal = tspan[2]
     order = order[1]
     horder = dt^order[1]
-    n::Int64 = floor(Int64, (T-t0)/dt)+1
-    l = length(u0)
+    n::Int64 = floor(Int64, (tfinal-t0)/dt)+1
+    iip = isinplace(prob)
+    T = eltype(u0)
+    mesh = collect(T, tspan[1]:dt:tspan[2])
 
     # Initialize solution
-    result = zeros(Float64, length(u0), n)
+    result = zeros(T, length(u0), n)
     result[:, 1] = u0
 
+    return GLCache{iip, T}(prob, alg, mesh, u0, order, horder, result, p, kwargs)
+end
+
+function SciMLBase.solve!(cache::GLCache)
+    @unpack prob, alg, mesh, u0, order, horder, y, p, kwargs = cache
+
+    n = length(mesh)
+    l = length(u0)
+    iip = isinplace(prob)
+    T = eltype(cache)
+
     # generating generalized binomial Corder
-    Corder = zeros(Float64, n)
+    Corder = zeros(T, n)
     Corder[1] = 1
 
     @fastmath @inbounds @simd for j in range(2, n, step=1)
         Corder[j] = (1-(1+order)/(j-1))*Corder[j-1]
     end
-
-    du = zeros(Float64, l)
+    
+    du = zeros(T, l)
 
     @fastmath @inbounds @simd for k in range(2, n, step=1)
-        summation = zeros(Float64, length(u0))
+        summation = zeros(T, length(u0))
 
         @fastmath @inbounds @simd for j in range(1, k-1, step=1)
             for i in eachindex(summation)
-                summation[i] += Corder[j+1]*result[i, k-j]
+                summation[i] += Corder[j+1]*y[i, k-j]
             end
         end
 
-        f(du, result[:, k-1], p, t0+(k-1)*dt)
-        result[:, k] = @. horder*du-summation
+        if iip
+            prob.f(du, y[:, k-1], p, mesh[k])
+            y[:, k] = @. horder*du - summation
+        else
+            y[:, k] = @. horder*prob.f(y[:, k-1], p, mesh[k]) - summation
+        end
     end
-    u = collect(Vector{eltype(u0)}, eachcol(result))
+    u = collect(Vector{eltype(u0)}, eachcol(y))
     
-    return DiffEqBase.build_solution(prob, alg, t, u)
+    return DiffEqBase.build_solution(prob, alg, mesh, u)
 end

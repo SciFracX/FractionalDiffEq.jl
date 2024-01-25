@@ -15,22 +15,20 @@ end
 function solve(prob::FODEProblem, alg::PECE; dt = 0.0)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
-    t0 = tspan[1]; T = tspan[2]
+    t0 = tspan[1]; tfinal = tspan[2]
+    T = eltype(u0)
+    iip = isinplace(prob)
+    all(x->x==order[1], order) ? nothing : throw(ArgumentError("PECE method is only for commensurate order FODE"))
+    alpha = order[1] # commensurate ordre FODE
+    (alpha > 1.0) && throw(ArgumentError("BDF method is only for order <= 1.0"))
     METH = M(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)# Initialization
     mu_tol = 1.0e-6
     mu = 1
     order = order[:]
 
-    # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
-    max_order = findmax(order)[1]
-    if max_order > 1
-        @error "This method doesn't support high order FDEs"
-    end
-
-
     # Check compatibility size of the problem with number of fractional orders
     alpha_length = length(order)
-    problem_size = size(u0, 1)
+    problem_size = length(u0)
 
     m_alpha = ceil.(Int, order)
     m_alpha_factorial = zeros(alpha_length, maximum(m_alpha))
@@ -41,11 +39,10 @@ function solve(prob::FODEProblem, alg::PECE; dt = 0.0)
     end
 
     f_temp = zeros(size(u0[:, 1]))
-    #f_temp = sysf_vectorfield(t0, u0[:, 1], f)
-    f(f_temp, u0[:, 1], p, t0)
+    f(f_temp, u0, p, t0)
 
     r::Int = 16
-    N::Int = ceil(Int64, (T-t0)/dt)
+    N::Int = ceil(Int64, (tfinal-t0)/dt)
     Nr::Int = ceil(Int64, (N+1)/r)*r
     Qr::Int = ceil(Int64, log2(Nr/r)) - 1
     NNr::Int = 2^(Qr+1)*r
@@ -132,9 +129,9 @@ function solve(prob::FODEProblem, alg::PECE; dt = 0.0)
     end
 
     # Evaluation solution in T when T is not in the mesh
-    if T < t[N+1]
-        c = (T - t[N])/dt
-        t[N+1] = T
+    if tfinal < t[N+1]
+        c = (tfinal - t[N])/dt
+        t[N+1] = tfinal
         y[:, N+1] = (1-c)*y[:, N] + c*y[:, N+1]
     end
 
@@ -147,7 +144,6 @@ end
 
 
 function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f)
-
     nxi::Int = nx0; nxf::Int = nx0 + L*r - 1
     nyi::Int = ny0; nyf::Int = ny0 + L*r - 1
     is::Int = 1
@@ -229,7 +225,6 @@ end
 function ABM_triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f)
 
     for n = nxi:min(N, nxf)
-        
         # Evaluation of the predictor
         Phi = zeros(problem_size, 1)
         if nxi == 1 # Case of the first triangle
@@ -243,7 +238,6 @@ function ABM_triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_si
         St = starting_term(t[n+1], u0, m_alpha, t0, m_alpha_factorial)
         y_pred = St + METH.halpha1.*(zn_pred[:, n+1] + Phi)
         f_pred = zeros(length(y_pred))
-        #f_pred = sysf_vectorfield(t[n+1], y_pred, f)
         f(f_pred, y_pred, p, t[n+1])
         
         # Evaluation of the corrector

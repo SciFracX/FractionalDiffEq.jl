@@ -2,9 +2,10 @@ module FractionalDiffEq
 
 using LinearAlgebra, Reexport, SciMLBase, SpecialFunctions, SparseArrays, ToeplitzMatrices,
         FFTW, RecipesBase, ForwardDiff, Polynomials, TruncatedStacktraces,
-        HypergeometricFunctions, DiffEqBase
+        HypergeometricFunctions, DiffEqBase, ConcreteStructs
 
 import SciMLBase: __solve
+import DiffEqBase: solve
 import InvertedIndices: Not
 import SpecialMatrices: Vandermonde
 import FFTW: fft, ifft
@@ -65,6 +66,12 @@ include("lyapunov.jl")
 
 include("utils.jl")
 include("auxiliary.jl")
+
+
+function __solve(prob::FODEProblem, alg::FODESystemAlgorithm, args...; kwargs...)
+    cache = init(prob, alg, args...; kwargs...)
+    return solve!(cache)
+end
 
 # General types
 export FDEProblem
