@@ -18,9 +18,6 @@ function solve(prob::FODEProblem, alg::PECE; dt = 0.0)
     t0 = tspan[1]; tfinal = tspan[2]
     T = eltype(u0)
     iip = isinplace(prob)
-    all(x->x==order[1], order) ? nothing : throw(ArgumentError("PECE method is only for commensurate order FODE"))
-    alpha = order[1] # commensurate ordre FODE
-    (alpha > 1.0) && throw(ArgumentError("BDF method is only for order <= 1.0"))
     METH = M(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)# Initialization
     mu_tol = 1.0e-6
     mu = 1
