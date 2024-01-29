@@ -177,6 +177,10 @@ The classical Euler method extended for fractional order differential equations.
 """
 struct Euler <: FODESystemAlgorithm end
 
+"""
+Explicit product integral method for initial value problems of fractional order differential equations.
+"""
+struct PIEX <: FODESystemAlgorithm end
 
 
 """

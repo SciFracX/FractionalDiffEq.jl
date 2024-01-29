@@ -1,8 +1,3 @@
-#=
-Multiple dispatch of explicit product integral methods for multi term FODEProblem
-=#
-struct PIEX <: FODESystemAlgorithm end
-
 function solve(prob::MultiTermsFODEProblem, h, ::PIEX)
     @unpack parameters, orders, rightfun, u0, tspan = prob
     t0 = tspan[1]; T = tspan[2]
