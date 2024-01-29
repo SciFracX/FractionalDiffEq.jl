@@ -1,18 +1,45 @@
-function solve(prob::FODEProblem, alg::PIEX; dt = 0.0)
+@concrete mutable struct PIEXCache{iip, T}
+    prob
+    alg
+    mesh
+    u0
+    order
+    m_alpha
+    m_alpha_factorial
+    y
+    fy
+    p
+    
+    zn
+
+    r
+    N
+    Nr
+    Qr
+    NNr
+
+    bn
+
+    halpha1
+    mu
+    abstol
+    index_fft
+    bn_fft
+
+    kwargs
+end
+
+Base.eltype(::PIEXCache{iip, T}) where {iip, T} = T
+
+function SciMLBase.__init(prob::FODEProblem, alg::PIEX; dt = 0.0, abstol = 1e-6, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
-
-    t0 = tspan[1]; T = tspan[2]
-
-    # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
-    max_order = findmax(order)[1]
-    if max_order > 1
-        @error "This method doesn't support high order FDEs"
-    end
-
-    METH = M(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)# Initialization
+    t0 = tspan[1]; tfinal = tspan[2]
+    T = eltype(u0)
+    iip = isinplace(prob)
+    mu = 1
     order = order[:]
-    # Check compatibility size of the problem with number of fractional orders
+
     alpha_length = length(order)
     problem_size = size(u0, 1)
 
@@ -28,7 +55,7 @@ function solve(prob::FODEProblem, alg::PIEX; dt = 0.0)
     f(f_temp, u0[:, 1], p, t0)
 
     r::Int = 16
-    N::Int = ceil(Int64, (T-t0)/dt)
+    N::Int = ceil(Int64, (tfinal-t0)/dt)
     Nr::Int = ceil(Int64, (N+1)/r)*r
     Qr::Int = ceil(Int64, log2(Nr/r)) - 1
     NNr::Int = 2^(Qr+1)*r
@@ -56,11 +83,9 @@ function solve(prob::FODEProblem, alg::PIEX; dt = 0.0)
             bn[i_alpha, :] = nalpha[2:end] - nalpha[1:end-1]
         end
     end
-    METH.bn = bn
-    METH.halpha1 = dt.^order./gamma.(order.+1)
+    halpha1 = dt.^order./gamma.(order.+1)
 
-    # Evaluation of FFT of coefficients of the PECE method
-    METH.r = r 
+
     if Qr >= 0
         index_fft = zeros(Int, 2, Qr+1)
         for l = 1 : Qr+1
@@ -71,7 +96,7 @@ function solve(prob::FODEProblem, alg::PIEX; dt = 0.0)
             end
         end
         
-        bn_fft = zeros(Complex, alpha_length, index_fft[2, end]);# an_fft = copy(bn_fft)
+        bn_fft = zeros(Complex, alpha_length, index_fft[2, end]);
         for l = 1:Qr+1
             coef_end = 2^l*r
             for i_alpha = 1 : alpha_length
@@ -82,46 +107,56 @@ function solve(prob::FODEProblem, alg::PIEX; dt = 0.0)
                 if isempty(find_alpha) == false
                     bn_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = bn_fft[find_alpha[1], index_fft[1, l]:index_fft[2, l]]
                 else
-                    bn_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = ourfft(METH.bn[i_alpha, 1:coef_end], coef_end)
+                    bn_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = ourfft(bn[i_alpha, 1:coef_end], coef_end)
                 end
             end
         end
-        METH.bn_fft = bn_fft ; METH.index_fft = index_fft
+    else
+        index_fft = 0
+        bn_fft = 0
     end
 
     # Initializing solution and proces of computation
-    t = t0 .+ collect(0:N)*dt
+    mesh = t0 .+ collect(0:N)*dt
     y[:, 1] = u0[:, 1]
     fy[:, 1] = f_temp
-    (y, fy) = PIEX_system_triangolo(1, r-1, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, order, p)
+    return PIEXCache{iip, T}(prob, alg, mesh, u0, order, m_alpha, m_alpha_factorial, y, fy, p,
+                             zn, r, N, Nr, Qr, NNr, bn, halpha1, mu, abstol, index_fft, bn_fft, kwargs)
+end
+function SciMLBase.solve!(cache::PIEXCache{iip, T}) where {iip, T}
+    @unpack prob, alg, mesh, u0, order, y, fy, r, N, Nr, Qr, NNr, bn, halpha1, mu, abstol, index_fft, bn_fft, kwargs = cache
+    t0 = mesh[1]
+    tfinal = mesh[end]
+    PIEX_triangolo(cache, 1, r-1, t0)
 
     # Main process of computation by means of the FFT algorithm
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0; 2] ; card_ff = 2
     nx0::Int = 0; ny0::Int = 0
     for qr = 0 : Qr
         L = 2^qr 
-        (y, fy) = PIEX_system_disegna_blocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, order, p)
+        PIEX_disegna_blocchi(cache, L, ff, r, Nr, nx0+L*r, ny0, t0)
         ff[1:2*card_ff] = [ff[1:card_ff]; ff[1:card_ff]] 
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
     end
 
     # Evaluation solution in T when T is not in the mesh
-    if T < t[N+1]
-        c = (T - t[N])/dt
-        t[N+1] = T
+    if tfinal < mesh[N+1]
+        c = (tfinal - mesh[N])/dt
+        mesh[N+1] = tfinal
         y[:, N+1] = (1-c)*y[:, N] + c*y[:, N+1]
     end
 
-    t = t[1:N+1]; y = y[:, 1:N+1]
+    mesh = mesh[1:N+1]; y = y[:, 1:N+1]
     u = collect(Vector{eltype(u0)}, eachcol(y))
 
-    return DiffEqBase.build_solution(prob, alg, t, u)
+    return DiffEqBase.build_solution(prob, alg, mesh, u)
 end
 
 
-function PIEX_system_disegna_blocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, alpha, p)
-
+function PIEX_disegna_blocchi(cache::PIEXCache{iip, T}, L, ff, r, Nr, nx0, ny0, t0) where {iip, T}
+    @unpack mesh, N = cache
+    t0 = mesh[1]
     nxi::Int = nx0; nxf::Int = nx0 + L*r - 1
     nyi::Int = ny0; nyf::Int = ny0 + L*r - 1
     is::Int = 1
@@ -136,9 +171,9 @@ function PIEX_system_disegna_blocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N, ME
         
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         
-        zn = PIEX_system_quadrato(nxi, nxf, nyi, nyf, fy, zn, N, METH, problem_size, alpha_length, alpha)
+        PIEX_quadrato(cache, nxi, nxf, nyi, nyf)
         
-        (y, fy) = PIEX_system_triangolo(nxi, nxi+r-1, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, alpha, p)
+        PIEX_triangolo(cache, nxi, nxi+r-1, t0)
         i_triangolo = i_triangolo + 1
         
         if stop == false
@@ -159,34 +194,37 @@ function PIEX_system_disegna_blocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N, ME
     return y, fy
 end
 
-function PIEX_system_quadrato(nxi, nxf, nyi, nyf, fy, zn, N, METH, problem_size, alpha_length, alpha)
+function PIEX_quadrato(cache::PIEXCache{iip, T}, nxi, nxf, nyi, nyf) where {iip, T}
+    @unpack prob, mesh, r, N, Nr, Qr, NNr, bn, halpha1, mu, abstol, index_fft, bn_fft = cache
     coef_end::Int = nxf-nyi+1
-    i_fft::Int = log2(coef_end/METH.r) 
+    i_fft::Int = log2(coef_end/r) 
     funz_beg::Int = nyi+1; funz_end::Int = nyf+1
     Nnxf::Int = min(N, nxf)
 
     # Evaluation convolution segment for the predictor
-    vett_funz = fy[:, funz_beg:funz_end]
+    vett_funz = cache.fy[:, funz_beg:funz_end]
     vett_funz_fft = rowfft(vett_funz, coef_end)
     zzn = zeros(problem_size, coef_end)
     for i = 1 : problem_size
         i_alpha = min(alpha_length, i)
-        if abs(alpha[i_alpha]-1)>1e-14
-        Z = METH.bn_fft[i_alpha, METH.index_fft[1, i_fft]:METH.index_fft[2, i_fft]].*vett_funz_fft[i, :]
+        if abs(order[i_alpha]-1)>1e-14
+        Z = bn_fft[i_alpha, index_fft[1, i_fft]:index_fft[2, i_fft]].*vett_funz_fft[i, :]
         zzn[i, :] = real.(ourifft(Z, coef_end))
         end
     end
     zzn = zzn[:, nxf-nyf:end-1]
-    zn[:, nxi+1:Nnxf+1] = zn[:, nxi+1:Nnxf+1] + zzn[:, 1:Nnxf-nxi+1]
-    return zn
+    cache.zn[:, nxi+1:Nnxf+1] = cache.zn[:, nxi+1:Nnxf+1] + zzn[:, 1:Nnxf-nxi+1]
 end
 
 
 
-function PIEX_system_triangolo(nxi, nxf, t, y, fy, zn, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, f, alpha, p)
-
+function PIEX_triangolo(cache::PIEXCache{iip, T}, nxi, nxf, t0) where {iip, T}
+    @unpack prob, mesh, u0, order, m_alpha, m_alpha_factorial, p, zn, N, bn, halpha1, mu, abstol, index_fft, bn_fft = cache
+    t0 = mesh[1]
+    problem_size = length(u0)
+    alpha_length = length(order)
     for n = nxi:min(N, nxf)
-        St = PIEX_system_starting_term(t[n+1], u0, m_alpha, t0, m_alpha_factorial)        
+        St = PIEX_system_starting_term(mesh[n+1], u0, m_alpha, t0, m_alpha_factorial)        
         # Evaluation of the predictor
         Phi = zeros(problem_size, 1)
         if nxi == 1 # Case of the first triangle
@@ -195,20 +233,18 @@ function PIEX_system_triangolo(nxi, nxf, t, y, fy, zn, N, METH, problem_size, al
             j_beg = nxi
         end
         for j = j_beg:n-1
-            Phi = Phi + METH.bn[1:alpha_length,n-j].*fy[:, j+1]
+            Phi = Phi + bn[1:alpha_length,n-j].*cache.fy[:, j+1]
         end
 
-        i_alpha_1 = findall(alpha -> abs(alpha - 1) < 1e-14, alpha)
-        Phi[i_alpha_1] = fy[i_alpha_1, n]
-        St[i_alpha_1] = y[i_alpha_1, n]
+        i_alpha_1 = findall(alpha -> abs(alpha - 1) < 1e-14, order)
+        Phi[i_alpha_1] = cache.fy[i_alpha_1, n]
+        St[i_alpha_1] = cache.y[i_alpha_1, n]
         
-        y[:, n+1] = St + METH.halpha1.*(zn[:, n+1] + Phi)
-        temp = zeros(length(y[:, n+1]))
-        f(temp, y[:, n+1], p, t[n+1])
-        fy[:, n+1] = temp
-        
+        cache.y[:, n+1] = St + halpha1.*(cache.zn[:, n+1] + Phi)
+        temp = zeros(length(cache.y[:, n+1]))
+        prob.f(temp, cache.y[:, n+1], p, mesh[n+1])
+        cache.fy[:, n+1] = temp
     end
-    return y, fy
 end
 
 function  PIEX_system_starting_term(t, u0, m_alpha, t0, m_alpha_factorial)

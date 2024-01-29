@@ -33,6 +33,8 @@
     kwargs
 end
 
+Base.eltype(::PECECache{iip, T}) where {iip, T} = T
+
 function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
