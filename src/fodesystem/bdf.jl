@@ -3,7 +3,7 @@
     alg
     mesh
     u0
-    order # temporary set as integer
+    order
     halpha
     y
     fy
@@ -54,7 +54,7 @@ function SciMLBase.__init(prob::FODEProblem, alg::BDF;
     r = 16
     N = ceil(Int, (tfinal-t0)/dt)
     Nr = ceil(Int, (N+1)/r)*r
-    Q = ceil(Int, log2((Nr)/r))-1
+    Q = ceil(Int, log2(Nr/r))-1
     NNr = 2^(Q+1)*r
 
     # Preallocation of some variables
