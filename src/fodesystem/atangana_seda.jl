@@ -1,4 +1,4 @@
-function SciMLBase.__solve(prob::FODEProblem, alg::AtanganaSedaAB; dt = 0.0)
+function solve(prob::FODEProblem, alg::AtanganaSedaAB; dt = 0.0)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     order = order[1]

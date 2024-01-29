@@ -1,17 +1,15 @@
 module FractionalDiffEq
 
 using LinearAlgebra, Reexport, SciMLBase, SpecialFunctions, SparseArrays, ToeplitzMatrices,
-        FFTW, LoopVectorization, RecipesBase, ForwardDiff, Polynomials, TruncatedStacktraces,
-        HypergeometricFunctions
+        FFTW, RecipesBase, ForwardDiff, Polynomials, TruncatedStacktraces,
+        HypergeometricFunctions, DiffEqBase, ConcreteStructs
 
-import DiffEqBase: solve
 import SciMLBase: __solve
-import ConcreteStructs: @concrete
+import DiffEqBase: solve
 import InvertedIndices: Not
 import SpecialMatrices: Vandermonde
 import FFTW: fft, ifft
 import UnPack: @unpack
-import LoopVectorization: @turbo
 import Polynomials: Polynomial
 import TruncatedStacktraces: @truncate_stacktrace
 
@@ -64,10 +62,16 @@ include("discrete/GL.jl")
 include("mlfun.jl")
 
 # Lyapunov exponents
-include("lyapunov.jl")
+#include("lyapunov.jl")
 
 include("utils.jl")
 include("auxiliary.jl")
+
+
+function __solve(prob::FODEProblem, alg::FODESystemAlgorithm, args...; kwargs...)
+    cache = init(prob, alg, args...; kwargs...)
+    return solve!(cache)
+end
 
 # General types
 export FDEProblem
@@ -117,7 +121,7 @@ export bagleytorvik, diffusion
 export mittleff, mittleffderiv
 
 # Lyapunov exponents
-export FOLyapunov, FOLE
+#export FOLyapunov, FOLE
 
 # Distributed order auxiliary SpecialFunctions
 export DOB, DOF, DORANORT, isFunction

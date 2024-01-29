@@ -1,4 +1,4 @@
-using SciMLBase, DiffEqBase
+using SciMLBase
 abstract type AbstractFDEProblem <: SciMLBase.AbstractDEProblem end
 abstract type FDEProblem end
 

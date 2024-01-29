@@ -1,36 +1,52 @@
-mutable struct M
+@concrete mutable struct PECECache{iip, T}
+    prob
+    alg
+    mesh
+    u0
+    order
+    m_alpha
+    m_alpha_factorial
+    y
+    fy
+    p
+
+    zn_pred
+    zn_corr
+
+    r
+    N
+    Nr
+    Qr
+    NNr
+
     an
     bn
     a0
     halpha1
     halpha2
     mu
-    mu_tol
-    r
+    abstol
     index_fft
     an_fft
     bn_fft
+
+    kwargs
 end
 
-function solve(prob::FODEProblem, alg::PECE; dt = 0.0)
+Base.eltype(::PECECache{iip, T}) where {iip, T} = T
+
+function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
-    t0 = tspan[1]; T = tspan[2]
-    METH = M(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)# Initialization
-    mu_tol = 1.0e-6
+    t0 = tspan[1]; tfinal = tspan[2]
+    T = eltype(u0)
+    iip = isinplace(prob)
     mu = 1
     order = order[:]
 
-    # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
-    max_order = findmax(order)[1]
-    if max_order > 1
-        @error "This method doesn't support high order FDEs"
-    end
-
-
     # Check compatibility size of the problem with number of fractional orders
     alpha_length = length(order)
-    problem_size = size(u0, 1)
+    problem_size = length(u0)
 
     m_alpha = ceil.(Int, order)
     m_alpha_factorial = zeros(alpha_length, maximum(m_alpha))
@@ -41,11 +57,10 @@ function solve(prob::FODEProblem, alg::PECE; dt = 0.0)
     end
 
     f_temp = zeros(size(u0[:, 1]))
-    #f_temp = sysf_vectorfield(t0, u0[:, 1], f)
-    f(f_temp, u0[:, 1], p, t0)
+    f(f_temp, u0, p, t0)
 
     r::Int = 16
-    N::Int = ceil(Int64, (T-t0)/dt)
+    N::Int = ceil(Int64, (tfinal-t0)/dt)
     Nr::Int = ceil(Int64, (N+1)/r)*r
     Qr::Int = ceil(Int64, log2(Nr/r)) - 1
     NNr::Int = 2^(Qr+1)*r
@@ -77,15 +92,12 @@ function solve(prob::FODEProblem, alg::PECE; dt = 0.0)
             a0[i_alpha, :] = [0; nalpha1[1:end-2]-nalpha[2:end-1].*(nvett[2:end-1].-order[i_alpha].-1)]
         end
     end
-    METH.bn = bn; METH.an = an; METH.a0 = a0
-    METH.halpha1 = dt.^order./gamma.(order.+1)
-    METH.halpha2 = dt.^order./gamma.(order.+2)
-    METH.mu = mu; METH.mu_tol = mu_tol
+    halpha1 = dt.^order./gamma.(order.+1)
+    halpha2 = dt.^order./gamma.(order.+2)
 
     # Evaluation of FFT of coefficients of the PECE method
-    METH.r = r 
+    index_fft = zeros(Int, 2, Qr+1)
     if Qr >= 0
-        index_fft = zeros(Int, 2, Qr+1)
         for l = 1 : Qr+1
             if l == 1
                 index_fft[1, l] = 1; index_fft[2, l] = r*2
@@ -106,48 +118,57 @@ function solve(prob::FODEProblem, alg::PECE; dt = 0.0)
                     bn_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = bn_fft(find_alpha(1),index_fft(1,l):index_fft(2,l)) ;
                     an_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = an_fft(find_alpha(1),index_fft(1,l):index_fft(2,l)) ;
                 else
-                    bn_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = ourfft(METH.bn[i_alpha, 1:coef_end], coef_end)
-                    an_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = ourfft(METH.an[i_alpha, 1:coef_end], coef_end)
+                    bn_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = ourfft(bn[i_alpha, 1:coef_end], coef_end)
+                    an_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = ourfft(an[i_alpha, 1:coef_end], coef_end)
                 end
             end
         end
-        METH.bn_fft = bn_fft ; METH.an_fft = an_fft ; METH.index_fft = index_fft ;
+    else
+        bn_fft = 0; an_fft = 0
     end
 
     # Initializing solution and proces of computation
-    t = t0 .+ collect(0:N)*dt
+    mesh = t0 .+ collect(0:N)*dt
     y[:, 1] = u0[:, 1]
     fy[:, 1] = f_temp
-    (y, fy) = ABM_triangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f) ;
+    return PECECache{iip, T}(prob, alg, mesh, u0, order, m_alpha, m_alpha_factorial, y, fy, p,
+                             zn_pred, zn_corr,
+                             r, N, Nr, Qr, NNr,
+                             an, bn, a0, halpha1, halpha2,
+                             mu, abstol, index_fft, an_fft, bn_fft, kwargs)
+end
+function SciMLBase.solve!(cache::PECECache{iip, T}) where {iip, T}
+    @unpack prob, alg, mesh, u0, order, y, fy, zn_pred, zn_corr, r, N, Nr, Qr, NNr, an, bn, a0, halpha1, halpha2, mu, abstol, index_fft, an_fft, bn_fft, kwargs = cache
+    t0 = mesh[1]; tfinal = mesh[N+1]
+    ABM_triangolo(cache, 1, r-1, t0)
 
     # Main process of computation by means of the FFT algorithm
-    ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0; 2] ; card_ff = 2
+    ff = zeros(T, 1, 2^(Qr+2)); ff[1:2] = [0; 2] ; card_ff = 2
     nx0::Int = 0; ny0::Int = 0
     for qr = 0 : Qr
         L = 2^qr 
-        (y, fy) = DisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f)
+        DisegnaBlocchi(cache, L, ff, r, Nr, nx0+L*r, ny0, t0)
         ff[1:2*card_ff] = [ff[1:card_ff]; ff[1:card_ff]] 
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
     end
 
     # Evaluation solution in T when T is not in the mesh
-    if T < t[N+1]
-        c = (T - t[N])/dt
-        t[N+1] = T
-        y[:, N+1] = (1-c)*y[:, N] + c*y[:, N+1]
+    if tfinal < mesh[N+1]
+        c = (tfinal - mesh[N])/dt
+        mesh[N+1] = tfinal
+        cache.y[:, N+1] = (1-c)*cache.y[:, N] + c*cache.y[:, N+1]
     end
 
-    t = t[1:N+1]; y = y[:, 1:N+1]
-    u = collect(Vector{eltype(u0)}, eachcol(y))
+    mesh = mesh[1:N+1]; u = cache.y[:, 1:N+1]
+    u = collect(Vector{eltype(u0)}, eachcol(u))
 
-    return DiffEqBase.build_solution(prob, alg, t, u)
-
+    return DiffEqBase.build_solution(prob, alg, mesh, u)
 end
 
 
-function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f)
-
+function DisegnaBlocchi(cache::PECECache{iip, T}, L, ff, r, Nr, nx0, ny0, t0) where {iip, T}
+    @unpack N = cache
     nxi::Int = nx0; nxf::Int = nx0 + L*r - 1
     nyi::Int = ny0; nyf::Int = ny0 + L*r - 1
     is::Int = 1
@@ -162,11 +183,11 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N, M
         
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         
-        (zn_pred, zn_corr) = ABM_quadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length)
-        
-        (y, fy) = ABM_triangolo(nxi, nxi+r-1, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f)
+        ABM_quadrato(cache, nxi, nxf, nyi, nyf)
+
+        ABM_triangolo(cache, nxi, nxi+r-1, t0)
         i_triangolo = i_triangolo + 1
-        
+
         if stop == false
             if nxi+r-1 == nxf
                 i_Delta = ff[i_triangolo]
@@ -182,110 +203,109 @@ function DisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn_pred, zn_corr, N, M
         end
         
     end
-    return y, fy
 end
 
-function ABM_quadrato(nxi, nxf, nyi, nyf, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length)
+function ABM_quadrato(cache::PECECache{iip, T}, nxi, nxf, nyi, nyf) where {iip, T}
+    @unpack prob, mesh, r, N, Nr, Qr, NNr, an, bn, a0, halpha1, halpha2, mu, abstol, index_fft, an_fft, bn_fft = cache
+    problem_size = length(prob.u0)
+    alpha_length = length(prob.order)
     coef_end::Int = nxf-nyi+1
-    i_fft::Int = log2(coef_end/METH.r) 
+    i_fft::Int = log2(coef_end/r)
     funz_beg::Int = nyi+1
     funz_end::Int = nyf+1
     Nnxf::Int = min(N, nxf)
 
     # Evaluation convolution segment for the predictor
-    vett_funz = fy[:, funz_beg:funz_end]
+    vett_funz = cache.fy[:, funz_beg:funz_end]
     vett_funz_fft = rowfft(vett_funz, coef_end)
     zzn_pred = zeros(problem_size, coef_end)
-    for i = 1 : problem_size
+    for i = 1:problem_size
         i_alpha = min(alpha_length,i)
-        Z = METH.bn_fft[i_alpha, METH.index_fft[1, i_fft]:METH.index_fft[2, i_fft]].*vett_funz_fft[i, :]
+        Z = bn_fft[i_alpha, index_fft[1, i_fft]:index_fft[2, i_fft]].*vett_funz_fft[i, :]
         zzn_pred[i, :] = real.(ourifft(Z, coef_end))
     end
     zzn_pred = zzn_pred[:, nxf-nyf:end-1]
-    zn_pred[:, nxi+1:Nnxf+1] = zn_pred[:, nxi+1:Nnxf+1] + zzn_pred[:, 1:Nnxf-nxi+1]
+    cache.zn_pred[:, nxi+1:Nnxf+1] = cache.zn_pred[:, nxi+1:Nnxf+1] + zzn_pred[:, 1:Nnxf-nxi+1]
 
     # Evaluation convolution segment for the corrector
-    if METH.mu > 0
+    if mu > 0
         if nyi == 0 # Evaluation of the lowest square
-            vett_funz = [zeros(problem_size, 1) fy[:, funz_beg+1:funz_end]]
+            vett_funz = [zeros(problem_size, 1) cache.fy[:, funz_beg+1:funz_end]]
             vett_funz_fft = rowfft(vett_funz, coef_end)
         end
         zzn_corr = zeros(problem_size, coef_end)
-        for i = 1 : problem_size
+        for i=1:problem_size
             i_alpha = min(alpha_length,i)
-            Z = METH.an_fft[i_alpha,METH.index_fft[1, i_fft]:METH.index_fft[2, i_fft]].*vett_funz_fft[i, :]
+            Z = an_fft[i_alpha, index_fft[1, i_fft]:index_fft[2, i_fft]].*vett_funz_fft[i, :]
             zzn_corr[i, :] = real.(ourifft(Z, coef_end))
         end
         zzn_corr = zzn_corr[:, nxf-nyf+1:end]
-        zn_corr[:, nxi+1:Nnxf+1] = zn_corr[:, nxi+1:Nnxf+1] + zzn_corr[:, 1:Nnxf-nxi+1]
+        cache.zn_corr[:, nxi+1:Nnxf+1] = cache.zn_corr[:, nxi+1:Nnxf+1] + zzn_corr[:, 1:Nnxf-nxi+1]
     else
-        zn_corr = 0
+        cache.zn_corr = 0
     end
-    return zn_pred, zn_corr
 end
 
 
 
-function ABM_triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, METH, problem_size, alpha_length, m_alpha, m_alpha_factorial, u0, t0, p, f)
+function ABM_triangolo(cache::PECECache{iip, T}, nxi, nxf, t0) where {iip, T}
+    @unpack prob, mesh, u0, order, m_alpha, m_alpha_factorial, p, zn_pred, zn_corr, N, an, bn, a0, halpha1, halpha2, mu, abstol, index_fft, an_fft, bn_fft = cache
+    alpha_length = length(order)
+    problem_size = length(u0)
 
     for n = nxi:min(N, nxf)
-        
         # Evaluation of the predictor
-        Phi = zeros(problem_size, 1)
+        Phi = zeros(T, problem_size, 1)
         if nxi == 1 # Case of the first triangle
             j_beg::Int = 0
         else # Case of any triangle but not the first
             j_beg = nxi
         end
         for j = j_beg:n-1
-            Phi = Phi + METH.bn[1:alpha_length,n-j].*fy[:, j+1]
+            Phi = Phi + bn[1:alpha_length,n-j].*cache.fy[:, j+1]
         end
-        St = starting_term(t[n+1], u0, m_alpha, t0, m_alpha_factorial)
-        y_pred = St + METH.halpha1.*(zn_pred[:, n+1] + Phi)
+        St = starting_term(mesh[n+1], u0, m_alpha, t0, m_alpha_factorial)
+        y_pred = St + halpha1.*(zn_pred[:, n+1] + Phi)
         f_pred = zeros(length(y_pred))
-        #f_pred = sysf_vectorfield(t[n+1], y_pred, f)
-        f(f_pred, y_pred, p, t[n+1])
+        prob.f(f_pred, y_pred, p, mesh[n+1])
         
         # Evaluation of the corrector
-        if METH.mu == 0
-            y[:, n+1] = y_pred
-            fy[:, n+1] = f_pred
+        if mu == 0
+            cache.y[:, n+1] = y_pred
+            cache.fy[:, n+1] = f_pred
         else
             j_beg = nxi
             Phi = zeros(problem_size, 1)
             for j = j_beg : n-1
-                Phi = Phi + METH.an[1:alpha_length, n-j+1].*fy[:, j+1]
+                Phi = Phi + an[1:alpha_length, n-j+1].*cache.fy[:, j+1]
             end
-            Phi_n = St + METH.halpha2.*(METH.a0[1:alpha_length, n+1].*fy[:, 1] + zn_corr[:, n+1] + Phi)
+            Phi_n = St + halpha2.*(a0[1:alpha_length, n+1].*cache.fy[:, 1] + zn_corr[:, n+1] + Phi)
             yn0 = y_pred
             fn0 = f_pred
             stop = false
             mu_it = 0
+
+            yn1 = zeros(T, alpha_length)
+            fn1 = zeros(T, length(yn1))
             while stop == false
-                global yn1 = Phi_n + METH.halpha2.*fn0
+                yn1 = Phi_n + halpha2.*fn0
                 mu_it = mu_it + 1
-                if METH.mu == Inf
-                    stop = norm(yn1-yn0, Inf) < METH.mu_tol
+                if mu == Inf
+                    stop = norm(yn1-yn0, Inf) < abstol
                     if mu_it > 100 && ~stop
                         stop = 1
                     end
                 else
-                    stop = (mu_it == METH.mu)
+                    stop = (mu_it == mu)
                 end
-                global fn1 = zeros(length(yn1))
-                #sysf_vectorfield(t[n+1], yn1, f)
-                f(fn1, yn1, p, t[n+1])
+                prob.f(fn1, yn1, p, mesh[n+1])
                 yn0 = yn1; fn0 = fn1
             end
-            y[:, n+1] = yn1
-            fy[:, n+1] = fn1
+            cache.y[:, n+1] = yn1
+            cache.fy[:, n+1] = fn1
         end
     end
-    return y, fy
 end
-
-
-sysf_vectorfield(t, y, f_fun) = f_fun(t, y)
 
 function  starting_term(t, u0, m_alpha, t0, m_alpha_factorial)
     ys = zeros(size(u0, 1), 1)

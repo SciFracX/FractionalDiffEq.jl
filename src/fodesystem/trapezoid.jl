@@ -1,24 +1,58 @@
-function SciMLBase.__solve(prob::FODEProblem, alg::Trapezoid; dt = 0.0, reltol=1e-6, abstol=1e-6)
+@concrete mutable struct TrapezoidCache{iip, T}
+    prob
+    alg
+    mesh
+    u0
+    order # temporary set as integer
+    halpha
+    y
+    fy
+    zn
+    p
+
+    # FLMM coefficients
+    m_alpha
+    m_alpha_factorial
+    r
+    N
+    Nr
+    Q
+    NNr
+
+    # LMM weights
+    omega
+    w
+    s
+
+    dt
+    reltol
+    abstol
+    maxiters
+    
+    kwargs
+end
+
+Base.eltype(::TrapezoidCache{iip, T}) where {iip, T} = T
+
+
+function SciMLBase.__init(prob::FODEProblem, alg::Trapezoid;
+                          dt = 0.0, reltol=1e-6, abstol=1e-6, maxiters=1000, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
-    u0 = u0
-    alpha = order[1]
-    maxiters = 100
+    T = eltype(u0)
+    iip = isinplace(prob)
+    all(x->x==order[1], order) ? nothing : throw(ArgumentError("BDF method is only for commensurate order FODE"))
+    alpha = order[1] # commensurate ordre FODE
+    (alpha > 1.0) && throw(ArgumentError("BDF method is only for order <= 1.0"))
 
-    # issue [#64](https://github.com/SciFracX/FractionalDiffEq.jl/issues/64)
-    max_order = findmax(order)[1]
-    if max_order > 1
-        @error "This method doesn't support high order FDEs"
-    end
-
-    Jfdefun(t, u) = jacobian_of_fdefun(f, t, u, p)
+    #Jfdefun(t, u) = jacobian_of_fdefun(f, t, u, p)
 
     m_alpha::Int = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
     # Structure for storing information on the problem
     
-    problem_size = size(u0, 1)
+    problem_size = length(u0)
     
     
     # Check compatibility size of the problem with size of the vector field
@@ -40,13 +74,27 @@ function SciMLBase.__solve(prob::FODEProblem, alg::Trapezoid; dt = 0.0, reltol=1
     halpha = dt^alpha
     
     # Initializing solution and proces of computation
-    t = collect(0:N)*dt
+    mesh = collect(0:N)*dt
     y[:, 1] = u0[:, 1]
     temp = zeros(problem_size)
     f(temp, u0[:, 1], p, t0)
     fy[:, 1] = temp
-    (y, fy) = TrapFirstApproximations(t, y, fy, abstol, maxiters, s, halpha, omega, w, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
-    (y, fy) = TrapTriangolo(s+1, r-1, 0, t, y, fy, zn, N, abstol, maxiters, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+    return TrapezoidCache{iip, T}(prob, alg, mesh, u0, alpha, halpha, y, fy, zn,
+                                  p, m_alpha, m_alpha_factorial, r, N, Nr, Q, NNr,
+                                  omega, w, s, dt, reltol, abstol, maxiters, kwargs)
+end
+
+function SciMLBase.solve!(cache::TrapezoidCache)
+    @unpack prob, alg, mesh, u0, order, halpha, y, fy, zn, p, m_alpha, m_alpha_factorial, r, N, Nr, Q, NNr, omega, w, s, dt, reltol, abstol, maxiters, kwargs = cache
+    t0 = mesh[1]; tfinal = mesh[end]
+    iip = isinplace(prob)
+    T = eltype(cache)
+    problem_size = length(u0)
+    # generate jacobian of input function
+    Jfdefun(t, u) = jacobian_of_fdefun(prob.f, t, u, p)
+
+    TrapFirstApproximations(cache, problem_size, prob.f, Jfdefun, t0)
+    TrapTriangolo(cache, s+1, r-1, 0, N, problem_size, prob.f, Jfdefun, t0)
     
     # Main process of computation by means of the FFT algorithm
     nx0 = 0; ny0 = 0
@@ -54,23 +102,24 @@ function SciMLBase.__solve(prob::FODEProblem, alg::Trapezoid; dt = 0.0, reltol=1
     ff[1:2] = [0 2]
     for q = 0:Q
         L::Int = 2^q
-        (y, fy) = TrapDisegnaBlocchi(L, ff, r, Nr, nx0+L*r, ny0, t, y, fy, zn, N, abstol, maxiters, s, w, omega, halpha, problem_size, f, Jfdefun, u0, m_alpha, t0, m_alpha_factorial, p)
+        TrapDisegnaBlocchi(cache, L, ff, r, Nr, nx0+L*r, ny0, N, problem_size, prob.f, Jfdefun, t0)
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
-    if tfinal < t[N+1]
-        c = (tfinal - t[N])/dt
-        t[N+1] = tfinal
+    if tfinal < mesh[N+1]
+        c = (tfinal - mesh[N])/dt
+        mesh[N+1] = tfinal
         y[:, N+1] = (1-c)*y[:, N] + c*y[:, N+1]
     end
-    t = t[1:N+1]; y = y[:, 1:N+1]
-    u = collect(Vector{eltype(u0)}, eachcol(y))
+    mesh = mesh[1:N+1]; y = y[:, 1:N+1]
+    y = collect(Vector{eltype(u0)}, eachcol(y))
 
-    return DiffEqBase.build_solution(prob, alg, t, u)
+    return DiffEqBase.build_solution(prob, alg, mesh, y)
 end
 
 
-function TrapDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N::Int, abstol, maxiters, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function TrapDisegnaBlocchi(cache, L, ff, r, Nr, nx0, ny0, N, problem_size, fdefun, Jfdefun, t0)
+    @unpack mesh, y, fy, zn, abstol, maxiters, s, w, omega, halpha, u0 = cache
     nxi::Int = copy(nx0); nxf::Int = copy(nx0 + L*r - 1)
     nyi::Int = copy(ny0); nyf::Int = copy(ny0 + L*r - 1)
     is::Int = 1
@@ -83,7 +132,7 @@ function TrapDisegnaBlocchi(L, ff, r, Nr, nx0, ny0, t, y, fy, zn, N::Int, abstol
     while ~stop
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         zn = TrapQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
-        (y, fy) = TrapTriangolo(nxi, nxi+r-1, nxi, t, y, fy, zn, N, abstol, maxiters, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+        TrapTriangolo(cache, nxi, nxi+r-1, nxi, N, problem_size, fdefun, Jfdefun, t0)
         i_triangolo = i_triangolo + 1
         
         if ~stop
@@ -114,32 +163,33 @@ function TrapQuadrato(nxi, nxf, nyi, nyf, fy, zn, omega, problem_size)
     return zn
 end
 
-function TrapTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, maxiters, s, w, omega, halpha, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function TrapTriangolo(cache, nxi, nxf, j0, N, problem_size, fdefun, Jfdefun, t0)
+    @unpack mesh, zn, abstol, maxiters, s, w, omega, halpha, u0, m_alpha, m_alpha_factorial, p = cache
     for n = nxi:min(N, nxf)
         n1::Int = n+1
-        St = TrapStartingTerm(t[n1], y0, m_alpha, t0, m_alpha_factorial)
+        St = TrapStartingTerm(mesh[n1], u0, m_alpha, t0, m_alpha_factorial)
         
         Phi = zeros(problem_size, 1)
         for j = 0:s
-            Phi = Phi + w[j+1, n1]*fy[:, j+1]
+            Phi = Phi + w[j+1, n1]*cache.fy[:, j+1]
         end
         for j = j0:n-1
-            Phi = Phi + omega[n-j+1]*fy[:, j+1]
+            Phi = Phi + omega[n-j+1]*cache.fy[:, j+1]
         end
         Phi_n = St + halpha*(zn[:, n1] + Phi)
         
-        yn0 = y[:, n]
+        yn0 = cache.y[:, n]
         temp = zeros(length(yn0))
-        fdefun(temp, yn0, p, t[n1])
+        fdefun(temp, yn0, p, mesh[n1])
         fn0 = temp#f_vectorfield(t[n1], yn0, fdefun)
-        Jfn0 = Jf_vectorfield(t[n1], yn0, Jfdefun)
+        Jfn0 = Jf_vectorfield(mesh[n1], yn0, Jfdefun)
         Gn0 = yn0 - halpha*omega[1]*fn0 - Phi_n
         stop = false; it::Int = 0
         while ~stop            
             JGn0 = zeros(problem_size, problem_size)+I - halpha*omega[1]*Jfn0
             global yn1 = yn0 - JGn0\Gn0
             global fn1 = zeros(length(yn1))#f_vectorfield(t[n1], yn1, fdefun)
-            fdefun(fn1, yn1, p, t[n1])
+            fdefun(fn1, yn1, p, mesh[n1])
             Gn1 = yn1 - halpha*omega[1]*fn1 - Phi_n
             it = it + 1
             
@@ -151,27 +201,27 @@ function TrapTriangolo(nxi, nxf, j0, t, y, fy, zn, N, abstol, maxiters, s, w, om
             
             yn0 = yn1; Gn0 = Gn1
             if ~stop
-                Jfn0 = Jf_vectorfield(t[n1], yn0, Jfdefun)
+                Jfn0 = Jf_vectorfield(mesh[n1], yn0, Jfdefun)
             end
             
         end
-        y[:, n1] = yn1
-        fy[:, n1] = fn1
+        cache.y[:, n1] = yn1
+        cache.fy[:, n1] = fn1
     end
-    return y, fy
 end
 
-function TrapFirstApproximations(t, y, fy, abstol, maxiters, s, halpha, omega, w, problem_size, fdefun, Jfdefun, y0, m_alpha, t0, m_alpha_factorial, p)
+function TrapFirstApproximations(cache, problem_size, fdefun, Jfdefun, t0)
+    @unpack mesh, abstol, maxiters, s, halpha, omega, w, u0, m_alpha, m_alpha_factorial, p = cache
     m = problem_size
     Im = zeros(m, m)+I ; Ims = zeros(m*s, m*s)+I
     Y0 = zeros(s*m, 1); F0 = copy(Y0); B0 = copy(Y0)
     for j = 1 : s
-        Y0[(j-1)*m+1:j*m, 1] = y[:, 1]
-        temp = zeros(length(y[:, 1]))
-        fdefun(temp, y[:, 1], p, t[j+1])
+        Y0[(j-1)*m+1:j*m, 1] = cache.y[:, 1]
+        temp = zeros(length(cache.y[:, 1]))
+        fdefun(temp, cache.y[:, 1], p, mesh[j+1])
         F0[(j-1)*m+1:j*m, 1] = temp#f_vectorfield(t[j+1], y[:, 1], fdefun)
-        St = TrapStartingTerm(t[j+1], y0, m_alpha, t0, m_alpha_factorial)
-        B0[(j-1)*m+1:j*m, 1] = St + halpha*(omega[j+1]+w[1, j+1])*fy[:, 1]
+        St = TrapStartingTerm(mesh[j+1], u0, m_alpha, t0, m_alpha_factorial)
+        B0[(j-1)*m+1:j*m, 1] = St + halpha*(omega[j+1]+w[1, j+1])*cache.fy[:, 1]
     end
     W = zeros(s, s)
     for i = 1:s
@@ -187,7 +237,7 @@ function TrapFirstApproximations(t, y, fy, abstol, maxiters, s, halpha, omega, w
     G0 = Y0 - B0 - W*F0
     JF = zeros(s*m, s*m)
     for j = 1:s
-        JF[(j-1)*m+1:j*m, (j-1)*m+1:j*m] = Jf_vectorfield(t[j+1], y[:, 1], Jfdefun)
+        JF[(j-1)*m+1:j*m, (j-1)*m+1:j*m] = Jf_vectorfield(mesh[j+1], cache.y[:, 1], Jfdefun)
     end
     stop = false; it::Int = 0
     F1 = zeros(s*m, 1)
@@ -197,7 +247,7 @@ function TrapFirstApproximations(t, y, fy, abstol, maxiters, s, halpha, omega, w
         
         for j in 1:s
             temp = zeros(length(Y1[(j-1)*m+1:j*m, 1]))
-            fdefun(temp, Y1[(j-1)*m+1:j*m, 1], p, t[j+1])
+            fdefun(temp, Y1[(j-1)*m+1:j*m, 1], p, mesh[j+1])
             F1[(j-1)*m+1:j*m, 1] = temp#f_vectorfield(t[j+1], Y1[(j-1)*m+1:j*m, 1], fdefun)
         end
         G1 = Y1 - B0 - W*F1
@@ -213,16 +263,15 @@ function TrapFirstApproximations(t, y, fy, abstol, maxiters, s, halpha, omega, w
         Y0 = Y1 ; G0 = G1
         if ~stop
             for j = 1 : s
-                JF[(j-1)*m+1:j*m, (j-1)*m+1:j*m] = Jf_vectorfield(t[j+1], Y1[(j-1)*m+1:j*m, 1], Jfdefun)
+                JF[(j-1)*m+1:j*m, (j-1)*m+1:j*m] = Jf_vectorfield(mesh[j+1], Y1[(j-1)*m+1:j*m, 1], Jfdefun)
             end
         end
         
     end
     for j = 1 : s
-        y[:, j+1] = Y1[(j-1)*m+1:j*m, 1]
-        fy[:, j+1] = F1[(j-1)*m+1:j*m, 1]
+        cache.y[:, j+1] = Y1[(j-1)*m+1:j*m, 1]
+        cache.fy[:, j+1] = F1[(j-1)*m+1:j*m, 1]
     end
-    return y, fy
 end
 
 function TrapWeights(alpha, N)
@@ -274,10 +323,10 @@ function TrapWeights(alpha, N)
     return omega, w, s
 end
 
-function TrapStartingTerm(t,y0, m_alpha, t0, m_alpha_factorial)
-    ys = zeros(size(y0, 1), 1)
+function TrapStartingTerm(t,u0, m_alpha, t0, m_alpha_factorial)
+    ys = zeros(size(u0, 1), 1)
     for k = 1:m_alpha
-        ys = ys + (t-t0)^(k-1)/m_alpha_factorial[k]*y0[:, k]
+        ys = ys + (t-t0)^(k-1)/m_alpha_factorial[k]*u0[:, k]
     end
     return ys
 end
