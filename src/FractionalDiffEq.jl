@@ -62,7 +62,7 @@ include("discrete/GL.jl")
 include("mlfun.jl")
 
 # Lyapunov exponents
-include("lyapunov.jl")
+#include("lyapunov.jl")
 
 include("utils.jl")
 include("auxiliary.jl")
@@ -121,7 +121,7 @@ export bagleytorvik, diffusion
 export mittleff, mittleffderiv
 
 # Lyapunov exponents
-export FOLyapunov, FOLE
+#export FOLyapunov, FOLE
 
 # Distributed order auxiliary SpecialFunctions
 export DOB, DOF, DORANORT, isFunction
