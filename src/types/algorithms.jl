@@ -184,8 +184,34 @@ struct PIEX <: FODESystemAlgorithm end
 
 
 """
+Explicit product integral method for initial value problems of fractional order differential equations.
+"""
+struct MTPIEX <: MultiTermsFODEAlgorithm end
+
+
+"""
     solve(prob::FODESystem, h, AtanganaSedaAB())
 
 Solve Atangana-Baleanu fractional order differential equations using Newton Polynomials.
 """
 struct AtanganaSedaAB <: FODESystemAlgorithm end
+
+
+"""
+# Usage
+
+    solve(prob::MultiTermsFODEProblem, MatrixDiscrete(), dt)
+
+Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional ordinary differential equations to simple algebra system and solve the system.
+
+### References
+
+```tex
+@inproceedings{Podlubny2000MATRIXAT,
+  title={MATRIX APPROACH TO DISCRETE FRACTIONAL CALCULUS},
+  author={Igor Podlubny},
+  year={2000}
+}
+```
+"""
+struct MatrixDiscrete <: MultiTermsFODEAlgorithm end

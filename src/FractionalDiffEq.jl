@@ -67,6 +67,10 @@ include("mlfun.jl")
 include("utils.jl")
 include("auxiliary.jl")
 
+function __solve(prob::MultiTermsFODEProblem, alg::MultiTermsFODEAlgorithm, args...; kwargs...)
+    cache = init(prob, alg, args...; kwargs...)
+    return solve!(cache)
+end
 
 function __solve(prob::FODEProblem, alg::FODESystemAlgorithm, args...; kwargs...)
     cache = init(prob, alg, args...; kwargs...)
@@ -94,8 +98,8 @@ export FODESolution, FDifferenceSolution, DODESolution, FFMODESolution
 export FODESystemSolution, FDDESystemSolution, FFMODESystem
 
 # FODE solvers
-export PIPECE, PIRect, PITrap
-export PECE, FODEMatrixDiscrete, ClosedForm, ClosedFormHankelM, GL
+export PIPECE, PIRect, PITrap, MTPIEX
+export PECE, MatrixDiscrete, GL
 export AtanganaSedaAB
 
 # System of FODE solvers

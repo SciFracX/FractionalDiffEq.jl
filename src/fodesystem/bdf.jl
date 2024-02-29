@@ -77,11 +77,9 @@ function SciMLBase.__init(prob::FODEProblem, alg::BDF;
                             omega, w, s, dt, reltol, abstol, maxiters, kwargs)
 end
 
-function SciMLBase.solve!(cache::BDFCache)
+function SciMLBase.solve!(cache::BDFCache{iip, T}) where {iip, T}
     @unpack prob, alg, mesh, u0, order, halpha, y, fy, zn, p, m_alpha, m_alpha_factorial, r, N, Nr, Q, NNr, omega, w, s, dt, reltol, abstol, maxiters, kwargs = cache
     t0 = mesh[1]; tfinal = mesh[end]
-    iip = isinplace(prob)
-    T = eltype(cache)
     problem_size = length(u0)
     # generate jacobian of input function
     Jfdefun(t, u) = jacobian_of_fdefun(prob.f, t, u, p)
