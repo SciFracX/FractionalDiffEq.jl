@@ -138,8 +138,7 @@ end
     
 
 function PIRect_disegna_blocchi(cache::PIRectCache{T}, L, ff, nx0, nu0, t0) where {T}
-    t0 = mesh[1]
-
+    @unpack r, N, Nr = cache
     nxi::Int = nx0
     nxf::Int = nx0 + L*r - 1
     nyi::Int = nu0
@@ -187,8 +186,12 @@ function PIRect_disegna_blocchi(cache::PIRectCache{T}, L, ff, nx0, nu0, t0) wher
 end
 
 function PIRect_quadrato(cache::PIRectCache{T}, nxi, nxf, nyi, nyf) where {T}
+    @unpack prob, u0 = cache
     coef_beg = nxi-nyf; coef_end = nxf-nyi+1
     funz_beg = nyi+1; funz_end = nyf+1
+
+    problem_size = size(u0, 1)
+    orders_length = length(prob.orders)
     
     for i = 1:orders_length
         vett_coef = cache.bn[i, coef_beg:coef_end]
