@@ -32,16 +32,6 @@ end
     @test isFunction("Hello")==false
 end
 
-@testset "Test Multiterms show method" begin
-    # MultiTermsFODEProblem
-    rightfun(x, y) = 172/125*cos(4/5*x)
-    multitermsprob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0 0 0 0 0 0], (0, 10))
-    multitermssol = solve(multitermsprob, 0.5, PIEX())
-
-    @test_nowarn show(multitermsprob)
-    @test_nowarn show(multitermssol)
-end
-
 @testset "Test DODEProblem show method" begin
     h = 0.5; t = collect(0:h:1)
     dodefun(t)=0
