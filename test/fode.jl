@@ -1,4 +1,4 @@
-"""
+#=
 @testset "Test Matrix discrete method" begin
     fun(x, y) = 1-y
     u0 = [0, 0]
@@ -57,7 +57,7 @@ end
 
     @test isapprox(result.u, [0.0; 0.08402140107687359; 0.3754974742112727]; atol=1e-3)
 end
-"""
+=#
 @testset "Test GL method for FODEProblem" begin
     alpha = [0.99, 0.99, 0.99]
     u0 = [1.0, 0.0, 1.0]
