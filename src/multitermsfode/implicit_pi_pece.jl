@@ -1,95 +1,155 @@
+@concrete mutable struct PIPECECache{T}
+    prob
+    alg
+    mesh
+    u0
+    bet
+    lam_rat_i
+    gamma_val
+
+    highest_order_parameter
+    highest_order_ceiling
+    other_orders_ceiling
+
+    y
+    fy
+    p
+    
+    zn_pred
+    zn_corr
+
+    r
+    N
+    Nr
+    Qr
+    NNr
+    C
+
+    an
+    bn
+    a0
+    mu
+    abstol
+
+
+    kwargs
+end
+
+Base.eltype(::PIPECECache{T}) where {T} = T
+
 """
-    solve(prob::MultiTermsFODEProblem, h, PIPECE())
+    solve(prob::MultiTermsFODEProblem, dt, PIPECE())
 
 Use product integration predictor-corrector method to solve multi-terms FODE.
 """
 struct PIPECE <: MultiTermsFODEAlgorithm end
 
-function solve(prob::MultiTermsFODEProblem, h, ::PIPECE; abstol=1e-6)
-    @unpack parameters, orders, rightfun, u0, tspan = prob
-    t0 = tspan[1]; T = tspan[2]
+function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::PIPECE; dt=0.0, abstol=1e-6, kwargs...)
+    dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
+    @unpack parameters, orders, f, u0, tspan, p = prob
+    t0 = tspan[1]; tfinal = tspan[2]
+    T = eltype(u0)
     mu=1
     u0 = u0[:]'
-    Q = length(orders)
-    orders= sort(orders)
-    i_al = sortperm(orders, rev=true)
-    parameters = parameters[i_al]
-    al_Q = orders[end]
-    al_i = orders[1:end-1]
-    lam_Q = parameters[end]
-    lam_rat_i = parameters[1:end-1]/lam_Q
-    m_Q = ceil(Int64, al_Q)
-    m_i = ceil.(Int64, orders[1:end-1])
-    bet = [al_Q .- al_i; al_Q]
+    orders_length = length(orders)
+    orders = sort(orders)
+    sorted_parameters_index = sortperm(orders, rev=true)
+    parameters = parameters[sorted_parameters_index]
+    highest_order = orders[end]
+    other_orders = orders[1:end-1]
+    highest_order_parameter = parameters[end]
+    lam_rat_i = parameters[1:end-1]/highest_order_parameter
+    highest_order_ceiling = ceil(Int64, highest_order)
+    other_orders_ceiling = ceil.(Int64, orders[1:end-1])
+    bet = [highest_order .- other_orders; highest_order]
 
     
-    gamma_val = zeros(Q, m_Q)
-    for i in 1:Q-1
-        k = collect(Int, 0:m_i[i]-1)
+    gamma_val = zeros(orders_length, highest_order_ceiling)
+    for i in 1:orders_length-1
+        k = collect(Int, 0:other_orders_ceiling[i]-1)
         gamma_val[i, k.+1] = gamma.(k.+bet[i].+1)
     end
-    k = collect(0:m_Q-1)
-    gamma_val[Q, :] = factorial.(k)
+    k = collect(0:highest_order_ceiling-1)
+    gamma_val[orders_length, :] = factorial.(k)
     
     
     problem_size = size(u0, 1)
     
     r::Int = 64
-    N::Int = ceil(Int, (T-t0)/h)
+    N::Int = ceil(Int, (tfinal-t0)/dt)
     Nr::Int = ceil(Int, (N+1)/r)*r
     Qr::Int = ceil(Int, log2((Nr)/r)) - 1
     NNr::Int = 2^(Qr+1)*r
     
     y = zeros(problem_size, N+1)
     fy = zeros(problem_size, N+1)
-    zn_pred = zeros(problem_size, NNr+1, Q)
+    zn_pred = zeros(problem_size, NNr+1, orders_length)
     if mu>0
-        zn_corr = zeros(problem_size, NNr+1, Q)
+        zn_corr = zeros(problem_size, NNr+1, orders_length)
     else
         zn_corr = 0
     end
     
     nvett = collect(0:NNr+1)
-    bn = zeros(Q, NNr+1); an = zeros(Q, NNr+1); a0 = zeros(Q, NNr+1)
-    for i in 1:Q
+    bn = zeros(orders_length, NNr+1)
+    an = zeros(orders_length, NNr+1)
+    a0 = zeros(orders_length, NNr+1)
+    for i in 1:orders_length
         nbeta = nvett.^bet[i]; nbeta1 = nbeta.*nvett
-        bn[i, :] = (nbeta[2:end] - nbeta[1:end-1]) * h^bet[i] / gamma(bet[i]+1)
-        an[i, :] = [1;  (nbeta1[1:end-2] - 2*nbeta1[2:end-1] + nbeta1[3:end]) ]*h^bet[i] / gamma(bet[i]+2)
-        a0[i, :] = [0;  nbeta1[1:end-2] - nbeta[2:end-1].*(nvett[2:end-1].-bet[i].-1)]*h^bet[i] / gamma(bet[i]+2)
+        bn[i, :] = (nbeta[2:end] - nbeta[1:end-1]) * dt^bet[i] / gamma(bet[i]+1)
+        an[i, :] = [1;  (nbeta1[1:end-2] - 2*nbeta1[2:end-1] + nbeta1[3:end]) ]*dt^bet[i] / gamma(bet[i]+2)
+        a0[i, :] = [0;  nbeta1[1:end-2] - nbeta[2:end-1].*(nvett[2:end-1].-bet[i].-1)]*dt^bet[i] / gamma(bet[i]+2)
     end
     C = 0
-    for i in 1:Q-1
+    for i in 1:orders_length-1
         C = C + lam_rat_i[i]*an[i, 1]
     end
     
-    t = collect(0:N)*h
+    mesh = collect(0:N)*dt
     y[:, 1] = u0[:, 1]
-    fy[:, 1] .= rightfun(t0, u0[:, 1])
-    (y, fy) = PIPECE_triangolo(1, r-1, t, y, fy, zn_pred, zn_corr, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
+    fy[:, 1] .= f(u0[:, 1], p, t0)
+
+    return PIPECECache{T}(prob, alg, mesh, u0, bet, lam_rat_i, gamma_val,
+                                highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
+                                y, fy, p, zn_pred, zn_corr,
+                                r, N, Nr, Qr, NNr, C, an, bn, a0, mu, abstol, kwargs)
+
+end
+function SciMLBase.solve!(cache::PIPECECache{T}) where {T}
+    @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val,
+    highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
+    p,
+    r, N, Nr, Qr, NNr, C, a0, an, bn, mu, abstol, kwargs = cache
+
+    t0 = mesh[1]; tfinal = mesh[end]
+
+    PIPECE_triangolo(cache, 1, r-1, t0)
     
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0 2]; card_ff = 2
     nx0 = 0; nu0 = 0
     for qr in 0:Qr
         L = 2^qr
-        (y, fy) = PIPECE_disegna_blocchi(L, ff, r, Nr, nx0+L*r, nu0, t, y, fy, zn_pred, zn_corr, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
+        PIPECE_disegna_blocchi(cache, L, ff, nx0+L*r, nu0, t0)
         ff[1:2*card_ff] = [ff[1:card_ff] ff[1:card_ff]]
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
     end
 
-    if T<t[N+1]
-        c = (T - t[N])/h
-        t[N+1] = tfinal
-        y[:, N+1] = (1-c)*y[:, N] + c*y[:, N+1]
+    if tfinal<mesh[N+1]
+        c = (tfinal - mesh[N])/dt
+        mesh[N+1] = tfinal
+        cache.y[:, N+1] = (1-c)*cache.y[:, N] + c*cache.y[:, N+1]
     end
 
-    t = t[1:N+1]; y = y[:, 1:N+1]
-    return FODESolution(t, y[:])
-end
-    
+    mesh = mesh[1:N+1]; u = cache.y[:, 1:N+1]
+    u = collect(Vector{eltype(u0)}, eachcol(u))
 
-function PIPECE_disegna_blocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn_pred, zn_corr, N , bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
-    
+    return DiffEqBase.build_solution(prob, alg, mesh, u)
+end
+
+function PIPECE_disegna_blocchi(cache::PIPECECache{T}, L, ff, nx0, nu0, t0) where {T}
+    @unpack r, N = cache
+
     nxi::Int = nx0
     nxf::Int = nx0 + L*r - 1
     nyi::Int = nu0
@@ -108,9 +168,9 @@ function PIPECE_disegna_blocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn_pred, zn_co
     while stop == false
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1 >= Nr-1)
         
-        (zn_pred, zn_corr) = PIPECE_quadrato(nxi, nxf, nyi, nyf, y, fy, zn_pred, zn_corr, bn, problem_size, Q, an, mu)
+        PIPECE_quadrato(cache, nxi, nxf, nyi, nyf)
         
-        (y, fy) = PIPECE_triangolo(nxi, nxi+r-1, t, y, fy, zn_pred, zn_corr, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
+        PIPECE_triangolo(cache, nxi, nxi+r-1, t0)
         i_triangolo = i_triangolo + 1
         
         if stop==false
@@ -134,55 +194,68 @@ function PIPECE_disegna_blocchi(L, ff, r, Nr, nx0, nu0, t, y, fy, zn_pred, zn_co
         end
         
     end
-    return y, fy
 end
 
-function PIPECE_quadrato(nxi, nxf, nyi, nyf, y, fy, zn_pred, zn_corr, bn,  problem_size, Q, an, mu)
+function PIPECE_quadrato(cache::PIPECECache{T}, nxi, nxf, nyi, nyf) where {T}
+    @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val,
+    highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
+    p, r, N, Nr, Qr, NNr, C, a0, an, bn, mu, abstol, kwargs = cache
+
     coef_beg = nxi-nyf; coef_end = nxf-nyi+1
     funz_beg = nyi+1; funz_end = nyf+1
+
+    problem_size = size(u0, 1)
+    orders_length = length(prob.orders)
     
-    for i in 1:Q
+    for i in 1:orders_length
         vett_coef = bn[i, coef_beg:coef_end]
-        if i < Q
-            vett_funz = [y[:, funz_beg:funz_end] zeros(problem_size, funz_end-funz_beg+1)]
+        if i < orders_length
+            vett_funz = [cache.y[:, funz_beg:funz_end] zeros(problem_size, funz_end-funz_beg+1)]
         else
-            vett_funz = [fy[:, funz_beg:funz_end] zeros(problem_size, funz_end-funz_beg+1)]
+            vett_funz = [cache.fy[:, funz_beg:funz_end] zeros(problem_size, funz_end-funz_beg+1)]
         end
         zzn_pred = real.(fast_conv(vett_coef, vett_funz))
-        zn_pred[:, nxi+1:nxf+1, i] = zn_pred[:, nxi+1:nxf+1, i] + zzn_pred[:, nxf-nyf:end-1]
+        cache.zn_pred[:, nxi+1:nxf+1, i] = cache.zn_pred[:, nxi+1:nxf+1, i] + zzn_pred[:, nxf-nyf:end-1]
     end
 
     if mu > 0
-        for i in 1:Q
+        for i in 1:orders_length
             vett_coef = an[i,coef_beg:coef_end]
             if nyi == 0
-                if i < Q
-                    vett_funz = [zeros(problem_size, 1)  y[:, funz_beg+1:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]
+                if i < orders_length
+                    vett_funz = [zeros(problem_size, 1)  cache.y[:, funz_beg+1:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]
                 else
-                    vett_funz = [zeros(problem_size, 1)  fy[:, funz_beg+1:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]
+                    vett_funz = [zeros(problem_size, 1)  cache.fy[:, funz_beg+1:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]
                 end
             else
-                if i < Q
-                    vett_funz = [y[:, funz_beg:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]
+                if i < orders_length
+                    vett_funz = [cache.y[:, funz_beg:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]
                 else
-                    vett_funz = [fy[:, funz_beg:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]
+                    vett_funz = [cache.fy[:, funz_beg:funz_end]  zeros(problem_size, funz_end-funz_beg+1)]
                 end
             end
             zzn_corr = real(fast_conv(vett_coef, vett_funz))
-            zn_corr[:, nxi+1:nxf+1, i] = zn_corr[:, nxi+1:nxf+1, i] + zzn_corr[:, nxf-nyf+1:end]
+            cache.zn_corr[:, nxi+1:nxf+1, i] = cache.zn_corr[:, nxi+1:nxf+1, i] + zzn_corr[:, nxf-nyf+1:end]
         end
     else
-        zn_corr = 0
+        cache.zn_corr = 0
     end
-    return zn_pred, zn_corr
 end
     
     
     
  
-function PIPECE_triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, bn, t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val, rightfun, lam_Q, an, a0, mu, abstol, C)
+function PIPECE_triangolo(cache::PIPECECache{T}, nxi, nxf, t0) where {T}
+    @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val,
+    highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
+    p, zn_pred, zn_corr,
+    r, N, Nr, Qr, NNr, C, a0, an, bn, mu, abstol, kwargs = cache
+   
+    problem_size = size(u0, 1)
+    orders_length = length(prob.orders)
+    
     for n in nxi:min(N, nxf)
-        St = PIPECE_starting_term_multi(t[n+1], t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
+        St = PIPECE_starting_term_multi(mesh[n+1], t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
         
         Phi_n = copy(St)
         if nxi == 1
@@ -191,44 +264,44 @@ function PIPECE_triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, bn, t0, probl
             j_beg = nxi
         end
         
-        for i in 1:Q-1
+        for i in 1:orders_length-1
             temp = zn_pred[:, n+1, i]
             for j = j_beg:n-1
-                temp = temp + bn[i, n-j]*y[:, j+1]
+                temp = temp + bn[i, n-j]*cache.y[:, j+1]
             end
             Phi_n = Phi_n - lam_rat_i[i]*temp
         end
-        temp = zn_pred[:, n+1, Q]
+        temp = zn_pred[:, n+1, orders_length]
         for j in j_beg:n-1
-            temp = temp + bn[Q, n-j]*fy[:, j+1]
+            temp = temp + bn[orders_length, n-j]*cache.fy[:, j+1]
         end
-        Phi_n = Phi_n + temp/lam_Q
+        Phi_n = Phi_n + temp/highest_order_parameter
         y_pred = copy(Phi_n)
-        f_pred = rightfun(t[n+1], y_pred)
+        f_pred = prob.f(y_pred, p, mesh[n+1])
 
         if mu == 0
-            y[:,n+1] = y_pred
-            fy[:, n+1] = f_pred
+            cache.y[:,n+1] = y_pred
+            cache.fy[:, n+1] = f_pred
         else
             j_beg = nxi
             Phi_n = copy(St)
-            for i in 1:Q-1
-                temp = a0[i, n+1]*y[:, 1] + zn_corr[:,n+1,i]
+            for i in 1:orders_length-1
+                temp = a0[i, n+1]*cache.y[:, 1] + zn_corr[:,n+1,i]
                 for j = j_beg : n-1
-                    temp += an[i, n-j+1]*y[:, j+1]#Possiable bugs
+                    temp += an[i, n-j+1]*cache.y[:, j+1]#Possiable bugs
                 end
                 Phi_n = Phi_n - lam_rat_i[i]*temp
             end
-            temp = a0[Q, n+1]*fy[:, 1] + zn_corr[:, n+1, Q]
+            temp = a0[orders_length, n+1]*cache.fy[:, 1] + zn_corr[:, n+1, orders_length]
             for j = j_beg : n-1
-                temp = temp + an[Q, n-j+1]*fy[:, j+1]
+                temp = temp + an[orders_length, n-j+1]*cache.fy[:, j+1]
             end
-            Phi_n = Phi_n + temp/lam_Q
+            Phi_n = Phi_n + temp/highest_order_parameter
             
             yn0 = y_pred; fn0 = f_pred
             stop = false; mu_it = 0
             while ~stop
-                global yn1 = Phi_n .- C*yn0 .+ an[Q, 1]./lam_Q*fn0
+                global yn1 = Phi_n .- C*yn0 .+ an[orders_length, 1]./highest_order_parameter*fn0
                 mu_it = mu_it + 1
                 if mu == Inf
                     stop = (norm(yn1-yn0,inf) < abstol)
@@ -239,27 +312,26 @@ function PIPECE_triangolo(nxi, nxf, t, y, fy, zn_pred, zn_corr, N, bn, t0, probl
                 else
                     stop = mu_it == mu
                 end
-                global fn1 = rightfun(t[n+1], yn1)           
+                global fn1 = prob.f(yn1, p, mesh[n+1])
                 yn0 = yn1; fn0 = fn1
             end
 
-        y[:, n+1] = yn1
-        fy[:, n+1] .= fn1
+        cache.y[:, n+1] = yn1
+        cache.fy[:, n+1] .= fn1
         end
     end
-    return y, fy
 end
 
-function PIPECE_starting_term_multi(t,t0, problem_size, u0, Q, m_Q, m_i, bet, lam_rat_i, gamma_val)
+function PIPECE_starting_term_multi(mesh, t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
     ys = zeros(problem_size)
 
-    for k in 0:m_Q-1
-        ys = ys .+ (t-t0)^k./gamma_val[Q, k+1]*u0[:, k+1]
+    for k in 0:highest_order_ceiling-1
+        ys = ys .+ (mesh-t0)^k./gamma_val[orders_length, k+1]*u0[:, k+1]
     end
-    for i in 1 : Q-1
+    for i in 1 : orders_length-1
         temp = zeros(problem_size)
-        for k in 0:m_i[i]-1
-            temp = temp .+ (t-t0)^(k+bet[i])/gamma_val[i, k+1]*u0[:, k+1]
+        for k in 0:other_orders_ceiling[i]-1
+            temp = temp .+ (mesh-t0)^(k+bet[i])/gamma_val[i, k+1]*u0[:, k+1]
         end
         ys = ys + lam_rat_i[i]*temp
     end

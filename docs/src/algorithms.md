@@ -16,7 +16,7 @@ AtanganaSeda
 
 ### Multi-Term FODE
 
-FODEMatrixDiscrete
+MatrixDiscrete
 ClosedForm
 ClosedFormHankelM
 PIPECE

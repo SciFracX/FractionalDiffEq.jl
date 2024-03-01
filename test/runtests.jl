@@ -1,8 +1,12 @@
-using FractionalDiffEq, SpecialFunctions
+using FractionalDiffEq, SpecialFunctions, SciMLBase
 using Test
 
-function test_sol(sol)
+function test_sol(sol::SciMLBase.AbstractODESolution)
     return transpose(mapreduce(permutedims, vcat, sol.u))
+end
+
+function test_sol(u::AbstractArray)
+    return transpose(mapreduce(permutedims, vcat, u))
 end
 
 @testset "FractionalDiffEq.jl" begin

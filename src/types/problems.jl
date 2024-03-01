@@ -3,27 +3,51 @@ abstract type AbstractFDEProblem <: SciMLBase.AbstractDEProblem end
 abstract type FDEProblem end
 
 """
+Defines an multiple terms linear fractional ordinary differential equation (FODE) problem.
+
+## Mathematical Specification of an multi-terms FODE problem
+
+To define an multi-terms FODE Problem, you simply need to given the parameters, their correspoding orders, right hand side function and the initial condition ``u_0``  which define an FODE:
+
+```math
+\\frac{du^\\alpha}{d^{\\alpha}t} = f(u,p,t)
+```
+
 Multiple terms fractional order differential equations.
 """
-struct MultiTermsFODEProblem <: FDEProblem
-    parameters
-    orders
-    rightfun
-    rparameters
-    rorders
-    u0
-    tspan
+struct MultiTermsFODEProblem{uType, tType, oType, pType, F, P, K, isinplace} <: SciMLBase.AbstractODEProblem{uType, tType, isinplace}
+    parameters::pType
+    orders::oType
+    f::F
+    rparameters::Union{Nothing, pType}
+    rorders::Union{Nothing, oType}
+    u0::uType
+    tspan::tType
+    p::P
+    kwargs::K
+
+    SciMLBase.@add_kwonly function MultiTermsFODEProblem{iip}(parameters, orders,
+        f::SciMLBase.AbstractODEFunction, rparameters, rorders,
+        u0, tspan, p = SciMLBase.NullParameters();
+        kwargs...) where {iip}
+        _tspan = SciMLBase.promote_tspan(tspan)
+        new{typeof(u0), typeof(_tspan), typeof(orders), typeof(parameters),
+            typeof(f), typeof(p), typeof(kwargs), iip}(parameters, orders, f, rparameters, rorders, u0, _tspan, p, kwargs)
+    end
+
+    function MultiTermsFODEProblem{iip}(parameters, orders, f, rparameters, rorders, u0, tspan, p = SciMLBase.NullParameters(); kwargs...) where {iip}
+        MultiTermsFODEProblem(parameters, orders, ODEFunction{iip}(f), rparameters, rorders, u0, tspan, p; kwargs...)
+    end
 end
 
-#=MultiTermsFODEProblem constructor, dispatch for closedform problem=#
-MultiTermsFODEProblem(parameters, orders, rightfun, u0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, u0, T)
-#MultiTermsFODEProblem(parameters, orders, rightfun, u0, t0, T) = MultiTermsFODEProblem(parameters, orders, rightfun, nothing, nothing, u0, T)
+function MultiTermsFODEProblem(parameters, orders, f, u0, tspan, p = SciMLBase.NullParameters(); kwargs... )
+    return MultiTermsFODEProblem{false}(parameters, orders, ODEFunction(f), nothing, nothing, u0, tspan, p; kwargs...)
+end
 
 struct StandardFODEProblem end
 
 """
 Defines an fractional ordinary differential equation (FODE) problem.
-Documentation Page:
 
 ## Mathematical Specification of an FODE problem
 
