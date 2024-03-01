@@ -148,7 +148,8 @@ function SciMLBase.solve!(cache::PIPECECache{T}) where {T}
 end
 
 function PIPECE_disegna_blocchi(cache::PIPECECache{T}, L, ff, nx0, nu0, t0) where {T}
-    
+    @unpack r, N = cache
+
     nxi::Int = nx0
     nxf::Int = nx0 + L*r - 1
     nyi::Int = nu0
@@ -203,6 +204,7 @@ function PIPECE_quadrato(cache::PIPECECache{T}, nxi, nxf, nyi, nyf) where {T}
     coef_beg = nxi-nyf; coef_end = nxf-nyi+1
     funz_beg = nyi+1; funz_end = nyf+1
 
+    problem_size = size(u0, 1)
     orders_length = length(prob.orders)
     
     for i in 1:orders_length
