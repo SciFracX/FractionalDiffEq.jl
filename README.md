@@ -1,6 +1,5 @@
 # FractionalDiffEq.jl
 
-<p align="center">
   <a href="https://github.com/SciFracX/FractionalDiffEq.jl/actions?query=workflow%3ACI">
     <img alt="building" src="https://github.com/SciFracX/FractionalDiffEq.jl/workflows/CI/badge.svg">
   </a>
@@ -16,9 +15,7 @@
   <a href="https://zenodo.org/badge/latestdoi/420992306">
   	<img src="https://zenodo.org/badge/420992306.svg" alt="DOI">
   </a>
-</p>
 
-<p align="center">
   <a href="https://github.com/SciFracX/FractionalDiffEq.jl/issues">
     <img alt="GitHub issues" src="https://img.shields.io/github/issues/SciFracX/FractionalDiffEq.jl?style=flat-square">
   </a>
@@ -28,7 +25,6 @@
   <a href="https://github.com/SciFracX/FractionalDiffEq.jl/network">
     <img alt="GitHub forks" src="https://img.shields.io/github/forks/SciFracX/FractionalDiffEq.jl?style=flat-square">
   </a>
-</p>
 
 FractionalDiffEq.jl provides FDE solvers to [DifferentialEquations.jl](https://diffeq.sciml.ai/dev/) ecosystem, including FODE(Fractional Ordinary Differential Equations), FDDE(Fractional Delay Differential Equations) and many more. There are many performant solvers available, capable of solving many kinds of fractional differential equations.
 
