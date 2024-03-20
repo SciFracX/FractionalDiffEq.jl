@@ -83,7 +83,7 @@ we can pass ```α``` as a ```Number``` or a ```Function``` to tell FractionalDif
 
 ## System of FDDE
 
-Time delay [Chen system](https://en.wikipedia.org/wiki/Multiscroll_attractor) as a famous chaotic system with time delay, has important applications in many fields. As for the simulation of time delay FDDE sysstem, FractionalDiffEq.jl is also a powerful tool to do the simulation, we would illustrate the usage via code below:
+Time delay [Chen system](https://en.wikipedia.org/wiki/Multiscroll_attractor) as a famous chaotic system with time delay, has important applications in many fields. As for the simulation of time delay FDDE system, FractionalDiffEq.jl is also a powerful tool to do the simulation, we would illustrate the usage via code below:
 
 ```math
 \begin{cases}
