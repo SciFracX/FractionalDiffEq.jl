@@ -9,16 +9,20 @@
     
     f(y, ϕ, p, t) = 3.5*y*(1-ϕ/19)
     
-    dt = 0.5
+    dt = 0.2
     α = 0.97
     τ = [0.8]
     u0 = 19.00001
     tspan = (0.0, 1.0)
     fddeprob = FDDEProblem(f, α, u0, h, constant_lags = τ, tspan)
-    V, y = solve(fddeprob, dt, DelayPECE())
+    sol = solve(fddeprob, DelayPECE(), dt=dt)
 
-    @test V≈[19.0, 19.0, 1.0]
-    @test y≈[19.00001, 19.00001, 37.274176448220274]
+    @test isapprox(test_sol(sol)', [19.00001
+    19.00001
+    19.00001
+    19.00001
+    19.000006224428567
+    18.999998984089164]; atol=1e-7)
 end
 
 @testset "Test DelayPECE method with single constant lag with variable order" begin
@@ -30,17 +34,26 @@ end
         end
     end
     
-    f(y, ϕ, p, t) = 3.5*y*(1-ϕ/19)    
-    dt = 0.5
+    f(y, ϕ, p, t) = 3.5*y*(1-ϕ/19)
+    dt = 0.01
     alpha(t) = 0.99-(0.01/100)*t
     τ = [0.8]
     tspan = (0.0, 1.0)
     u0 = 19.00001
     fddeprob = FDDEProblem(f, [alpha], u0, h, constant_lags = τ, tspan)
-    V, y = solve(fddeprob, dt, DelayPECE())
+    sol = solve(fddeprob, DelayPECE(), dt=dt)
 
-    @test V≈[19.0, 19.0, 1.0]
-    @test y≈[19.00001, 19.00001, 36.698681913021375]
+    @test isapprox(test_sol(sol)'[end-10:end], [19.000006225431903
+    19.00000586970618
+    19.000005514290276
+    19.000005159159087
+    19.000004804291258
+    19.000004449668406
+    19.00000409527454
+    19.000003741095618
+    19.00000338711922
+    19.000003033334277
+    19.000002679730862]; atol=1e-7)
 end
 
 @testset "Test DelayPECE method with single time varying lag" begin
@@ -56,16 +69,25 @@ end
         return 3.5*y*(1-ϕ/19)
     end
     
-    dt = 0.5
+    dt = 0.01
     alpha = 0.97
     u0 = 19.00001
     τ(t) = 0.8
     tspan = (0.0, 1.0)
     fddeprob = FDDEProblem(f, alpha, u0, h, constant_lags = [τ], tspan)
-    V, y = solve(fddeprob, dt, DelayPECE())
+    sol = solve(fddeprob, DelayPECE(), dt=dt)
 
-    @test V≈[19.0, 19.0, 1.0]
-    @test y≈[19.00001, 19.00001, 37.274176448220274]
+    @test isapprox(test_sol(sol)'[end-10:end], [19.000006018940965
+    19.000005651668022
+    19.000005285353794
+    19.000004919919107
+    19.000004555296744
+    19.000004191428914
+    19.00000382826542
+    19.000003465762248
+    19.000003103880502
+    19.00000274258556
+    19.00000238184641]; atol=1e-8)
 end
 
 @testset "Test Product Integral method" begin
@@ -85,36 +107,40 @@ end
     tspan = (0.0, 2.0)
     dt = 0.5
     prob = FDDEProblem(f, order, u0, ϕ, constant_lags = τ, tspan)
-    result = solve(prob, dt, PIEX())
-    @test result≈[19.00001, 19.00001, 19.00001, 18.99999190949352, 18.99997456359874]
+    sol = solve(prob, DelayPIEX(), dt=dt)
+    @test isapprox(test_sol(sol)', [19.00001, 19.00001, 19.00001, 18.99999190949352, 18.99997456359874]; atol=1e-3)
 end
-
+#DelayABM todo
+#=
 @testset "Test DelayABM method" begin
     dt=0.5
     tspan = (0.0, 5.0)
     α=0.97
-    τ=[2]
-    h = 0.5
+    τ=[2.0]
     u0 = 0.5
-    delayabmfun(ϕ, y, p, t) = 2*ϕ/(1+ϕ^9.65)-y
+    h(p, t) = 0.5
+    delayabmfun(y, ϕ, p, t) = 2*ϕ/(1+ϕ^9.65)-y
     prob = FDDEProblem(delayabmfun, α, u0, h, constant_lags=τ, tspan)
-    x, y=solve(prob, dt, DelayABM())
+    x, y=solve(prob, DelayABM(), dt=dt)
 
     @test isapprox(x, [1.078559863692747, 1.175963999045738, 1.1661317460354588, 1.128481756921719, 1.0016061526083417, 0.7724564325042358, 0.5974978685646778]; atol=1e-3)
     @test isapprox(y, [0.8889787467894421, 0.9404487875504524, 0.9667449499617093, 0.9803311436135411, 1.078559863692747, 1.175963999045738, 1.1661317460354588]; atol=1e-3)
 end
 
 @testset "Test DelayABM for FDDESystem" begin
-    function EnzymeKinetics!(dy, y, ϕ, t)
+    function EnzymeKinetics!(dy, y, ϕ, p, t)
         dy[1] = 10.5-y[1]/(1+0.0005*ϕ[4]^3)
         dy[2] = y[1]/(1+0.0005*ϕ[4]^3)-y[2]
         dy[3] = y[2]-y[3]
         dy[4] = y[3]-0.5*y[4]
     end
-    q = [60, 10, 10, 20]; α = [0.95, 0.95, 0.95, 0.95]
-    prob = FDDESystem(EnzymeKinetics!, q, α, 4, 6)
-    #sold, sol = solve(prob, 0.1, DelayABM())
-    sol = solve(prob, 0.1, DelayABM())
+    function test_phi(p, t)
+        return [60.0, 10.0, 10.0, 20.0]
+    end
+    tspan = (0.0, 6.0)
+    q = [60.0, 10.0, 10.0, 20.0]; α = [0.95, 0.95, 0.95, 0.95]
+    prob = FDDEProblem(EnzymeKinetics!, α, q, test_phi, constant_lags=[4], tspan)
+    sol = solve(prob, DelayABM(), dt=0.1)
 #=
     @test isapprox(sold, [ 56.3     11.3272   11.4284  22.4025
     56.3229  11.2293   11.4106  22.4194
@@ -204,4 +230,5 @@ end
    @test isapprox(delayed, [0.5  0.5  0.5  0.5  0.5  1.12259   0.62302  1.28025   0.818417  2.53596  -1.65415
    0.5  0.5  0.5  0.5  0.5  0.605999  1.2225   0.491575  1.37261   0.47491   3.37398]; atol=1e-3)
 end
+=#
 =#

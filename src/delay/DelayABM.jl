@@ -1,3 +1,24 @@
+@concrete mutable struct ABMCache{iip, T}
+    prob
+    alg
+    mesh
+    u0
+    order
+    constant_algs
+    p
+
+    x
+    x0
+    x1
+    N
+    Ndelay
+
+    dt
+    kwargs
+end
+
+Base.eltype(::ABMCache{iip, T}) where {iip, T} = T
+
 """
     solve(FDDE::FDDEProblem, dt, DelayABM())
 
@@ -16,59 +37,91 @@ Use the Adams-Bashforth-Moulton method to solve fractional delayed differential 
 struct DelayABM <: FDDEAlgorithm end
 #FIXME: There are still some improvments about initial condition
 #FIXME: Fix DelayABM method for FDDESystem : https://www.researchgate.net/publication/245538900_A_Predictor-Corrector_Scheme_For_Solving_Nonlinear_Delay_Differential_Equations_Of_Fractional_Order
-#FIXME: Also the problem definition f(t, h, y) or f(t, y, h)?
-function solve(FDDE::FDDEProblem, dt, ::DelayABM)
-    @unpack f, h, order, constant_lags, tspan, p = FDDE
+#TODO: Need more works
+function SciMLBase.__init(prob::FDDEProblem, alg::DelayABM; dt=0.0, kwargs...)
+    @unpack f, order, u0, h, tspan, p, constant_lags = prob
     τ = constant_lags[1]
-    N::Int = round(Int, tspan[2]/dt)
-    Ndelay::Int = round(Int, τ/dt)
-    x1 = zeros(Float64, Ndelay+N+1)
-    x = zeros(Float64, Ndelay+N+1)
+    T = eltype(u0)
+    l = length(u0)
+    iip = SciMLBase.isinplace(prob)
+    t0 = tspan[1]; tfinal = tspan[2]
+    N = round(Int, (tfinal-t0)/dt)
+    mesh = collect(T, t0:dt:tfinal)
+    Ndelay = round(Int, τ/dt)
+    #x1 = zeros(Float64, Ndelay+N+1)
+    #x = zeros(Float64, Ndelay+N+1)
+    #x1 = [zeros(T, l) for i=1:(Ndelay+N+1)]
+    #x = [zeros(T, l) for i=1:(Ndelay+N+1)]
+    x1 = _generate_similar_array(u0, Ndelay+N+1, u0)
+    x = _generate_similar_array(u0, Ndelay+N+1, u0)
     #x1[Ndelay+N+1] = 0
     
     #x[Ndelay+N+1] = 0
 
     # History function handling
     #FIXME: When the value of history function h is different with the initial value?
-    if typeof(h) <: Number
-        x[1:Ndelay] = h*ones(Ndelay)
-    elseif typeof(h) <: Function
-        x[Ndelay] = h(p, 0)
-        x[1:Ndelay-1] .= h(p, collect(Float64, -dt*(Ndelay-1):dt:(-dt)))
+    println(x[1])
+    x[Ndelay] = length(u0) == 1 ? ([h(p, 0)]) : (h(p, 0))
+    for i=1:Ndelay
+        x[i] .= h(p, collect(Float64, -dt*(Ndelay-1):dt:(-dt)))
     end
     
     x0 = copy(x[Ndelay])
     
-    
-    x1[Ndelay+1] = x0 + dt^order*f(x[1], x0, p, 0)/(gamma(order)*order)
+    if iip
+        tmp1 = zeros(T, l)
+        tmp2 = zeros(T, l)
+        f(tmp1, x0, x[1], p, 0)
+        f(tmp2, x[Ndelay+1], x[1], p, 0)
+        @. x1[Ndelay+1] = x0 + dt^order*tmp1/(gamma(order)*order)
+        @. x[Ndelay+1] = x0 + dt^order*(tmp2 + order*tmp1)/gamma(order+2)
+    else
+        @. x1[Ndelay+1] = x0 + dt^order*f(x0, x[1], p, 0)/(gamma(order)*order)
+        @. x[Ndelay+1] = x0 + dt^order*(f(x[Ndelay+1], x[1], p, 0) + order*f(x0, x[1], p, 0))/gamma(order+2)
+    end
 
-    x[Ndelay+1] = x0 + dt^order*(f(x[1], x[Ndelay+1], p, 0) + order*f(x[1], x0, p, 0))/gamma(order+2)
+    return ABMCache{iip, T}(prob, alg, mesh, u0, order, constant_lags, p, x, x0, x1, N, Ndelay, dt, kwargs)
     
-    @fastmath @inbounds @simd for n=1:N 
-        M1=(n^(order+1)-(n-order)*(n+1)^order)*f(x[1], x0, p, 0)
-        
-        N1=((n+1)^order-n^order)*f(x[1], x0, p, 0)
+end
 
-        @fastmath @inbounds @simd for j=1:n   
-            M1 = M1+((n-j+2)^(order+1)+(n-j)^(order+1)-2*(n-j+1)^(order+1))*f(x[j], x[Ndelay+j], p, 0)
-            N1 = N1+((n-j+1)^order-(n-j)^order)*f(x[j], x[Ndelay+j], p, 0)
+function SciMLBase.solve!(cache::ABMCache{iip, T}) where {iip, T}
+    @unpack prob, alg, mesh, u0, order, constant_algs, p, x, x0, x1, N, Ndelay, dt, kwargs = cache
+    l = length(u0)
+    if iip
+        @fastmath @inbounds @simd for n=1:N
+            tmp1 = zeros(T, l)
+            prob.f(tmp1, x0, x[1], p, 0)
+            M1 = @. (n^(order+1)-(n-order)*(n+1)^order)*tmp1
+            N1 = @. ((n+1)^order-n^order)*tmp1
+
+            @fastmath @inbounds @simd for j=1:n
+                tmp2 = zeros(T, l)
+                prob.f(tmp2, x[Ndelay+j], x[j], p, 0)
+                M1 = @. M1+((n-j+2)^(order+1)+(n-j)^(order+1)-2*(n-j+1)^(order+1))*tmp2
+                N1 = @. N1+((n-j+1)^order-(n-j)^order)*tmp2
+            end
+            @. x1[Ndelay+n+1] = x0+dt^order*N1/(gamma(order)*order)
+            tmp3 = zeros(T, l)
+            prob.f(tmp3, x[Ndelay+n+1], x[n+1], p, 0)
+            @. x[Ndelay+n+1] = x0+dt^order*(tmp3 + M1)/gamma(order+2)
         end
-        x1[Ndelay+n+1] = x0+dt^order*N1/(gamma(order)*order)
-        x[Ndelay+n+1] = x0+dt^order*(f(x[n+1], x[Ndelay+n+1], p, 0)+M1)/gamma(order+2)
+    else
+        @fastmath @inbounds @simd for n=1:N 
+            @. M1=(n^(order+1)-(n-order)*(n+1)^order)*prob.f(x0, x[1], p, 0)
+            @. N1=((n+1)^order-n^order)*prob.f(x0, x[1], p, 0)
+
+            @fastmath @inbounds @simd for j=1:n
+                @. M1 = M1+((n-j+2)^(order+1)+(n-j)^(order+1)-2*(n-j+1)^(order+1))*prob.f(x[Ndelay+j], x[j], p, 0)
+                @. N1 = N1+((n-j+1)^order-(n-j)^order)*prob.f(x[Ndelay+j], x[j], p, 0)
+            end
+            @. x1[Ndelay+n+1] = x0+dt^order*N1/(gamma(order)*order)
+            @. x[Ndelay+n+1] = x0+dt^order*(prob.f(x[Ndelay+n+1], x[n+1], p, 0)+M1)/gamma(order+2)
+        end
     end
     
-    xresult = zeros(N-Ndelay+1)
-    yresult = zeros(N-Ndelay+1)
-    
-    xresult[N-Ndelay+1]=0
-    yresult[N-Ndelay+1]=0
+    u = x[Ndelay+1:end]
 
-    @fastmath @inbounds @simd for n=2*Ndelay+1:N+Ndelay+1  
-       xresult[n-2*Ndelay] = x[n]
-       yresult[n-2*Ndelay] = x[n-Ndelay]
-    end
-
-    return xresult, yresult
+    return DiffEqBase.build_solution(prob, alg, mesh, u)
 end
 
 

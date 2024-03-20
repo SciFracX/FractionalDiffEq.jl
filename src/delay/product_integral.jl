@@ -19,37 +19,67 @@ Use explicit rectangular product integration algorithm to solve an FDDE problem.
 }
 ```
 =#
+@concrete mutable struct DelayPIEXCache{iip, T}
+    prob
+    alg
+    mesh
+    u0
+    order
+    constant_lags
+    p
 
-function solve(FDDE::FDDEProblem, dt, ::PIEX)
-    @unpack f, order, h, tspan, p, constant_lags = FDDE
+    N
+    y0
+    y
+    g
+    b
+
+    dt
+    kwargs
+end
+
+Base.eltype(::DelayPIEXCache{iip, T}) where {iip, T} = T
+
+function SciMLBase.__init(prob::FDDEProblem, alg::DelayPIEX; dt=0.0, kwargs...)
+    dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
+    @unpack f, order, u0, h, tspan, p, constant_lags = prob
     τ = constant_lags[1]
-    iip = SciMLBase.isinplace(FDDE)
-    t0 = tspan[1]; T = tspan[2]
-    N::Int = ceil(Int, (T-t0)/dt)
-    t = t0 .+ dt*collect(0:N)
+    iip = SciMLBase.isinplace(prob)
+    T = eltype(u0)
+    t0 = tspan[1]; tfinal = tspan[2]
+    N = ceil(Int, (tfinal-t0)/dt)
+    mesh = t0 .+ dt*collect(0:N)
 
-    nn_al = collect(Float64, 0:N).^order
+    order = order[1] # Only for commensurate order FDDE
+    nn_al = collect(T, 0:N).^order[1]
     b = [0; nn_al[2:end].-nn_al[1:end-1]]/gamma(order+1)
-    h_al = dt^order
 
     y0 = h(p, t0)
-    y = zeros(Float64, N+1)
+    length(y0) == 1 ? (y=[similar([y0]) for i=1:N+1]) : (y=[similar(y0) for i=1:N+1])
 
-    g = zeros(Float64, N+1)
-    y[1] = y0
+    length(y0) == 1 ? (g=[similar([y0]) for i=1:N+1]) : (g=[similar(y0) for i=1:N+1])
+    length(y0) == 1 ? (y[1] = [y0]) : (y[1] = y0)
 
+    return DelayPIEXCache{iip, T}(prob, alg, mesh, u0, order, τ, p, N, y0, y, g, b, dt, kwargs)
+end
+
+function SciMLBase.solve!(cache::DelayPIEXCache{iip, T}) where {iip, T}
+    @unpack prob, alg, mesh, u0, order, constant_lags, p, N, y0, y, g, b, dt, kwargs = cache
+    h_al = dt^order[1]
+    τ = constant_lags
+    l = length(u0)
     for n = 1:N
-        tnm1 = t[n]
+        tnm1 = mesh[n]
         if tnm1 <= τ
-            y_nm1_tau = h(p, tnm1-τ)
+            y_nm1_tau = prob.h(p, tnm1-τ)
         else
             nm1_tau1 = floor(Int, (tnm1-τ)/dt)
             nm1_tau2 = ceil(Int, (tnm1-τ)/dt)
             if nm1_tau1 == nm1_tau2
                 y_nm1_tau = y[nm1_tau1+1]
             else
-                tt0 = t[nm1_tau1+1]
-                tt1 = t[nm1_tau1+2]
+                tt0 = mesh[nm1_tau1+1]
+                tt1 = mesh[nm1_tau1+2]
                 yy0 = y[nm1_tau1+1]
                 yy1 = y[nm1_tau1+2]
                 y_nm1_tau = ((tnm1-τ)-tt0)/(tt1-tt0)*yy1 + ((tnm1-τ)-tt1)/(tt0-tt1)*yy0
@@ -58,16 +88,18 @@ function solve(FDDE::FDDEProblem, dt, ::PIEX)
 
         if iip
             tmp = zeros(length(g[1]))
-            f(tmp, y[n], y_nm1_tau, tnm1, p)
+            prob.f(tmp, y[n], y_nm1_tau, p, tnm1)
             g[n] = tmp
         else
-            g[n] = f(y[n], y_nm1_tau, tnm1, p)
+            length(u0) == 1 ? (tmp = prob.f(y[n], y_nm1_tau[1], p, tnm1)) : (tmp = prob.f(y[n], y_nm1_tau, p, tnm1))
+            g[n] = tmp
         end
-        f_mem = 0
+        f_mem = zeros(T, l)
         for j = 0:n-1
-            f_mem = f_mem + g[j+1]*b[n-j+1]
+            @. f_mem = f_mem + g[j+1]*b[n-j+1]
         end
-        y[n+1] = y0 + h_al*f_mem
+        @. y[n+1] = y0 + h_al*f_mem
     end
-    return y
+
+    return DiffEqBase.build_solution(prob, alg, mesh, y)
 end

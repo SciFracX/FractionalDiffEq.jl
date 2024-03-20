@@ -77,6 +77,11 @@ function __solve(prob::FODEProblem, alg::FODESystemAlgorithm, args...; kwargs...
     return solve!(cache)
 end
 
+function __solve(prob::FDDEProblem, alg::FDDEAlgorithm, args...; kwargs...)
+    cache = init(prob, alg, args...; kwargs...)
+    return solve!(cache)
+end
+
 # General types
 export FDEProblem
 
@@ -108,7 +113,7 @@ export AtanganaSedaCF
 export AtanganaSeda
 
 # FDDE solvers
-export DelayPECE, DelayABM, MatrixForm
+export DelayPIEX, DelayPECE, DelayABM, MatrixForm
 
 # DODE solvers
 export DOMatrixDiscrete

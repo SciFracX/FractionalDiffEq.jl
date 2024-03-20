@@ -1,11 +1,5 @@
 # FractionalDiffEq.jl
 
-
-<p align="center">
-<img width="250px" src="https://raw.githubusercontent.com/SciFracX/FractionalDiffEq.jl/master/docs/src/assets/logo.svg"/>
-</p>
-
-
 <p align="center">
   <a href="https://github.com/SciFracX/FractionalDiffEq.jl/actions?query=workflow%3ACI">
     <img alt="building" src="https://github.com/SciFracX/FractionalDiffEq.jl/workflows/CI/badge.svg">
@@ -36,11 +30,11 @@
   </a>
 </p>
 
-FractionalDiffEq.jl provides FDE solvers to [DifferentialEquations.jl](https://diffeq.sciml.ai/dev/) ecosystem, including FODE(Fractional Ordianry Differential Equations), FDDE(Fractional Delay Differential Equations) and many more. There are many performant solvers available, capable of solving many kinds of fractional differential equations.
+FractionalDiffEq.jl provides FDE solvers to [DifferentialEquations.jl](https://diffeq.sciml.ai/dev/) ecosystem, including FODE(Fractional Ordinary Differential Equations), FDDE(Fractional Delay Differential Equations) and many more. There are many performant solvers available, capable of solving many kinds of fractional differential equations.
 
 # Installation
 
-If you have already installed Julia, you can install FractionalDiffEq.jl in REPL using Julia package manager:
+If you have already installed Julia, you can install FractionalDiffEq.jl in REPL using the Julia package manager:
 
 ```julia
 pkg> add FractionalDiffEq
@@ -95,7 +89,7 @@ Or use the [example file](https://github.com/SciFracX/FractionalDiffEq.jl/blob/m
 
 ### System of Fractional Differential Equations:
 
-FractionalDiffEq.jl is a powerful tool to solve system of fractional differential equations, if you are familiar with [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl), it would be just like out of the box.
+FractionalDiffEq.jl is a powerful tool to solve a system of fractional differential equations, if you are familiar with [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl), it would be just like out of the box.
 
 Let's see if we have a Chua chaos system:
 
