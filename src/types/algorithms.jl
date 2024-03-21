@@ -21,17 +21,12 @@ abstract type FPDEAlgorithm <: AbstractFDEAlgorithm end
 """
 Base type for system of fractional order ordinary differential equations algorithms.
 """
-abstract type FODESystemAlgorithm <: AbstractFDEAlgorithm end
+abstract type FODEAlgorithm <: AbstractFDEAlgorithm end
 
 """
 Base type for multi-terms fractional ordinary differential equations algorithms.
 """
 abstract type MultiTermsFODEAlgorithm <: AbstractFDEAlgorithm end
-
-"""
-Base type for single-term fractional ordinary differential equations algorithms.
-"""
-abstract type SingleTermFODEAlgorithm <: AbstractFDEAlgorithm end
 
 """
 Base type for fractional order difference equations algorithms.
@@ -44,13 +39,12 @@ abstract type FractionalDiscreteAlgorithm <: AbstractFDEAlgorithm end
 ###################### FODE ######################
 
 """
-    solve(prob::FODEProblem, dt, BDF())
+  BDF
 
-Use [Backward Differentiation Formula](https://en.wikipedia.org/wiki/Backward_differentiation_formula) generated weights fractional linear multi-steps method to solve system of FODE.
+[Backward Differentiation Formula](https://en.wikipedia.org/wiki/Backward_differentiation_formula) generated weights fractional linear multi-steps method.
 
-### References
+## References
 
-```tex
 @article{Garrappa2015TrapezoidalMF,
   title={Trapezoidal methods for fractional differential equations: Theoretical and computational aspects},
   author={Roberto Garrappa},
@@ -58,43 +52,35 @@ Use [Backward Differentiation Formula](https://en.wikipedia.org/wiki/Backward_di
   year={2015},
   volume={abs/1912.09878}
 }
-```
 """
-struct BDF <: FODESystemAlgorithm end
+struct BDF <: FODEAlgorithm end
 
 """
-# Usage
+Grunwald Letnikov difference method.
 
-    solve(prob::FODEProblem, dt, GL())
+## Reference
 
-Use Grunwald Letnikov difference method to solve system of system of FODE.
-
-### Reference
-
-```tex
 @INPROCEEDINGS{8742063,  
 author={Clemente-López, D. and Muñoz-Pacheco, J. M. and Félix-Beltrán, O. G. and Volos, C.},  
 booktitle={2019 8th International Conference on Modern Circuits and Systems Technologies (MOCAST)},   
 title={Efficient Computation of the Grünwald-Letnikov Method for ARM-Based Implementations of Fractional-Order Chaotic Systems},   
 year={2019},   
 doi={10.1109/MOCAST.2019.8742063}}
-```
 
 Python version by https://github.com/DClementeL/Grunwald_Letnikov
 """
 # Grunwald Letnikov discretization method dispatch for FODEProblem
 # struct GLWithMemory <: FractionalDiffEqAlgorithm end
-struct GL <: FODESystemAlgorithm end
+struct GL <: FODEAlgorithm end
 
 
 """
-    solve(prob::FODEProblem, dt, FLMMNewtonGregory())
+    solve(prob::FODEProblem, NewtonGregory(); abstol=1e-3, maxiters=1e3)
 
-Use [Newton Gregory](https://www.geeksforgeeks.org/newton-forward-backward-interpolation/) generated weights fractional linear multiple steps method to solve system of FODE.
+[Newton Gregory](https://www.geeksforgeeks.org/newton-forward-backward-interpolation/) generated weights fractional linear multiple steps method.
 
-### References
+## References
 
-```tex
 @article{Garrappa2015TrapezoidalMF,
   title={Trapezoidal methods for fractional differential equations: Theoretical and computational aspects},
   author={Roberto Garrappa},
@@ -102,9 +88,8 @@ Use [Newton Gregory](https://www.geeksforgeeks.org/newton-forward-backward-inter
   year={2015},
   volume={abs/1912.09878}
 }
-```
 """
-struct NewtonGregory <: FODESystemAlgorithm end
+struct NewtonGregory <: FODEAlgorithm end
 
 
 """
@@ -115,11 +100,11 @@ Solve FODE system using Newton Polynomials methods.
 !!! tip
     Used for the Caputo Fabrizio fractional differential operators.
 
-```tex
+## References
+
 https://doi.org/10.1016/c2020-0-02711-8
-```
 """
-struct NewtonPolynomial <: FODESystemAlgorithm end
+struct NewtonPolynomial <: FODEAlgorithm end
 
 
 """
@@ -129,21 +114,20 @@ struct NewtonPolynomial <: FODESystemAlgorithm end
 
 Nonlinear algorithm for nonlinear fractional differential equations.
 
-### References
+## References
 
 Dingyu Xue, Northeastern University, China ISBN:9787030543981
 """
-struct NonLinearAlg <: FODESystemAlgorithm end
+struct NonLinearAlg <: FODEAlgorithm end
 
 
 """
-    solve(prob::FODEProblem, Trapezoidal())
+    solve(prob::FODEProblem, Trapezoidal(); abstol=1e-3, maxiters=1e3)
 
 Use [Trapezoidal](https://en.wikipedia.org/wiki/Trapezoidal_rule_(differential_equations)) with generating function ``f(x)=\\frac{1+x}{2(1-x)^\\alpha}`` generated weights fractional linear multiple steps method to solve system of FODE.
 
-### References
+## References
 
-```tex
 @article{Garrappa2015TrapezoidalMF,
   title={Trapezoidal methods for fractional differential equations: Theoretical and computational aspects},
   author={Roberto Garrappa},
@@ -151,25 +135,22 @@ Use [Trapezoidal](https://en.wikipedia.org/wiki/Trapezoidal_rule_(differential_e
   year={2015},
   volume={abs/1912.09878}
 }
-```
 """
-struct Trapezoid <: FODESystemAlgorithm end
+struct Trapezoid <: FODEAlgorithm end
 
 
 """
-Predictor-Correct scheme.
+    Predictor-Correct scheme.
 
-### References
+## References
 
-```tex
 @inproceedings{Garrappa2018NumericalSO,
   title={Numerical Solution of Fractional Differential Equations: A Survey and a Software Tutorial},
   author={Roberto Garrappa},
   year={2018}
 }
-```
 """
-struct PECE <: FODESystemAlgorithm end
+struct PECE <: FODEAlgorithm end
 
 """
 # Usage
@@ -180,9 +161,8 @@ Using the delayed predictor-corrector method to solve the delayed fractional dif
 
 Capable of solving both single term FDDE and multiple FDDE, support time varying lags of course😋.
 
-### References
+## References
 
-```tex
 @article{Wang2013ANM,
   title={A Numerical Method for Delayed Fractional-Order Differential Equations},
   author={Zhen Wang},
@@ -203,27 +183,34 @@ Capable of solving both single term FDDE and multiple FDDE, support time varying
   author={Salem Abdelmalek and Redouane Douaifia},
   year={2019}
 }
-```
 """
 struct DelayPECE <: FDDEAlgorithm end
 
 """
+    Euler
+
 The classical Euler method extended for fractional order differential equations.
 """
-struct Euler <: FODESystemAlgorithm end
+struct Euler <: FODEAlgorithm end
 
 """
+  PIEX
+
 Explicit product integral method for initial value problems of fractional order differential equations.
 """
-struct PIEX <: FODESystemAlgorithm end
+struct PIEX <: FODEAlgorithm end
 
 """
+  DelayPIEX
+
 Explicit product integral method for initial value problems of fractional order differential equations.
 """
 struct DelayPIEX <: FDDEAlgorithm end
 
 
 """
+  MTPIEX
+
 Explicit product integral method for initial value problems of fractional order differential equations.
 """
 struct MTPIEX <: MultiTermsFODEAlgorithm end
@@ -231,28 +218,24 @@ struct MTPIEX <: MultiTermsFODEAlgorithm end
 
 
 """
-    solve(prob::FODESystem, h, AtanganaSedaAB())
+  AtanganaSedaAB
 
 Solve Atangana-Baleanu fractional order differential equations using Newton Polynomials.
 """
-struct AtanganaSedaAB <: FODESystemAlgorithm end
+struct AtanganaSedaAB <: FODEAlgorithm end
 
 
 """
-# Usage
+  MatrixDiscrete
 
-    solve(prob::MultiTermsFODEProblem, MatrixDiscrete(), dt)
+[Triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional ordinary differential equations to simple algebra system and solve the system.
 
-Using [triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional ordinary differential equations to simple algebra system and solve the system.
+## References
 
-### References
-
-```tex
 @inproceedings{Podlubny2000MATRIXAT,
   title={MATRIX APPROACH TO DISCRETE FRACTIONAL CALCULUS},
   author={Igor Podlubny},
   year={2000}
 }
-```
 """
 struct MatrixDiscrete <: MultiTermsFODEAlgorithm end

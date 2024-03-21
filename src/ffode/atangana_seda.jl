@@ -1,7 +1,7 @@
 """
 AtanganaSeda methods for 
 """
-struct AtanganaSeda <: FODESystemAlgorithm end
+struct AtanganaSeda <: FODEAlgorithm end
 
 function solve(prob::Union{FFMODEProblem, FFMODESystem}, h::Float64, ::AtanganaSeda)
     if typeof(prob.order[2]) <: Function

@@ -31,15 +31,15 @@ include("multitermsfode/implicit_pi_trapezoid.jl")
 include("multitermsfode/implicit_pi_rectangle.jl")
 
 # System of fractional ordinary differential equations
-include("fodesystem/pi_pece.jl")
-include("fodesystem/bdf.jl")
-include("fodesystem/newton_gregory.jl")
-include("fodesystem/trapezoid.jl")
-include("fodesystem/explicit_pi.jl")
-include("fodesystem/grunwald_letnikov.jl")
-include("fodesystem/NonLinear.jl")
-include("fodesystem/newton_polynomials.jl")
-include("fodesystem/atangana_seda.jl")
+include("fode/pi_pece.jl")
+include("fode/bdf.jl")
+include("fode/newton_gregory.jl")
+include("fode/trapezoid.jl")
+include("fode/explicit_pi.jl")
+include("fode/grunwald_letnikov.jl")
+include("fode/NonLinear.jl")
+include("fode/newton_polynomials.jl")
+include("fode/atangana_seda.jl")
 
 # System of fractal-fractional ordinary differential equations
 include("ffode/atangana_seda.jl")
@@ -72,7 +72,7 @@ function __solve(prob::MultiTermsFODEProblem, alg::MultiTermsFODEAlgorithm, args
     return solve!(cache)
 end
 
-function __solve(prob::FODEProblem, alg::FODESystemAlgorithm, args...; kwargs...)
+function __solve(prob::FODEProblem, alg::FODEAlgorithm, args...; kwargs...)
     cache = init(prob, alg, args...; kwargs...)
     return solve!(cache)
 end

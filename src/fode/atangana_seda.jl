@@ -59,7 +59,7 @@ Atagana Seda method for Caputo-Fabrizio fractional order differential equations.
 https://doi.org/10.1016/c2020-0-02711-8
 ```
 """
-struct AtanganaSedaCF <: FODESystemAlgorithm end
+struct AtanganaSedaCF <: FODEAlgorithm end
 #FIXME: Tests
 function solve(prob::FODEProblem, ::AtanganaSedaCF; dt = 0.0)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
