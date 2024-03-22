@@ -92,7 +92,7 @@ function SciMLBase.solve!(cache::NewtonGregoryCache{iip, T}) where {iip, T}
     NG_triangolo(cache, s+1, r-1, 0)
     
     # Main process of computation by means of the FFT algorithm
-    nx0 = 0; ny0 = 0
+    nx0::Int = 0; ny0::Int = 0
     ff = zeros(1, 2^(Q+2), 1)
     ff[1:2] = [0 2]
     for q = 0:Q
