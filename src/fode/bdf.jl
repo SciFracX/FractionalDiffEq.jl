@@ -332,7 +332,7 @@ function jacobian_of_fdefun(f, t, y, p)
     end
 end
 
-_is_need_convert!(prob::FODEProblem) = length(prob.u0) == 1 ? _convert_single_term_to_vectorized_prob!(prob) : nothing
+_is_need_convert!(prob::FODEProblem) = length(prob.u0) == 1 ? _convert_single_term_to_vectorized_prob!(prob) : prob
 
 function _convert_single_term_to_vectorized_prob!(prob::FODEProblem)
     if SciMLBase.isinplace(prob)
