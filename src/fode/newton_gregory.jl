@@ -59,7 +59,7 @@ function SciMLBase.__init(prob::FODEProblem, alg::NewtonGregory;
     N = ceil(Int, (tfinal-t0)/dt)
     Nr = ceil(Int, (N+1)/r)*r
     Q = ceil(Int, log2((Nr)/r))-1
-    global NNr = 2^(Q+1)*r
+    NNr = 2^(Q+1)*r
 
     # Preallocation of some variables
     y = zeros(problem_size, N+1)
@@ -113,11 +113,11 @@ function SciMLBase.solve!(cache::NewtonGregoryCache{iip, T}) where {iip, T}
 end
 
 
-function NG_disegna_blocchi(cache::NewtonGregoryCache{iip, T}, L::P, ff, nx0::P, ny0::P) where {P <: Integer, iip, T}
+function NG_disegna_blocchi(cache::NewtonGregoryCache{iip, T}, L::P, ff, nx0::P, ny0) where {P <: Integer, iip, T}
     @unpack mesh, y, fy, zn, abstol, maxiters, r, Nr, N, Jfdefun, s, w, omega, halpha, u0 = cache
     nxi::Int = copy(nx0); nxf::Int = copy(nx0 + L*r - 1)
     nyi::Int = copy(ny0); nyf::Int = copy(ny0 + L*r - 1)
-    is = 1
+    is::Int = 1
     s_nxi = zeros(T, N)
     s_nxf = zeros(T, N)
     s_nyi = zeros(T, N)
