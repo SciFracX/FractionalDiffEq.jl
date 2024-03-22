@@ -146,7 +146,7 @@ struct FODEProblem{uType, tType, oType, isinplace, P, F, bF, PT, K} <: SciMLBase
     end
 end
 
-TruncatedStacktraces.@truncate_stacktrace SingleTermFODEProblem 3 1 2
+TruncatedStacktraces.@truncate_stacktrace FODEProblem 3 1 2
 
 function FODEProblem(f::SciMLBase.AbstractODEFunction, order, u0, tspan, args...; kwargs...)
     FODEProblem{SciMLBase.isinplace(f, 4)}(f, order, u0, tspan, args...; kwargs...)

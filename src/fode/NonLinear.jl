@@ -7,6 +7,7 @@
     halpha
     p
     N
+    problem_size
 
     gen
     W
@@ -21,6 +22,7 @@ Base.eltype(::NonlinearAlgCache{iip, T}) where {iip, T} = T
 
 function SciMLBase.__init(prob::FODEProblem, alg::NonLinearAlg; dt = 0.0, L0=1e10, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
+    prob = _is_need_convert!(prob)
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     T = eltype(u0)
@@ -32,19 +34,17 @@ function SciMLBase.__init(prob::FODEProblem, alg::NonLinearAlg; dt = 0.0, L0=1e1
     gen = gen[:]
     u0 = u0[:]
     halpha = dt.^order
-    z = zeros(Float64, problem_size, N)
+    z = zeros(T, problem_size, N)
 
     # All of the min(N, L0+1) is to set the memory effect.
     memory_effect = Int(min(N, L0+1))
     W = zeros(T, problem_size, memory_effect) #Initializing W a problem_size*N matrix
-    return NonlinearAlgCache{iip, T}(prob, alg, mesh, u0, order, halpha, p, N, gen, W, z, similar(z), L0, memory_effect, kwargs)
+    return NonlinearAlgCache{iip, T}(prob, alg, mesh, u0, order, halpha, p, N, problem_size, gen, W, z, similar(z), L0, memory_effect, kwargs)
 end
 
-function SciMLBase.solve!(cache::NonlinearAlgCache)
-    @unpack prob, alg, mesh, u0, order, halpha, p, N, gen, W, z, y, L0, memory_effect, kwargs = cache
-    iip = isinplace(prob)
-    T = eltype(cache)
-    problem_size = length(u0)
+function SciMLBase.solve!(cache::NonlinearAlgCache{iip, T}) where {iip, T}
+    @unpack prob, alg, mesh, u0, order, halpha, p, N, problem_size, gen, W, z, y, L0, memory_effect, kwargs = cache
+
     @fastmath @inbounds @simd for i = 1:problem_size
         W[i, :] = getvec(order[i], memory_effect, gen)
     end
@@ -54,11 +54,11 @@ function SciMLBase.solve!(cache::NonlinearAlgCache)
     for k = 2:N
         tk = mesh[k]
         L = Int(min(k-1, L0))
-        if iip
+        #if iip
             prob.f(du, x1, p, tk)
-        else
-            du = prob.f(x1, p, tk)
-        end
+        #else
+        #    du = prob.f(x1, p, tk)
+        #end
 
         for i = 1:problem_size
             x1[i] = du[i]*halpha[i] - W[i, 2:L+1]'*z[i, k-1:-1:k-L] + u0[i]

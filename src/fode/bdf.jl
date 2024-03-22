@@ -38,11 +38,13 @@ Base.eltype(::BDFCache{iip, T}) where {iip, T} = T
 
 function SciMLBase.__init(prob::FODEProblem, alg::BDF;
                           dt=0.0, reltol=1e-6, abstol=1e-6, maxiters = 1000, kwargs...)
+    prob = _is_need_convert!(prob)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     T = eltype(u0)
     iip = isinplace(prob)
+
     all(x->x==order[1], order) ? nothing : throw(ArgumentError("BDF method is only for commensurate order FODE"))
     alpha = order[1] # commensurate ordre FODE
     (alpha > 1.0) && throw(ArgumentError("BDF method is only for order <= 1.0"))
@@ -73,7 +75,7 @@ function SciMLBase.__init(prob::FODEProblem, alg::BDF;
     
     # Initializing solution and proces of computation
     mesh = t0 .+ collect(0:N)*dt
-    y[:, 1] = u0
+    y[:, 1] .= u0
     temp = similar(u0)
     f(temp, u0, p, t0)
     fy[:, 1] = temp
@@ -114,8 +116,8 @@ end
 function BDF_disegna_blocchi(cache::BDFCache{iip, T}, L::P, ff, nx0::P, ny0::P) where {P <: Integer, iip, T}
     @unpack mesh, y, fy, zn, abstol, maxiters, r, Nr, N, Jfdefun, s, w, omega, halpha, u0 = cache
 
-    nxi = copy(nx0); nxf = copy(nx0 + L*r - 1)
-    nyi = copy(ny0); nyf = copy(ny0 + L*r - 1)
+    nxi::Int = copy(nx0); nxf::Int = copy(nx0 + L*r - 1)
+    nyi::Int = copy(ny0); nyf::Int = copy(ny0 + L*r - 1)
     is = 1
     s_nxi = zeros(T, N)
     s_nxf = zeros(T, N)
@@ -327,5 +329,21 @@ function jacobian_of_fdefun(f, t, y, p)
     du = similar(y)
     f(du, y, p, t)
     du
+    end
+end
+
+_is_need_convert!(prob::FODEProblem) = length(prob.u0) == 1 ? _convert_single_term_to_vectorized_prob!(prob) : nothing
+
+function _convert_single_term_to_vectorized_prob!(prob::FODEProblem)
+    if SciMLBase.isinplace(prob)
+        new_prob = remake(prob; u0=[prob.u0], order=[prob.order])
+        return new_prob
+    else
+        function new_f(du, u, p, t)
+            du[1] = prob.f(u[1], p, t)
+        end
+        new_fun = ODEFunction(new_f)
+        new_prob = remake(prob; f=new_fun, u0=[prob.u0], order=[prob.order])
+        return new_prob
     end
 end

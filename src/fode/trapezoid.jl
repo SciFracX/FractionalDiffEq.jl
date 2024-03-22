@@ -40,6 +40,7 @@ Base.eltype(::TrapezoidCache{iip, T}) where {iip, T} = T
 function SciMLBase.__init(prob::FODEProblem, alg::Trapezoid;
                           dt = 0.0, reltol=1e-6, abstol=1e-6, maxiters=1000, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
+    prob = _is_need_convert!(prob)
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     T = eltype(u0)
@@ -119,8 +120,8 @@ end
 function TrapDisegnaBlocchi(cache::TrapezoidCache{iip, T}, L::P, ff, nx0::P, ny0::P) where {P <: Integer, iip, T}
     @unpack mesh, y, fy, zn, abstol, maxiters, r, Nr, N, Jfdefun, s, w, omega, halpha, u0 = cache
 
-    nxi = copy(nx0); nxf = copy(nx0 + L*r - 1)
-    nyi = copy(ny0); nyf = copy(ny0 + L*r - 1)
+    nxi::Int = copy(nx0); nxf::Int = copy(nx0 + L*r - 1)
+    nyi::Int = copy(ny0); nyf::Int = copy(ny0 + L*r - 1)
     is = 1
     s_nxi = zeros(N)
     s_nxf = zeros(N)

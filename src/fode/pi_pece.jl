@@ -9,6 +9,7 @@
     y
     fy
     p
+    problem_size
 
     zn_pred
     zn_corr
@@ -37,6 +38,7 @@ Base.eltype(::PECECache{iip, T}) where {iip, T} = T
 
 function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
+    prob = _is_need_convert!(prob)
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     T = eltype(u0)
@@ -59,11 +61,11 @@ function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6,
     f_temp = zeros(size(u0[:, 1]))
     f(f_temp, u0, p, t0)
 
-    r::Int = 16
-    N::Int = ceil(Int64, (tfinal-t0)/dt)
-    Nr::Int = ceil(Int64, (N+1)/r)*r
-    Qr::Int = ceil(Int64, log2(Nr/r)) - 1
-    NNr::Int = 2^(Qr+1)*r
+    r = 16
+    N = ceil(Int64, (tfinal-t0)/dt)
+    Nr = ceil(Int64, (N+1)/r)*r
+    Qr = ceil(Int64, log2(Nr/r)) - 1
+    NNr = 2^(Qr+1)*r
 
     # Preallocation of some variables
     y = zeros(problem_size, N+1)
@@ -131,23 +133,24 @@ function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6,
     mesh = t0 .+ collect(0:N)*dt
     y[:, 1] = u0[:, 1]
     fy[:, 1] = f_temp
-    return PECECache{iip, T}(prob, alg, mesh, u0, order, m_alpha, m_alpha_factorial, y, fy, p,
+    return PECECache{iip, T}(prob, alg, mesh, u0, order, m_alpha, m_alpha_factorial, y, fy, p, problem_size,
                              zn_pred, zn_corr,
                              r, N, Nr, Qr, NNr,
                              an, bn, a0, halpha1, halpha2,
                              mu, abstol, index_fft, an_fft, bn_fft, kwargs)
 end
+
 function SciMLBase.solve!(cache::PECECache{iip, T}) where {iip, T}
     @unpack prob, alg, mesh, u0, order, y, fy, zn_pred, zn_corr, r, N, Nr, Qr, NNr, an, bn, a0, halpha1, halpha2, mu, abstol, index_fft, an_fft, bn_fft, kwargs = cache
     t0 = mesh[1]; tfinal = mesh[N+1]
-    ABM_triangolo(cache, 1, r-1, t0)
+    ABM_triangolo(cache, 1, r-1)
 
     # Main process of computation by means of the FFT algorithm
     ff = zeros(T, 1, 2^(Qr+2)); ff[1:2] = [0; 2] ; card_ff = 2
-    nx0::Int = 0; ny0::Int = 0
+    nx0 = 0; ny0 = 0
     for qr = 0 : Qr
         L = 2^qr 
-        DisegnaBlocchi(cache, L, ff, r, Nr, nx0+L*r, ny0, t0)
+        DisegnaBlocchi(cache, L, ff, nx0+L*r, ny0)
         ff[1:2*card_ff] = [ff[1:card_ff]; ff[1:card_ff]] 
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -167,11 +170,11 @@ function SciMLBase.solve!(cache::PECECache{iip, T}) where {iip, T}
 end
 
 
-function DisegnaBlocchi(cache::PECECache{iip, T}, L, ff, r, Nr, nx0, ny0, t0) where {iip, T}
-    @unpack N = cache
+function DisegnaBlocchi(cache::PECECache{iip, T}, L::P, ff, nx0::P, ny0::P) where {P <: Integer, iip, T}
+    @unpack mesh, N, r, Nr = cache
     nxi::Int = nx0; nxf::Int = nx0 + L*r - 1
     nyi::Int = ny0; nyf::Int = ny0 + L*r - 1
-    is::Int = 1
+    is = 1
     s_nxi = zeros(N)
     s_nxf = zeros(N)
     s_nyi = zeros(N)
@@ -185,7 +188,7 @@ function DisegnaBlocchi(cache::PECECache{iip, T}, L, ff, r, Nr, nx0, ny0, t0) wh
         
         ABM_quadrato(cache, nxi, nxf, nyi, nyf)
 
-        ABM_triangolo(cache, nxi, nxi+r-1, t0)
+        ABM_triangolo(cache, nxi, nxi+r-1)
         i_triangolo = i_triangolo + 1
 
         if stop == false
@@ -194,33 +197,32 @@ function DisegnaBlocchi(cache::PECECache{iip, T}, L, ff, r, Nr, nx0, ny0, t0) wh
                 Delta = i_Delta*r
                 nxi = s_nxf[is]+1; nxf = s_nxf[is]  + Delta
                 nyi = s_nxf[is] - Delta +1; nyf = s_nxf[is]
-                s_nxi[is] = nxi; s_nxf[is] = nxf; s_nyi[is] = nyi; s_nyf[is] = nyf ;
-            else # Il triangolo finisce prima del quadrato -> si fa un quadrato accanto
-                nxi = nxi + r ; nxf = nxi + r - 1 ; nyi = nyf + 1 ; nyf = nyf + r  ;
+                s_nxi[is] = nxi; s_nxf[is] = nxf; s_nyi[is] = nyi; s_nyf[is] = nyf
+            else
+                nxi = nxi + r ; nxf = nxi + r - 1 ; nyi = nyf + 1 ; nyf = nyf + r
                 is = is + 1 ;
-                s_nxi[is] = nxi ; s_nxf[is] = nxf ; s_nyi[is] = nyi ; s_nyf[is] = nyf ;
+                s_nxi[is] = nxi ; s_nxf[is] = nxf ; s_nyi[is] = nyi ; s_nyf[is] = nyf
             end
         end
-        
     end
 end
 
-function ABM_quadrato(cache::PECECache{iip, T}, nxi, nxf, nyi, nyf) where {iip, T}
+function ABM_quadrato(cache::PECECache{iip, T}, nxi::P, nxf::P, nyi::P, nyf::P) where {P <: Integer, iip, T}
     @unpack prob, mesh, r, N, Nr, Qr, NNr, an, bn, a0, halpha1, halpha2, mu, abstol, index_fft, an_fft, bn_fft = cache
     problem_size = length(prob.u0)
     alpha_length = length(prob.order)
-    coef_end::Int = nxf-nyi+1
+    coef_end = nxf-nyi+1
     i_fft::Int = log2(coef_end/r)
-    funz_beg::Int = nyi+1
-    funz_end::Int = nyf+1
-    Nnxf::Int = min(N, nxf)
+    funz_beg = nyi+1
+    funz_end = nyf+1
+    Nnxf = min(N, nxf)
 
     # Evaluation convolution segment for the predictor
     vett_funz = cache.fy[:, funz_beg:funz_end]
     vett_funz_fft = rowfft(vett_funz, coef_end)
     zzn_pred = zeros(problem_size, coef_end)
     for i = 1:problem_size
-        i_alpha = min(alpha_length,i)
+        i_alpha::Int = min(alpha_length,i)
         Z = bn_fft[i_alpha, index_fft[1, i_fft]:index_fft[2, i_fft]].*vett_funz_fft[i, :]
         zzn_pred[i, :] = real.(ourifft(Z, coef_end))
     end
@@ -248,7 +250,7 @@ end
 
 
 
-function ABM_triangolo(cache::PECECache{iip, T}, nxi, nxf, t0) where {iip, T}
+function ABM_triangolo(cache::PECECache{iip, T}, nxi::P, nxf::P) where {P <: Integer, iip, T}
     @unpack prob, mesh, u0, order, m_alpha, m_alpha_factorial, p, zn_pred, zn_corr, N, an, bn, a0, halpha1, halpha2, mu, abstol, index_fft, an_fft, bn_fft = cache
     alpha_length = length(order)
     problem_size = length(u0)
@@ -257,14 +259,14 @@ function ABM_triangolo(cache::PECECache{iip, T}, nxi, nxf, t0) where {iip, T}
         # Evaluation of the predictor
         Phi = zeros(T, problem_size, 1)
         if nxi == 1 # Case of the first triangle
-            j_beg::Int = 0
+            j_beg = 0
         else # Case of any triangle but not the first
             j_beg = nxi
         end
         for j = j_beg:n-1
             Phi = Phi + bn[1:alpha_length,n-j].*cache.fy[:, j+1]
         end
-        St = starting_term(mesh[n+1], u0, m_alpha, t0, m_alpha_factorial)
+        St = starting_term(cache, mesh[n+1])
         y_pred = St + halpha1.*(zn_pred[:, n+1] + Phi)
         f_pred = zeros(length(y_pred))
         prob.f(f_pred, y_pred, p, mesh[n+1])
@@ -307,7 +309,9 @@ function ABM_triangolo(cache::PECECache{iip, T}, nxi, nxf, t0) where {iip, T}
     end
 end
 
-function  starting_term(t, u0, m_alpha, t0, m_alpha_factorial)
+function starting_term(cache::PECECache{iip, T}, t) where {iip, T}
+    @unpack mesh, m_alpha, u0, m_alpha_factorial = cache
+    t0 = mesh[1]
     ys = zeros(size(u0, 1), 1)
     for k = 1 : maximum(m_alpha)
         if length(m_alpha) == 1

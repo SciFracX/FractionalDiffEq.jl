@@ -26,18 +26,16 @@ function SciMLBase.__init(prob::FODEProblem, alg::GL; dt = 0.0, kwargs...)
 
     # Initialize solution
     result = zeros(T, length(u0), n)
-    result[:, 1] = u0
+    result[:, 1] .= u0
 
     return GLCache{iip, T}(prob, alg, mesh, u0, order, horder, result, p, kwargs)
 end
 
-function SciMLBase.solve!(cache::GLCache)
+function SciMLBase.solve!(cache::GLCache{iip, T}) where {iip, T}
     @unpack prob, alg, mesh, u0, order, horder, y, p, kwargs = cache
-
+    prob = _is_need_convert!(prob)
     n = length(mesh)
     l = length(u0)
-    iip = isinplace(prob)
-    T = eltype(cache)
 
     # generating generalized binomial Corder
     Corder = zeros(T, n)
@@ -58,12 +56,8 @@ function SciMLBase.solve!(cache::GLCache)
             end
         end
 
-        if iip
-            prob.f(du, y[:, k-1], p, mesh[k])
-            y[:, k] = @. horder*du - summation
-        else
-            y[:, k] = @. horder*prob.f(y[:, k-1], p, mesh[k]) - summation
-        end
+        prob.f(du, y[:, k-1], p, mesh[k])
+        y[:, k] = @. horder*du - summation
     end
     u = collect(Vector{eltype(u0)}, eachcol(y))
     
