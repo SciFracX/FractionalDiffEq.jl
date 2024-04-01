@@ -138,7 +138,6 @@ Use [Trapezoidal](https://en.wikipedia.org/wiki/Trapezoidal_rule_(differential_e
 """
 struct Trapezoid <: FODEAlgorithm end
 
-
 """
     Predictor-Correct scheme.
 
@@ -151,6 +150,46 @@ struct Trapezoid <: FODEAlgorithm end
 }
 """
 struct PECE <: FODEAlgorithm end
+
+
+"""
+  AtanganaSedaAB
+
+Solve Atangana-Baleanu fractional order differential equations using Newton Polynomials.
+"""
+struct AtanganaSedaAB <: FODEAlgorithm end
+
+
+"""
+  MatrixDiscrete
+
+[Triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional ordinary differential equations to simple algebra system and solve the system.
+
+## References
+
+@inproceedings{Podlubny2000MATRIXAT,
+  title={MATRIX APPROACH TO DISCRETE FRACTIONAL CALCULUS},
+  author={Igor Podlubny},
+  year={2000}
+}
+"""
+struct MatrixDiscrete <: MultiTermsFODEAlgorithm end
+
+"""
+    Euler
+
+The classical Euler method extended for fractional order differential equations.
+"""
+struct Euler <: FODEAlgorithm end
+
+"""
+  PIEX
+
+Explicit product integral method for initial value problems of fractional order differential equations.
+"""
+struct PIEX <: FODEAlgorithm end
+
+###################### FDDE ######################
 
 """
 # Usage
@@ -187,25 +226,17 @@ Capable of solving both single term FDDE and multiple FDDE, support time varying
 struct DelayPECE <: FDDEAlgorithm end
 
 """
-    Euler
-
-The classical Euler method extended for fractional order differential equations.
-"""
-struct Euler <: FODEAlgorithm end
-
-"""
-  PIEX
-
-Explicit product integral method for initial value problems of fractional order differential equations.
-"""
-struct PIEX <: FODEAlgorithm end
-
-"""
   DelayPIEX
 
 Explicit product integral method for initial value problems of fractional order differential equations.
 """
 struct DelayPIEX <: FDDEAlgorithm end
+
+
+
+
+
+###################### Multi-terms FODE ######################
 
 
 """
@@ -215,27 +246,23 @@ Explicit product integral method for initial value problems of fractional order 
 """
 struct MTPIEX <: MultiTermsFODEAlgorithm end
 
+"""
+    solve(prob::MultiTermsFODEProblem, dt, MTPECE())
 
+Use product integration predictor-corrector method to solve multi-terms FODE.
+"""
+struct MTPECE <: MultiTermsFODEAlgorithm end
 
 """
-  AtanganaSedaAB
+    solve(prob::MultiTermsFODEProblem,, MTPIRect(); dt)
 
-Solve Atangana-Baleanu fractional order differential equations using Newton Polynomials.
+Use implicit product integration rectangular type method to solve multi-terms FODE.
 """
-struct AtanganaSedaAB <: FODEAlgorithm end
-
+struct MTPIRect <: MultiTermsFODEAlgorithm end
 
 """
-  MatrixDiscrete
+    solve(prob::MultiTermsFODEProblem, MTPITrap(), dt)
 
-[Triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional ordinary differential equations to simple algebra system and solve the system.
-
-## References
-
-@inproceedings{Podlubny2000MATRIXAT,
-  title={MATRIX APPROACH TO DISCRETE FRACTIONAL CALCULUS},
-  author={Igor Podlubny},
-  year={2000}
-}
+Use implicit product integration trapezoidal type method to solve multi-terms FODE.
 """
-struct MatrixDiscrete <: MultiTermsFODEAlgorithm end
+struct MTPITrap <: MultiTermsFODEAlgorithm end

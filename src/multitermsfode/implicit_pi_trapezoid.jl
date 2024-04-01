@@ -1,4 +1,4 @@
-@concrete mutable struct PITrapCache{T}
+@concrete mutable struct MTPITrapCache{T}
     prob
     alg
     mesh
@@ -34,16 +34,9 @@
     kwargs
 end
 
-Base.eltype(::PITrapCache{T}) where {T} = T
+Base.eltype(::MTPITrapCache{T}) where {T} = T
 
-"""
-    solve(prob::MultiTermsFODEProblem, dt, PITrap())
-
-Use implicit product integration trapezoidal type method to solve multi-terms FODE.
-"""
-struct PITrap <: MultiTermsFODEAlgorithm end
-
-function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::PITrap; dt=0.0, abstol=1e-6, maxiters=100, kwargs...)
+function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::MTPITrap; dt=0.0, abstol=1e-6, maxiters=100, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack parameters, orders, f, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
@@ -103,19 +96,19 @@ function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::PITrap; dt=0.0, abst
     y[:, 1] = u0[:, 1]
     fy[:, 1] .= f(u0[:, 1], p, t0)
 
-    return PITrapCache{T}(prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, J_fun,
+    return MTPITrapCache{T}(prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, J_fun,
     highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
     y, fy, p, zn, r, N, Nr, Qr, NNr, C, an, a0, abstol, maxiters, kwargs)
 end
 
-function SciMLBase.solve!(cache::PITrapCache{T}) where {T}
+function SciMLBase.solve!(cache::MTPITrapCache{T}) where {T}
     @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, J,
     highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
     y, fy, p, zn, r, N, Nr, Qr, NNr, C, an, a0, abstol, maxiters, kwargs = cache
 
     t0 = mesh[1]
     tfinal = mesh[end]
-    PITrap_triangolo(cache, 1, r-1, t0)
+    MTPITrap_triangolo(cache, 1, r-1, t0)
     
     ff = zeros(1, 2^(Qr+2))
     ff[1:2] = [0 2]
@@ -124,7 +117,7 @@ function SciMLBase.solve!(cache::PITrapCache{T}) where {T}
     nu0 = 0
     for qr = 0 : Qr
         L = 2^qr
-        PITrap_disegna_blocchi(cache, L, ff, nx0+L*r, nu0, t0)
+        MTPITrap_disegna_blocchi(cache, L, ff, nx0+L*r, nu0, t0)
         ff[1:2*card_ff] = [ff[1:card_ff] ff[1:card_ff]]
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -143,7 +136,7 @@ function SciMLBase.solve!(cache::PITrapCache{T}) where {T}
 end
 
 
-function PITrap_disegna_blocchi(cache::PITrapCache{T}, L, ff, nx0, nu0, t0) where {T}
+function MTPITrap_disegna_blocchi(cache::MTPITrapCache{T}, L, ff, nx0, nu0, t0) where {T}
     @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, J,
     highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
     p, zn, r, N, Nr, Qr, NNr, C, an, a0, abstol, maxiters, kwargs = cache
@@ -166,9 +159,9 @@ function PITrap_disegna_blocchi(cache::PITrapCache{T}, L, ff, nx0, nu0, t0) wher
     while stop == false
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1 >= Nr-1)
 
-        PITrap_quadrato(cache, nxi, nxf, nyi, nyf)
+        MTPITrap_quadrato(cache, nxi, nxf, nyi, nyf)
 
-        PITrap_triangolo(cache, nxi, nxi+r-1, t0)
+        MTPITrap_triangolo(cache, nxi, nxi+r-1, t0)
         i_triangolo = i_triangolo + 1
 
         if stop==false
@@ -193,7 +186,7 @@ function PITrap_disegna_blocchi(cache::PITrapCache{T}, L, ff, nx0, nu0, t0) wher
     end
 end
 
-function PITrap_quadrato(cache::PITrapCache{T}, nxi, nxf, nyi, nyf) where {T}
+function MTPITrap_quadrato(cache::MTPITrapCache{T}, nxi, nxf, nyi, nyf) where {T}
     @unpack prob, u0, an = cache
 
     coef_beg = nxi-nyf; coef_end = nxf-nyi+1
@@ -225,7 +218,7 @@ end
     
     
  
-function PITrap_triangolo(cache::PITrapCache{T}, nxi, nxf, t0) where {T}
+function MTPITrap_triangolo(cache::MTPITrapCache{T}, nxi, nxf, t0) where {T}
     @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, J,
     highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
     p, zn, r, N, Nr, Qr, NNr, C, an, a0, abstol, maxiters, kwargs = cache
@@ -233,7 +226,7 @@ function PITrap_triangolo(cache::PITrapCache{T}, nxi, nxf, t0) where {T}
     orders_length = length(prob.orders)
     problem_size = size(u0, 1)
     for n = nxi:min(N, nxf)
-        St = PITrap_startingterm_multi(mesh[n+1], t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
+        St = MTPITrap_startingterm_multi(mesh[n+1], t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
         Phi_n = copy(St)
 
         for i = 1:orders_length-1
@@ -281,7 +274,7 @@ function PITrap_triangolo(cache::PITrapCache{T}, nxi, nxf, t0) where {T}
     end
 end
 
-function PITrap_startingterm_multi(mesh,t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
+function MTPITrap_startingterm_multi(mesh,t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
     ys = zeros(problem_size)
 
     for k = 0:highest_order_ceiling-1

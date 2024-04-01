@@ -1,4 +1,4 @@
-@concrete mutable struct PIRectCache{T}
+@concrete mutable struct MTPIRectCache{T}
     prob
     alg
     mesh
@@ -33,16 +33,9 @@
     kwargs
 end
 
-Base.eltype(::PIRectCache{T}) where {T} = T
+Base.eltype(::MTPIRectCache{T}) where {T} = T
 
-"""
-    solve(prob::MultiTermsFODEProblem,, PIRect(); dt)
-
-Use implicit product integration rectangular type method to solve multi-terms FODE.
-"""
-struct PIRect <: MultiTermsFODEAlgorithm end
-
-function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::PIRect; dt=0.0, abstol=1e-6, maxiters=100, kwargs...)
+function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::MTPIRect; dt=0.0, abstol=1e-6, maxiters=100, kwargs...)
     @unpack parameters, orders, f, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     u0 = u0[:]'
@@ -101,24 +94,24 @@ function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::PIRect; dt=0.0, abst
     y[:, 1] = u0[:, 1]
     fy[:, 1] .= f(u0[:, 1], p, t0)
 
-    return PIRectCache{T}(prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, J_fun,
+    return MTPIRectCache{T}(prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, J_fun,
     highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
     y, fy, p, zn, r, N, Nr, Qr, NNr, C, bn, abstol, maxiters, kwargs)
 end
 
-function SciMLBase.solve!(cache::PIRectCache{T}) where {T}
+function SciMLBase.solve!(cache::MTPIRectCache{T}) where {T}
     @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, J,
     highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
     y, fy, p, zn, r, N, Nr, Qr, NNr, C, bn, abstol, maxiters, kwargs = cache
     t0 = mesh[1]
     tfinal = mesh[end]
-    PIRect_triangolo(cache, 1, r-1, t0)
+    MTPIRect_triangolo(cache, 1, r-1, t0)
     
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0 2]; card_ff = 2
     nx0 = 0; nu0 = 0
     for qr = 0 : Qr
         L = 2^qr
-        PIRect_disegna_blocchi(cache, L, ff, nx0+L*r, nu0, t0)
+        MTPIRect_disegna_blocchi(cache, L, ff, nx0+L*r, nu0, t0)
         ff[1:2*card_ff] = [ff[1:card_ff] ff[1:card_ff]]
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -137,7 +130,7 @@ function SciMLBase.solve!(cache::PIRectCache{T}) where {T}
 end
     
 
-function PIRect_disegna_blocchi(cache::PIRectCache{T}, L, ff, nx0, nu0, t0) where {T}
+function MTPIRect_disegna_blocchi(cache::MTPIRectCache{T}, L, ff, nx0, nu0, t0) where {T}
     @unpack r, N, Nr = cache
     nxi::Int = nx0
     nxf::Int = nx0 + L*r - 1
@@ -157,9 +150,9 @@ function PIRect_disegna_blocchi(cache::PIRectCache{T}, L, ff, nx0, nu0, t0) wher
     while stop == false
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1 >= Nr-1)
 
-        PIRect_quadrato(cache, nxi, nxf, nyi, nyf)
+        MTPIRect_quadrato(cache, nxi, nxf, nyi, nyf)
 
-        PIRect_triangolo(cache, nxi, nxi+r-1, t0)
+        MTPIRect_triangolo(cache, nxi, nxi+r-1, t0)
         i_triangolo = i_triangolo + 1
         
         if stop==false
@@ -185,7 +178,7 @@ function PIRect_disegna_blocchi(cache::PIRectCache{T}, L, ff, nx0, nu0, t0) wher
     end
 end
 
-function PIRect_quadrato(cache::PIRectCache{T}, nxi, nxf, nyi, nyf) where {T}
+function MTPIRect_quadrato(cache::MTPIRectCache{T}, nxi, nxf, nyi, nyf) where {T}
     @unpack prob, u0 = cache
     coef_beg = nxi-nyf; coef_end = nxf-nyi+1
     funz_beg = nyi+1; funz_end = nyf+1
@@ -213,7 +206,7 @@ function PIRect_quadrato(cache::PIRectCache{T}, nxi, nxf, nyi, nyf) where {T}
     end
 end
 
-function PIRect_triangolo(cache::PIRectCache{T}, nxi, nxf, t0) where {T}
+function MTPIRect_triangolo(cache::MTPIRectCache{T}, nxi, nxf, t0) where {T}
     @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, J,
     highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
     p, zn, r, N, Nr, Qr, NNr, C, bn, abstol, maxiters, kwargs = cache
@@ -222,7 +215,7 @@ function PIRect_triangolo(cache::PIRectCache{T}, nxi, nxf, t0) where {T}
     orders_length = length(prob.orders)
     
     for n = nxi:min(N, nxf)
-        St = PIRect_startingterm_multi(mesh[n+1], t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
+        St = MTPIRect_startingterm_multi(mesh[n+1], t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
         Phi_n = copy(St)
 
         for i = 1:orders_length-1
@@ -267,7 +260,7 @@ function PIRect_triangolo(cache::PIRectCache{T}, nxi, nxf, t0) where {T}
     end
 end
 
-function PIRect_startingterm_multi(mesh,t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
+function MTPIRect_startingterm_multi(mesh,t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
     ys = zeros(problem_size)
 
     for k = 0:highest_order_ceiling-1

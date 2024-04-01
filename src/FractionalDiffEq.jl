@@ -36,6 +36,8 @@ include("fode/bdf.jl")
 include("fode/newton_gregory.jl")
 include("fode/trapezoid.jl")
 include("fode/explicit_pi.jl")
+include("fode/implicit_pi_rectangle.jl")
+include("fode/implicit_pi_trapzoid.jl")
 include("fode/grunwald_letnikov.jl")
 include("fode/NonLinear.jl")
 include("fode/newton_polynomials.jl")
@@ -103,12 +105,14 @@ export FODESolution, FDifferenceSolution, DODESolution, FFMODESolution
 export FODESystemSolution, FDDESystemSolution, FFMODESystem
 
 # FODE solvers
-export PIPECE, PIRect, PITrap, MTPIEX
-export PECE, MatrixDiscrete, GL
+export PIRect, PITrap, PECE, PIEX
+export MatrixDiscrete, GL
 export AtanganaSedaAB
 
+export MTPIRect, MTPITrap, MTPECE, MTPIEX
+
 # System of FODE solvers
-export NonLinearAlg, BDF, NewtonGregory, Trapezoid, PIEX, NewtonPolynomial
+export NonLinearAlg, BDF, NewtonGregory, Trapezoid, NewtonPolynomial
 export AtanganaSedaCF
 export AtanganaSeda
 

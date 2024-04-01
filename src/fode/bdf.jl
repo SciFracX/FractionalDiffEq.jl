@@ -30,6 +30,7 @@
     reltol
     abstol
     maxiters
+    high_order_prob
     
     kwargs
 end
@@ -47,13 +48,14 @@ function SciMLBase.__init(prob::FODEProblem, alg::BDF;
 
     all(x->x==order[1], order) ? nothing : throw(ArgumentError("BDF method is only for commensurate order FODE"))
     alpha = order[1] # commensurate ordre FODE
-    (alpha > 1.0) && throw(ArgumentError("BDF method is only for order <= 1.0"))
-    
+
 
     m_alpha = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
-    problem_size = length(u0)
-    
+    problem_size = length(order)
+    u0_size = length(u0)
+    high_order_prob = problem_size !== u0_size
+
     # Number of points in which to evaluate the solution or the BDF_weights
     r = 16
     N = ceil(Int, (tfinal-t0)/dt)
@@ -66,7 +68,7 @@ function SciMLBase.__init(prob::FODEProblem, alg::BDF;
     fy = zeros(T, problem_size, N+1)
     zn = zeros(T, problem_size, NNr+1)
 
-    # generate jacobian of input function
+    # generate jacobian of the input function
     Jfdefun(t, u) = jacobian_of_fdefun(prob.f, t, u, p)
 
     # Evaluation of convolution and starting BDF_weights of the FLMM
@@ -75,13 +77,14 @@ function SciMLBase.__init(prob::FODEProblem, alg::BDF;
     
     # Initializing solution and proces of computation
     mesh = t0 .+ collect(0:N)*dt
-    y[:, 1] .= u0
-    temp = similar(u0)
+    y[:, 1] = high_order_prob ? u0[1, :] : u0
+    temp = high_order_prob ? similar(u0[1, :]) : similar(u0)
     f(temp, u0, p, t0)
     fy[:, 1] = temp
+
     return BDFCache{iip, T}(prob, alg, mesh, u0, alpha, halpha, y, fy, zn, Jfdefun,
                             p, problem_size, m_alpha, m_alpha_factorial, r, N, Nr, Q, NNr,
-                            omega, w, s, dt, reltol, abstol, maxiters, kwargs)
+                            omega, w, s, dt, reltol, abstol, maxiters, high_order_prob, kwargs)
 end
 
 function SciMLBase.solve!(cache::BDFCache{iip, T}) where {iip, T}
@@ -158,7 +161,7 @@ function BDF_quadrato(cache::BDFCache, nxi::P, nxf::P, nyi::P, nyf::P) where {P 
     cache.zn[:, nxi+1:nxf+1] = cache.zn[:, nxi+1:nxf+1] + zzn[:, nxf-nyf:end-1]
 end
 
-function BDF_triangolo(cache::BDFCache{iip, T}, nxi::P, nxf::P, j0) where{P <: Integer, iip, T}
+function BDF_triangolo(cache::BDFCache{iip, T}, nxi::P, nxf::P, j0) where {P <: Integer, iip, T}
     @unpack prob, mesh, problem_size, zn, Jfdefun, N, abstol, maxiters, s, w, omega, halpha, u0, m_alpha, m_alpha_factorial, p = cache
     for n = nxi:min(N, nxf)
         n1 = n+1
@@ -315,11 +318,12 @@ end
 Jf_vectorfield(t, y, Jfdefun) = Jfdefun(t, y)
 
 function ABM_starting_term(cache::BDFCache{iip, T}, t) where {iip, T}
-    @unpack u0, m_alpha, mesh, m_alpha_factorial = cache
+    @unpack u0, m_alpha, mesh, m_alpha_factorial, high_order_prob = cache
     t0 = mesh[1]
+    u0 = high_order_prob ? reshape(u0, 1, length(u0)) : u0
     ys = zeros(size(u0, 1), 1)
     for k = 1:m_alpha
-        ys = ys + (t-t0)^(k-1)/m_alpha_factorial[k]*u0
+        ys = ys + (t-t0)^(k-1)/m_alpha_factorial[k]*u0[:, k]
     end
     return ys
 end
@@ -336,13 +340,17 @@ _is_need_convert!(prob::FODEProblem) = length(prob.u0) == 1 ? _convert_single_te
 
 function _convert_single_term_to_vectorized_prob!(prob::FODEProblem)
     if SciMLBase.isinplace(prob)
-        new_prob = remake(prob; u0=[prob.u0], order=[prob.order])
+        if isa(prob.u0, AbstractArray)
+            new_prob = remake(prob; order=[prob.order])
+        else
+            new_prob = remake(prob; u0=[prob.u0], order=[prob.order])
+        end
         return new_prob
     else
         function new_f(du, u, p, t)
             du[1] = prob.f(u[1], p, t)
         end
-        new_fun = ODEFunction(new_f)
+        new_fun = ODEFunction{true}(new_f) # make in-place
         new_prob = remake(prob; f=new_fun, u0=[prob.u0], order=[prob.order])
         return new_prob
     end
