@@ -30,6 +30,7 @@
     reltol
     abstol
     maxiters
+    high_order_prob
     
     kwargs
 end
@@ -46,13 +47,14 @@ function SciMLBase.__init(prob::FODEProblem, alg::NewtonGregory;
     iip = isinplace(prob)
     all(x->x==order[1], order) ? nothing : throw(ArgumentError("BDF method is only for commensurate order FODE"))
     alpha = order[1] # commensurate ordre FODE
-    (alpha > 1.0) && throw(ArgumentError("Newton Gregory method is only for order <= 1.0"))
 
     #Jfdefun(t, u) = jacobian_of_fdefun(f, t, u, p)
 
     m_alpha = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
-    problem_size = length(u0)
+    problem_size = length(order)
+    u0_size = length(u0)
+    high_order_prob = problem_size !== u0_size
 
     # Number of points in which to evaluate the solution or the weights
     r = 16
@@ -75,14 +77,14 @@ function SciMLBase.__init(prob::FODEProblem, alg::NewtonGregory;
     
     # Initializing solution and proces of computation
     mesh = t0 .+ collect(0:N)*dt
-    y[:, 1] = u0[:, 1]
-    temp = similar(u0)
+    y[:, 1] = high_order_prob ? u0[1, :] : u0
+    temp = high_order_prob ? similar(u0[1, :]) : similar(u0)
     f(temp, u0, p, t0)
     fy[:, 1] = temp
 
     return NewtonGregoryCache{iip, T}(prob, alg, mesh, u0, alpha, halpha, y, fy, zn, Jfdefun,
                                       p, problem_size, m_alpha, m_alpha_factorial, r, N, Nr, Q, NNr,
-                                      omega, w, s, dt, reltol, abstol, maxiters, kwargs)
+                                      omega, w, s, dt, reltol, abstol, maxiters, high_order_prob, kwargs)
 end
 function SciMLBase.solve!(cache::NewtonGregoryCache{iip, T}) where {iip, T}
     @unpack prob, alg, mesh, u0, order, halpha, y, fy, zn, Jfdefun, p, problem_size, m_alpha, m_alpha_factorial, r, N, Nr, Q, NNr, omega, w, s, dt, reltol, abstol, maxiters, kwargs = cache
@@ -159,7 +161,7 @@ function NG_quadrato(cache::NewtonGregoryCache{iip, T}, nxi::P, nxf::P, nyi::P, 
     cache.zn[:, nxi+1:nxf+1] = cache.zn[:, nxi+1:nxf+1] + zzn[:, nxf-nyf:end-1]
 end
 
-function NG_triangolo(cache::NewtonGregoryCache{iip, T}, nxi, nxf, j0) where {iip, T}
+function NG_triangolo(cache::NewtonGregoryCache{iip, T}, nxi::P, nxf::P, j0) where {P <: Integer, iip, T}
     @unpack prob, mesh, problem_size, zn, Jfdefun, N, abstol, maxiters, s, w, omega, halpha, u0, m_alpha, m_alpha_factorial, p = cache
     for n = nxi:min(N, nxf)
         n1 = Int64(n+1)
@@ -315,11 +317,12 @@ function NG_weights(alpha, N)
 end
 
 function NG_starting_term(cache::NewtonGregoryCache{iip, T}, t) where {iip, T}
-    @unpack u0, m_alpha, mesh, m_alpha_factorial = cache
+    @unpack u0, m_alpha, mesh, m_alpha_factorial, high_order_prob = cache
     t0 = mesh[1]
+    u0 = high_order_prob ? reshape(u0, 1, length(u0)) : u0
     ys = zeros(size(u0, 1), 1)
     for k = 1:Int64(m_alpha)
-        ys = ys + (t-t0)^(k-1)/m_alpha_factorial[k]*u0
+        ys = ys + (t-t0)^(k-1)/m_alpha_factorial[k]*u0[:, k]
     end
     return ys
 end

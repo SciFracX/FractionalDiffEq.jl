@@ -1,4 +1,4 @@
-@concrete mutable struct PIPECECache{T}
+@concrete mutable struct MTPECECache{T}
     prob
     alg
     mesh
@@ -35,16 +35,9 @@
     kwargs
 end
 
-Base.eltype(::PIPECECache{T}) where {T} = T
+Base.eltype(::MTPECECache{T}) where {T} = T
 
-"""
-    solve(prob::MultiTermsFODEProblem, dt, PIPECE())
-
-Use product integration predictor-corrector method to solve multi-terms FODE.
-"""
-struct PIPECE <: MultiTermsFODEAlgorithm end
-
-function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::PIPECE; dt=0.0, abstol=1e-6, kwargs...)
+function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::MTPECE; dt=0.0, abstol=1e-6, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     @unpack parameters, orders, f, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
@@ -109,13 +102,13 @@ function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::PIPECE; dt=0.0, abst
     y[:, 1] = u0[:, 1]
     fy[:, 1] .= f(u0[:, 1], p, t0)
 
-    return PIPECECache{T}(prob, alg, mesh, u0, bet, lam_rat_i, gamma_val,
+    return MTPECECache{T}(prob, alg, mesh, u0, bet, lam_rat_i, gamma_val,
                                 highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
                                 y, fy, p, zn_pred, zn_corr,
                                 r, N, Nr, Qr, NNr, C, an, bn, a0, mu, abstol, kwargs)
 
 end
-function SciMLBase.solve!(cache::PIPECECache{T}) where {T}
+function SciMLBase.solve!(cache::MTPECECache{T}) where {T}
     @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val,
     highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
     p,
@@ -123,13 +116,13 @@ function SciMLBase.solve!(cache::PIPECECache{T}) where {T}
 
     t0 = mesh[1]; tfinal = mesh[end]
 
-    PIPECE_triangolo(cache, 1, r-1, t0)
+    MTPECE_triangolo(cache, 1, r-1, t0)
     
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0 2]; card_ff = 2
     nx0 = 0; nu0 = 0
     for qr in 0:Qr
         L = 2^qr
-        PIPECE_disegna_blocchi(cache, L, ff, nx0+L*r, nu0, t0)
+        MTPECE_disegna_blocchi(cache, L, ff, nx0+L*r, nu0, t0)
         ff[1:2*card_ff] = [ff[1:card_ff] ff[1:card_ff]]
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -147,7 +140,7 @@ function SciMLBase.solve!(cache::PIPECECache{T}) where {T}
     return DiffEqBase.build_solution(prob, alg, mesh, u)
 end
 
-function PIPECE_disegna_blocchi(cache::PIPECECache{T}, L, ff, nx0, nu0, t0) where {T}
+function MTPECE_disegna_blocchi(cache::MTPECECache{T}, L, ff, nx0, nu0, t0) where {T}
     @unpack r, N = cache
 
     nxi::Int = nx0
@@ -168,9 +161,9 @@ function PIPECE_disegna_blocchi(cache::PIPECECache{T}, L, ff, nx0, nu0, t0) wher
     while stop == false
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1 >= Nr-1)
         
-        PIPECE_quadrato(cache, nxi, nxf, nyi, nyf)
+        MTPECE_quadrato(cache, nxi, nxf, nyi, nyf)
         
-        PIPECE_triangolo(cache, nxi, nxi+r-1, t0)
+        MTPECE_triangolo(cache, nxi, nxi+r-1, t0)
         i_triangolo = i_triangolo + 1
         
         if stop==false
@@ -196,7 +189,7 @@ function PIPECE_disegna_blocchi(cache::PIPECECache{T}, L, ff, nx0, nu0, t0) wher
     end
 end
 
-function PIPECE_quadrato(cache::PIPECECache{T}, nxi, nxf, nyi, nyf) where {T}
+function MTPECE_quadrato(cache::MTPECECache{T}, nxi, nxf, nyi, nyf) where {T}
     @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val,
     highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
     p, r, N, Nr, Qr, NNr, C, a0, an, bn, mu, abstol, kwargs = cache
@@ -245,7 +238,7 @@ end
     
     
  
-function PIPECE_triangolo(cache::PIPECECache{T}, nxi, nxf, t0) where {T}
+function MTPECE_triangolo(cache::MTPECECache{T}, nxi, nxf, t0) where {T}
     @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val,
     highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
     p, zn_pred, zn_corr,
@@ -255,7 +248,7 @@ function PIPECE_triangolo(cache::PIPECECache{T}, nxi, nxf, t0) where {T}
     orders_length = length(prob.orders)
     
     for n in nxi:min(N, nxf)
-        St = PIPECE_starting_term_multi(mesh[n+1], t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
+        St = MTPECE_starting_term_multi(mesh[n+1], t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
         
         Phi_n = copy(St)
         if nxi == 1
@@ -322,7 +315,7 @@ function PIPECE_triangolo(cache::PIPECECache{T}, nxi, nxf, t0) where {T}
     end
 end
 
-function PIPECE_starting_term_multi(mesh, t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
+function MTPECE_starting_term_multi(mesh, t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
     ys = zeros(problem_size)
 
     for k in 0:highest_order_ceiling-1

@@ -30,12 +30,12 @@
     reltol
     abstol
     maxiters
+    high_order_prob
     
     kwargs
 end
 
 Base.eltype(::TrapezoidCache{iip, T}) where {iip, T} = T
-
 
 function SciMLBase.__init(prob::FODEProblem, alg::Trapezoid;
                           dt = 0.0, reltol=1e-6, abstol=1e-6, maxiters=1000, kwargs...)
@@ -49,12 +49,11 @@ function SciMLBase.__init(prob::FODEProblem, alg::Trapezoid;
     alpha = order[1] # commensurate ordre FODE
     (alpha > 1.0) && throw(ArgumentError("BDF method is only for order <= 1.0"))
 
-    #Jfdefun(t, u) = jacobian_of_fdefun(f, t, u, p)
-
     m_alpha = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
-    problem_size = length(u0)
-    
+    problem_size = length(order)
+    u0_size = length(u0)
+    high_order_prob = problem_size !== u0_size
     
     # Check compatibility size of the problem with size of the vector field
     
@@ -79,13 +78,13 @@ function SciMLBase.__init(prob::FODEProblem, alg::Trapezoid;
     
     # Initializing solution and proces of computation
     mesh = t0 .+ collect(0:N)*dt
-    y[:, 1] = u0
-    temp = zeros(problem_size)
+    y[:, 1] = high_order_prob ? u0[1, :] : u0
+    temp = high_order_prob ? similar(u0[1, :]) : similar(u0)
     f(temp, u0, p, t0)
     fy[:, 1] = temp
     return TrapezoidCache{iip, T}(prob, alg, mesh, u0, alpha, halpha, y, fy, zn, Jfdefun,
                                   p, problem_size, m_alpha, m_alpha_factorial, r, N, Nr, Q, NNr,
-                                  omega, w, s, dt, reltol, abstol, maxiters, kwargs)
+                                  omega, w, s, dt, reltol, abstol, maxiters, high_order_prob, kwargs)
 end
 
 function SciMLBase.solve!(cache::TrapezoidCache{iip, T}) where {iip, T}
@@ -182,7 +181,7 @@ function TrapTriangolo(cache::TrapezoidCache{iip, T}, nxi::P, nxf::P, j0) where 
         yn0 = cache.y[:, n]
         temp = zeros(length(yn0))
         prob.f(temp, yn0, p, mesh[n1])
-        fn0 = temp#f_vectorfield(t[n1], yn0, fdefun)
+        fn0 = temp
         Jfn0 = Jf_vectorfield(mesh[n1], yn0, Jfdefun)
         Gn0 = yn0 - halpha*omega[1]*fn0 - Phi_n
         stop = false; it = 0
@@ -324,8 +323,9 @@ function TrapWeights(alpha, N)
 end
 
 function TrapStartingTerm(cache::TrapezoidCache{iip, T}, t) where {iip, T}
-    @unpack u0, m_alpha, mesh, m_alpha_factorial = cache
+    @unpack u0, m_alpha, mesh, m_alpha_factorial, high_order_prob = cache
     t0 = mesh[1]
+    u0 = high_order_prob ? reshape(u0, 1, length(u0)) : u0
     ys = zeros(size(u0, 1), 1)
     for k = 1:m_alpha
         ys = ys + (t-t0)^(k-1)/m_alpha_factorial[k]*u0[:, k]

@@ -23,13 +23,6 @@ function Base.show(io::IO, prob::FDDESystem)
     println("history function: $(prob.ϕ)")
 end
 
-function Base.show(io::IO, prob::DODEProblem)
-    printstyled(typeof(prob), color=:light_blue)
-    printstyled(" with order ")
-    printstyled("$(prob.orders)", color=:red)
-    println()
-    println("timespan: $(prob.tspan)")
-end
 
 function Base.show(io::IO, prob::FractionalDiscreteProblem)
     printstyled(typeof(prob), color=:light_blue)

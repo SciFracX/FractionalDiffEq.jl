@@ -13,7 +13,7 @@ end
     include("fode.jl")
     include("fdde.jl")
     include("discrete.jl")
-    include("dode.jl")
+    #include("dode.jl")
     include("ffode.jl")
     include("auxillary.jl")
     #include("fole.jl")

@@ -14,7 +14,7 @@ We can write the general form of distributed order differential equations as:
 \int_0^m \mathscr{A}(r,\ D_*^r u(t))dr = f(t)
 ```
 
-Similar with what we have learned about single-term and multi-term fractional differential equations in linear fractional differential equations, we can also write the single-term distributed order differential equations:
+Similar to what we have learned about single-term and multi-term fractional differential equations in linear fractional differential equations, we can also write the single-term distributed order differential equations:
 
 ```math
 D_*^ru(t)=f(t,\ u(t))
@@ -28,20 +28,20 @@ And multi-term distributed order differential equations
 
 ## Example1: Distributed order relaxation
 
-The distributed order relaxation equation is similar with fractional relaxation equation, only the order is changed to a distributed function. Let's see an example here, the distributed order relaxation:
+The distributed order relaxation equation is similar to fractional relaxation equation, only the order is changed to a distributed function. Let's see an example here, the distributed order relaxation:
 
 ```math
 {_0D_t^{\omega(\alpha)} u(t)}+bu(t)=f(t),\quad x(0)=1
 ```
 
-With distribution of orders ``\alpha``: ``\omega(\alpha)=6\alpha(1-\alpha)``
+With a distribution of orders ``\alpha``: ``\omega(\alpha)=6\alpha(1-\alpha)``
 
 By using the ```DOMatrixDiscrete``` method to solve this problem:
 
 !!! info
-    The usage of ```DOMatrixDiscrete``` method is similiar with the ```FODEMatrixDiscrete``` method, all we need to do is to pass the parameters array and orders array to the problem difinition and solve the problem.
+    The usage of ```DOMatrixDiscrete``` method is similar to the ```FODEMatrixDiscrete``` method, all we need to do is to pass the parameters array and order array to the problem definition and solve the problem.
     !!! tip
-        Pass the weight function and other orders to the order array is the right way:
+        Pass the weight function and other orders to the order array in the right way:
         ```julia-repl
         julia> orders = [x->x*(1-x), 1.2, 3]
         3-element Vector{Any}:

@@ -1,4 +1,4 @@
-@concrete mutable struct PIEXCache{iip, T}
+@concrete mutable struct PITrapCache{iip, T}
     prob
     alg
     mesh
@@ -11,6 +11,7 @@
     p
     problem_size
     zn
+    Jfdefun
 
     r
     N
@@ -18,27 +19,29 @@
     Qr
     NNr
 
-    bn
+    an
+    a0
 
-    halpha1
-    mu
+    halpha2
     abstol
+    maxiters
     index_fft
-    bn_fft
+    an_fft
 
     kwargs
 end
 
-Base.eltype(::PIEXCache{iip, T}) where {iip, T} = T
+Base.eltype(::PITrapCache{iip, T}) where {iip, T} = T
 
-function SciMLBase.__init(prob::FODEProblem, alg::PIEX; dt = 0.0, abstol = 1e-6, kwargs...)
+struct PITrap <: FODEAlgorithm end
+
+function SciMLBase.__init(prob::FODEProblem, alg::PITrap; dt = 0.0, abstol = 1e-6, maxiters = 1000, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     prob = _is_need_convert!(prob)
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     T = eltype(u0)
     iip = isinplace(prob)
-    mu = 1
     order = order[:]
 
     alpha_length = length(order)
@@ -66,9 +69,13 @@ function SciMLBase.__init(prob::FODEProblem, alg::PIEX; dt = 0.0, abstol = 1e-6,
     fy = zeros(T, problem_size, N+1)
     zn = zeros(problem_size, NNr+1)
 
+    # generate jacobian of the input function
+    Jfdefun(t, u) = jacobian_of_fdefun(prob.f, t, u, p)
+
     # Evaluation of coefficients of the PECE method
     nvett = 0:NNr+1 |> collect
-    bn = zeros(alpha_length, NNr+1)
+    an = zeros(alpha_length, NNr+1)
+    a0 = copy(an)
     for i_alpha = 1:alpha_length
         find_alpha = Float64[]
         if order[i_alpha] == order[1:i_alpha-1]
@@ -76,17 +83,18 @@ function SciMLBase.__init(prob::FODEProblem, alg::PIEX; dt = 0.0, abstol = 1e-6,
         end
 
         if isempty(find_alpha) == false
-            bn[i_alpha, :] = bn[find_alpha[1], :]
-        elseif abs(order[i_alpha]-1) < 1e-14
-            bn[i_alpha, :] = [1; zeros(NNr)]
+            an[i_alpha, :] = an[find_alpha[1], :]
+            a0[i_alpha, :] = a0[find_alpha[1], :]
         else
             nalpha = nvett.^order[i_alpha]
-            bn[i_alpha, :] = nalpha[2:end] - nalpha[1:end-1]
+            nalpha1 = nalpha.*nvett
+            an[i_alpha, :] = [ 1; (nalpha1[1:end-2] - 2*nalpha1[2:end-1] + nalpha1[3:end]) ] ;
+            a0[i_alpha, :] = [ 0; nalpha1[1:end-2]-nalpha[2:end-1].*(nvett[2:end-1] .- order[i_alpha] .-1)]
         end
     end
-    halpha1 = dt.^order./gamma.(order.+1)
+    halpha2 = dt.^order./gamma.(order.+2)
 
-
+    
     if Qr >= 0
         index_fft = zeros(Int, 2, Qr+1)
         for l = 1 : Qr+1
@@ -97,7 +105,7 @@ function SciMLBase.__init(prob::FODEProblem, alg::PIEX; dt = 0.0, abstol = 1e-6,
             end
         end
         
-        bn_fft = zeros(Complex, alpha_length, index_fft[2, end])
+        an_fft = zeros(Complex, alpha_length, index_fft[2, Qr+1])
         for l = 1:Qr+1
             coef_end = 2^l*r
             for i_alpha = 1 : alpha_length
@@ -106,36 +114,36 @@ function SciMLBase.__init(prob::FODEProblem, alg::PIEX; dt = 0.0, abstol = 1e-6,
                     push!(find_alpha, i_alpha)
                 end
                 if isempty(find_alpha) == false
-                    bn_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = bn_fft[find_alpha[1], index_fft[1, l]:index_fft[2, l]]
+                    an_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = an_fft[find_alpha[1], index_fft[1, l]:index_fft[2, l]]
                 else
-                    bn_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = ourfft(bn[i_alpha, 1:coef_end], coef_end)
+                    an_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = ourfft(an[i_alpha, 1:coef_end], coef_end)
                 end
             end
         end
     else
         index_fft = 0
-        bn_fft = 0
+        an_fft = 0
     end
-
     # Initializing solution and proces of computation
     mesh = t0 .+ collect(0:N)*dt
     y[:, 1] = u0[:, 1]
     fy[:, 1] = f_temp
-    return PIEXCache{iip, T}(prob, alg, mesh, u0, order, m_alpha, m_alpha_factorial, y, fy, p, problem_size,
-                             zn, r, N, Nr, Qr, NNr, bn, halpha1, mu, abstol, index_fft, bn_fft, kwargs)
+    return PITrapCache{iip, T}(prob, alg, mesh, u0, order, m_alpha, m_alpha_factorial, y, fy, p, problem_size,
+                             zn, Jfdefun, r, N, Nr, Qr, NNr, an, a0, halpha2, abstol, maxiters, index_fft, an_fft, kwargs)
 end
-function SciMLBase.solve!(cache::PIEXCache{iip, T}) where {iip, T}
-    @unpack prob, alg, mesh, u0, order, y, fy, r, N, Nr, Qr, NNr, bn, halpha1, mu, abstol, index_fft, bn_fft, kwargs = cache
+
+function SciMLBase.solve!(cache::PITrapCache{iip, T}) where {iip, T}
+    @unpack prob, alg, mesh, u0, order, y, fy, r, N, Nr, Qr, NNr, an, a0, halpha2, abstol, index_fft, an_fft, kwargs = cache
     t0 = mesh[1]
     tfinal = mesh[end]
-    PIEX_triangolo(cache, 1, r-1)
+    PITrap_triangolo(cache, 1, r-1)
 
     # Main process of computation by means of the FFT algorithm
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0; 2] ; card_ff = 2
     nx0 = 0; ny0 = 0
     for qr = 0 : Qr
         L = 2^qr 
-        PIEX_disegna_blocchi(cache, L, ff, nx0+L*r, ny0)
+        PITrap_disegna_blocchi(cache, L, ff, nx0+L*r, ny0)
         ff[1:2*card_ff] = [ff[1:card_ff]; ff[1:card_ff]] 
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -155,7 +163,7 @@ function SciMLBase.solve!(cache::PIEXCache{iip, T}) where {iip, T}
 end
 
 
-function PIEX_disegna_blocchi(cache::PIEXCache{iip, T}, L::P, ff, nx0::P, ny0::P) where {P <: Integer, iip, T}
+function PITrap_disegna_blocchi(cache::PITrapCache{iip, T}, L::P, ff, nx0::P, ny0::P) where {P <: Integer, iip, T}
     @unpack mesh, N, r, Nr = cache
 
     nxi::Int = nx0; nxf::Int = nx0 + L*r - 1
@@ -171,8 +179,8 @@ function PIEX_disegna_blocchi(cache::PIEXCache{iip, T}, L::P, ff, nx0::P, ny0::P
     while stop == false
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         
-        PIEX_quadrato(cache, nxi, nxf, nyi, nyf)
-        PIEX_triangolo(cache, nxi, nxi+r-1)
+        PITrap_quadrato(cache, nxi, nxf, nyi, nyf)
+        PITrap_triangolo(cache, nxi, nxi+r-1)
         i_triangolo = i_triangolo + 1
         
         if stop == false
@@ -191,60 +199,82 @@ function PIEX_disegna_blocchi(cache::PIEXCache{iip, T}, L::P, ff, nx0::P, ny0::P
     end
 end
 
-function PIEX_quadrato(cache::PIEXCache{iip, T}, nxi::P, nxf::P, nyi::P, nyf::P) where {P <: Integer, iip, T}
-    @unpack prob, mesh, r, N, Nr, Qr, NNr, problem_size, bn, halpha1, mu, abstol, index_fft, bn_fft = cache
+function PITrap_quadrato(cache::PITrapCache{iip, T}, nxi::P, nxf::P, nyi::P, nyf::P) where {P <: Integer, iip, T}
+    @unpack prob, mesh, r, N, Nr, Qr, NNr, problem_size, an, a0, halpha2, abstol, index_fft, an_fft = cache
     coef_end = nxf-nyi+1
     alpha_length = length(prob.order)
     i_fft::Int = log2(coef_end/r) 
     funz_beg = nyi+1; funz_end = nyf+1
     Nnxf = min(N, nxf)
 
-    # Evaluation convolution segment for the predictor
-    vett_funz = cache.fy[:, funz_beg:funz_end]
+    if nyi == 0
+        vett_funz = [zeros(problem_size, 1) cache.fy[:, funz_beg+1:funz_end]]
+    else
+        vett_funz = cache.fy[:, funz_beg:funz_end]
+    end
     vett_funz_fft = rowfft(vett_funz, coef_end)
     zzn = zeros(problem_size, coef_end)
     for i = 1 : problem_size
         i_alpha::Int = min(alpha_length, i)
         if abs(prob.order[i_alpha]-1)>1e-14
-        Z = bn_fft[i_alpha, index_fft[1, i_fft]:index_fft[2, i_fft]].*vett_funz_fft[i, :]
+        Z = an_fft[i_alpha, index_fft[1, i_fft]:index_fft[2, i_fft]].*vett_funz_fft[i, :]
         zzn[i, :] = real.(ourifft(Z, coef_end))
         end
     end
-    zzn = zzn[:, nxf-nyf:end-1]
+    zzn = zzn[:, nxf-nyf+1:end]
     cache.zn[:, nxi+1:Nnxf+1] = cache.zn[:, nxi+1:Nnxf+1] + zzn[:, 1:Nnxf-nxi+1]
 end
 
 
 
-function PIEX_triangolo(cache::PIEXCache{iip, T}, nxi::P, nxf::P) where {P <: Integer, iip, T}
-    @unpack prob, mesh, u0, order, m_alpha, m_alpha_factorial, p, problem_size, zn, N, bn, halpha1, mu, abstol, index_fft, bn_fft = cache
+function PITrap_triangolo(cache::PITrapCache{iip, T}, nxi::P, nxf::P) where {P <: Integer, iip, T}
+    @unpack prob, mesh, u0, order, m_alpha, m_alpha_factorial, p, problem_size, zn, Jfdefun, N, an, a0, halpha2, abstol, maxiters, index_fft, an_fft = cache
 
     alpha_length = length(order)
     for n = nxi:min(N, nxf)
-        St = PIEX_system_starting_term(cache, mesh[n+1])
+        n1 = n+1
+        St = PITrap_system_starting_term(cache, mesh[n+1])
         # Evaluation of the predictor
         Phi = zeros(problem_size, 1)
-        if nxi == 1 # Case of the first triangle
-            j_beg = 0
-        else # Case of any triangle but not the first
-            j_beg = nxi
+        for j = nxi:n-1
+            Phi = Phi + an[1:alpha_length,n-j+1].*cache.fy[:, j+1]
         end
-        for j = j_beg:n-1
-            Phi = Phi + bn[1:alpha_length,n-j].*cache.fy[:, j+1]
-        end
-
-        i_alpha_1 = findall(alpha -> abs(alpha - 1) < 1e-14, order)
-        Phi[i_alpha_1] = cache.fy[i_alpha_1, n]
-        St[i_alpha_1] = cache.y[i_alpha_1, n]
+        Phi_n = St + halpha2 .*(a0[1:alpha_length, n+1] .* cache.fy[:, 1] + cache.zn[:, n+1] + Phi)
         
-        cache.y[:, n+1] = St + halpha1.*(cache.zn[:, n+1] + Phi)
-        temp = zeros(length(cache.y[:, n+1]))
-        prob.f(temp, cache.y[:, n+1], p, mesh[n+1])
-        cache.fy[:, n+1] = temp
+        yn0 = cache.y[:, n]
+        fn0 = zeros(T, problem_size); Jfn0 = zeros(T, problem_size, problem_size)
+        prob.f(fn0, yn0, p, mesh[n+1])
+        Jfn0 = Jf_vectorfield(mesh[n+1], yn0, Jfdefun)
+        Gn0 = yn0 - halpha2 .*fn0 - Phi_n
+
+        stop = false; it = 0
+        yn1 = similar(yn0)
+        fn1 = similar(yn0)
+
+        while ~stop
+            JGn0 = zeros(T, problem_size, problem_size)+I - diagm(halpha2)*Jfn0
+            yn1 = yn0 - JGn0\Gn0
+            prob.f(fn1, yn1, p, mesh[n+1])
+            Gn1 = yn1 - halpha2.*fn1 - Phi_n
+            it = it + 1
+
+            stop = (norm(yn1-yn0, Inf) < abstol) || (norm(Gn1, Inf)<abstol)
+            if it > maxiters && ~stop
+                @warn "Non Convergence"
+                stop = true
+            end
+
+            yn0 = yn1; Gn0 = Gn1
+            if ~stop
+                Jfn0 = Jf_vectorfield(mesh[n1], yn0, Jfdefun)
+            end
+        end
+        cache.y[:, n1] = yn1
+        cache.fy[:, n1] = fn1
     end
 end
 
-function  PIEX_system_starting_term(cache::PIEXCache{iip, T}, t) where {iip, T}
+function  PITrap_system_starting_term(cache::PITrapCache{iip, T}, t) where {iip, T}
     @unpack mesh, u0, m_alpha, m_alpha_factorial = cache
     t0 = mesh[1]
     ys = zeros(length(u0))

@@ -24,7 +24,6 @@
     NNr
     bn
 
-
     kwargs
 end
 
@@ -47,7 +46,7 @@ function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::MTPIEX; dt = 0.0, ab
     highest_order_ceiling = ceil(Int64, highest_order)
     other_orders_ceiling = ceil.(Int64, orders[1:end-1])
     bet = [highest_order .- other_orders; highest_order]
-    
+
     gamma_val = zeros(orders_length, highest_order_ceiling)
     for i = 1 : orders_length-1
         k = collect(Int, 0:other_orders_ceiling[i]-1)
@@ -89,19 +88,20 @@ function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::MTPIEX; dt = 0.0, ab
                                y, fy, p, zn,
                                r, N, Nr, Qr, NNr, bn, kwargs)
 end
+
 function SciMLBase.solve!(cache::MTPIEXCache{T}) where {T}
     @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val,
             highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
             y, fy, p, zn,
             r, N, Nr, Qr, NNr, bn, kwargs = cache
     t0 = mesh[1]; tfinal = mesh[end]
-    PIEX_multiterms_triangolo(cache, 1, r-1, t0)
+    MTPX_multiterms_triangolo(cache, 1, r-1, t0)
     
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0 2]; card_ff = 2
     nx0 = 0; nu0 = 0
     for qr = 0 : Qr
         L = 2^qr
-        PIEX_multiterms_disegna_blocchi(cache, L, ff, nx0+L*r, nu0, t0)
+        MTPX_multiterms_disegna_blocchi(cache, L, ff, nx0+L*r, nu0, t0)
         ff[1:2*card_ff] = [ff[1:card_ff] ff[1:card_ff]]
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -117,9 +117,8 @@ function SciMLBase.solve!(cache::MTPIEXCache{T}) where {T}
     y = collect(Vector{eltype(y)}, eachcol(y))
     return DiffEqBase.build_solution(prob, alg, mesh, y)
 end
-    
 
-function PIEX_multiterms_disegna_blocchi(cache::MTPIEXCache{T}, L, ff, nx0, nu0, t0) where {T}
+function MTPX_multiterms_disegna_blocchi(cache::MTPIEXCache{T}, L, ff, nx0, nu0, t0) where {T}
     @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val,
             highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
             p, zn, r, N, Nr, Qr, NNr, bn, kwargs = cache
@@ -141,9 +140,9 @@ function PIEX_multiterms_disegna_blocchi(cache::MTPIEXCache{T}, L, ff, nx0, nu0,
     while stop == false
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1 >= Nr-1)
         
-        PIEX_multiterms_quadrato(cache, nxi, nxf, nyi, nyf)
+        MTPX_multiterms_quadrato(cache, nxi, nxf, nyi, nyf)
         
-        PIEX_multiterms_triangolo(cache, nxi, nxi+r-1, t0)
+        MTPX_multiterms_triangolo(cache, nxi, nxi+r-1, t0)
         i_triangolo = i_triangolo + 1
         
         if stop==false
@@ -168,7 +167,7 @@ function PIEX_multiterms_disegna_blocchi(cache::MTPIEXCache{T}, L, ff, nx0, nu0,
     end
 end
 
-function PIEX_multiterms_quadrato(cache::MTPIEXCache{T}, nxi, nxf, nyi, nyf) where {T}
+function MTPX_multiterms_quadrato(cache::MTPIEXCache{T}, nxi, nxf, nyi, nyf) where {T}
     @unpack prob, alg, mesh, r, N, Nr, Qr, NNr, bn, kwargs = cache
     orders_length = length(prob.orders)
     problem_size = size(prob.u0, 2)
@@ -186,15 +185,15 @@ function PIEX_multiterms_quadrato(cache::MTPIEXCache{T}, nxi, nxf, nyi, nyf) whe
         cache.zn[:, nxi+1:nxf+1, i] = cache.zn[:, nxi+1:nxf+1, i] + zzn[:, nxf-nyf:end-1]
     end
 end
- 
-function PIEX_multiterms_triangolo(cache::MTPIEXCache{T}, nxi, nxf, t0) where {T}
+
+function MTPX_multiterms_triangolo(cache::MTPIEXCache{T}, nxi, nxf, t0) where {T}
     @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val,
             highest_order_parameter, highest_order_ceiling, other_orders_ceiling,
             p, zn, r, N, Nr, Qr, NNr, bn, kwargs = cache
     problem_size = size(prob.u0, 2)
     orders_length = length(prob.orders)
     for n = nxi:min(N, nxf)
-        Phi_n = PIEX_multiterms_starting_term(mesh[n+1], t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
+        Phi_n = MTPX_multiterms_starting_term(mesh[n+1], t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
         if nxi == 1
             j_beg = 0
         else
@@ -219,7 +218,7 @@ function PIEX_multiterms_triangolo(cache::MTPIEXCache{T}, nxi, nxf, t0) where {T
     end
 end
 
-function PIEX_multiterms_starting_term(t, t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
+function MTPX_multiterms_starting_term(t, t0, problem_size, u0, orders_length, highest_order_ceiling, other_orders_ceiling, bet, lam_rat_i, gamma_val)
     ys = zeros(problem_size)
 
     for k = 0:highest_order_ceiling-1

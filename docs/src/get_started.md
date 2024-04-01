@@ -25,9 +25,9 @@ We can solve this problem by the following code using FractionalDiffEq.jl:
 ```julia
 using FractionalDiffEq, Plots
 fun(u, p, t) = 1-u
-α=1.8; h=0.01; tspan = (0, 20); u0 = [0, 0]
-prob = SingleTermFODEProblem(fun, α, u0, tspan)
-sol = solve(prob, h, PECE())
+α=1.8; tspan = (0, 20); u0 = [0, 0]
+prob = FODEProblem(fun, α, u0, tspan)
+sol = solve(prob, PIEX(), dt=0.01)
 plot(sol)
 ```
 
@@ -35,7 +35,7 @@ By plotting the numerical result, we can get the approximation result:
 
 ![Relaxation Oscillation](./assets/example.png)
 
-To provide users a simple way to solve fractional differential equations, we follow the design pattern of [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl)
+To provide users with a simple way to solve fractional differential equations, we follow the design pattern of [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl)
 
 ## Step 1: Defining a Problem
 
@@ -45,10 +45,10 @@ First, we need to specify the problem we want to solve. Just by passing the para
 using FractionalDiffEq
 fun(u, p, t) = 1-u
 α = 1.8; u0 = [0, 0]; tspan = (0, 20); h = 0.01;
-prob = SingleTermFODEProblem(fun, α, u0, tspan)
+prob = FODEProblem(fun, α, u0, tspan)
 ```
 
-The ```SingleTermFODEProblem``` is a class of fractional differential equation, describing equations with ``D^{\alpha}u=f(t, u)`` pattern. For other patterns and classes of fractional differential equation, please refer to [Problem types](@ref problems)
+The ```FODEProblem``` is a class of fractional differential equations, describing equations with ``D^{\alpha}u=f(t, u)`` pattern. For other patterns and classes of fractional differential equations, please refer to [Problem types](@ref problems)
 
 ## Step 2: Solving a Problem
 

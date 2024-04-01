@@ -44,6 +44,48 @@ function MultiTermsFODEProblem(parameters, orders, f, u0, tspan, p = SciMLBase.N
     return MultiTermsFODEProblem{false}(parameters, orders, ODEFunction(f), nothing, nothing, u0, tspan, p; kwargs...)
 end
 
+
+"""
+Defines an distributed order fractional ordinary differential equation (DODE) problem.
+
+## Mathematical Specification of an distributed order FODE problem
+
+To define an multi-terms FODE Problem, you simply need to given the parameters, their correspoding orders, right hand side function and the initial condition ``u_0``  which define an FODE:
+
+```math
+\\frac{du^\\alpha}{d^{\\alpha}t} = f(u,p,t)
+```
+
+Distributed order differential equations.
+"""
+struct DODEProblem{uType, tType, oType, pType, F, P, K, isinplace} <: SciMLBase.AbstractODEProblem{uType, tType, isinplace}
+    parameters::pType
+    orders::oType
+    f::F
+    u0::uType
+    tspan::tType
+    p::P
+    kwargs::K
+
+    SciMLBase.@add_kwonly function DODEProblem{iip}(parameters, orders,
+        f::SciMLBase.AbstractODEFunction, rparameters, rorders,
+        u0, tspan, p = SciMLBase.NullParameters();
+        kwargs...) where {iip}
+        _tspan = SciMLBase.promote_tspan(tspan)
+        new{typeof(u0), typeof(_tspan), typeof(orders), typeof(parameters),
+            typeof(f), typeof(p), typeof(kwargs), iip}(parameters, orders, f, rparameters, rorders, u0, _tspan, p, kwargs)
+    end
+
+    function DODEProblem{iip}(parameters, orders, f, u0, tspan, p = SciMLBase.NullParameters(); kwargs...) where {iip}
+        DODEProblem(parameters, orders, ODEFunction{iip}(f), u0, tspan, p; kwargs...)
+    end
+end
+
+function DODEProblem(parameters, orders, f, u0, tspan, p = SciMLBase.NullParameters(); kwargs... )
+    return DODEProblem{false}(parameters, orders, ODEFunction(f), u0, tspan, p; kwargs...)
+end
+
+
 struct StandardFODEProblem end
 
 """
@@ -352,20 +394,6 @@ function FFMODESystem(f::Function,
                       u0::Union{AbstractArray, Number},
                       tspan::Union{Tuple, Number})
     FFMODESystem(f, order, u0, tspan, nothing)
-end
-
-"""
-    DODEProblem(parameters, orders, interval, tspan, rightfun)
-
-Define distributed order differential equation problem.
-"""
-struct DODEProblem <: FDEProblem
-    parameters::AbstractArray
-    orders::AbstractArray
-    interval::Tuple
-    rightfun::Function
-    u0
-    tspan
 end
 
 """
