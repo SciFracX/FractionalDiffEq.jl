@@ -1,8 +1,8 @@
 # Fractional Order Delay Differential Equations
 
-In real world systems, delay is very often encountered in many practical systems, such as automatic control, biology, economics and long transmission lines. The delayed differential equation is used to describe these dynamical systems. Fractional order delay differential equations as the generalization of the delay differential equations, provide more freedom when we describing these systems, let's see how we can use FractionalDiffEq.jl to accelerate the simulation of fractional order delay differential equations.
+In real-world systems, delay is very often encountered in many practical systems, such as automatic control, biology, economics and long transmission lines. The delayed differential equation is used to describe these dynamical systems. Fractional order delay differential equations as the generalization of the delay differential equations, provide more freedom when we describe these systems, let's see how we can use FractionalDiffEq.jl to accelerate the simulation of fractional order delay differential equations.
 
-The fractional delay differential equations has the general form:
+The fractional delay differential equations have the general form:
 
 ```math
 D^\alpha_ty(t)=f(t,\ y(t),\ y(t-\tau)),\quad t\geq\xi
@@ -20,9 +20,9 @@ All we need to do is to pass the function ``f(t,\ y(t),\ y(t-\tau))``, and histo
 prob = FDDEProblem(f, ϕ, α, τ, T)
 ```
 
-And choose an algorithm to solve problem.
+And choose an algorithm to solve the problem.
 
-Here, we consider the fractional order version of the four year life cycle of a population of lemmings[^1] (A classical test example for delay differential equations):
+Here, we consider the fractional order version of the four-year life cycle of a population of lemmings[^1] (A classical test example for delay differential equations):
 
 ```math
 D^\alpha_ty(t)=3.5y(t)(1-\frac{y(t-0.74)}{19}),\ y(0)=19.00001
@@ -129,7 +129,7 @@ function EnzymeKinetics!(dy, y, ϕ, t)
 end
 q = [60, 10, 10, 20]; α = [0.95, 0.95, 0.95, 0.95]
 prob = FDDESystem(EnzymeKinetics!, q, α, 4, 150)
-sol = solve(prob, 0.01, DelayABM())
+sol = solve(prob, DelayABM(), dt=0.01)
 plot(sol)
 ```
 

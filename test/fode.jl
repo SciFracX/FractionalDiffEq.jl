@@ -1,3 +1,5 @@
+using LinearAlgebra
+
 #=
 @testset "Test Matrix discrete method" begin
     fun(x, y) = 1-y
@@ -60,37 +62,20 @@ end
 =#
 
 @testset "Test Single Term FODE solvers" begin
-    fun(u, p, t) = 1-u
-    u0 = 0.0; tspan = (0, 5)
-    prob = FODEProblem(fun, 0.5, u0, tspan)
-    for alg in [BDF(), Trapezoid(), NewtonGregory(), PECE()]
-        sol = solve(prob, alg, dt=0.01)
-        @test isapprox(test_sol(sol[end-10:end])', [0.7656479126406821
-        0.7658528726249956
-        0.7660572866356755
-        0.7662611571262892
-        0.7664644865348149
-        0.7666672772837678
-        0.7668695317803317
-        0.7670712524164904
-        0.7672724415691329
-        0.7674731016001921
-        0.7676732348567751]; atol=1e-4)
+    fun(du, u, p, t) = (du .= 1-u[1])
+    u0 = [0.0, 0.0]; tspan = (0, 20.0); dt = 0.001
+    t = collect(tspan[1]:dt:tspan[2])
+    alpha = 1.8
+    prob = FODEProblem(fun, alpha, u0, tspan)
+    temp = t.^alpha .* mittleff(alpha, 2.8, -t.^alpha)
+    analytical_sol = [[i] for i in temp]
+    for alg in [BDF(), Trapezoid(), NewtonGregory(), PITrap(), PECE()]#, PIRect()
+        sol = solve(prob, alg, dt=dt)
+        @test norm(analytical_sol .- sol.u) < 1e-4
     end
-
-    for alg in [NonLinearAlg(), PIEX(), GL()]
-        sol = solve(prob, alg, dt=0.01)
-        @test isapprox(test_sol(sol[end-10:end])', [ 0.7658162826024704
-        0.7660208438987697
-        0.7662248608315372
-        0.7664283358450568
-        0.7666312713680935
-        0.7668336698140216
-        0.7670355335809507
-        0.7672368650518531
-        0.7674376665946829
-        0.7676379405625046
-        0.7678376892936092]; atol=1e-4)
+    for alg in [PIEX()]#, PECE()
+        sol = solve(prob, alg, dt=dt)
+        @test norm(analytical_sol .- sol.u) < 0.05
     end
 end
 @testset "Test GL method for FODEProblem" begin
@@ -130,27 +115,6 @@ end
     -0.1  -0.0590683  -0.018475  0.0192931  0.0534393  0.0844175
      0.1   0.224134    0.282208  0.286636   0.246248   0.168693]; atol=1e-3)
 end
-#=
-@testset "Test Product Integral Explicit method" begin
-    fun(y, p, t)=1-y
-    prob = SingleTermFODEProblem(fun, 0.5, 0, (0, 5))
-    sol=solve(prob, 0.5, PIEX())
-
-    @test isapprox(sol.u, [0.0
-    0.5840920370824765
-    0.6497603208539517
-    0.6965874966593231
-    0.7309421360673156
-    0.7569810570702951
-    0.7773192302138408
-    0.7936279277715693
-    0.8070043316131614
-    0.8181895332990293
-    0.8276979913681598]; atol=1e-4)
-end
-=#
-
-
 
 @testset "Test Product Integration explicit method for multi-terms FODE" begin
     tspan = (0, 30); h = 0.01

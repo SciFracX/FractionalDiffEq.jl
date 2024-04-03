@@ -30,6 +30,7 @@
     index_fft
     an_fft
     bn_fft
+    high_order_prob
 
     kwargs
 end
@@ -44,11 +45,13 @@ function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6,
     T = eltype(u0)
     iip = isinplace(prob)
     mu = 1
-    order = order[:]
 
     # Check compatibility size of the problem with number of fractional orders
     alpha_length = length(order)
-    problem_size = length(u0)
+    order = (alpha_length == 1) ? order : order[:]
+    problem_size = length(order)
+    u0_size = length(u0)
+    high_order_prob = problem_size !== u0_size
 
     m_alpha = ceil.(Int, order)
     m_alpha_factorial = zeros(alpha_length, maximum(m_alpha))
@@ -57,9 +60,6 @@ function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6,
             m_alpha_factorial[i, j+1] = factorial(j)
         end
     end
-
-    f_temp = zeros(size(u0[:, 1]))
-    f(f_temp, u0, p, t0)
 
     r = 16
     N = ceil(Int64, (tfinal-t0)/dt)
@@ -78,8 +78,12 @@ function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6,
     bn = zeros(alpha_length, NNr+1); an = copy(bn); a0 = copy(bn)
     for i_alpha = 1:alpha_length
         find_alpha = Float64[]
-        if order[i_alpha] == order[1:i_alpha-1]
-            push!(find_alpha, i_alpha)
+        if alpha_length == 1
+            nothing
+        else
+            if order[i_alpha] == order[1:i_alpha-1]
+                push!(find_alpha, i_alpha)
+            end
         end
 
         if isempty(find_alpha) == false
@@ -113,8 +117,12 @@ function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6,
             coef_end = 2^l*r
             for i_alpha = 1 : alpha_length
                 find_alpha = Float64[]
-                if order[i_alpha] == order[1:i_alpha-1]
-                    push!(find_alpha, i_alpha)
+                if alpha_length == 1
+                    nothing
+                else
+                    if order[i_alpha] == order[1:i_alpha-1]
+                        push!(find_alpha, i_alpha)
+                    end
                 end
                 if isempty(find_alpha) == false
                     bn_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = bn_fft(find_alpha(1),index_fft(1,l):index_fft(2,l)) ;
@@ -131,13 +139,15 @@ function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6,
 
     # Initializing solution and proces of computation
     mesh = t0 .+ collect(0:N)*dt
-    y[:, 1] = u0[:, 1]
-    fy[:, 1] = f_temp
+    y[:, 1] = high_order_prob ? u0[1, :] : u0
+    temp = high_order_prob ? similar(u0[1, :]) : similar(u0)
+    f(temp, u0, p, t0)
+    fy[:, 1] = temp
     return PECECache{iip, T}(prob, alg, mesh, u0, order, m_alpha, m_alpha_factorial, y, fy, p, problem_size,
                              zn_pred, zn_corr,
                              r, N, Nr, Qr, NNr,
                              an, bn, a0, halpha1, halpha2,
-                             mu, abstol, index_fft, an_fft, bn_fft, kwargs)
+                             mu, abstol, index_fft, an_fft, bn_fft, high_order_prob, kwargs)
 end
 
 function SciMLBase.solve!(cache::PECECache{iip, T}) where {iip, T}
@@ -209,7 +219,7 @@ end
 
 function ABM_quadrato(cache::PECECache{iip, T}, nxi::P, nxf::P, nyi::P, nyf::P) where {P <: Integer, iip, T}
     @unpack prob, mesh, r, N, Nr, Qr, NNr, an, bn, a0, halpha1, halpha2, mu, abstol, index_fft, an_fft, bn_fft = cache
-    problem_size = length(prob.u0)
+    problem_size = length(prob.order)
     alpha_length = length(prob.order)
     coef_end = nxf-nyi+1
     i_fft::Int = log2(coef_end/r)
@@ -253,7 +263,7 @@ end
 function ABM_triangolo(cache::PECECache{iip, T}, nxi::P, nxf::P) where {P <: Integer, iip, T}
     @unpack prob, mesh, u0, order, m_alpha, m_alpha_factorial, p, zn_pred, zn_corr, N, an, bn, a0, halpha1, halpha2, mu, abstol, index_fft, an_fft, bn_fft = cache
     alpha_length = length(order)
-    problem_size = length(u0)
+    problem_size = length(order)
 
     for n = nxi:min(N, nxf)
         # Evaluation of the predictor
@@ -264,10 +274,10 @@ function ABM_triangolo(cache::PECECache{iip, T}, nxi::P, nxf::P) where {P <: Int
             j_beg = nxi
         end
         for j = j_beg:n-1
-            Phi = Phi + bn[1:alpha_length,n-j].*cache.fy[:, j+1]
+            Phi = Phi .+ bn[1:alpha_length,n-j].*cache.fy[:, j+1]
         end
         St = starting_term(cache, mesh[n+1])
-        y_pred = St + halpha1.*(zn_pred[:, n+1] + Phi)
+        y_pred = St .+ halpha1.*(zn_pred[:, n+1] .+ Phi)
         f_pred = zeros(length(y_pred))
         prob.f(f_pred, y_pred, p, mesh[n+1])
         
@@ -281,7 +291,7 @@ function ABM_triangolo(cache::PECECache{iip, T}, nxi::P, nxf::P) where {P <: Int
             for j = j_beg : n-1
                 Phi = Phi + an[1:alpha_length, n-j+1].*cache.fy[:, j+1]
             end
-            Phi_n = St + halpha2.*(a0[1:alpha_length, n+1].*cache.fy[:, 1] + zn_corr[:, n+1] + Phi)
+            Phi_n = St .+ halpha2.*(a0[1:alpha_length, n+1].*cache.fy[:, 1] .+ zn_corr[:, n+1] .+ Phi)
             yn0 = y_pred
             fn0 = f_pred
             stop = false
@@ -310,8 +320,9 @@ function ABM_triangolo(cache::PECECache{iip, T}, nxi::P, nxf::P) where {P <: Int
 end
 
 function starting_term(cache::PECECache{iip, T}, t) where {iip, T}
-    @unpack mesh, m_alpha, u0, m_alpha_factorial = cache
+    @unpack mesh, m_alpha, u0, m_alpha_factorial, high_order_prob = cache
     t0 = mesh[1]
+    u0 = high_order_prob ? reshape(u0, 1, length(u0)) : u0
     ys = zeros(size(u0, 1), 1)
     for k = 1 : maximum(m_alpha)
         if length(m_alpha) == 1

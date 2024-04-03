@@ -28,7 +28,7 @@ To solve the multi-terms fractional order  equation, you can use the code:
 ```julia
 rightside = 1
 prob = MultiTermsFODEProblem([2, 4], [2, 1.5], rightside, [0, 0], (0, 30))
-sol = solve(prob, 0.01, PIEX())
+sol = solve(prob, PIEX(), dt=0.01)
 ```
 
 Bingo! The result ```sol``` is the numerical solution of this equation!!!!
@@ -49,10 +49,10 @@ Model this problem and solve the equation:
 
 ```julia
 using FractionalDiffEq, Plots
-tspan = (0, 30); h = 0.01
+tspan = (0, 30)
 rightfun(x, y) = 172/125*cos(4/5*x)
 prob = MultiTermsFODEProblem([1, 1/16, 4/5, 3/2, 1/25, 6/5], [3, 2.5, 2, 1, 0.5, 0], rightfun, [0, 0, 0, 0, 0, 0], tspan)
-sol = solve(prob, h, PIEX())
+sol = solve(prob, PIEX(), dt=0.01)
 plot(sol, legend=:bottomright)
 ```
 

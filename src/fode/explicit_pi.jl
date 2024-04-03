@@ -25,6 +25,7 @@
     abstol
     index_fft
     bn_fft
+    high_order_prob
 
     kwargs
 end
@@ -39,10 +40,12 @@ function SciMLBase.__init(prob::FODEProblem, alg::PIEX; dt = 0.0, abstol = 1e-6,
     T = eltype(u0)
     iip = isinplace(prob)
     mu = 1
-    order = order[:]
 
     alpha_length = length(order)
-    problem_size = length(u0)
+    order = (alpha_length == 1) ? order : order[:]
+    problem_size = length(order)
+    u0_size = length(u0)
+    high_order_prob = problem_size !== u0_size
 
     m_alpha = ceil.(Int, order)
     m_alpha_factorial = zeros(alpha_length, maximum(m_alpha))
@@ -51,9 +54,6 @@ function SciMLBase.__init(prob::FODEProblem, alg::PIEX; dt = 0.0, abstol = 1e-6,
             m_alpha_factorial[i, j+1] = factorial(j)
         end
     end
-
-    f_temp = zeros(length(u0[:, 1]))
-    f(f_temp, u0[:, 1], p, t0)
 
     r = 16
     N = ceil(Int64, (tfinal-t0)/dt)
@@ -71,8 +71,12 @@ function SciMLBase.__init(prob::FODEProblem, alg::PIEX; dt = 0.0, abstol = 1e-6,
     bn = zeros(alpha_length, NNr+1)
     for i_alpha = 1:alpha_length
         find_alpha = Float64[]
-        if order[i_alpha] == order[1:i_alpha-1]
-            push!(find_alpha, i_alpha)
+        if alpha_length == 1
+            nothing
+        else
+            if order[i_alpha] == order[1:i_alpha-1]
+                push!(find_alpha, i_alpha)
+            end
         end
 
         if isempty(find_alpha) == false
@@ -102,8 +106,12 @@ function SciMLBase.__init(prob::FODEProblem, alg::PIEX; dt = 0.0, abstol = 1e-6,
             coef_end = 2^l*r
             for i_alpha = 1 : alpha_length
                 find_alpha = Float64[]
-                if order[i_alpha] == order[1:i_alpha-1]
-                    push!(find_alpha, i_alpha)
+                if alpha_length == 1
+                    nothing
+                else
+                    if order[i_alpha] == order[1:i_alpha-1]
+                        push!(find_alpha, i_alpha)
+                    end
                 end
                 if isempty(find_alpha) == false
                     bn_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = bn_fft[find_alpha[1], index_fft[1, l]:index_fft[2, l]]
@@ -119,14 +127,15 @@ function SciMLBase.__init(prob::FODEProblem, alg::PIEX; dt = 0.0, abstol = 1e-6,
 
     # Initializing solution and proces of computation
     mesh = t0 .+ collect(0:N)*dt
-    y[:, 1] = u0[:, 1]
-    fy[:, 1] = f_temp
+    y[:, 1] = high_order_prob ? u0[1, :] : u0
+    temp = high_order_prob ? similar(u0[1, :]) : similar(u0)
+    f(temp, u0, p, t0)
+    fy[:, 1] = temp
     return PIEXCache{iip, T}(prob, alg, mesh, u0, order, m_alpha, m_alpha_factorial, y, fy, p, problem_size,
-                             zn, r, N, Nr, Qr, NNr, bn, halpha1, mu, abstol, index_fft, bn_fft, kwargs)
+                             zn, r, N, Nr, Qr, NNr, bn, halpha1, mu, abstol, index_fft, bn_fft, high_order_prob, kwargs)
 end
 function SciMLBase.solve!(cache::PIEXCache{iip, T}) where {iip, T}
     @unpack prob, alg, mesh, u0, order, y, fy, r, N, Nr, Qr, NNr, bn, halpha1, mu, abstol, index_fft, bn_fft, kwargs = cache
-    t0 = mesh[1]
     tfinal = mesh[end]
     PIEX_triangolo(cache, 1, r-1)
 
@@ -217,7 +226,7 @@ end
 
 
 function PIEX_triangolo(cache::PIEXCache{iip, T}, nxi::P, nxf::P) where {P <: Integer, iip, T}
-    @unpack prob, mesh, u0, order, m_alpha, m_alpha_factorial, p, problem_size, zn, N, bn, halpha1, mu, abstol, index_fft, bn_fft = cache
+    @unpack prob, mesh, u0, order, m_alpha, m_alpha_factorial, p, problem_size, zn, N, bn, halpha1, mu, abstol, index_fft, bn_fft, high_order_prob = cache
 
     alpha_length = length(order)
     for n = nxi:min(N, nxf)
@@ -245,12 +254,13 @@ function PIEX_triangolo(cache::PIEXCache{iip, T}, nxi::P, nxf::P) where {P <: In
 end
 
 function  PIEX_system_starting_term(cache::PIEXCache{iip, T}, t) where {iip, T}
-    @unpack mesh, u0, m_alpha, m_alpha_factorial = cache
+    @unpack mesh, u0, m_alpha, m_alpha_factorial, high_order_prob = cache
     t0 = mesh[1]
-    ys = zeros(length(u0))
+    u0 = high_order_prob ? reshape(u0, 1, length(u0)) : u0
+    ys = zeros(size(u0, 1), 1)
     for k = 1 : maximum(m_alpha)
         if length(m_alpha) == 1
-            ys = ys .+ (t-t0)^(k-1)/m_alpha_factorial[k]*u0[k]
+            ys = ys .+ (t-t0)^(k-1)/m_alpha_factorial[k]*u0[:, k]
         else
             i_alpha = findall(x -> x>=k, m_alpha)
             ys[i_alpha] = ys[i_alpha] + (t-t0)^(k-1)*u0[i_alpha, k]./m_alpha_factorial[i_alpha, k]

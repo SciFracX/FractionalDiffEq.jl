@@ -53,7 +53,7 @@ So we can use FractionalDiffEq.jl to solve the problem:
 using FractionalDiffEq, Plots
 fun(u, p, t) = 1-u
 u0 = [0, 0]; tspan = (0, 20);
-prob = SingleTermFODEProblem(fun, 1.8, u0, tspan)
+prob = FODEProblem(fun, 1.8, u0, tspan)
 sol = solve(prob, PECE(), dt=0.001)
 plot(sol)
 ```
@@ -107,8 +107,8 @@ end
 x0 = [0.2; -0.1; 0.1];
 tspan = (0, 100);
 p = [10.725, 10.593, 0.268, -1.1726, -0.7872]
-prob = FODESystem(chua!, α, x0, tspan, p)
-sol = solve(prob, NonLinearAlg(), dt=0.01)
+prob = FODEProblem(chua!, α, x0, tspan, p)
+sol = solve(prob, BDF(), dt=0.01)
 plot(sol, vars=(1, 2), title="Chua System", legend=:bottomright)
 ```
 

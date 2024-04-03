@@ -26,14 +26,14 @@ FLMM2 toolbox is a toolbox developed by [Prof Roberto Garrappa](https://www.dm.u
 
 | Exsiting | FractionalDiffEq.jl |
 |-----|-----|
-| ```FLMM2(method=1)``` | ```FLMMTrap``` |
-| ```FLMM2(method=2)``` | ```FLMMNewtonGregory``` |
-| ```FLMM2(method=3)``` | ```FLMMBDF```|
-| ```fde12``` | ```ABM``` |
-| ```mt_fde_pi1_ex``` | ```PIEX``` |
-| ```mt_fde_pi1_im``` | ```PIIMRect``` |
-| ```mt_fde_pi2_im``` | ```PIIMTrap``` |
-| ```mt_fde_pi12_pc``` | ```PIPECE``` |
+| ```FLMM2(method=1)``` | ```Trap``` |
+| ```FLMM2(method=2)``` | ```NewtonGregory``` |
+| ```FLMM2(method=3)``` | ```BDF```|
+| ```fde12``` | ```PECE``` |
+| ```mt_fde_pi1_ex``` | ```MTPIEX``` |
+| ```mt_fde_pi1_im``` | ```mTPIRect``` |
+| ```mt_fde_pi2_im``` | ```MTPITrap``` |
+| ```mt_fde_pi12_pc``` | ```MTPECE``` |
 ## Python
 
 [fodeint](https://github.com/mattja/fodeint): With explicit one-step Adams-Bashforth (Euler) method.

@@ -27,13 +27,12 @@
     maxiters
     index_fft
     an_fft
+    high_order_prob
 
     kwargs
 end
 
 Base.eltype(::PITrapCache{iip, T}) where {iip, T} = T
-
-struct PITrap <: FODEAlgorithm end
 
 function SciMLBase.__init(prob::FODEProblem, alg::PITrap; dt = 0.0, abstol = 1e-6, maxiters = 1000, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
@@ -42,10 +41,12 @@ function SciMLBase.__init(prob::FODEProblem, alg::PITrap; dt = 0.0, abstol = 1e-
     t0 = tspan[1]; tfinal = tspan[2]
     T = eltype(u0)
     iip = isinplace(prob)
-    order = order[:]
 
     alpha_length = length(order)
-    problem_size = length(u0)
+    order = (alpha_length == 1) ? order : order[:]
+    problem_size = length(order)
+    u0_size = length(u0)
+    high_order_prob = problem_size !== u0_size
 
     m_alpha = ceil.(Int, order)
     m_alpha_factorial = zeros(alpha_length, maximum(m_alpha))
@@ -54,9 +55,6 @@ function SciMLBase.__init(prob::FODEProblem, alg::PITrap; dt = 0.0, abstol = 1e-
             m_alpha_factorial[i, j+1] = factorial(j)
         end
     end
-
-    f_temp = zeros(length(u0[:, 1]))
-    f(f_temp, u0[:, 1], p, t0)
 
     r = 16
     N = ceil(Int64, (tfinal-t0)/dt)
@@ -78,8 +76,12 @@ function SciMLBase.__init(prob::FODEProblem, alg::PITrap; dt = 0.0, abstol = 1e-
     a0 = copy(an)
     for i_alpha = 1:alpha_length
         find_alpha = Float64[]
-        if order[i_alpha] == order[1:i_alpha-1]
-            push!(find_alpha, i_alpha)
+        if alpha_length == 1
+            nothing
+        else
+            if order[i_alpha] == order[1:i_alpha-1]
+                push!(find_alpha, i_alpha)
+            end
         end
 
         if isempty(find_alpha) == false
@@ -110,8 +112,12 @@ function SciMLBase.__init(prob::FODEProblem, alg::PITrap; dt = 0.0, abstol = 1e-
             coef_end = 2^l*r
             for i_alpha = 1 : alpha_length
                 find_alpha = Float64[]
-                if order[i_alpha] == order[1:i_alpha-1]
-                    push!(find_alpha, i_alpha)
+                if alpha_length == 1
+                    nothing
+                else
+                    if order[i_alpha] == order[1:i_alpha-1]
+                        push!(find_alpha, i_alpha)
+                    end
                 end
                 if isempty(find_alpha) == false
                     an_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = an_fft[find_alpha[1], index_fft[1, l]:index_fft[2, l]]
@@ -124,12 +130,15 @@ function SciMLBase.__init(prob::FODEProblem, alg::PITrap; dt = 0.0, abstol = 1e-
         index_fft = 0
         an_fft = 0
     end
+
     # Initializing solution and proces of computation
     mesh = t0 .+ collect(0:N)*dt
-    y[:, 1] = u0[:, 1]
-    fy[:, 1] = f_temp
+    y[:, 1] = high_order_prob ? u0[1, :] : u0
+    temp = high_order_prob ? similar(u0[1, :]) : similar(u0)
+    f(temp, u0, p, t0)
+    fy[:, 1] = temp
     return PITrapCache{iip, T}(prob, alg, mesh, u0, order, m_alpha, m_alpha_factorial, y, fy, p, problem_size,
-                             zn, Jfdefun, r, N, Nr, Qr, NNr, an, a0, halpha2, abstol, maxiters, index_fft, an_fft, kwargs)
+                             zn, Jfdefun, r, N, Nr, Qr, NNr, an, a0, halpha2, abstol, maxiters, index_fft, an_fft, high_order_prob, kwargs)
 end
 
 function SciMLBase.solve!(cache::PITrapCache{iip, T}) where {iip, T}
@@ -228,7 +237,7 @@ end
 
 
 function PITrap_triangolo(cache::PITrapCache{iip, T}, nxi::P, nxf::P) where {P <: Integer, iip, T}
-    @unpack prob, mesh, u0, order, m_alpha, m_alpha_factorial, p, problem_size, zn, Jfdefun, N, an, a0, halpha2, abstol, maxiters, index_fft, an_fft = cache
+    @unpack prob, mesh, u0, order, m_alpha, m_alpha_factorial, p, problem_size, zn, Jfdefun, N, an, a0, halpha2, abstol, maxiters, index_fft, an_fft, high_order_prob = cache
 
     alpha_length = length(order)
     for n = nxi:min(N, nxf)
@@ -239,20 +248,21 @@ function PITrap_triangolo(cache::PITrapCache{iip, T}, nxi::P, nxf::P) where {P <
         for j = nxi:n-1
             Phi = Phi + an[1:alpha_length,n-j+1].*cache.fy[:, j+1]
         end
-        Phi_n = St + halpha2 .*(a0[1:alpha_length, n+1] .* cache.fy[:, 1] + cache.zn[:, n+1] + Phi)
+        Phi_n = St .+ halpha2 .*(a0[1:alpha_length, n+1] .* cache.fy[:, 1] + cache.zn[:, n+1] + Phi)
         
         yn0 = cache.y[:, n]
         fn0 = zeros(T, problem_size); Jfn0 = zeros(T, problem_size, problem_size)
         prob.f(fn0, yn0, p, mesh[n+1])
         Jfn0 = Jf_vectorfield(mesh[n+1], yn0, Jfdefun)
-        Gn0 = yn0 - halpha2 .*fn0 - Phi_n
+        Gn0 = yn0 .- halpha2 .*fn0 .- Phi_n
 
         stop = false; it = 0
         yn1 = similar(yn0)
         fn1 = similar(yn0)
 
         while ~stop
-            JGn0 = zeros(T, problem_size, problem_size)+I - diagm(halpha2)*Jfn0
+            temp = high_order_prob ? diagm([halpha2]) : diagm(halpha2)
+            JGn0 = zeros(T, problem_size, problem_size)+I - temp*Jfn0
             yn1 = yn0 - JGn0\Gn0
             prob.f(fn1, yn1, p, mesh[n+1])
             Gn1 = yn1 - halpha2.*fn1 - Phi_n
@@ -275,12 +285,13 @@ function PITrap_triangolo(cache::PITrapCache{iip, T}, nxi::P, nxf::P) where {P <
 end
 
 function  PITrap_system_starting_term(cache::PITrapCache{iip, T}, t) where {iip, T}
-    @unpack mesh, u0, m_alpha, m_alpha_factorial = cache
+    @unpack mesh, u0, m_alpha, m_alpha_factorial, high_order_prob = cache
     t0 = mesh[1]
-    ys = zeros(length(u0))
+    u0 = high_order_prob ? reshape(u0, 1, length(u0)) : u0
+    ys = zeros(size(u0, 1), 1)
     for k = 1 : maximum(m_alpha)
         if length(m_alpha) == 1
-            ys = ys .+ (t-t0)^(k-1)/m_alpha_factorial[k]*u0[k]
+            ys = ys .+ (t-t0)^(k-1)/m_alpha_factorial[k]*u0[:, k]
         else
             i_alpha = findall(x -> x>=k, m_alpha)
             ys[i_alpha] = ys[i_alpha] + (t-t0)^(k-1)*u0[i_alpha, k]./m_alpha_factorial[i_alpha, k]

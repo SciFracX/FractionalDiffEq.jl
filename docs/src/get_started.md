@@ -44,7 +44,7 @@ First, we need to specify the problem we want to solve. Just by passing the para
 ```julia
 using FractionalDiffEq
 fun(u, p, t) = 1-u
-α = 1.8; u0 = [0, 0]; tspan = (0, 20); h = 0.01;
+α = 1.8; u0 = [0, 0]; tspan = (0, 20); dt = 0.01;
 prob = FODEProblem(fun, α, u0, tspan)
 ```
 
@@ -55,14 +55,14 @@ The ```FODEProblem``` is a class of fractional differential equations, describin
 After defining a problem, we can solve it by calling the ```solve``` function:
 
 ```julia
-sol = solve(prob, h, Alg())
+sol = solve(prob, Alg(), dt=0.01)
 ```
 
-Note that there are different algorithms for differential fractional differential equations, such as FODE, FDDE and DODE, we need to choose a suitable algorithm for specific problem. For all the algorithms, please refer to [algorithms documentation](@ref algorithms).
+Note that there are different algorithms for differential fractional differential equations, such as FODE, FDDE and DODE, we need to choose a suitable algorithm for a specific problem. For all the algorithms, please refer to [the algorithms documentation](@ref algorithms).
 
-## Step3 : Analyzing the Solution
+## Step 3: Analyzing the Solution
 
-Simply call plot to visualize the solution:
+Simply call the Plots.jl to visualize the solution:
 
 ```julia
 using Plots

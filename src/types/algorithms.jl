@@ -189,6 +189,10 @@ Explicit product integral method for initial value problems of fractional order 
 """
 struct PIEX <: FODEAlgorithm end
 
+struct PITrap <: FODEAlgorithm end
+
+struct PIRect <: FODEAlgorithm end
+
 ###################### FDDE ######################
 
 """
