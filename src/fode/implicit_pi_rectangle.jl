@@ -1,4 +1,4 @@
-@concrete mutable struct PIIMRectCache{iip, T}
+@concrete mutable struct PIRectCache{iip, T}
     prob
     alg
     mesh
@@ -26,25 +26,26 @@
     maxiters
     index_fft
     bn_fft
+    high_order_prob
 
     kwargs
 end
 
-Base.eltype(::PIIMRectCache{iip, T}) where {iip, T} = T
+Base.eltype(::PIRectCache{iip, T}) where {iip, T} = T
 
-struct PIIMRect <: FODEAlgorithm end
-
-function SciMLBase.__init(prob::FODEProblem, alg::PIIMRect; dt = 0.0, abstol = 1e-6, maxiters = 1000, kwargs...)
+function SciMLBase.__init(prob::FODEProblem, alg::PIRect; dt = 0.0, abstol = 1e-6, maxiters = 1000, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     prob = _is_need_convert!(prob)
     @unpack f, order, u0, tspan, p = prob
     t0 = tspan[1]; tfinal = tspan[2]
     T = eltype(u0)
     iip = isinplace(prob)
-    order = order[:]
 
     alpha_length = length(order)
-    problem_size = length(u0)
+    order = (alpha_length == 1) ? order : order[:]
+    problem_size = length(order)
+    u0_size = length(u0)
+    high_order_prob = problem_size !== u0_size
 
     m_alpha = ceil.(Int, order)
     m_alpha_factorial = zeros(alpha_length, maximum(m_alpha))
@@ -53,9 +54,6 @@ function SciMLBase.__init(prob::FODEProblem, alg::PIIMRect; dt = 0.0, abstol = 1
             m_alpha_factorial[i, j+1] = factorial(j)
         end
     end
-
-    f_temp = zeros(length(u0[:, 1]))
-    f(f_temp, u0[:, 1], p, t0)
 
     r = 16
     N = ceil(Int64, (tfinal-t0)/dt)
@@ -76,8 +74,12 @@ function SciMLBase.__init(prob::FODEProblem, alg::PIIMRect; dt = 0.0, abstol = 1
     bn = zeros(alpha_length, NNr+1)
     for i_alpha = 1:alpha_length
         find_alpha = Float64[]
-        if order[i_alpha] == order[1:i_alpha-1]
-            push!(find_alpha, i_alpha)
+        if alpha_length == 1
+            nothing
+        else
+            if order[i_alpha] == order[1:i_alpha-1]
+                push!(find_alpha, i_alpha)
+            end
         end
 
         if isempty(find_alpha) == false
@@ -107,8 +109,12 @@ function SciMLBase.__init(prob::FODEProblem, alg::PIIMRect; dt = 0.0, abstol = 1
             coef_end = 2^l*r
             for i_alpha = 1 : alpha_length
                 find_alpha = Float64[]
-                if order[i_alpha] == order[1:i_alpha-1]
-                    push!(find_alpha, i_alpha)
+                if alpha_length == 1
+                    nothing
+                else
+                    if order[i_alpha] == order[1:i_alpha-1]
+                        push!(find_alpha, i_alpha)
+                    end
                 end
                 if isempty(find_alpha) == false
                     bn_fft[i_alpha, index_fft[1, l]:index_fft[2, l]] = bn_fft[find_alpha[1], index_fft[1, l]:index_fft[2, l]]
@@ -124,23 +130,24 @@ function SciMLBase.__init(prob::FODEProblem, alg::PIIMRect; dt = 0.0, abstol = 1
 
     # Initializing solution and proces of computation
     mesh = t0 .+ collect(0:N)*dt
-    y[:, 1] = u0[:, 1]
-    fy[:, 1] = f_temp
-    return PIIMRectCache{iip, T}(prob, alg, mesh, u0, order, m_alpha, m_alpha_factorial, y, fy, p, problem_size,
-                             zn, Jfdefun, r, N, Nr, Qr, NNr, bn, halpha1, abstol, maxiters, index_fft, bn_fft, kwargs)
+    y[:, 1] = high_order_prob ? u0[1, :] : u0
+    temp = high_order_prob ? similar(u0[1, :]) : similar(u0)
+    f(temp, u0, p, t0)
+    fy[:, 1] = temp
+    return PIRectCache{iip, T}(prob, alg, mesh, u0, order, m_alpha, m_alpha_factorial, y, fy, p, problem_size,
+                             zn, Jfdefun, r, N, Nr, Qr, NNr, bn, halpha1, abstol, maxiters, index_fft, bn_fft, high_order_prob, kwargs)
 end
-function SciMLBase.solve!(cache::PIIMRectCache{iip, T}) where {iip, T}
+function SciMLBase.solve!(cache::PIRectCache{iip, T}) where {iip, T}
     @unpack prob, alg, mesh, u0, order, y, fy, r, N, Nr, Qr, NNr, bn, halpha1, abstol, index_fft, bn_fft, kwargs = cache
-    t0 = mesh[1]
     tfinal = mesh[end]
-    PIIMRect_triangolo(cache, 1, r-1)
+    PIRect_triangolo(cache, 1, r-1)
 
     # Main process of computation by means of the FFT algorithm
     ff = zeros(1, 2^(Qr+2)); ff[1:2] = [0; 2] ; card_ff = 2
     nx0 = 0; ny0 = 0
     for qr = 0 : Qr
         L = 2^qr 
-        PIIMRect_disegna_blocchi(cache, L, ff, nx0+L*r, ny0)
+        PIRect_disegna_blocchi(cache, L, ff, nx0+L*r, ny0)
         ff[1:2*card_ff] = [ff[1:card_ff]; ff[1:card_ff]] 
         card_ff = 2*card_ff
         ff[card_ff] = 4*L
@@ -160,7 +167,7 @@ function SciMLBase.solve!(cache::PIIMRectCache{iip, T}) where {iip, T}
 end
 
 
-function PIIMRect_disegna_blocchi(cache::PIIMRectCache{iip, T}, L::P, ff, nx0::P, ny0::P) where {P <: Integer, iip, T}
+function PIRect_disegna_blocchi(cache::PIRectCache{iip, T}, L::P, ff, nx0::P, ny0::P) where {P <: Integer, iip, T}
     @unpack mesh, N, r, Nr = cache
 
     nxi::Int = nx0; nxf::Int = nx0 + L*r - 1
@@ -176,8 +183,8 @@ function PIIMRect_disegna_blocchi(cache::PIIMRectCache{iip, T}, L::P, ff, nx0::P
     while stop == false
         stop = (nxi+r-1 == nx0+L*r-1) || (nxi+r-1>=Nr-1)
         
-        PIIMRect_quadrato(cache, nxi, nxf, nyi, nyf)
-        PIIMRect_triangolo(cache, nxi, nxi+r-1)
+        PIRect_quadrato(cache, nxi, nxf, nyi, nyf)
+        PIRect_triangolo(cache, nxi, nxi+r-1)
         i_triangolo = i_triangolo + 1
         
         if stop == false
@@ -196,7 +203,7 @@ function PIIMRect_disegna_blocchi(cache::PIIMRectCache{iip, T}, L::P, ff, nx0::P
     end
 end
 
-function PIIMRect_quadrato(cache::PIIMRectCache{iip, T}, nxi::P, nxf::P, nyi::P, nyf::P) where {P <: Integer, iip, T}
+function PIRect_quadrato(cache::PIRectCache{iip, T}, nxi::P, nxf::P, nyi::P, nyf::P) where {P <: Integer, iip, T}
     @unpack prob, mesh, r, N, Nr, Qr, NNr, problem_size, bn, halpha1, abstol, index_fft, bn_fft = cache
     coef_end = nxf-nyi+1
     alpha_length = length(prob.order)
@@ -224,13 +231,13 @@ end
 
 
 
-function PIIMRect_triangolo(cache::PIIMRectCache{iip, T}, nxi::P, nxf::P) where {P <: Integer, iip, T}
-    @unpack prob, mesh, u0, order, m_alpha, m_alpha_factorial, p, problem_size, zn, Jfdefun, N, bn, halpha1, abstol, maxiters, index_fft, bn_fft = cache
+function PIRect_triangolo(cache::PIRectCache{iip, T}, nxi::P, nxf::P) where {P <: Integer, iip, T}
+    @unpack prob, mesh, u0, order, m_alpha, m_alpha_factorial, p, problem_size, zn, Jfdefun, N, bn, halpha1, abstol, maxiters, index_fft, bn_fft, high_order_prob = cache
 
     alpha_length = length(order)
     for n = nxi:min(N, nxf)
         n1 = n+1
-        St = PIIMRect_system_starting_term(cache, mesh[n+1])
+        St = PIRect_system_starting_term(cache, mesh[n+1])
         # Evaluation of the predictor
         Phi = zeros(problem_size, 1)
         for j = nxi:n-1
@@ -250,7 +257,8 @@ function PIIMRect_triangolo(cache::PIIMRectCache{iip, T}, nxi::P, nxf::P) where 
         yn1 = similar(yn0)
         fn1 = similar(yn0)
         while ~stop
-            JGn0 = zeros(T, problem_size, problem_size)+I - diagm(halpha1)*Jfn0
+            temp = high_order_prob ? diagm([halpha1]) : diagm(halpha1)
+            JGn0 = zeros(T, problem_size, problem_size)+I - temp*Jfn0
             yn1 = yn0 - JGn0\Gn0
             prob.f(fn1, yn1, p, mesh[n+1])
             Gn1 = yn1 - halpha1.*fn1 - Phi_n
@@ -272,13 +280,14 @@ function PIIMRect_triangolo(cache::PIIMRectCache{iip, T}, nxi::P, nxf::P) where 
     end
 end
 
-function  PIIMRect_system_starting_term(cache::PIIMRectCache{iip, T}, t) where {iip, T}
-    @unpack mesh, u0, m_alpha, m_alpha_factorial = cache
+function  PIRect_system_starting_term(cache::PIRectCache{iip, T}, t) where {iip, T}
+    @unpack mesh, u0, m_alpha, m_alpha_factorial, high_order_prob = cache
     t0 = mesh[1]
-    ys = zeros(length(u0))
+    u0 = high_order_prob ? reshape(u0, 1, length(u0)) : u0
+    ys = zeros(size(u0, 1), 1)
     for k = 1 : maximum(m_alpha)
         if length(m_alpha) == 1
-            ys = ys .+ (t-t0)^(k-1)/m_alpha_factorial[k]*u0[k]
+            ys = ys .+ (t-t0)^(k-1)/m_alpha_factorial[k]*u0[:, k]
         else
             i_alpha = findall(x -> x>=k, m_alpha)
             ys[i_alpha] = ys[i_alpha] + (t-t0)^(k-1)*u0[i_alpha, k]./m_alpha_factorial[i_alpha, k]

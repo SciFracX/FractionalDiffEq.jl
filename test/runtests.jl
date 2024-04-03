@@ -1,5 +1,5 @@
 using FractionalDiffEq, SpecialFunctions, SciMLBase
-using Test
+using Test, LinearAlgebra
 
 function test_sol(sol::SciMLBase.AbstractODESolution)
     return transpose(mapreduce(permutedims, vcat, sol.u))

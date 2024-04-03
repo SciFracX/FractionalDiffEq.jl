@@ -6,32 +6,28 @@ Pages = ["algorithms.md"]
 
 ## Fractional Ordinary Differential Equations
 
-### Single Term FODE
-
-PECE
-Euler
-PIEX
-AtanganaSeda
-
-
 ### Multi-Term FODE
 
 MatrixDiscrete
 ClosedForm
 ClosedFormHankelM
-PIPECE
-PIRect
-PITrap
+MTPIEX
+MTPIPECE
+MTPIRect
+MTPITrap
 
 ### System of FODE
 
 NonLinearAlg
+Euler
 PECE
 GL
-FLMMBDF
-FLMMNewtonGregory
-FLMMTrap
+BDF
+NewtonGregory
+Trapezoid
 PIEX
+PIRect
+PITrap
 NewtonPolynomial
 AtanganaSedaAB
 

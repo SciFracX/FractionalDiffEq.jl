@@ -47,7 +47,6 @@ function SciMLBase.__init(prob::FODEProblem, alg::Trapezoid;
     iip = isinplace(prob)
     all(x->x==order[1], order) ? nothing : throw(ArgumentError("BDF method is only for commensurate order FODE"))
     alpha = order[1] # commensurate ordre FODE
-    (alpha > 1.0) && throw(ArgumentError("BDF method is only for order <= 1.0"))
 
     m_alpha = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))

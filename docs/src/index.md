@@ -24,8 +24,8 @@ pkg> add FractionalDiffEq
 While most fractional differential equations solvers are implemented using Matlab, **FractionalDiffEq.jl** is totally driven by [Julia](https://julialang.org/) and licensed with [MIT License](https://en.wikipedia.org/wiki/MIT_License), ensuring its everlasting development and open source. Benefit from the advancing features of JuliaLang, FractionalDiffEq.jl has impressive performance and high speed, helps the computing more efficient and robust. Also fractionalDiffEq.jl has the most solvers for FDE available.
 
 * Fractional ordinary differential equations(FODE), single-term FODE, Multi-term FODE, nonlinear system of FODE(Caputo sense, Caputo-Fabrizio sense, Atangana-Baleanu sense, etc), variable order FODE.
-* Fractional delay differential equations(FDDE), single lag FDDE, multiple lags FDDE, time varying lags FDDE, variable order FDDE, nonlinear system of FDDE.
-* Fractional difference equations, single-term fractional difference equations and nonlinear system of fractional difference equations.
+* Fractional delay differential equations(FDDE), single lag FDDE, multiple lags FDDE, time-varying lags FDDE, variable order FDDE, nonlinear system of FDDE.
+* Fractional difference equations, single-term fractional difference equations and nonlinear systems of fractional difference equations.
 * Distributed order differential equations(DODE), single-term DODE and multi-term DODE.
 * Fractional integral equations(FIE)
 
