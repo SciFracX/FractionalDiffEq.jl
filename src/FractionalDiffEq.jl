@@ -39,7 +39,7 @@ include("fode/explicit_pi.jl")
 include("fode/implicit_pi_rectangle.jl")
 include("fode/implicit_pi_trapzoid.jl")
 include("fode/grunwald_letnikov.jl")
-include("fode/NonLinear.jl")
+include("fode/nonlinearalg.jl")
 include("fode/newton_polynomials.jl")
 include("fode/atangana_seda.jl")
 
@@ -47,10 +47,10 @@ include("fode/atangana_seda.jl")
 include("ffode/atangana_seda.jl")
 
 # Fractional delay differential equations
-include("delay/DelayPECE.jl")
+include("delay/pece.jl")
 include("delay/product_integral.jl")
 include("delay/matrix_form.jl")
-include("delay/DelayABM.jl")
+include("delay/abm.jl")
 
 # Distributed order differential equations
 include("dode/utils.jl")
