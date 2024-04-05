@@ -152,7 +152,7 @@ end
 
 function SciMLBase.solve!(cache::PECECache{iip, T}) where {iip, T}
     @unpack prob, alg, mesh, u0, order, y, fy, zn_pred, zn_corr, r, N, Nr, Qr, NNr, an, bn, a0, halpha1, halpha2, mu, abstol, index_fft, an_fft, bn_fft, kwargs = cache
-    t0 = mesh[1]; tfinal = mesh[N+1]
+    tfinal = mesh[N+1]
     ABM_triangolo(cache, 1, r-1)
 
     # Main process of computation by means of the FFT algorithm
