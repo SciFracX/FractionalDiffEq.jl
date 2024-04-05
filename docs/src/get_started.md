@@ -2,7 +2,7 @@
 
 We would use a simple example -- [Relaxation Oscillation Process](https://encyclopediaofmath.org/wiki/Relaxation_oscillation) to show you how to use FractionalDiffEq.jl to solve fractional differential equations.🙂
 
-The mathematical model of the fractional order Relaxation Oscillation can be abstracted as an IVP:
+The mathematical model of the fractional order relaxation oscillation can be abstracted as an IVP:
 
 ```math
 D^{1.8}y(t)+y(t)=1,\ (t>0)
@@ -39,7 +39,7 @@ To provide users with a simple way to solve fractional differential equations, w
 
 ## Step 1: Defining a Problem
 
-First, we need to specify the problem we want to solve. Just by passing the parameters —— describing function, orders, initial condition and time span:
+First, we need to specify the problem we want to solve. Just by passing the parameters —— describing function, orders, initial condition and time span to construct a fractional ordinary differential equation problem:
 
 ```julia
 using FractionalDiffEq
@@ -52,13 +52,13 @@ The ```FODEProblem``` is a class of fractional differential equations, describin
 
 ## Step 2: Solving a Problem
 
-After defining a problem, we can solve it by calling the ```solve``` function:
+After defining a problem, we can solve it by choosing a numerical algorithm and calling the ```solve``` function:
 
 ```julia
 sol = solve(prob, Alg(), dt=0.01)
 ```
 
-Note that there are different algorithms for differential fractional differential equations, such as FODE, FDDE and DODE, we need to choose a suitable algorithm for a specific problem. For all the algorithms, please refer to [the algorithms documentation](@ref algorithms).
+Note that there are different algorithms for different fractional differential equations, such as FODE, FDDE and DODE, we need to choose a suitable algorithm for a specific problem. For all the algorithms, please refer to [the algorithms documentation](@ref algorithms).
 
 ## Step 3: Analyzing the Solution
 
