@@ -2,8 +2,6 @@ using BenchmarkTools: BenchmarkTools, BenchmarkGroup, @btime, @benchmarkable
 using FractionalDiffEq
 using Statistics: median
 
-@info sprint(versioninfo)
-
 const SUITE = BenchmarkGroup()
 
 α = [0.8, 0.8]
