@@ -13,7 +13,7 @@ function Brusselator!(du, u, p, t)
     du[2] = μ*u[1]-(u[1])^2*u[1]
 end
 
-prob = FODESystem(Brusselator!, α, u0, (0, 20))
+prob = FODEProblem(Brusselator!, α, u0, (0, 20))
 
 SUITE["FLMM"]["BDF"] = @benchmarkable solve(prob, BDF(), dt=0.01)
 SUITE["FLMM"]["Trapezoid"] = @benchmarkable solve(prob, Trapezoid(), dt=0.01)
