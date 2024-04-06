@@ -238,9 +238,10 @@ function NG_first_approximations(cache::NewtonGregoryCache{iip, T}) where {iip, 
     end
     stop = false; it = 0
     F1 = zeros(s*problem_size, 1)
+    Y1 = similar(Y0)
     while ~stop
         JG = Ims - W*JF
-        global Y1 = Y0 - JG\G0
+        Y1 = Y0 - JG\G0
         
         for j = 1 : s
             temp = zeros(length(Y1[(j-1)*problem_size+1:j*problem_size, 1]))
