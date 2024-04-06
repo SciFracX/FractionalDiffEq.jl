@@ -15,7 +15,10 @@ concurrency:
 
 jobs:
   benchmark:
-    permissions: write-all
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
