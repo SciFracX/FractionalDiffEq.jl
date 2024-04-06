@@ -48,8 +48,6 @@ function SciMLBase.__init(prob::FODEProblem, alg::NewtonGregory;
     all(x->x==order[1], order) ? nothing : throw(ArgumentError("BDF method is only for commensurate order FODE"))
     alpha = order[1] # commensurate ordre FODE
 
-    #Jfdefun(t, u) = jacobian_of_fdefun(f, t, u, p)
-
     m_alpha = ceil.(Int, alpha)
     m_alpha_factorial = factorial.(collect(0:m_alpha-1))
     problem_size = length(order)
@@ -92,14 +90,14 @@ function SciMLBase.solve!(cache::NewtonGregoryCache{iip, T}) where {iip, T}
 
     NG_first_approximations(cache)
     NG_triangolo(cache, s+1, r-1, 0)
-    
+
     # Main process of computation by means of the FFT algorithm
     nx0::Int = 0; ny0::Int = 0
     ff = zeros(1, 2^(Q+2), 1)
     ff[1:2] = [0 2]
     for q = 0:Q
         L = Int64(2^q)
-        NG_disegna_blocchi(cache, L, ff, nx0+L*r, ny0)
+        NG_disegna_blocchi!(cache, L, ff, nx0+L*r, ny0)
         ff[1:4*L] = [ff[1:2*L]; ff[1:2*L-1]; 4*L]
     end
     # Evaluation solution in TFINAL when TFINAL is not in the mesh
@@ -115,7 +113,7 @@ function SciMLBase.solve!(cache::NewtonGregoryCache{iip, T}) where {iip, T}
 end
 
 
-function NG_disegna_blocchi(cache::NewtonGregoryCache{iip, T}, L::P, ff, nx0::P, ny0) where {P <: Integer, iip, T}
+function NG_disegna_blocchi!(cache::NewtonGregoryCache{iip, T}, L::P, ff, nx0::P, ny0) where {P <: Integer, iip, T}
     @unpack mesh, y, fy, zn, abstol, maxiters, r, Nr, N, Jfdefun, s, w, omega, halpha, u0 = cache
     nxi::Int = copy(nx0); nxf::Int = copy(nx0 + L*r - 1)
     nyi::Int = copy(ny0); nyf::Int = copy(ny0 + L*r - 1)
@@ -133,21 +131,19 @@ function NG_disegna_blocchi(cache::NewtonGregoryCache{iip, T}, L::P, ff, nx0::P,
         i_triangolo = i_triangolo + 1
         
         if ~stop
-            if nxi+r-1 == nxf   # Il triangolo finisce dove finisce il quadrato -> si scende di livello
+            if nxi+r-1 == nxf
                 i_Delta = ff[i_triangolo]
                 Delta = i_Delta*r
                 nxi = s_nxf[is]+1; nxf = s_nxf[is] + Delta
                 nyi = s_nxf[is] - Delta +1; nyf = s_nxf[is]
                 s_nxi[is] = nxi; s_nxf[is] = nxf; s_nyi[is] = nyi; s_nyf[is] = nyf
-            else # Il triangolo finisce prima del quadrato -> si fa un quadrato accanto
+            else
                 nxi = nxi + r ; nxf = nxi + r - 1 ; nyi = nyf + 1 ; nyf = nyf + r
                 is = is + 1
                 s_nxi[is] = nxi ; s_nxf[is] = nxf ; s_nyi[is] = nyi ; s_nyf[is] = nyf
             end
         end
-        
     end
-    return y, fy
 end
 
 function NG_quadrato(cache::NewtonGregoryCache{iip, T}, nxi::P, nxf::P, nyi::P, nyf::P) where {P <: Integer, iip, T}
