@@ -143,7 +143,6 @@ end
 
 function SciMLBase.solve!(cache::PITrapCache{iip, T}) where {iip, T}
     @unpack prob, alg, mesh, u0, order, y, fy, r, N, Nr, Qr, NNr, an, a0, halpha2, abstol, index_fft, an_fft, kwargs = cache
-    t0 = mesh[1]
     tfinal = mesh[end]
     PITrap_triangolo(cache, 1, r-1)
 
