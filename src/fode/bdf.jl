@@ -238,9 +238,10 @@ function BDF_first_approximations(cache::BDFCache{iip, T}) where {iip, T}
     end
     stop = false; it = 0
     F1 = zeros(T, s*problem_size, 1)
+    Y1 = similar(Y0)
     while ~stop
         JG = Ims - W*JF
-        global Y1 = Y0 - JG\G0
+        Y1 = Y0 - JG\G0
         
         for j = 1 : s
             temp = zeros(T, length(Y1[(j-1)*problem_size+1:j*problem_size, 1]))
