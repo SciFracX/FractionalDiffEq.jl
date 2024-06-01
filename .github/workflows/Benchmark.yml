@@ -13,12 +13,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 
-jobs:
-  benchmark:
-    permissions:
+permissions:
       contents: write
       pull-requests: write
+      deployments: write
       repository-projects: write
+
+jobs:
+  benchmark:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
