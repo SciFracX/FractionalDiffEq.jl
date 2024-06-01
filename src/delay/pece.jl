@@ -95,7 +95,7 @@ function SciMLBase.solve!(cache::DelayPECECache{iip, T}) where {iip, T}
             if iip
                 tmp = zeros(length(cache.yp[1]))
                 prob.f(tmp, cache.y[j], v(cache, j), p, mesh[j])
-                cache.yp[n+1] = cache.yp[n+1]+generalized_binomials(j-1, n-1, order, dt)*tmp
+                cache.yp[n+1] = cache.yp[n+1] + generalized_binomials(j-1, n-1, order, dt)*tmp
             else
                 length(u0) == 1 ? (tmp = prob.f(cache.y[j][1], v(cache, j)[1], p, mesh[j])) : (tmp = prob.f(cache.y[j], v(cache, j), p, mesh[j]))
                 @. cache.yp[n+1] = cache.yp[n+1] + generalized_binomials(j-1, n-1, order, dt)*tmp
