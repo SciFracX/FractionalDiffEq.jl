@@ -1,8 +1,8 @@
 module FractionalDiffEq
 
 using LinearAlgebra, Reexport, SciMLBase, SpecialFunctions, SparseArrays, ToeplitzMatrices,
-        FFTW, RecipesBase, ForwardDiff, Polynomials, TruncatedStacktraces,
-        HypergeometricFunctions, DiffEqBase, ConcreteStructs
+      FFTW, RecipesBase, ForwardDiff, Polynomials, TruncatedStacktraces,
+      HypergeometricFunctions, DiffEqBase, ConcreteStructs
 
 import SciMLBase: __solve
 import DiffEqBase: solve
@@ -69,7 +69,8 @@ include("mlfun.jl")
 include("utils.jl")
 include("auxiliary.jl")
 
-function __solve(prob::MultiTermsFODEProblem, alg::MultiTermsFODEAlgorithm, args...; kwargs...)
+function __solve(
+        prob::MultiTermsFODEProblem, alg::MultiTermsFODEAlgorithm, args...; kwargs...)
     cache = init(prob, alg, args...; kwargs...)
     return solve!(cache)
 end
@@ -91,14 +92,13 @@ export FDEProblem
 export FDDEProblem, FDDESystem, FDDEMatrixProblem
 
 # FODE problems
-export FODEProblem, MultiTermsFODEProblem, DODEProblem, FFPODEProblem, FFEODEProblem, FFMODEProblem
+export FODEProblem, MultiTermsFODEProblem, DODEProblem, FFPODEProblem, FFEODEProblem,
+       FFMODEProblem
 
 # Fractional Discrete probelms
 export FractionalDiscreteProblem, FractionalDiscreteSystem
 
-
 ###################################################
-
 
 export AbstractFDESolution
 export FODESolution, FDifferenceSolution, DODESolution, FFMODESolution

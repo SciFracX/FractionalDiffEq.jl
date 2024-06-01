@@ -8,7 +8,7 @@ function ϕ(x)
     end
 end
 
-f(t, y, ϕ) = 3.5*y*(1-ϕ/19)
+f(t, y, ϕ) = 3.5 * y * (1 - ϕ / 19)
 
 h = 0.05
 α = 0.97
@@ -18,4 +18,4 @@ fddeprob = FDDEProblem(f, ϕ, α, τ, T)
 V, y = solve(fddeprob, h, DelayPECE())
 
 using Plots
-plot(y, V, xlabel="y(t)", ylabel="y(t-τ)")
+plot(y, V, xlabel = "y(t)", ylabel = "y(t-τ)")

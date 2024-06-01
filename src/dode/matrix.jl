@@ -18,7 +18,6 @@ Use distributed order strip matrix algorithm to solve distriubted order problem.
 """
 struct DOMatrixDiscrete <: DODEAlgorithm end
 
-
 isFunction(x) = isa(x, Function) ? true : false
 
 function solve(prob::DODEProblem, h, ::DOMatrixDiscrete)
@@ -39,16 +38,16 @@ function solve(prob::DODEProblem, h, ::DOMatrixDiscrete)
 
     # Construct systems using matrices
     for (i, j) in zip(modifiedparameters, modifiedorders)
-        equation += i*D(N, j, h)
+        equation += i * D(N, j, h)
     end
 
     # Don't forget the distributed order term!
-    equation += ω.*DOB(ϕ, interval, 0.01, N, h)
+    equation += ω .* DOB(ϕ, interval, 0.01, N, h)
 
-    F = eliminator(N, rows)*(rightfun.(tspan).+ic_handling(orders, parameters, u0))
-    M = eliminator(N, rows)*equation*eliminator(N, rows)'
+    F = eliminator(N, rows) * (rightfun.(tspan) .+ ic_handling(orders, parameters, u0))
+    M = eliminator(N, rows) * equation * eliminator(N, rows)'
 
-    Y = M\F
+    Y = M \ F
 
     if typeof(u0) <: Number
         Y0 = Y
@@ -56,14 +55,14 @@ function solve(prob::DODEProblem, h, ::DOMatrixDiscrete)
         Y0 = [zeros(length(u0)); Y]
     end
     #Y0 = [u0[:]; Y]
-    return DODESolution(tspan, Y0.+u0[1])
+    return DODESolution(tspan, Y0 .+ u0[1])
 end
 
 function ic_handling(orders, parameters, initialcondition)
     if typeof(initialcondition) <: Number
         zerosordersid = findall(x -> x == 0, orders)
         zerosorderparameter = (parameters[zerosordersid])[1]
-        return -zerosorderparameter*initialcondition
+        return -zerosorderparameter * initialcondition
     else
         return initialcondition[1]# Need to be done in FODEMatrixDiscrete
     end

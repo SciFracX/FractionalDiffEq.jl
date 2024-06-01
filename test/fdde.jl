@@ -6,23 +6,25 @@
             return 19.0
         end
     end
-    
-    f(y, ϕ, p, t) = 3.5*y*(1-ϕ/19)
-    
+
+    f(y, ϕ, p, t) = 3.5 * y * (1 - ϕ / 19)
+
     dt = 0.2
     α = 0.97
     τ = [0.8]
     u0 = 19.00001
     tspan = (0.0, 1.0)
     fddeprob = FDDEProblem(f, α, u0, h, constant_lags = τ, tspan)
-    sol = solve(fddeprob, DelayPECE(), dt=dt)
+    sol = solve(fddeprob, DelayPECE(), dt = dt)
 
-    @test isapprox(test_sol(sol)', [19.00001
-    19.00001
-    19.00001
-    19.00001
-    19.000006224428567
-    18.999998984089164]; atol=1e-7)
+    @test isapprox(test_sol(sol)',
+        [19.00001
+         19.00001
+         19.00001
+         19.00001
+         19.000006224428567
+         18.999998984089164];
+        atol = 1e-7)
 end
 
 @testset "Test DelayPECE method with single constant lag with variable order" begin
@@ -33,27 +35,29 @@ end
             return 19.0
         end
     end
-    
-    f(y, ϕ, p, t) = 3.5*y*(1-ϕ/19)
+
+    f(y, ϕ, p, t) = 3.5 * y * (1 - ϕ / 19)
     dt = 0.01
-    alpha(t) = 0.99-(0.01/100)*t
+    alpha(t) = 0.99 - (0.01 / 100) * t
     τ = [0.8]
     tspan = (0.0, 1.0)
     u0 = 19.00001
     fddeprob = FDDEProblem(f, [alpha], u0, h, constant_lags = τ, tspan)
-    sol = solve(fddeprob, DelayPECE(), dt=dt)
+    sol = solve(fddeprob, DelayPECE(), dt = dt)
 
-    @test isapprox(test_sol(sol)'[end-10:end], [19.000006225431903
-    19.00000586970618
-    19.000005514290276
-    19.000005159159087
-    19.000004804291258
-    19.000004449668406
-    19.00000409527454
-    19.000003741095618
-    19.00000338711922
-    19.000003033334277
-    19.000002679730862]; atol=1e-7)
+    @test isapprox(test_sol(sol)'[(end - 10):end],
+        [19.000006225431903
+         19.00000586970618
+         19.000005514290276
+         19.000005159159087
+         19.000004804291258
+         19.000004449668406
+         19.00000409527454
+         19.000003741095618
+         19.00000338711922
+         19.000003033334277
+         19.000002679730862];
+        atol = 1e-7)
 end
 
 @testset "Test DelayPECE method with single time varying lag" begin
@@ -64,30 +68,32 @@ end
             return 19.0
         end
     end
-    
+
     function f(y, ϕ, p, t)
-        return 3.5*y*(1-ϕ/19)
+        return 3.5 * y * (1 - ϕ / 19)
     end
-    
+
     dt = 0.01
     alpha = 0.97
     u0 = 19.00001
     τ(t) = 0.8
     tspan = (0.0, 1.0)
     fddeprob = FDDEProblem(f, alpha, u0, h, constant_lags = [τ], tspan)
-    sol = solve(fddeprob, DelayPECE(), dt=dt)
+    sol = solve(fddeprob, DelayPECE(), dt = dt)
 
-    @test isapprox(test_sol(sol)'[end-10:end], [19.000006018940965
-    19.000005651668022
-    19.000005285353794
-    19.000004919919107
-    19.000004555296744
-    19.000004191428914
-    19.00000382826542
-    19.000003465762248
-    19.000003103880502
-    19.00000274258556
-    19.00000238184641]; atol=1e-8)
+    @test isapprox(test_sol(sol)'[(end - 10):end],
+        [19.000006018940965
+         19.000005651668022
+         19.000005285353794
+         19.000004919919107
+         19.000004555296744
+         19.000004191428914
+         19.00000382826542
+         19.000003465762248
+         19.000003103880502
+         19.00000274258556
+         19.00000238184641];
+        atol = 1e-8)
 end
 
 @testset "Test Product Integral method" begin
@@ -99,7 +105,7 @@ end
         end
     end
     function f(y, ϕ, p, t)
-        return 3.5*y*(1-ϕ/19)
+        return 3.5 * y * (1 - ϕ / 19)
     end
     τ = [0.8]
     order = 0.97
@@ -107,8 +113,9 @@ end
     tspan = (0.0, 2.0)
     dt = 0.5
     prob = FDDEProblem(f, order, u0, ϕ, constant_lags = τ, tspan)
-    sol = solve(prob, DelayPIEX(), dt=dt)
-    @test isapprox(test_sol(sol)', [19.00001, 19.00001, 19.00001, 18.99999190949352, 18.99997456359874]; atol=1e-3)
+    sol = solve(prob, DelayPIEX(), dt = dt)
+    @test isapprox(test_sol(sol)',
+        [19.00001, 19.00001, 19.00001, 18.99999190949352, 18.99997456359874]; atol = 1e-3)
 end
 #DelayABM todo
 #=
@@ -214,7 +221,7 @@ end
     fun(t, y, ϕ1, ϕ2) = 2*ϕ1/(1+ϕ2^9.65)-y
     prob = FDDEProblem(fun, ϕ, α, τ, 5)
     delayed, y = solve(prob, 0.5, DelayPECE())
-    
+
     @test isapprox(y, [  0.5
     0.6920978716960207
     1.1225901176125745

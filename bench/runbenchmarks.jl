@@ -9,8 +9,8 @@ u0 = [0.2, 0.03]
 
 function Brusselator!(du, u, p, t)
     a, μ = 1, 4
-    du[1] = a-(μ+1)*u[1]+(u[1])^2*u[2]
-    du[2] = μ*u[1]-(u[1])^2*u[1]
+    du[1] = a - (μ + 1) * u[1] + (u[1])^2 * u[2]
+    return du[2] = μ * u[1] - (u[1])^2 * u[1]
 end
 
 prob = FODEProblem(Brusselator!, α, u0, (0, 20))

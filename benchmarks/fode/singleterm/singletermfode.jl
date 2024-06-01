@@ -1,11 +1,12 @@
 using FractionalDiffEq, Plots
 
-α = 1.8; h = 1e-2
+α = 1.8;
+h = 1e-2;
 
 # Analytical solution
-analytical(x) = x.^1.8 .*mittleff(1.8, 2.8, -x.^1.8)
+analytical(x) = x .^ 1.8 .* mittleff(1.8, 2.8, -x .^ 1.8)
 # Numerical solution
-fun(x, y) = 1-y
+fun(x, y) = 1 - y
 #prob = SingleTermFODEProblem(fun, 1.8, [0, 0], (0, 20))
 prob = SingleTermFODEProblem(fun, α, [0, 0], (0, 20))
 sol1 = solve(prob, h, PECE())

@@ -33,24 +33,21 @@ Base type for fractional order difference equations algorithms.
 """
 abstract type FractionalDiscreteAlgorithm <: AbstractFDEAlgorithm end
 
-
-
-
 ###################### FODE ######################
 
 """
-  BDF
+BDF
 
 [Backward Differentiation Formula](https://en.wikipedia.org/wiki/Backward_differentiation_formula) generated weights fractional linear multi-steps method.
 
 ## References
 
 @article{Garrappa2015TrapezoidalMF,
-  title={Trapezoidal methods for fractional differential equations: Theoretical and computational aspects},
-  author={Roberto Garrappa},
-  journal={ArXiv},
-  year={2015},
-  volume={abs/1912.09878}
+title={Trapezoidal methods for fractional differential equations: Theoretical and computational aspects},
+author={Roberto Garrappa},
+journal={ArXiv},
+year={2015},
+volume={abs/1912.09878}
 }
 """
 struct BDF <: FODEAlgorithm end
@@ -73,7 +70,6 @@ Python version by https://github.com/DClementeL/Grunwald_Letnikov
 # struct GLWithMemory <: FractionalDiffEqAlgorithm end
 struct GL <: FODEAlgorithm end
 
-
 """
     solve(prob::FODEProblem, NewtonGregory(); abstol=1e-3, maxiters=1e3)
 
@@ -82,15 +78,14 @@ struct GL <: FODEAlgorithm end
 ## References
 
 @article{Garrappa2015TrapezoidalMF,
-  title={Trapezoidal methods for fractional differential equations: Theoretical and computational aspects},
-  author={Roberto Garrappa},
-  journal={ArXiv},
-  year={2015},
-  volume={abs/1912.09878}
+title={Trapezoidal methods for fractional differential equations: Theoretical and computational aspects},
+author={Roberto Garrappa},
+journal={ArXiv},
+year={2015},
+volume={abs/1912.09878}
 }
 """
 struct NewtonGregory <: FODEAlgorithm end
-
 
 """
     solve(prob::FODEProblem, dt, NewtonPolynomial())
@@ -98,6 +93,7 @@ struct NewtonGregory <: FODEAlgorithm end
 Solve FODE system using Newton Polynomials methods.
 
 !!! tip
+
     Used for the Caputo Fabrizio fractional differential operators.
 
 ## References
@@ -105,7 +101,6 @@ Solve FODE system using Newton Polynomials methods.
 https://doi.org/10.1016/c2020-0-02711-8
 """
 struct NewtonPolynomial <: FODEAlgorithm end
-
 
 """
 # Usage
@@ -120,7 +115,6 @@ Dingyu Xue, Northeastern University, China ISBN:9787030543981
 """
 struct NonLinearAlg <: FODEAlgorithm end
 
-
 """
     solve(prob::FODEProblem, Trapezoidal(); abstol=1e-3, maxiters=1e3)
 
@@ -129,11 +123,11 @@ Use [Trapezoidal](https://en.wikipedia.org/wiki/Trapezoidal_rule_(differential_e
 ## References
 
 @article{Garrappa2015TrapezoidalMF,
-  title={Trapezoidal methods for fractional differential equations: Theoretical and computational aspects},
-  author={Roberto Garrappa},
-  journal={ArXiv},
-  year={2015},
-  volume={abs/1912.09878}
+title={Trapezoidal methods for fractional differential equations: Theoretical and computational aspects},
+author={Roberto Garrappa},
+journal={ArXiv},
+year={2015},
+volume={abs/1912.09878}
 }
 """
 struct Trapezoid <: FODEAlgorithm end
@@ -144,33 +138,31 @@ struct Trapezoid <: FODEAlgorithm end
 ## References
 
 @inproceedings{Garrappa2018NumericalSO,
-  title={Numerical Solution of Fractional Differential Equations: A Survey and a Software Tutorial},
-  author={Roberto Garrappa},
-  year={2018}
+title={Numerical Solution of Fractional Differential Equations: A Survey and a Software Tutorial},
+author={Roberto Garrappa},
+year={2018}
 }
 """
 struct PECE <: FODEAlgorithm end
 
-
 """
-  AtanganaSedaAB
+AtanganaSedaAB
 
 Solve Atangana-Baleanu fractional order differential equations using Newton Polynomials.
 """
 struct AtanganaSedaAB <: FODEAlgorithm end
 
-
 """
-  MatrixDiscrete
+MatrixDiscrete
 
 [Triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional ordinary differential equations to simple algebra system and solve the system.
 
 ## References
 
 @inproceedings{Podlubny2000MATRIXAT,
-  title={MATRIX APPROACH TO DISCRETE FRACTIONAL CALCULUS},
-  author={Igor Podlubny},
-  year={2000}
+title={MATRIX APPROACH TO DISCRETE FRACTIONAL CALCULUS},
+author={Igor Podlubny},
+year={2000}
 }
 """
 struct MatrixDiscrete <: MultiTermsFODEAlgorithm end
@@ -183,7 +175,7 @@ The classical Euler method extended for fractional order differential equations.
 struct Euler <: FODEAlgorithm end
 
 """
-  PIEX
+PIEX
 
 Explicit product integral method for initial value problems of fractional order differential equations.
 """
@@ -207,44 +199,53 @@ Capable of solving both single term FDDE and multiple FDDE, support time varying
 ## References
 
 @article{Wang2013ANM,
-  title={A Numerical Method for Delayed Fractional-Order Differential Equations},
-  author={Zhen Wang},
-  journal={J. Appl. Math.},
-  year={2013},
-  volume={2013},
-  pages={256071:1-256071:7}
+title={A Numerical Method for Delayed Fractional-Order Differential Equations},
+author={Zhen Wang},
+journal={J. Appl. Math.},
+year={2013},
+volume={2013},
+pages={256071:1-256071:7}
 }
 
 @inproceedings{Nagy2014NUMERICALSF,
-  title={NUMERICAL SIMULATIONS FOR VARIABLE-ORDER FRACTIONAL NONLINEAR DELAY DIFFERENTIAL EQUATIONS},
-  author={Abdelhameed M. Nagy and Taghreed Abdul Rahman Assiri},
-  year={2014}
+title={NUMERICAL SIMULATIONS FOR VARIABLE-ORDER FRACTIONAL NONLINEAR DELAY DIFFERENTIAL EQUATIONS},
+author={Abdelhameed M. Nagy and Taghreed Abdul Rahman Assiri},
+year={2014}
 }
 
 @inproceedings{Abdelmalek2019APM,
-  title={A Predictor-Corrector Method for Fractional Delay-Differential System with Multiple Lags},
-  author={Salem Abdelmalek and Redouane Douaifia},
-  year={2019}
+title={A Predictor-Corrector Method for Fractional Delay-Differential System with Multiple Lags},
+author={Salem Abdelmalek and Redouane Douaifia},
+year={2019}
 }
 """
 struct DelayPECE <: FDDEAlgorithm end
 
 """
-  DelayPIEX
+DelayPIEX
 
 Explicit product integral method for initial value problems of fractional order differential equations.
+
+### References
+
+```tex
+@article{2020,
+ title={On initial conditions for fractional delay differential equations},
+ ISSN={1007-5704},
+ url={http://dx.doi.org/10.1016/j.cnsns.2020.105359},
+ DOI={10.1016/j.cnsns.2020.105359},
+ journal={Communications in Nonlinear Science and Numerical Simulation},
+ author={Garrappa, Roberto and Kaslik, Eva},
+ year={2020},
+}
+```
 """
 struct DelayPIEX <: FDDEAlgorithm end
 
-
-
-
-
 ###################### Multi-terms FODE ######################
 
-
 """
-  MTPIEX
+MTPIEX
 
 Explicit product integral method for initial value problems of fractional order differential equations.
 """

@@ -15,7 +15,8 @@ To define an multi-terms FODE Problem, you simply need to given the parameters, 
 
 Multiple terms fractional order differential equations.
 """
-struct MultiTermsFODEProblem{uType, tType, oType, pType, F, P, K, isinplace} <: SciMLBase.AbstractODEProblem{uType, tType, isinplace}
+struct MultiTermsFODEProblem{uType, tType, oType, pType, F, P, K, isinplace} <:
+       SciMLBase.AbstractODEProblem{uType, tType, isinplace}
     parameters::pType
     orders::oType
     f::F
@@ -26,24 +27,28 @@ struct MultiTermsFODEProblem{uType, tType, oType, pType, F, P, K, isinplace} <: 
     p::P
     kwargs::K
 
-    SciMLBase.@add_kwonly function MultiTermsFODEProblem{iip}(parameters, orders,
-        f::SciMLBase.AbstractODEFunction, rparameters, rorders,
-        u0, tspan, p = SciMLBase.NullParameters();
-        kwargs...) where {iip}
+    SciMLBase.@add_kwonly function MultiTermsFODEProblem{iip}(
+            parameters, orders, f::SciMLBase.AbstractODEFunction, rparameters,
+            rorders, u0, tspan, p = SciMLBase.NullParameters(); kwargs...) where {iip}
         _tspan = SciMLBase.promote_tspan(tspan)
-        new{typeof(u0), typeof(_tspan), typeof(orders), typeof(parameters),
-            typeof(f), typeof(p), typeof(kwargs), iip}(parameters, orders, f, rparameters, rorders, u0, _tspan, p, kwargs)
+        new{typeof(u0), typeof(_tspan), typeof(orders),
+            typeof(parameters), typeof(f), typeof(p), typeof(kwargs), iip}(
+            parameters, orders, f, rparameters, rorders, u0, _tspan, p, kwargs)
     end
 
-    function MultiTermsFODEProblem{iip}(parameters, orders, f, rparameters, rorders, u0, tspan, p = SciMLBase.NullParameters(); kwargs...) where {iip}
-        MultiTermsFODEProblem(parameters, orders, ODEFunction{iip}(f), rparameters, rorders, u0, tspan, p; kwargs...)
+    function MultiTermsFODEProblem{iip}(
+            parameters, orders, f, rparameters, rorders, u0, tspan,
+            p = SciMLBase.NullParameters(); kwargs...) where {iip}
+        MultiTermsFODEProblem(parameters, orders, ODEFunction{iip}(f),
+            rparameters, rorders, u0, tspan, p; kwargs...)
     end
 end
 
-function MultiTermsFODEProblem(parameters, orders, f, u0, tspan, p = SciMLBase.NullParameters(); kwargs... )
-    return MultiTermsFODEProblem{false}(parameters, orders, ODEFunction(f), nothing, nothing, u0, tspan, p; kwargs...)
+function MultiTermsFODEProblem(
+        parameters, orders, f, u0, tspan, p = SciMLBase.NullParameters(); kwargs...)
+    return MultiTermsFODEProblem{false}(
+        parameters, orders, ODEFunction(f), nothing, nothing, u0, tspan, p; kwargs...)
 end
-
 
 """
 Defines an distributed order fractional ordinary differential equation (DODE) problem.
@@ -58,7 +63,8 @@ To define an multi-terms FODE Problem, you simply need to given the parameters, 
 
 Distributed order differential equations.
 """
-struct DODEProblem{uType, tType, oType, pType, F, P, K, isinplace} <: SciMLBase.AbstractODEProblem{uType, tType, isinplace}
+struct DODEProblem{uType, tType, oType, pType, F, P, K, isinplace} <:
+       SciMLBase.AbstractODEProblem{uType, tType, isinplace}
     parameters::pType
     orders::oType
     f::F
@@ -67,24 +73,25 @@ struct DODEProblem{uType, tType, oType, pType, F, P, K, isinplace} <: SciMLBase.
     p::P
     kwargs::K
 
-    SciMLBase.@add_kwonly function DODEProblem{iip}(parameters, orders,
-        f::SciMLBase.AbstractODEFunction, rparameters, rorders,
-        u0, tspan, p = SciMLBase.NullParameters();
-        kwargs...) where {iip}
+    SciMLBase.@add_kwonly function DODEProblem{iip}(
+            parameters, orders, f::SciMLBase.AbstractODEFunction, rparameters,
+            rorders, u0, tspan, p = SciMLBase.NullParameters(); kwargs...) where {iip}
         _tspan = SciMLBase.promote_tspan(tspan)
-        new{typeof(u0), typeof(_tspan), typeof(orders), typeof(parameters),
-            typeof(f), typeof(p), typeof(kwargs), iip}(parameters, orders, f, rparameters, rorders, u0, _tspan, p, kwargs)
+        new{typeof(u0), typeof(_tspan), typeof(orders),
+            typeof(parameters), typeof(f), typeof(p), typeof(kwargs), iip}(
+            parameters, orders, f, rparameters, rorders, u0, _tspan, p, kwargs)
     end
 
-    function DODEProblem{iip}(parameters, orders, f, u0, tspan, p = SciMLBase.NullParameters(); kwargs...) where {iip}
+    function DODEProblem{iip}(parameters, orders, f, u0, tspan,
+            p = SciMLBase.NullParameters(); kwargs...) where {iip}
         DODEProblem(parameters, orders, ODEFunction{iip}(f), u0, tspan, p; kwargs...)
     end
 end
 
-function DODEProblem(parameters, orders, f, u0, tspan, p = SciMLBase.NullParameters(); kwargs... )
+function DODEProblem(
+        parameters, orders, f, u0, tspan, p = SciMLBase.NullParameters(); kwargs...)
     return DODEProblem{false}(parameters, orders, ODEFunction(f), u0, tspan, p; kwargs...)
 end
-
 
 struct StandardFODEProblem end
 
@@ -100,12 +107,13 @@ To define an FODE Problem, you simply need to given the function ``f`` and the i
 ```
 
 There are two different ways of specifying `f`:
-- `f(du,u,p,t)`: in-place. Memory-efficient when avoiding allocations. Best option for most cases unless mutation is not allowed.
-- `f(u,p,t)`: returning `du`. Less memory-efficient way, particularly suitable when mutation is not allowed (e.g. with certain automatic differentiation packages such as Zygote).
-- `order`: the fractional order of the differential equations, commensurate and non-commensurate is both supported.
--`u₀` should be an AbstractArray (or number) whose geometry matches the desired geometry of `u`.
-Note that we are not limited to numbers or vectors for `u₀`; one is allowed to
-provide `u₀` as arbitrary matrices / higher dimension tensors as well.
+
+  - `f(du,u,p,t)`: in-place. Memory-efficient when avoiding allocations. Best option for most cases unless mutation is not allowed.
+  - `f(u,p,t)`: returning `du`. Less memory-efficient way, particularly suitable when mutation is not allowed (e.g. with certain automatic differentiation packages such as Zygote).
+  - `order`: the fractional order of the differential equations, commensurate and non-commensurate is both supported.
+    -`u₀` should be an AbstractArray (or number) whose geometry matches the desired geometry of `u`.
+    Note that we are not limited to numbers or vectors for `u₀`; one is allowed to
+    provide `u₀` as arbitrary matrices / higher dimension tensors as well.
 
 ## Problem Type
 
@@ -115,13 +123,13 @@ provide `u₀` as arbitrary matrices / higher dimension tensors as well.
 by simply passing the FODE right-hand side to the constructor. The constructors
 are:
 
-- `FODEProblem(f::ODEFunction,u0,tspan,p=NullParameters();kwargs...)`
-- `FODEProblem{isinplace,specialize}(f,u0,tspan,p=NullParameters();kwargs...)` :
-  Defines the FODE with the specified functions. `isinplace` optionally sets whether
-  the function is inplace or not. This is determined automatically, but not inferred.
-  `specialize` optionally controls the specialization level. See the
-  [specialization levels section of the SciMLBase documentation](https://docs.sciml.ai/SciMLBase/stable/interfaces/Problems/#Specialization-Levels)
-  for more details. The default is `AutoSpecialize`.
+  - `FODEProblem(f::ODEFunction,u0,tspan,p=NullParameters();kwargs...)`
+  - `FODEProblem{isinplace,specialize}(f,u0,tspan,p=NullParameters();kwargs...)` :
+    Defines the FODE with the specified functions. `isinplace` optionally sets whether
+    the function is inplace or not. This is determined automatically, but not inferred.
+    `specialize` optionally controls the specialization level. See the
+    [specialization levels section of the SciMLBase documentation](https://docs.sciml.ai/SciMLBase/stable/interfaces/Problems/#Specialization-Levels)
+    for more details. The default is `AutoSpecialize`.
 
 For more details on the in-place and specialization controls, see the ODEFunction
 documentation.
@@ -136,34 +144,36 @@ For specifying Jacobians and mass matrices, see the `ODEFunction` documentation.
 
 ### Fields
 
-- `f`: The function in the ODE.
-- `order`: The order of the FODE.
-- `u0`: The initial condition.
-- `tspan`: The timespan for the problem.
-- `p`: The parameters.
-- `kwargs`: The keyword arguments passed onto the solves.
+  - `f`: The function in the ODE.
+  - `order`: The order of the FODE.
+  - `u0`: The initial condition.
+  - `tspan`: The timespan for the problem.
+  - `p`: The parameters.
+  - `kwargs`: The keyword arguments passed onto the solves.
 
 ## Example Problem
 
 ```julia
 using SciMLBase
-function lorenz!(du,u,p,t)
- du[1] = 10.0(u[2]-u[1])
- du[2] = u[1]*(28.0-u[3]) - u[2]
- du[3] = u[1]*u[2] - (8/3)*u[3]
+function lorenz!(du, u, p, t)
+    du[1] = 10.0(u[2] - u[1])
+    du[2] = u[1] * (28.0 - u[3]) - u[2]
+    du[3] = u[1] * u[2] - (8 / 3) * u[3]
 end
-order = [0.96;0.96;0.96]
-u0 = [1.0;0.0;0.0]
-tspan = (0.0,100.0)
-prob = FODEProblem(lorenz!,u0,tspan)
+order = [0.96; 0.96; 0.96]
+u0 = [1.0; 0.0; 0.0]
+tspan = (0.0, 100.0)
+prob = FODEProblem(lorenz!, u0, tspan)
 
 # Test that it worked
 using FractionalDiffEq
-sol = solve(prob,PIEX())
-using Plots; plot(sol,vars=(1,2,3))
+sol = solve(prob, PIEX())
+using Plots;
+plot(sol, vars = (1, 2, 3));
 ```
 """
-struct FODEProblem{uType, tType, oType, isinplace, P, F, bF, PT, K} <: SciMLBase.AbstractODEProblem{uType, tType, isinplace}
+struct FODEProblem{uType, tType, oType, isinplace, P, F, bF, PT, K} <:
+       SciMLBase.AbstractODEProblem{uType, tType, isinplace}
     f::F
     order::oType
     u0::uType
@@ -171,19 +181,18 @@ struct FODEProblem{uType, tType, oType, isinplace, P, F, bF, PT, K} <: SciMLBase
     p::P
     problem_type::PT
     kwargs::K
-    SciMLBase.@add_kwonly function FODEProblem{iip}(f::SciMLBase.AbstractODEFunction, order, u0, tspan,
-        p = SciMLBase.NullParameters(),
-        problem_type = StandardFODEProblem();
-        kwargs...) where {iip}
+    SciMLBase.@add_kwonly function FODEProblem{iip}(f::SciMLBase.AbstractODEFunction, order,
+            u0, tspan, p = SciMLBase.NullParameters(),
+            problem_type = StandardFODEProblem(); kwargs...) where {iip}
         _tspan = SciMLBase.promote_tspan(tspan)
         #warn_paramtype(p)
         new{typeof(u0), typeof(_tspan), typeof(order), iip, typeof(p),
-            typeof(f), typeof(order),
-            typeof(problem_type), typeof(kwargs)}(f, order, u0, _tspan, p,
-            problem_type, kwargs)
+            typeof(f), typeof(order), typeof(problem_type), typeof(kwargs)}(
+            f, order, u0, _tspan, p, problem_type, kwargs)
     end
 
-    function FODEProblem{iip}(f, order, u0, tspan, p = SciMLBase.NullParameters(); kwargs...) where {iip}
+    function FODEProblem{iip}(
+            f, order, u0, tspan, p = SciMLBase.NullParameters(); kwargs...) where {iip}
         FODEProblem(ODEFunction{iip}(f), order, u0, tspan, p; kwargs...)
     end
 end
@@ -198,7 +207,6 @@ function FODEProblem(f, order, u0, tspan, p = SciMLBase.NullParameters(); kwargs
     FODEProblem(ODEFunction(f), order, u0, tspan, p; kwargs...)
 end
 
-
 #=
 #=FDDEProblem constructor=#
 function FDDEProblem(f::Function,
@@ -210,17 +218,17 @@ function FDDEProblem(f::Function,
 end
 =#
 
-
 struct StandardFDDEProblem end
 
 """
     FDDEProblem(f, ϕ, α, τ, tspan)
 
-- `f`: The function describing fractional delay differential equations.
-- `ϕ`: History function
-Construct a fractional delayed differential equation problem.
+  - `f`: The function describing fractional delay differential equations.
+  - `ϕ`: History function
+    Construct a fractional delayed differential equation problem.
 """
-struct FDDEProblem{uType, tType, oType, lType, isinplace, P, F, H, K, PT} <: SciMLBase.AbstractDDEProblem{uType, tType, lType, isinplace}
+struct FDDEProblem{uType, tType, oType, lType, isinplace, P, F, H, K, PT} <:
+       SciMLBase.AbstractDDEProblem{uType, tType, lType, isinplace}
     f::F
     order::oType
     u0::uType
@@ -231,26 +239,19 @@ struct FDDEProblem{uType, tType, oType, lType, isinplace, P, F, H, K, PT} <: Sci
     kwargs::K
     problem_type::PT
 
-    SciMLBase.@add_kwonly function FDDEProblem{iip}(f::SciMLBase.AbstractDDEFunction{iip}, order, u0, h, tspan,
-        p = SciMLBase.NullParameters();
-        constant_lags = (),
-        problem_type = StandardFDDEProblem(),
-        kwargs...) where {iip}
+    SciMLBase.@add_kwonly function FDDEProblem{iip}(
+            f::SciMLBase.AbstractDDEFunction{iip}, order, u0, h,
+            tspan, p = SciMLBase.NullParameters(); constant_lags = (),
+            problem_type = StandardFDDEProblem(), kwargs...) where {iip}
         _tspan = SciMLBase.promote_tspan(tspan)
         SciMLBase.warn_paramtype(p)
-        new{typeof(u0), typeof(_tspan), typeof(order), typeof(constant_lags),
-            isinplace(f),
-            typeof(p), typeof(f), typeof(h), typeof(kwargs), typeof(problem_type)}(f, order, u0,
-            h,
-            _tspan,
-            p,
-            constant_lags,
-            kwargs,
-            problem_type)
+        new{typeof(u0), typeof(_tspan), typeof(order), typeof(constant_lags), isinplace(f),
+            typeof(p), typeof(f), typeof(h), typeof(kwargs), typeof(problem_type)}(
+            f, order, u0, h, _tspan, p, constant_lags, kwargs, problem_type)
     end
 
     function FDDEProblem{iip}(f::SciMLBase.AbstractDDEFunction{iip}, h, tspan::Tuple,
-        p = SciMLBase.NullParameters(); kwargs...) where {iip}
+            p = SciMLBase.NullParameters(); kwargs...) where {iip}
         FDDEProblem{iip}(f, h(p, first(tspan)), h, tspan, p; kwargs...)
     end
 end
@@ -309,13 +310,10 @@ struct FODESystem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-function FODESystem(f::Function,
-                    α::AbstractArray,
-                    u0::AbstractArray,
-                    tspan::Union{Tuple, Number})
+function FODESystem(
+        f::Function, α::AbstractArray, u0::AbstractArray, tspan::Union{Tuple, Number})
     FODESystem(f, α, u0, tspan, nothing)
 end
-
 
 """
     FFPODEProblem(f, α, u0, tspan, p)
@@ -331,10 +329,8 @@ struct FFPODEProblem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-function FFPODEProblem(f::Function,
-                       order::Union{AbstractArray, Function},
-                       u0::Union{AbstractArray, Number},
-                       tspan::Union{Tuple, Number})
+function FFPODEProblem(f::Function, order::Union{AbstractArray, Function},
+        u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number})
     FFPODEProblem(f, order, u0, tspan, nothing)
 end
 
@@ -352,10 +348,8 @@ struct FFEODEProblem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-function FFEODEProblem(f::Function,
-                       order::Union{AbstractArray, Function},
-                       u0::Union{AbstractArray, Number},
-                       tspan::Union{Tuple, Number})
+function FFEODEProblem(f::Function, order::Union{AbstractArray, Function},
+        u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number})
     FFEODEProblem(f, order, u0, tspan, nothing)
 end
 
@@ -373,10 +367,8 @@ struct FFMODEProblem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-function FFMODEProblem(f::Function,
-                       order::Union{AbstractArray, Function},
-                       u0::Union{AbstractArray, Number},
-                       tspan::Union{Tuple, Number})
+function FFMODEProblem(f::Function, order::Union{AbstractArray, Function},
+        u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number})
     FFMODEProblem(f, order, u0, tspan, nothing)
 end
 
@@ -389,10 +381,8 @@ struct FFMODESystem <: FDEProblem
 end
 
 # If the there are no parameters, we do this:
-function FFMODESystem(f::Function,
-                      order::Union{AbstractArray, Function},
-                      u0::Union{AbstractArray, Number},
-                      tspan::Union{Tuple, Number})
+function FFMODESystem(f::Function, order::Union{AbstractArray, Function},
+        u0::Union{AbstractArray, Number}, tspan::Union{Tuple, Number})
     FFMODESystem(f, order, u0, tspan, nothing)
 end
 
@@ -409,7 +399,9 @@ struct FractionalDiscreteProblem <: FDEProblem
     p::Union{AbstractArray, Nothing}
 end
 
-FractionalDiscreteProblem(fun, α, u0, tspan) = FractionalDiscreteProblem(fun, α, u0, tspan, nothing)
+function FractionalDiscreteProblem(fun, α, u0, tspan)
+    FractionalDiscreteProblem(fun, α, u0, tspan, nothing)
+end
 FractionalDiscreteProblem(fun, α, u0) = FractionalDiscreteProblem(fun, α, u0, nothing)
 
 """
@@ -431,10 +423,9 @@ struct FractionalDiscreteSystem <: FDEProblem
     p::Union{AbstractArray, Number, Nothing}
 end
 
-FractionalDiscreteSystem(fun, α, u0, tspan) = FractionalDiscreteSystem(fun, α, u0, tspan, nothing)
+function FractionalDiscreteSystem(fun, α, u0, tspan)
+    FractionalDiscreteSystem(fun, α, u0, tspan, nothing)
+end
 FractionalDiscreteSystem(fun, α, u0) = FractionalDiscreteSystem(fun, α, u0, nothing)
 
 ################################################################################
-
-
-

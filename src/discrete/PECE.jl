@@ -27,38 +27,42 @@ function solve(FDProb::FractionalDiscreteProblem, h, ::PECE)
     elseif tspan isa Real
         T = copy(tspan)
     end
-    N = round(Int, T/h)
+    N = round(Int, T / h)
 
     # Initialize
-    b=zeros(N); a=zeros(N); x=zeros(N); t=zeros(N)
-    t1=zeros(N+1); y=zeros(N+1)
-    
-    @fastmath @inbounds @simd for i=1:N
+    b = zeros(N)
+    a = zeros(N)
+    x = zeros(N)
+    t = zeros(N)
+    t1 = zeros(N + 1)
+    y = zeros(N + 1)
+
+    @fastmath @inbounds @simd for i in 1:N
         k = 1
-        @fastmath @inbounds @simd for j=1:N-i
-            k = k*j
+        @fastmath @inbounds @simd for j in 1:(N - i)
+            k = k * j
         end
-        b[i] = gamma(N-i+α)/k
-        a[N+1-i] = b[i]
+        b[i] = gamma(N - i + α) / k
+        a[N + 1 - i] = b[i]
     end
-    x[1] = u0+a[1]*fun(u0)/gamma(α)
+    x[1] = u0 + a[1] * fun(u0) / gamma(α)
     t[1] = 1
 
-    @fastmath @inbounds @simd for i=2:N
+    @fastmath @inbounds @simd for i in 2:N
         temp = 0
-        @fastmath @inbounds @simd for j=1:i-1
-            temp = a[i+1-j]*fun(x[j])
+        @fastmath @inbounds @simd for j in 1:(i - 1)
+            temp = a[i + 1 - j] * fun(x[j])
         end
-        temp = temp/gamma(α)
-        x[i] = u0 + temp+a[1]*(u0+temp)/gamma(α)
+        temp = temp / gamma(α)
+        x[i] = u0 + temp + a[1] * (u0 + temp) / gamma(α)
         t[i] = i
     end
 
     y[1] = u0
     t1[1] = 0
-    @fastmath @inbounds @simd for i = 1:N
-        y[i+1] = x[i]
-        t1[i+1] = t[i]
+    @fastmath @inbounds @simd for i in 1:N
+        y[i + 1] = x[i]
+        t1[i + 1] = t[i]
     end
     return FDifferenceSolution(t1, y)
 end
