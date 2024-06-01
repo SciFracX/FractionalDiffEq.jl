@@ -9,22 +9,11 @@
   <a href="https://scifracx.github.io/FractionalDiffEq.jl/dev/">
     <img src="https://img.shields.io/badge/docs-dev-blue.svg" alt="license">
   </a>
-  <a href="https://github.com/SciFracX/FractionalDiffEq.jl/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/SciFracX/FractionalDiffEq.jl?style=flat-square" alt="license">
-  </a>
   <a href="https://zenodo.org/badge/latestdoi/420992306">
   	<img src="https://zenodo.org/badge/420992306.svg" alt="DOI">
   </a>
 
-  <a href="https://github.com/SciFracX/FractionalDiffEq.jl/issues">
-    <img alt="GitHub issues" src="https://img.shields.io/github/issues/SciFracX/FractionalDiffEq.jl?style=flat-square">
-  </a>
-  <a href="#">
-    <img alt="GitHub stars" src="https://img.shields.io/github/stars/SciFracX/FractionalDiffEq.jl?style=flat-square">
-  </a>
-  <a href="https://github.com/SciFracX/FractionalDiffEq.jl/network">
-    <img alt="GitHub forks" src="https://img.shields.io/github/forks/SciFracX/FractionalDiffEq.jl?style=flat-square">
-  </a>
+  [![SciML Code Style](https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826)](https://github.com/SciML/SciMLStyle)
 
 FractionalDiffEq.jl provides FDE solvers to [DifferentialEquations.jl](https://diffeq.sciml.ai/dev/) ecosystem, including FODE(Fractional Ordinary Differential Equations), FDDE(Fractional Delay Differential Equations) and many more. There are many performant solvers available, capable of solving many kinds of fractional differential equations.
 
