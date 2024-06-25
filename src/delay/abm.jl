@@ -20,7 +20,7 @@ end
 Base.eltype(::ABMCache{iip, T}) where {iip, T} = T
 
 """
-    solve(FDDE::FDDEProblem, dt, DelayABM())
+    solve(FDDE::FDDEProblem, DelayABM(); dt)
 
 Use the Adams-Bashforth-Moulton method to solve fractional delayed differential equations.
 

@@ -5,7 +5,7 @@ Many real life situations are governed by a system of fractional differential eq
 The usage of system of fractional differential equations solvers is quite similiar with DifferentialEquations.jl, all we need to do is to define our ```FODESystem``` and choose a solver to solve the problem:
 
 
-```julia-repl
+```julia
 julia> sol = solve(FODESystem, α, u0, tspan)
 ```
 

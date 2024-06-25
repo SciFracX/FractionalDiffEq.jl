@@ -8,19 +8,21 @@ The general fractional differential equations problem type.
 
 ## FODE Problem
 
-Fractional ordinary problems type, we can classify them as Single-Term and Multi-Term problems:
-
-```math
-D^{\alpha}y(t)=f(t, y)
+```@docs
+FractionalDiffEq.FODEProblem
 ```
 
-```math
-\sum_{s=0}^pc_sD^{\beta_s}y=f
+### Multi-terms FODE problems
+
+```@docs
+FractionalDiffEq.MultiTermsFODEProblem
 ```
 
-SingleTermFODEProblem
-MultiTermsFODEProblem
-FODESystem
+## FDDE Problem
+
+```@docs
+FractionalDiffEq.FDDEProblem
+```
 
 ### FFODE Problem
 
@@ -28,21 +30,15 @@ FFPODEProblem
 FFEODEProblem
 FFMODEProblem
 
-## FDDE Problem
 
-FDDEProblem
-FDDEMatrixProblem
-FDDESystem
 
 ## DODE Problem
 
+```@docs
 FractionalDiffEq.DODEProblem
+```
 
 ## Fractional Difference Problem
 
 FractionalDifferenceProblem
 FractionalDifferenceSystem
-
-## FIE Problem
-
-FIEProblem

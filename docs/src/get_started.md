@@ -1,6 +1,6 @@
 # Get Start
 
-We would use a simple example -- [Relaxation Oscillation Process](https://encyclopediaofmath.org/wiki/Relaxation_oscillation) to show you how to use FractionalDiffEq.jl to solve fractional differential equations.🙂
+We would use a simple example -- [Relaxation Oscillation Process](https://encyclopediaofmath.org/wiki/Relaxation_oscillation) to show you how to use FractionalDiffEq.jl to solve fractional differential equations.
 
 The mathematical model of the fractional order relaxation oscillation can be abstracted as an IVP:
 
@@ -18,7 +18,7 @@ While we can know the analytical solution of this equation is:
 u(t)=t^{1.8}E_{1.8,\ 2.8}(-t^{1.8})
 ```
 
-Here ``E_{\alpha, \beta}(z)`` is the [Mittag Leffler function](https://scifracx.org/FractionalDiffEq.jl/stable/mittagleffler/).
+Here ``E_{\alpha, \beta}(z)`` is the two parametric [Mittag Leffler function](https://scifracx.org/FractionalDiffEq.jl/stable/mittagleffler/).
 
 We can solve this problem by the following code using FractionalDiffEq.jl:
 
@@ -35,11 +35,11 @@ By plotting the numerical result, we can get the approximation result:
 
 ![Relaxation Oscillation](./assets/example.png)
 
-To provide users with a simple way to solve fractional differential equations, we follow the design pattern of [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl)
+To provide users with a simple way to solve fractional differential equations, we follow the design pattern of [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl), so it would be the same way to use FractionalDiffEq.jl as DifferentialEquations.jl, we are supporting more and more similar features in FractionalDiffEq.jl such as callback functions, sensitivity analysis etc.
 
 ## Step 1: Defining a Problem
 
-First, we need to specify the problem we want to solve. Just by passing the parameters —— describing function, orders, initial condition and time span to construct a fractional ordinary differential equation problem:
+First, we need to specify the problem we want to solve. Just by passing the parameters —— the right hand side function, fractional orders, initial conditions and time span to construct a fractional ordinary differential equation problem:
 
 ```julia
 using FractionalDiffEq

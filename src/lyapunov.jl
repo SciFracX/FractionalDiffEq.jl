@@ -153,7 +153,7 @@ function commensurate_lyapunov(fun, order, t_start, h_norm, t_end, u0, h, out, p
     ne::Int = length(u0) # System dimension
     order = order[1] # Since this is the commensurate case, we only need one element in order array
 
-    Jfdefun(t, u, p) = jacobian_of_fdefun(fun, t, u, p) #TODO:可能有点问题
+    Jfdefun(t, u, p) = jacobian_of_fdefun(fun, t, u, p) #FIXME: Use ForwardDiff or FiniteDiff autodiff
 
     tspan = Float64[]
     LE = Float64[]
