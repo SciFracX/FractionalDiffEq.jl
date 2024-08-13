@@ -3,7 +3,7 @@
 ```math
 \begin{cases}
 {_{t_0}D_t^\alpha}y_1(t)=a-(\mu+1)y_1(t)+(y_1(t))^2y_2(t)\\
-{_{t_0}D_t^\alpha}y_2(t)=\mu y_1(t)-(y_1(t))^2y_1(t)\\
+{_{t_0}D_t^\alpha}y_2(t)=\mu y_1(t)-(y_1(t))^2y_2(t)\\
 y_1(t_0)=y_{1,0}\\
 y_2(t_0)=y_{2,0}
 \end{cases}
@@ -20,7 +20,7 @@ tspan = (0, 100)
 function Brusselator!(du, u, p, t)
     a, μ = 1, 4
     du[1] = a-(μ+1)*u[1]+(u[1])^2*u[2]
-    du[2] = μ*u[1]-(u[1])^2*u[1]
+    du[2] = μ*u[1]-(u[1])^2*u[2]
 end
 
 prob = FODEProblem(Brusselator!, α, u0, tspan)
