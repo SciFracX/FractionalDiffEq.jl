@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719371506798,
+  "lastUpdate": 1724344851665,
   "repoUrl": "https://github.com/SciFracX/FractionalDiffEq.jl",
   "entries": {
     "Benchmark Results": [
@@ -420,6 +420,48 @@ window.BENCHMARK_DATA = {
             "value": 16795517,
             "unit": "ns",
             "extra": "gctime=0\nmemory=22336672\nallocs=264966\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"evals_set\":false,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "52615090+ErikQQY@users.noreply.github.com",
+            "name": "Qingyu Qu",
+            "username": "ErikQQY"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "eccc0254d0199669b5a0282b5a79162098a5b498",
+          "message": "Merge pull request #114 from alexfikl/fix-brusselator\n\nFix Brusselator right-hand side in some examples",
+          "timestamp": "2024-08-23T00:37:44+08:00",
+          "tree_id": "7d9841baa5926256c904fddf4dcb4fb72343cf8c",
+          "url": "https://github.com/SciFracX/FractionalDiffEq.jl/commit/eccc0254d0199669b5a0282b5a79162098a5b498"
+        },
+        "date": 1724344850305,
+        "tool": "julia",
+        "benches": [
+          {
+            "name": "FLMM/Trapezoid",
+            "value": 19841908,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=22206432\nallocs=252355\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"evals_set\":false,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "FLMM/NewtonGregory",
+            "value": 18515591.5,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=21712560\nallocs=252308\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"evals_set\":false,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "FLMM/BDF",
+            "value": 18477555,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=21649600\nallocs=252648\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"evals_set\":false,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
           }
         ]
       }
