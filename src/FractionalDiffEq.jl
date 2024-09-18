@@ -1,8 +1,7 @@
 module FractionalDiffEq
 
 using LinearAlgebra, Reexport, SciMLBase, SpecialFunctions, SparseArrays, ToeplitzMatrices,
-      FFTW, RecipesBase, ForwardDiff, Polynomials, TruncatedStacktraces,
-      HypergeometricFunctions, DiffEqBase, ConcreteStructs
+      FFTW, RecipesBase, ForwardDiff, Polynomials, HypergeometricFunctions, DiffEqBase, ConcreteStructs
 
 import SciMLBase: __solve
 import DiffEqBase: solve
@@ -10,7 +9,6 @@ import InvertedIndices: Not
 import SpecialMatrices: Vandermonde
 import FFTW: fft, ifft
 import Polynomials: Polynomial
-import TruncatedStacktraces: @truncate_stacktrace
 
 @reexport using DiffEqBase, SciMLBase
 
