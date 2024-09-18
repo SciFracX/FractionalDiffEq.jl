@@ -32,7 +32,7 @@ Base.eltype(::MTPIEXCache{T}) where {T} = T
 function SciMLBase.__init(
         prob::MultiTermsFODEProblem, alg::MTPIEX; dt = 0.0, abstol = 1e-6, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
-    @unpack parameters, orders, f, u0, tspan, p = prob
+    (; parameters, orders, f, u0, tspan, p) = prob
     t0 = tspan[1]
     tfinal = tspan[2]
     T = eltype(u0)
@@ -90,7 +90,7 @@ function SciMLBase.__init(
 end
 
 function SciMLBase.solve!(cache::MTPIEXCache{T}) where {T}
-    @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, highest_order_parameter, highest_order_ceiling, other_orders_ceiling, y, fy, p, zn, r, N, Nr, Qr, NNr, bn, kwargs = cache
+    (; prob, alg, mesh, y, r, N, Qr) = cache
     t0 = mesh[1]
     tfinal = mesh[end]
     MTPX_multiterms_triangolo(cache, 1, r - 1, t0)
@@ -122,7 +122,7 @@ end
 
 function MTPX_multiterms_disegna_blocchi(
         cache::MTPIEXCache{T}, L, ff, nx0, nu0, t0) where {T}
-    @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, highest_order_parameter, highest_order_ceiling, other_orders_ceiling, p, zn, r, N, Nr, Qr, NNr, bn, kwargs = cache
+    (; r, N, Nr) = cache
     nxi::Int = nx0
     nxf::Int = nx0 + L * r - 1
     nyi::Int = nu0
@@ -175,7 +175,7 @@ function MTPX_multiterms_disegna_blocchi(
 end
 
 function MTPX_multiterms_quadrato(cache::MTPIEXCache{T}, nxi, nxf, nyi, nyf) where {T}
-    @unpack prob, alg, mesh, r, N, Nr, Qr, NNr, bn, kwargs = cache
+    (; prob, bn) = cache
     orders_length = length(prob.orders)
     problem_size = size(prob.u0, 2)
     coef_beg = nxi - nyf
@@ -199,7 +199,7 @@ function MTPX_multiterms_quadrato(cache::MTPIEXCache{T}, nxi, nxf, nyi, nyf) whe
 end
 
 function MTPX_multiterms_triangolo(cache::MTPIEXCache{T}, nxi, nxf, t0) where {T}
-    @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, highest_order_parameter, highest_order_ceiling, other_orders_ceiling, p, zn, r, N, Nr, Qr, NNr, bn, kwargs = cache
+    (; prob, mesh, u0, bet, lam_rat_i, gamma_val, highest_order_parameter, highest_order_ceiling, other_orders_ceiling, p, zn, N, bn) = cache
     problem_size = size(prob.u0, 2)
     orders_length = length(prob.orders)
     for n in nxi:min(N, nxf)

@@ -9,7 +9,6 @@ import DiffEqBase: solve
 import InvertedIndices: Not
 import SpecialMatrices: Vandermonde
 import FFTW: fft, ifft
-import UnPack: @unpack
 import Polynomials: Polynomial
 import TruncatedStacktraces: @truncate_stacktrace
 

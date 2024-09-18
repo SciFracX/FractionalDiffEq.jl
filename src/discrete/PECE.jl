@@ -21,7 +21,7 @@ Use the PECE algorithm to solve fractional difference equations
 =#
 
 function solve(FDProb::FractionalDiscreteProblem, h, ::PECE)
-    @unpack fun, α, u0, tspan = FDProb
+    (; fun, α, u0, tspan) = FDProb
     if tspan isa Tuple
         T = tspan[end]
     elseif tspan isa Real

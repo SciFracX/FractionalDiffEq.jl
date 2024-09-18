@@ -16,7 +16,7 @@ Base.eltype(::MatrixDiscreteCache{T}) where {T} = T
 function SciMLBase.__init(
         prob::MultiTermsFODEProblem, alg::MatrixDiscrete; dt = 0.0, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
-    @unpack parameters, orders, f, u0, tspan, p = prob
+    (; parameters, orders, f, u0, tspan, p) = prob
     T = eltype(u0)
     t0 = tspan[1]
     tfinal = tspan[2]
@@ -45,7 +45,7 @@ function SciMLBase.__init(
 end
 
 function SciMLBase.solve!(cache::MatrixDiscreteCache{iip, T}) where {iip, T}
-    @unpack prob, alg, mesh, highest_order, equation, rightside, kwargs = cache
+    (; prob, alg, mesh, highest_order, equation, rightside) = cache
     result = equation \ rightside
     result = vcat(zeros(highest_order), result)
     y = collect(Vector{eltype(result)}, eachrow(result))

@@ -15,7 +15,7 @@ ISBN:9787030543981
 struct ClosedForm <: MultiTermsFODEAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, h, ::ClosedForm)
-    @unpack parameters, orders, rightfun, rparameters, rorders, u0, tspan = prob
+    (; parameters, orders, rightfun, rparameters, rorders, tspan) = prob
     t0 = tspan[1]
     T = tspan[2]
     D = sum(parameters ./ (h .^ orders))

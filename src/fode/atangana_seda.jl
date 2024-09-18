@@ -1,6 +1,6 @@
 function solve(prob::FODEProblem, alg::AtanganaSedaAB; dt = 0.0)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
-    @unpack f, order, u0, tspan, p = prob
+    (; f, order, u0, tspan, p) = prob
     order = order[1]
     t0 = tspan[1]
     tfinal = tspan[2]
@@ -78,7 +78,7 @@ struct AtanganaSedaCF <: FODEAlgorithm end
 #FIXME: Tests
 function solve(prob::FODEProblem, ::AtanganaSedaCF; dt = 0.0)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
-    @unpack f, order, u0, tspan, p = prob
+    (; f, order, u0, tspan, p) = prob
     t0 = tspan[1]
     tfinal = tspan[2]
     t = collect(Float64, t0:dt:tfinal)

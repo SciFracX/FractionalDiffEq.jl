@@ -21,7 +21,7 @@ struct DOMatrixDiscrete <: DODEAlgorithm end
 isFunction(x) = isa(x, Function) ? true : false
 
 function solve(prob::DODEProblem, h, ::DOMatrixDiscrete)
-    @unpack parameters, orders, interval, rightfun, u0, tspan = prob
+    (; parameters, orders, interval, rightfun, u0, tspan) = prob
     N = length(tspan)
     # find the index of the distributed order
     DOid = findall(isFunction, orders)

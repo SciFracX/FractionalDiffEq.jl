@@ -15,7 +15,7 @@ function solve(prob::Union{FFMODEProblem, FFMODESystem}, h::Float64, ::AtanganaS
     end
 end
 function solve_singletermffode(prob::Union{FFMODEProblem, FFMODESystem}, h)
-    @unpack f, order, u0, tspan, p = prob
+    (; f, order, u0, tspan, p) = prob
     α = order[1] # Fractional order
     β = order[2] # Fractal dimension
     t0 = tspan[1]
@@ -63,7 +63,7 @@ function solve_singletermffode(prob::Union{FFMODEProblem, FFMODESystem}, h)
 end
 
 function solve_ffodesystem(prob::FFMODESystem, h)
-    @unpack f, order, u0, tspan, p = prob
+    (; f, order, u0, tspan, p) = prob
     α = order[1]
     β = order[2]
     t0 = tspan[1]
@@ -120,7 +120,7 @@ function solve_ffodesystem(prob::FFMODESystem, h)
 end
 
 function solve_cf_variable_ffodesystem(prob::FFMODESystem, h)
-    @unpack f, order, u0, tspan, p = prob
+    (; f, order, u0, tspan, p) = prob
     α = order[1]
     β = order[2]
     t0 = tspan[1]

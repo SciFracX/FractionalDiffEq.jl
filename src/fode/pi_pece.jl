@@ -40,7 +40,7 @@ Base.eltype(::PECECache{iip, T}) where {iip, T} = T
 function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     prob = _is_need_convert!(prob)
-    @unpack f, order, u0, tspan, p = prob
+    (; f, order, u0, tspan, p) = prob
     t0 = tspan[1]
     tfinal = tspan[2]
     T = eltype(u0)
@@ -166,7 +166,7 @@ function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6,
 end
 
 function SciMLBase.solve!(cache::PECECache{iip, T}) where {iip, T}
-    @unpack prob, alg, mesh, u0, order, y, fy, zn_pred, zn_corr, r, N, Nr, Qr, NNr, an, bn, a0, halpha1, halpha2, mu, abstol, index_fft, an_fft, bn_fft, kwargs = cache
+    (; prob, alg, mesh, u0, r, N, Qr) = cache
     tfinal = mesh[N + 1]
     ABM_triangolo(cache, 1, r - 1)
 
@@ -200,7 +200,7 @@ end
 
 function DisegnaBlocchi(
         cache::PECECache{iip, T}, L::P, ff, nx0::P, ny0::P) where {P <: Integer, iip, T}
-    @unpack mesh, N, r, Nr = cache
+    (; N, r, Nr) = cache
     nxi::Int = nx0
     nxf::Int = nx0 + L * r - 1
     nyi::Int = ny0
@@ -254,7 +254,7 @@ end
 
 function ABM_quadrato(cache::PECECache{iip, T}, nxi::P, nxf::P,
         nyi::P, nyf::P) where {P <: Integer, iip, T}
-    @unpack prob, mesh, r, N, Nr, Qr, NNr, an, bn, a0, halpha1, halpha2, mu, abstol, index_fft, an_fft, bn_fft = cache
+    (; prob, r, N, mu, index_fft, an_fft, bn_fft) = cache
     problem_size = length(prob.order)
     alpha_length = length(prob.order)
     coef_end = nxf - nyi + 1
@@ -299,7 +299,7 @@ end
 
 function ABM_triangolo(
         cache::PECECache{iip, T}, nxi::P, nxf::P) where {P <: Integer, iip, T}
-    @unpack prob, mesh, u0, order, m_alpha, m_alpha_factorial, p, zn_pred, zn_corr, N, an, bn, a0, halpha1, halpha2, mu, abstol, index_fft, an_fft, bn_fft = cache
+    (; prob, mesh, order, p, zn_pred, zn_corr, N, an, bn, a0, halpha1, halpha2, mu, abstol) = cache
     alpha_length = length(order)
     problem_size = length(order)
 
@@ -362,7 +362,7 @@ function ABM_triangolo(
 end
 
 function starting_term(cache::PECECache{iip, T}, t) where {iip, T}
-    @unpack mesh, m_alpha, u0, m_alpha_factorial, high_order_prob = cache
+    (; mesh, m_alpha, u0, m_alpha_factorial, high_order_prob) = cache
     t0 = mesh[1]
     u0 = high_order_prob ? reshape(u0, 1, length(u0)) : u0
     ys = zeros(size(u0, 1), 1)

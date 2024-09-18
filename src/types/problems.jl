@@ -197,8 +197,6 @@ struct FODEProblem{uType, tType, oType, isinplace, P, F, bF, PT, K} <:
     end
 end
 
-TruncatedStacktraces.@truncate_stacktrace FODEProblem 3 1 2
-
 function FODEProblem(f::SciMLBase.AbstractODEFunction, order, u0, tspan, args...; kwargs...)
     FODEProblem{SciMLBase.isinplace(f, 4)}(f, order, u0, tspan, args...; kwargs...)
 end
@@ -331,8 +329,6 @@ struct FDDEProblem{uType, tType, oType, lType, isinplace, P, F, H, K, PT} <:
         FDDEProblem{iip}(f, h(p, first(tspan)), h, tspan, p; kwargs...)
     end
 end
-
-TruncatedStacktraces.@truncate_stacktrace FDDEProblem 5 1 2
 
 FDDEProblem(f, args...; kwargs...) = FDDEProblem(DDEFunction(f), args...; kwargs...)
 
