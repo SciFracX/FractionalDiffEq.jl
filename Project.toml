@@ -1,7 +1,7 @@
 name = "FractionalDiffEq"
 uuid = "c7492dd8-6170-483b-af64-cefb6c377d9a"
 authors = ["Qingyu Qu <erikqqy123@gmail.com>"]
-version = "0.3.5"
+version = "0.3.6"
 
 [deps]
 ConcreteStructs = "2569d6c7-a4a2-43d3-a901-331e8e4be471"
