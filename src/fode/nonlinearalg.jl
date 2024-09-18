@@ -24,7 +24,7 @@ function SciMLBase.__init(
         prob::FODEProblem, alg::NonLinearAlg; dt = 0.0, L0 = 1e10, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     prob = _is_need_convert!(prob)
-    @unpack f, order, u0, tspan, p = prob
+    (; f, order, u0, tspan, p) = prob
     t0 = tspan[1]
     tfinal = tspan[2]
     T = eltype(u0)
@@ -46,7 +46,7 @@ function SciMLBase.__init(
 end
 
 function SciMLBase.solve!(cache::NonlinearAlgCache{iip, T}) where {iip, T}
-    @unpack prob, alg, mesh, u0, order, halpha, p, N, problem_size, gen, W, z, y, L0, memory_effect, kwargs = cache
+    (; prob, alg, mesh, u0, order, halpha, p, N, problem_size, gen, W, z, y, L0, memory_effect, kwargs) = cache
 
     @fastmath @inbounds @simd for i in 1:problem_size
         W[i, :] = getvec(order[i], memory_effect, gen)

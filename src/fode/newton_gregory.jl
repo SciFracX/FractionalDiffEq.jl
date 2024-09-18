@@ -41,7 +41,7 @@ function SciMLBase.__init(prob::FODEProblem, alg::NewtonGregory; dt = 0.0,
         reltol = 1e-6, abstol = 1e-6, maxiters = 1000, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     prob = _is_need_convert!(prob)
-    @unpack f, order, u0, tspan, p = prob
+    (; f, order, u0, tspan, p) = prob
     t0 = tspan[1]
     tfinal = tspan[2]
     T = eltype(u0)
@@ -88,7 +88,7 @@ function SciMLBase.__init(prob::FODEProblem, alg::NewtonGregory; dt = 0.0,
         w, s, dt, reltol, abstol, maxiters, high_order_prob, kwargs)
 end
 function SciMLBase.solve!(cache::NewtonGregoryCache{iip, T}) where {iip, T}
-    @unpack prob, alg, mesh, u0, order, halpha, y, fy, zn, Jfdefun, p, problem_size, m_alpha, m_alpha_factorial, r, N, Nr, Q, NNr, omega, w, s, dt, reltol, abstol, maxiters, kwargs = cache
+    (; prob, alg, mesh, u0, y, r, N, Q, s, dt) = cache
     tfinal = mesh[end]
 
     NG_first_approximations(cache)
@@ -119,7 +119,7 @@ end
 
 function NG_disegna_blocchi!(cache::NewtonGregoryCache{iip, T}, L::P, ff,
         nx0::P, ny0) where {P <: Integer, iip, T}
-    @unpack mesh, y, fy, zn, abstol, maxiters, r, Nr, N, Jfdefun, s, w, omega, halpha, u0 = cache
+    (; r, Nr, N) = cache
     nxi::Int = copy(nx0)
     nxf::Int = copy(nx0 + L * r - 1)
     nyi::Int = copy(ny0)
@@ -170,7 +170,7 @@ end
 
 function NG_quadrato(cache::NewtonGregoryCache{iip, T}, nxi::P, nxf::P,
         nyi::P, nyf::P) where {P <: Integer, iip, T}
-    @unpack problem_size, omega = cache
+    (; problem_size, omega) = cache
 
     coef_beg = nxi - nyf
     coef_end = nxf - nyi + 1
@@ -185,7 +185,7 @@ end
 
 function NG_triangolo(
         cache::NewtonGregoryCache{iip, T}, nxi::P, nxf::P, j0) where {P <: Integer, iip, T}
-    @unpack prob, mesh, problem_size, zn, Jfdefun, N, abstol, maxiters, s, w, omega, halpha, u0, m_alpha, m_alpha_factorial, p = cache
+    (; prob, mesh, problem_size, zn, Jfdefun, N, abstol, maxiters, s, w, omega, halpha, p) = cache
     for n in nxi:min(N, nxf)
         n1 = Int64(n + 1)
         St = NG_starting_term(cache, mesh[n1])
@@ -234,7 +234,7 @@ function NG_triangolo(
 end
 
 function NG_first_approximations(cache::NewtonGregoryCache{iip, T}) where {iip, T}
-    @unpack prob, mesh, abstol, problem_size, maxiters, s, halpha, omega, w, Jfdefun, u0, m_alpha, m_alpha_factorial, p = cache
+    (; prob, mesh, abstol, problem_size, maxiters, s, halpha, omega, w, Jfdefun, p) = cache
     Im = zeros(problem_size, problem_size) + I
     Ims = zeros(problem_size * s, problem_size * s) + I
     Y0 = zeros(s * problem_size, 1)
@@ -360,7 +360,7 @@ function NG_weights(alpha, N)
 end
 
 function NG_starting_term(cache::NewtonGregoryCache{iip, T}, t) where {iip, T}
-    @unpack u0, m_alpha, mesh, m_alpha_factorial, high_order_prob = cache
+    (; u0, m_alpha, mesh, m_alpha_factorial, high_order_prob) = cache
     t0 = mesh[1]
     u0 = high_order_prob ? reshape(u0, 1, length(u0)) : u0
     ys = zeros(size(u0, 1), 1)

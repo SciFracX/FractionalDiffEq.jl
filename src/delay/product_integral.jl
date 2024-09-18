@@ -21,7 +21,7 @@ Base.eltype(::DelayPIEXCache{iip, T}) where {iip, T} = T
 
 function SciMLBase.__init(prob::FDDEProblem, alg::DelayPIEX; dt = 0.0, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
-    @unpack f, order, u0, h, tspan, p, constant_lags = prob
+    (; f, order, u0, h, tspan, p, constant_lags) = prob
     τ = constant_lags[1]
     iip = SciMLBase.isinplace(prob)
     T = eltype(u0)
@@ -47,7 +47,7 @@ function SciMLBase.__init(prob::FDDEProblem, alg::DelayPIEX; dt = 0.0, kwargs...
 end
 
 function SciMLBase.solve!(cache::DelayPIEXCache{iip, T}) where {iip, T}
-    @unpack prob, alg, mesh, u0, order, constant_lags, p, N, y0, y, g, b, dt, kwargs = cache
+    (; prob, alg, mesh, u0, order, constant_lags, p, N, y0, y, g, b, dt, kwargs) = cache
     h_al = dt^order[1]
     τ = constant_lags
     l = length(u0)

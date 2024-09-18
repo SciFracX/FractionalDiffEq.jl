@@ -39,7 +39,7 @@ Base.eltype(::MTPITrapCache{T}) where {T} = T
 function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::MTPITrap;
         dt = 0.0, abstol = 1e-6, maxiters = 100, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
-    @unpack parameters, orders, f, u0, tspan, p = prob
+    (; parameters, orders, f, u0, tspan, p) = prob
     t0 = tspan[1]
     tfinal = tspan[2]
     T = eltype(u0)
@@ -108,7 +108,7 @@ function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::MTPITrap;
 end
 
 function SciMLBase.solve!(cache::MTPITrapCache{T}) where {T}
-    @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, J, highest_order_parameter, highest_order_ceiling, other_orders_ceiling, y, fy, p, zn, r, N, Nr, Qr, NNr, C, an, a0, abstol, maxiters, kwargs = cache
+    (; prob, alg, mesh, u0, r, N, Qr) = cache
 
     t0 = mesh[1]
     tfinal = mesh[end]
@@ -141,7 +141,7 @@ function SciMLBase.solve!(cache::MTPITrapCache{T}) where {T}
 end
 
 function MTPITrap_disegna_blocchi(cache::MTPITrapCache{T}, L, ff, nx0, nu0, t0) where {T}
-    @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, J, highest_order_parameter, highest_order_ceiling, other_orders_ceiling, p, zn, r, N, Nr, Qr, NNr, C, an, a0, abstol, maxiters, kwargs = cache
+    (; r, N, Nr) = cache
 
     nxi::Int = nx0
     nxf::Int = nx0 + L * r - 1
@@ -195,7 +195,7 @@ function MTPITrap_disegna_blocchi(cache::MTPITrapCache{T}, L, ff, nx0, nu0, t0) 
 end
 
 function MTPITrap_quadrato(cache::MTPITrapCache{T}, nxi, nxf, nyi, nyf) where {T}
-    @unpack prob, u0, an = cache
+    (; prob, u0, an) = cache
 
     coef_beg = nxi - nyf
     coef_end = nxf - nyi + 1
@@ -231,7 +231,7 @@ function MTPITrap_quadrato(cache::MTPITrapCache{T}, nxi, nxf, nyi, nyf) where {T
 end
 
 function MTPITrap_triangolo(cache::MTPITrapCache{T}, nxi, nxf, t0) where {T}
-    @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, J, highest_order_parameter, highest_order_ceiling, other_orders_ceiling, p, zn, r, N, Nr, Qr, NNr, C, an, a0, abstol, maxiters, kwargs = cache
+    (; prob, mesh, u0, bet, lam_rat_i, gamma_val, J, highest_order_parameter, highest_order_ceiling, other_orders_ceiling, p, zn, N, C, an, a0, abstol, maxiters) = cache
 
     orders_length = length(prob.orders)
     problem_size = size(u0, 1)

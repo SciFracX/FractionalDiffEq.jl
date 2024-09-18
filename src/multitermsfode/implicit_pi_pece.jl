@@ -39,7 +39,7 @@ Base.eltype(::MTPECECache{T}) where {T} = T
 function SciMLBase.__init(
         prob::MultiTermsFODEProblem, alg::MTPECE; dt = 0.0, abstol = 1e-6, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
-    @unpack parameters, orders, f, u0, tspan, p = prob
+    (; parameters, orders, f, u0, tspan, p) = prob
     t0 = tspan[1]
     tfinal = tspan[2]
     T = eltype(u0)
@@ -112,7 +112,7 @@ function SciMLBase.__init(
         zn_corr, r, N, Nr, Qr, NNr, C, an, bn, a0, mu, abstol, kwargs)
 end
 function SciMLBase.solve!(cache::MTPECECache{T}) where {T}
-    @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, highest_order_parameter, highest_order_ceiling, other_orders_ceiling, p, r, N, Nr, Qr, NNr, C, a0, an, bn, mu, abstol, kwargs = cache
+    (; prob, alg, mesh, u0, r, N, Qr) = cache
 
     t0 = mesh[1]
     tfinal = mesh[end]
@@ -146,7 +146,7 @@ function SciMLBase.solve!(cache::MTPECECache{T}) where {T}
 end
 
 function MTPECE_disegna_blocchi(cache::MTPECECache{T}, L, ff, nx0, nu0, t0) where {T}
-    @unpack r, N = cache
+    (; r, N) = cache
 
     nxi::Int = nx0
     nxf::Int = nx0 + L * r - 1
@@ -200,7 +200,7 @@ function MTPECE_disegna_blocchi(cache::MTPECECache{T}, L, ff, nx0, nu0, t0) wher
 end
 
 function MTPECE_quadrato(cache::MTPECECache{T}, nxi, nxf, nyi, nyf) where {T}
-    @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, highest_order_parameter, highest_order_ceiling, other_orders_ceiling, p, r, N, Nr, Qr, NNr, C, a0, an, bn, mu, abstol, kwargs = cache
+    (; prob, u0, an, bn, mu) = cache
 
     coef_beg = nxi - nyf
     coef_end = nxf - nyi + 1
@@ -254,7 +254,7 @@ function MTPECE_quadrato(cache::MTPECECache{T}, nxi, nxf, nyi, nyf) where {T}
 end
 
 function MTPECE_triangolo(cache::MTPECECache{T}, nxi, nxf, t0) where {T}
-    @unpack prob, alg, mesh, u0, bet, lam_rat_i, gamma_val, highest_order_parameter, highest_order_ceiling, other_orders_ceiling, p, zn_pred, zn_corr, r, N, Nr, Qr, NNr, C, a0, an, bn, mu, abstol, kwargs = cache
+    (; prob, mesh, u0, bet, lam_rat_i, gamma_val, highest_order_parameter, highest_order_ceiling, other_orders_ceiling, p, zn_pred, zn_corr, N, C, a0, an, bn, mu, abstol) = cache
 
     problem_size = size(u0, 1)
     orders_length = length(prob.orders)

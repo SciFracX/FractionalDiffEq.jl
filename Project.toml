@@ -1,7 +1,7 @@
 name = "FractionalDiffEq"
 uuid = "c7492dd8-6170-483b-af64-cefb6c377d9a"
 authors = ["Qingyu Qu <erikqqy123@gmail.com>"]
-version = "0.3.5"
+version = "0.3.6"
 
 [deps]
 ConcreteStructs = "2569d6c7-a4a2-43d3-a901-331e8e4be471"
@@ -19,8 +19,6 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 SpecialMatrices = "928aab9d-ef52-54ac-8ca1-acd7ca42c160"
 ToeplitzMatrices = "c751599d-da0a-543b-9d20-d0a503d91d24"
-TruncatedStacktraces = "781d530d-4396-4725-bb49-402e4bee1e77"
-UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
 
 [compat]
 ConcreteStructs = "0.2.2"
@@ -37,8 +35,6 @@ SparseArrays = "1.10"
 SpecialFunctions = "2.3.1"
 SpecialMatrices = "3.0.0"
 ToeplitzMatrices = "0.8.3"
-TruncatedStacktraces = "1.4.0"
-UnPack = "1.0.2"
 julia = "1.10"
 
 [extras]

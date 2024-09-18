@@ -15,7 +15,7 @@ Base.eltype(::GLCache{iip, T}) where {iip, T} = T
 function SciMLBase.__init(prob::FODEProblem, alg::GL; dt = 0.0, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     # GL method is only for commensurate order FODE
-    @unpack f, order, u0, tspan, p = prob
+    (; order, u0, tspan, p) = prob
     t0 = tspan[1]
     tfinal = tspan[2]
     order = order[1]
@@ -33,7 +33,7 @@ function SciMLBase.__init(prob::FODEProblem, alg::GL; dt = 0.0, kwargs...)
 end
 
 function SciMLBase.solve!(cache::GLCache{iip, T}) where {iip, T}
-    @unpack prob, alg, mesh, u0, order, horder, y, p, kwargs = cache
+    (; prob, alg, mesh, u0, order, horder, y, p) = cache
     prob = _is_need_convert!(prob)
     n = length(mesh)
     l = length(u0)

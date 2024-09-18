@@ -46,7 +46,7 @@ end
 
 function SciMLBase.__init(prob::FDDEProblem, alg::DelayPECE; dt = 0.0, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
-    @unpack f, h, order, u0, constant_lags, p, tspan = prob
+    (; f, h, order, u0, constant_lags, p, tspan) = prob
     τ = constant_lags[1]
     iip = SciMLBase.isinplace(prob)
     t0 = tspan[1]
@@ -84,7 +84,7 @@ end
 end
 
 function SciMLBase.solve!(cache::DelayPECECache{iip, T}) where {iip, T}
-    @unpack prob, alg, mesh, u0, order, p, dt = cache
+    (; prob, alg, mesh, u0, order, p, dt) = cache
     maxn = length(mesh)
     l = length(u0)
     initial = _generate_similar_array(u0, 1, prob.h(p, 0))
@@ -157,7 +157,7 @@ function generalized_binomials(j, n, order, dt)
 end
 
 function v(cache::DelayPECECache{iip, T}, n) where {iip, T}
-    @unpack prob, mesh, dt, constant_lags, p = cache
+    (; prob, mesh, dt, constant_lags, p) = cache
     τ = constant_lags
     if typeof(τ) <: Function
         m = floor.(Int, τ.(mesh) / dt)
@@ -191,7 +191,7 @@ function v(cache::DelayPECECache{iip, T}, n) where {iip, T}
 end
 
 function solve_fdde_with_multiple_lags(FDDE::FDDEProblem, dt)
-    @unpack f, h, order, constant_lags, p, tspan = FDDE
+    (; f, h, order, constant_lags, p, tspan) = FDDE
     τ = constant_lags[1]
     mesh = collect(0:dt:tspan[2])
     maxn = length(mesh)
@@ -274,7 +274,7 @@ end
 #########################For variable order FDDE###########################
 
 function solve_fdde_with_single_lag_and_variable_order(FDDE::FDDEProblem, dt)
-    @unpack f, order, h, constant_lags, p, tspan = FDDE
+    (; f, order, h, constant_lags, p, tspan) = FDDE
     iip = SciMLBase.isinplace(FDDE)
     order = order[1]
     τ = constant_lags[1]
@@ -339,7 +339,7 @@ function solve_fdde_with_single_lag_and_variable_order(FDDE::FDDEProblem, dt)
 end
 
 function solve_fdde_with_multiple_lags_and_variable_order(FDDE::FDDEProblem, dt)
-    @unpack f, h, order, constant_lags, p, tspan = FDDE
+    (; f, h, order, constant_lags, p, tspan) = FDDE
     τ = constant_lags[1]
     mesh = collect(0:dt:tspan[2])
     maxn = length(mesh)

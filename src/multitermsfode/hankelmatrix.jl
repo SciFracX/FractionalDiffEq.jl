@@ -8,7 +8,7 @@ Use Closed-Form Hankel matrix algorithm to obtain numerical solution at zero ini
 struct ClosedFormHankelM <: MultiTermsFODEAlgorithm end
 
 function solve(prob::MultiTermsFODEProblem, h, ::ClosedFormHankelM)
-    @unpack parameters, orders, rightfun, rparameters, rorders, u0, tspan = prob
+    (; parameters, orders, rightfun, rparameters, rorders, tspan) = prob
     t0 = tspan[1]
     T = tspan[2]
     t = collect(t0:h:T)
