@@ -29,7 +29,7 @@ pkg> add FractionalDiffEq
 
 ### Fractional ordinary differential equations
 
-Let's see if we have an initial value problem:
+Let's see if we have an fractional order initial value problem:
 
 $$ D^{1.8}y(x)=1-y $$
 
