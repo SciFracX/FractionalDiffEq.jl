@@ -33,7 +33,7 @@ Reexport = "1.2.2"
 SciMLBase = "2.55"
 SparseArrays = "1.10"
 SpecialFunctions = "2.3.1"
-SpecialMatrices = "3.0.0"
+SpecialMatrices = "3"
 ToeplitzMatrices = "0.8.3"
 julia = "1.10"
 
