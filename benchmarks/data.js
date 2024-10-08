@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1726734668613,
+  "lastUpdate": 1728408874819,
   "repoUrl": "https://github.com/SciFracX/FractionalDiffEq.jl",
   "entries": {
     "Benchmark Results": [
@@ -546,6 +546,48 @@ window.BENCHMARK_DATA = {
             "value": 18617032,
             "unit": "ns",
             "extra": "gctime=0\nmemory=21647600\nallocs=252523\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"evals_set\":false,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "52615090+ErikQQY@users.noreply.github.com",
+            "name": "Qingyu Qu",
+            "username": "ErikQQY"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9a7b5d4b0972bb896779c20c65b1ad6745808ac4",
+          "message": "Merge pull request #117 from ErikQQY/qqy/up\n\nUpdate compat",
+          "timestamp": "2024-10-09T01:31:35+08:00",
+          "tree_id": "d9bf76be02b24a72c4727745b57560d8379dc97f",
+          "url": "https://github.com/SciFracX/FractionalDiffEq.jl/commit/9a7b5d4b0972bb896779c20c65b1ad6745808ac4"
+        },
+        "date": 1728408873431,
+        "tool": "julia",
+        "benches": [
+          {
+            "name": "FLMM/Trapezoid",
+            "value": 18397976.5,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=23069952\nallocs=385981\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"evals_set\":false,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "FLMM/NewtonGregory",
+            "value": 17944961,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=22575856\nallocs=385922\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"evals_set\":false,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "FLMM/BDF",
+            "value": 17901242,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=22512816\nallocs=386357\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"evals_set\":false,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
           }
         ]
       }
