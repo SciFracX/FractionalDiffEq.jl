@@ -1,7 +1,7 @@
 module FractionalDiffEq
 
-using LinearAlgebra, Reexport, SciMLBase, SpecialFunctions, SparseArrays, ToeplitzMatrices,
-      FFTW, RecipesBase, ForwardDiff, Polynomials, HypergeometricFunctions, DiffEqBase, ConcreteStructs
+using LinearAlgebra, Reexport, SciMLBase, SpecialFunctions, SparseArrays, ToeplitzMatrices, RecursiveArrayTools,
+      FFTW, ForwardDiff, Polynomials, HypergeometricFunctions, DiffEqBase, ConcreteStructs, FastClosures
 
 import SciMLBase: __solve
 import DiffEqBase: solve
@@ -15,8 +15,6 @@ import Polynomials: Polynomial
 include("types/problems.jl")
 include("types/algorithms.jl")
 include("types/solutions.jl")
-
-include("types/problem_utils.jl")
 
 # Multi-terms fractional ordinary differential equations
 include("multitermsfode/matrix.jl")

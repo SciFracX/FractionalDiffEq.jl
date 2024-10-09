@@ -66,8 +66,8 @@ function SciMLBase.__init(prob::FODEProblem, alg::Trapezoid; dt = 0.0,
     NNr = 2^(Q + 1) * r
 
     # Preallocation of some variables
-    y = zeros(T, problem_size, N + 1)
-    fy = zeros(T, problem_size, N + 1)
+    y = [Vector{T}(undef, problem_size) for _ in 1:(N + 1)]
+    fy = similar(y)
     zn = zeros(T, problem_size, NNr + 1)
 
     # generate jacobian of input function
@@ -79,10 +79,10 @@ function SciMLBase.__init(prob::FODEProblem, alg::Trapezoid; dt = 0.0,
 
     # Initializing solution and proces of computation
     mesh = t0 .+ collect(0:N) * dt
-    y[:, 1] = high_order_prob ? u0[1, :] : u0
+    y[1] = high_order_prob ? u0[1, :] : u0
     temp = high_order_prob ? similar(u0[1, :]) : similar(u0)
     f(temp, u0, p, t0)
-    fy[:, 1] = temp
+    fy[1] = temp
     return TrapezoidCache{iip, T}(prob, alg, mesh, u0, alpha, halpha, y, fy, zn, Jfdefun, p,
         problem_size, m_alpha, m_alpha_factorial, r, N, Nr, Q, NNr, omega,
         w, s, dt, reltol, abstol, maxiters, high_order_prob, kwargs)
@@ -105,15 +105,6 @@ function SciMLBase.solve!(cache::TrapezoidCache{iip, T}) where {iip, T}
         TrapDisegnaBlocchi(cache, L, ff, nx0 + L * r, ny0)
         ff[1:(4 * L)] = [ff[1:(2 * L)]; ff[1:(2 * L - 1)]; 4 * L]
     end
-    # Evaluation solution in TFINAL when TFINAL is not in the mesh
-    if tfinal < mesh[N + 1]
-        c = (tfinal - mesh[N]) / dt
-        mesh[N + 1] = tfinal
-        y[:, N + 1] = (1 - c) * y[:, N] + c * y[:, N + 1]
-    end
-    mesh = mesh[1:(N + 1)]
-    y = y[:, 1:(N + 1)]
-    y = collect(Vector{eltype(u0)}, eachcol(y))
 
     return DiffEqBase.build_solution(prob, alg, mesh, y)
 end
@@ -127,14 +118,14 @@ function TrapDisegnaBlocchi(cache::TrapezoidCache{iip, T}, L::P, ff,
     nyi::Int = copy(ny0)
     nyf::Int = copy(ny0 + L * r - 1)
     is = 1
-    s_nxi = zeros(N)
-    s_nxf = zeros(N)
-    s_nyi = zeros(N)
-    s_nyf = zeros(N)
-    s_nxi[is] = nxi
-    s_nxf[is] = nxf
-    s_nyi[is] = nyi
-    s_nyf[is] = nyf
+    s_nxi = Vector{T}(undef, N)
+    s_nxf = similar(s_nxi)
+    s_nyi = similar(s_nxi)
+    s_nyf = similar(s_nxi)
+    s_nxi[1] = nxi
+    s_nxf[1] = nxf
+    s_nyi[1] = nyi
+    s_nyf[1] = nyf
     i_triangolo = 0
     stop = false
     while ~stop
@@ -179,7 +170,7 @@ function TrapQuadrato(cache::TrapezoidCache{iip, T}, nxi::P, nxf::P,
     funz_beg = nyi + 1
     funz_end = nyf + 1
     vett_coef = omega[(coef_beg + 1):(coef_end + 1)]
-    vett_funz = [cache.fy[:, funz_beg:funz_end] zeros(problem_size, funz_end - funz_beg + 1)]
+    vett_funz = [reduce(hcat, cache.fy[funz_beg:funz_end]) zeros(problem_size, funz_end - funz_beg + 1)]
     zzn = real(fast_conv(vett_coef, vett_funz))
     cache.zn[:, (nxi + 1):(nxf + 1)] = cache.zn[:, (nxi + 1):(nxf + 1)] +
                                        zzn[:, (nxf - nyf):(end - 1)]
@@ -192,16 +183,16 @@ function TrapTriangolo(
         n1::Int = n + 1
         St = TrapStartingTerm(cache, mesh[n1])
 
-        Phi = zeros(problem_size, 1)
+        Phi = zeros(problem_size)
         for j in 0:s
-            Phi = Phi + w[j + 1, n1] * cache.fy[:, j + 1]
+            Phi = Phi + w[j + 1, n1] * cache.fy[j + 1]
         end
         for j in j0:(n - 1)
-            Phi = Phi + omega[n - j + 1] * cache.fy[:, j + 1]
+            Phi = Phi + omega[n - j + 1] * cache.fy[j + 1]
         end
         Phi_n = St + halpha * (zn[:, n1] + Phi)
 
-        yn0 = cache.y[:, n]
+        yn0 = cache.y[n]
         temp = zeros(length(yn0))
         prob.f(temp, yn0, p, mesh[n1])
         fn0 = temp
@@ -213,7 +204,7 @@ function TrapTriangolo(
         fn1 = similar(yn0)
         while ~stop
             JGn0 = zeros(problem_size, problem_size) + I - halpha * omega[1] * Jfn0
-            yn1 = yn0 - JGn0 \ Gn0
+            yn1 = yn0 - vec(JGn0 \ Gn0)
             prob.f(fn1, yn1, p, mesh[n1])
             Gn1 = yn1 - halpha * omega[1] * fn1 - Phi_n
             it = it + 1
@@ -230,8 +221,8 @@ function TrapTriangolo(
                 Jfn0 = Jf_vectorfield(mesh[n1], yn0, Jfdefun)
             end
         end
-        cache.y[:, n1] = yn1
-        cache.fy[:, n1] = fn1
+        cache.y[n1] = yn1
+        cache.fy[n1] = fn1
     end
 end
 
@@ -239,20 +230,13 @@ function TrapFirstApproximations(cache::TrapezoidCache{iip, T}) where {iip, T}
     (; prob, mesh, abstol, problem_size, maxiters, s, halpha, omega, w, Jfdefun, p) = cache
     Im = zeros(problem_size, problem_size) + I
     Ims = zeros(problem_size * s, problem_size * s) + I
-    Y0 = zeros(s * problem_size, 1)
-    F0 = copy(Y0)
-    B0 = copy(Y0)
+    Y0 = VectorOfArray([cache.y[1] for _ in 1:s])
+    F0 = similar(Y0)
+    B0 = similar(Y0)
     for j in 1:s
-        Y0[((j - 1) * problem_size + 1):(j * problem_size), 1] = cache.y[:, 1]
-        temp = zeros(length(cache.y[:, 1]))
-        prob.f(temp, cache.y[:, 1], p, mesh[j + 1])
-        F0[((j - 1) * problem_size + 1):(j * problem_size), 1] = temp
+        prob.f(F0.u[j], cache.y[1], p, mesh[j + 1])
         St = TrapStartingTerm(cache, mesh[j + 1])
-        B0[((j - 1) * problem_size + 1):(j * problem_size), 1] = St +
-                                                                 halpha *
-                                                                 (omega[j + 1] +
-                                                                  w[1, j + 1]) *
-                                                                 cache.fy[:, 1]
+        B0.u[j] = St + halpha * (omega[j + 1] + w[1, j + 1]) * cache.fy[1]
     end
     W = zeros(s, s)
     for i in 1:s
@@ -265,29 +249,26 @@ function TrapFirstApproximations(cache::TrapezoidCache{iip, T}) where {iip, T}
         end
     end
     W = halpha * kron(W, Im)
-    G0 = Y0 - B0 - W * F0
+    G0 = vec(Y0 - B0) - W * vec(F0)
     JF = zeros(s * problem_size, s * problem_size)
     for j in 1:s
         JF[((j - 1) * problem_size + 1):(j * problem_size), ((j - 1) * problem_size + 1):(j * problem_size)] = Jf_vectorfield(
-            mesh[j + 1], cache.y[:, 1], Jfdefun)
+            mesh[j + 1], cache.y[1], Jfdefun)
     end
     stop = false
     it = 0
-    F1 = zeros(s * problem_size, 1)
+    F1 = similar(F0)
+    Y1 = similar(Y0)
     while ~stop
         JG = Ims - W * JF
-        global Y1 = Y0 - JG \ G0
+        recursive_unflatten!(Y1, vec(Y0) - JG \ G0)
 
         for j in 1:s
-            temp = zeros(length(Y1[((j - 1) * problem_size + 1):(j * problem_size), 1]))
-            prob.f(temp, Y1[((j - 1) * problem_size + 1):(j * problem_size), 1],
-                p, mesh[j + 1])
-            F1[((j - 1) * problem_size + 1):(j * problem_size), 1] = temp
+            prob.f(F1.u[j], Y1.u[j], p, mesh[j + 1])
         end
-        G1 = Y1 - B0 - W * F1
+        G1 = vec(Y1 - B0) - W * vec(F1)
 
         it = it + 1
-
         stop = (norm(Y1 - Y0, Inf) < abstol) || (norm(G1, Inf) < abstol)
         if it > maxiters && ~stop
             @warn "Non Convergence"
@@ -299,14 +280,13 @@ function TrapFirstApproximations(cache::TrapezoidCache{iip, T}) where {iip, T}
         if ~stop
             for j in 1:s
                 JF[((j - 1) * problem_size + 1):(j * problem_size), ((j - 1) * problem_size + 1):(j * problem_size)] = Jf_vectorfield(
-                    mesh[j + 1],
-                    Y1[((j - 1) * problem_size + 1):(j * problem_size), 1], Jfdefun)
+                    mesh[j + 1], Y1.u[j], Jfdefun)
             end
         end
     end
     for j in 1:s
-        cache.y[:, j + 1] = Y1[((j - 1) * problem_size + 1):(j * problem_size), 1]
-        cache.fy[:, j + 1] = F1[((j - 1) * problem_size + 1):(j * problem_size), 1]
+        cache.y[j + 1] = Y1.u[j]
+        cache.fy[j + 1] = F1.u[j]
     end
 end
 
@@ -370,7 +350,7 @@ function TrapStartingTerm(cache::TrapezoidCache{iip, T}, t) where {iip, T}
     (; u0, m_alpha, mesh, m_alpha_factorial, high_order_prob) = cache
     t0 = mesh[1]
     u0 = high_order_prob ? reshape(u0, 1, length(u0)) : u0
-    ys = zeros(size(u0, 1), 1)
+    ys = zeros(size(u0, 1))
     for k in 1:m_alpha
         ys = ys + (t - t0)^(k - 1) / m_alpha_factorial[k] * u0[:, k]
     end
