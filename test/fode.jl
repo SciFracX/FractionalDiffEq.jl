@@ -73,6 +73,7 @@ end
     analytical_sol = [[i] for i in temp]
     for alg in [BDF(), Trapezoid(), NewtonGregory(), PITrap(), PECE()]#, PIRect()
         sol = solve(prob, alg, dt = dt)
+        @info "$(alg) method"
         @test norm(analytical_sol .- sol.u) < 1e-4
     end
     for alg in [PIEX()]#, PECE()

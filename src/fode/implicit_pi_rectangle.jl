@@ -64,8 +64,8 @@ function SciMLBase.__init(
     NNr = 2^(Qr + 1) * r
 
     # Preallocation of some variables
-    y = zeros(T, problem_size, N + 1)
-    fy = zeros(T, problem_size, N + 1)
+    y = [Vector{T}(undef, problem_size) for _ in 1:(N + 1)]
+    fy = similar(y)
     zn = zeros(problem_size, NNr + 1)
 
     # generate jacobian of the input function
@@ -135,10 +135,10 @@ function SciMLBase.__init(
 
     # Initializing solution and proces of computation
     mesh = t0 .+ collect(0:N) * dt
-    y[:, 1] = high_order_prob ? u0[1, :] : u0
+    y[1] = high_order_prob ? u0[1, :] : u0
     temp = high_order_prob ? similar(u0[1, :]) : similar(u0)
     f(temp, u0, p, t0)
-    fy[:, 1] = temp
+    fy[1] = temp
     return PIRectCache{iip, T}(
         prob, alg, mesh, u0, order, m_alpha, m_alpha_factorial, y, fy,
         p, problem_size, zn, Jfdefun, r, N, Nr, Qr, NNr, bn, halpha1,
@@ -146,7 +146,6 @@ function SciMLBase.__init(
 end
 function SciMLBase.solve!(cache::PIRectCache{iip, T}) where {iip, T}
     (; prob, alg, mesh, u0, y, r, N, Qr) = cache
-    tfinal = mesh[end]
     PIRect_triangolo(cache, 1, r - 1)
 
     # Main process of computation by means of the FFT algorithm
@@ -163,18 +162,7 @@ function SciMLBase.solve!(cache::PIRectCache{iip, T}) where {iip, T}
         ff[card_ff] = 4 * L
     end
 
-    # Evaluation solution in tfinal when tfinal is not in the mesh
-    if tfinal < mesh[N + 1]
-        c = (tfinal - mesh[N]) / dt
-        mesh[N + 1] = tfinal
-        y[:, N + 1] = (1 - c) * y[:, N] + c * y[:, N + 1]
-    end
-
-    mesh = mesh[1:(N + 1)]
-    y = cache.y[:, 1:(N + 1)]
-    u = collect(Vector{eltype(u0)}, eachcol(y))
-
-    return DiffEqBase.build_solution(prob, alg, mesh, u)
+    return DiffEqBase.build_solution(prob, alg, mesh, cache.y)
 end
 
 function PIRect_disegna_blocchi(
@@ -185,15 +173,15 @@ function PIRect_disegna_blocchi(
     nxf::Int = nx0 + L * r - 1
     nyi::Int = ny0
     nyf::Int = ny0 + L * r - 1
-    is = 1
-    s_nxi = zeros(T, N)
-    s_nxf = zeros(T, N)
-    s_nyi = zeros(T, N)
-    s_nyf = zeros(T, N)
-    s_nxi[is] = nxi
-    s_nxf[is] = nxf
-    s_nyi[is] = nyi
-    s_nyf[is] = nyf
+    is::Int = 1
+    s_nxi = Vector{T}(undef, N)
+    s_nxf = similar(s_nxi)
+    s_nyi = similar(s_nxi)
+    s_nyf = similar(s_nxi)
+    s_nxi[1] = nxi
+    s_nxf[1] = nxf
+    s_nyi[1] = nyi
+    s_nyf[1] = nyf
 
     i_triangolo = 0
     stop = false
@@ -242,9 +230,9 @@ function PIRect_quadrato(cache::PIRectCache{iip, T}, nxi::P, nxf::P,
     Nnxf = min(N, nxf)
 
     if nyi == 0
-        vett_funz = [zeros(problem_size, 1) cache.fy[:, (funz_beg + 1):funz_end]]
+        vett_funz = [zeros(problem_size, 1) reduce(hcat, cache.fy[(funz_beg + 1):funz_end])]
     else
-        vett_funz = cache.fy[:, funz_beg:funz_end]
+        vett_funz = reduce(hcat, cache.fy[funz_beg:funz_end])
     end
     vett_funz_fft = rowfft(vett_funz, coef_end)
     zzn = zeros(problem_size, coef_end)
@@ -270,16 +258,16 @@ function PIRect_triangolo(
         n1 = n + 1
         St = PIRect_system_starting_term(cache, mesh[n + 1])
         # Evaluation of the predictor
-        Phi = zeros(problem_size, 1)
+        Phi = zeros(problem_size)
         for j in nxi:(n - 1)
-            Phi = Phi + bn[1:alpha_length, n - j + 1] .* cache.fy[:, j + 1]
+            Phi = Phi + bn[1:alpha_length, n - j + 1] .* cache.fy[j + 1]
         end
         Phi_n = St + halpha1 .* (cache.zn[:, n + 1] + Phi)
         i_alpha_1 = findall(alpha -> abs(alpha - 1) < 1e-14, order)
-        Phi_n[i_alpha_1] = cache.y[i_alpha_1, n]
+        Phi_n[i_alpha_1] = cache.y[n][i_alpha_1]
 
-        yn0 = cache.y[:, n]
-        fn0 = zeros(T, problem_size)
+        yn0 = cache.y[n]
+        fn0 = similar(yn0)
         Jfn0 = zeros(T, problem_size, problem_size)
         prob.f(fn0, yn0, p, mesh[n + 1])
         Jfn0 = Jf_vectorfield(mesh[n + 1], yn0, Jfdefun)
@@ -292,7 +280,7 @@ function PIRect_triangolo(
         while ~stop
             temp = high_order_prob ? diagm([halpha1]) : diagm(halpha1)
             JGn0 = zeros(T, problem_size, problem_size) + I - temp * Jfn0
-            yn1 = yn0 - JGn0 \ Gn0
+            yn1 = yn0 - vec(JGn0 \ Gn0)
             prob.f(fn1, yn1, p, mesh[n + 1])
             Gn1 = yn1 - halpha1 .* fn1 - Phi_n
             it = it + 1
@@ -309,8 +297,8 @@ function PIRect_triangolo(
                 Jfn0 = Jf_vectorfield(mesh[n1], yn0, Jfdefun)
             end
         end
-        cache.y[:, n1] = yn1
-        cache.fy[:, n1] = fn1
+        cache.y[n1] = yn1
+        cache.fy[n1] = fn1
     end
 end
 
@@ -318,7 +306,7 @@ function PIRect_system_starting_term(cache::PIRectCache{iip, T}, t) where {iip, 
     (; mesh, u0, m_alpha, m_alpha_factorial, high_order_prob) = cache
     t0 = mesh[1]
     u0 = high_order_prob ? reshape(u0, 1, length(u0)) : u0
-    ys = zeros(size(u0, 1), 1)
+    ys = zeros(size(u0, 1))
     for k in 1:maximum(m_alpha)
         if length(m_alpha) == 1
             ys = ys .+ (t - t0)^(k - 1) / m_alpha_factorial[k] * u0[:, k]

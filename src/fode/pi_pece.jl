@@ -69,8 +69,8 @@ function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6,
     NNr = 2^(Qr + 1) * r
 
     # Preallocation of some variables
-    y = zeros(problem_size, N + 1)
-    fy = zeros(problem_size, N + 1)
+    y = [Vector{T}(undef, problem_size) for _ in 1:(N + 1)]
+    fy = similar(y)
     zn_pred = zeros(problem_size, NNr + 1)
     mu > 0 ? (zn_corr = zeros(problem_size, NNr + 1)) : (zn_corr = 0)
 
@@ -155,10 +155,10 @@ function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6,
 
     # Initializing solution and proces of computation
     mesh = t0 .+ collect(0:N) * dt
-    y[:, 1] = high_order_prob ? u0[1, :] : u0
+    y[1] = high_order_prob ? u0[1, :] : u0
     temp = high_order_prob ? similar(u0[1, :]) : similar(u0)
     f(temp, u0, p, t0)
-    fy[:, 1] = temp
+    fy[1] = temp
     return PECECache{iip, T}(
         prob, alg, mesh, u0, order, m_alpha, m_alpha_factorial, y, fy, p,
         problem_size, zn_pred, zn_corr, r, N, Nr, Qr, NNr, an, bn, a0, halpha1,
@@ -167,7 +167,6 @@ end
 
 function SciMLBase.solve!(cache::PECECache{iip, T}) where {iip, T}
     (; prob, alg, mesh, u0, r, N, Qr) = cache
-    tfinal = mesh[N + 1]
     ABM_triangolo(cache, 1, r - 1)
 
     # Main process of computation by means of the FFT algorithm
@@ -183,19 +182,7 @@ function SciMLBase.solve!(cache::PECECache{iip, T}) where {iip, T}
         card_ff = 2 * card_ff
         ff[card_ff] = 4 * L
     end
-
-    # Evaluation solution in T when T is not in the mesh
-    if tfinal < mesh[N + 1]
-        c = (tfinal - mesh[N]) / dt
-        mesh[N + 1] = tfinal
-        cache.y[:, N + 1] = (1 - c) * cache.y[:, N] + c * cache.y[:, N + 1]
-    end
-
-    mesh = mesh[1:(N + 1)]
-    u = cache.y[:, 1:(N + 1)]
-    u = collect(Vector{eltype(u0)}, eachcol(u))
-
-    return DiffEqBase.build_solution(prob, alg, mesh, u)
+    return DiffEqBase.build_solution(prob, alg, mesh, cache.y)
 end
 
 function DisegnaBlocchi(
@@ -206,14 +193,14 @@ function DisegnaBlocchi(
     nyi::Int = ny0
     nyf::Int = ny0 + L * r - 1
     is = 1
-    s_nxi = zeros(N)
-    s_nxf = zeros(N)
-    s_nyi = zeros(N)
-    s_nyf = zeros(N)
-    s_nxi[is] = nxi
-    s_nxf[is] = nxf
-    s_nyi[is] = nyi
-    s_nyf[is] = nyf
+    s_nxi = Vector{T}(undef, N)
+    s_nxf = similar(s_nxi)
+    s_nyi = similar(s_nxi)
+    s_nyf = similar(s_nxi)
+    s_nxi[1] = nxi
+    s_nxf[1] = nxf
+    s_nyi[1] = nyi
+    s_nyf[1] = nyf
 
     i_triangolo = 0
     stop = false
@@ -264,8 +251,8 @@ function ABM_quadrato(cache::PECECache{iip, T}, nxi::P, nxf::P,
     Nnxf = min(N, nxf)
 
     # Evaluation convolution segment for the predictor
-    vett_funz = cache.fy[:, funz_beg:funz_end]
-    vett_funz_fft = rowfft(vett_funz, coef_end)
+    vett_funz = cache.fy[funz_beg:funz_end]
+    vett_funz_fft = rowfft(reduce(hcat, vett_funz), coef_end)
     zzn_pred = zeros(problem_size, coef_end)
     for i in 1:problem_size
         i_alpha::Int = min(alpha_length, i)
@@ -279,7 +266,7 @@ function ABM_quadrato(cache::PECECache{iip, T}, nxi::P, nxf::P,
     # Evaluation convolution segment for the corrector
     if mu > 0
         if nyi == 0 # Evaluation of the lowest square
-            vett_funz = [zeros(problem_size, 1) cache.fy[:, (funz_beg + 1):funz_end]]
+            vett_funz = [zeros(problem_size, 1) reduce(hcat, cache.fy[(funz_beg + 1):funz_end])]
             vett_funz_fft = rowfft(vett_funz, coef_end)
         end
         zzn_corr = zeros(problem_size, coef_end)
@@ -305,14 +292,14 @@ function ABM_triangolo(
 
     for n in nxi:min(N, nxf)
         # Evaluation of the predictor
-        Phi = zeros(T, problem_size, 1)
+        Phi = zeros(T, problem_size)
         if nxi == 1 # Case of the first triangle
             j_beg = 0
         else # Case of any triangle but not the first
             j_beg = nxi
         end
         for j in j_beg:(n - 1)
-            Phi = Phi .+ bn[1:alpha_length, n - j] .* cache.fy[:, j + 1]
+            Phi = Phi .+ bn[1:alpha_length, n - j] .* cache.fy[j + 1]
         end
         St = starting_term(cache, mesh[n + 1])
         y_pred = St .+ halpha1 .* (zn_pred[:, n + 1] .+ Phi)
@@ -321,17 +308,17 @@ function ABM_triangolo(
 
         # Evaluation of the corrector
         if mu == 0
-            cache.y[:, n + 1] = y_pred
-            cache.fy[:, n + 1] = f_pred
+            cache.y[n + 1] = y_pred
+            cache.fy[n + 1] = f_pred
         else
             j_beg = nxi
-            Phi = zeros(problem_size, 1)
+            Phi = zeros(problem_size)
             for j in j_beg:(n - 1)
-                Phi = Phi + an[1:alpha_length, n - j + 1] .* cache.fy[:, j + 1]
+                Phi = Phi + an[1:alpha_length, n - j + 1] .* cache.fy[j + 1]
             end
             Phi_n = St .+
                     halpha2 .*
-                    (a0[1:alpha_length, n + 1] .* cache.fy[:, 1] .+ zn_corr[:, n + 1] .+
+                    (a0[1:alpha_length, n + 1] .* cache.fy[1] .+ zn_corr[:, n + 1] .+
                      Phi)
             yn0 = y_pred
             fn0 = f_pred
@@ -355,8 +342,8 @@ function ABM_triangolo(
                 yn0 = yn1
                 fn0 = fn1
             end
-            cache.y[:, n + 1] = yn1
-            cache.fy[:, n + 1] = fn1
+            cache.y[n + 1] = yn1
+            cache.fy[n + 1] = fn1
         end
     end
 end
@@ -365,13 +352,13 @@ function starting_term(cache::PECECache{iip, T}, t) where {iip, T}
     (; mesh, m_alpha, u0, m_alpha_factorial, high_order_prob) = cache
     t0 = mesh[1]
     u0 = high_order_prob ? reshape(u0, 1, length(u0)) : u0
-    ys = zeros(size(u0, 1), 1)
+    ys = zeros(size(u0, 1))
     for k in 1:maximum(m_alpha)
         if length(m_alpha) == 1
             ys = ys + (t - t0)^(k - 1) / m_alpha_factorial[k] * u0[:, k]
         else
             i_alpha = findall(x -> x >= k, m_alpha)
-            ys[i_alpha, 1] = ys[i_alpha, 1] +
+            ys[i_alpha] = ys[i_alpha, 1] +
                              (t - t0)^(k - 1) * u0[i_alpha, k] ./
                              m_alpha_factorial[i_alpha, k]
         end
