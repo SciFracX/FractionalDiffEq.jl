@@ -16,5 +16,5 @@
     u0 = [0.2; -0.1; 0.1]
     tspan = (0, 0.5)
     prob = FODEProblem(chua!, α, u0, tspan)
-    @test_no_warn solve(prob, FdeSolverPECE(), dt = 0.01)
+    @test_nowarn solve(prob, FdeSolverPECE(), dt = 0.01)
 end
