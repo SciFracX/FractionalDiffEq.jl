@@ -123,7 +123,7 @@ function SciMLBase.solve!(cache::BDFCache{iip, T}) where {iip, T}
         ff[1:(4 * L)] = [ff[1:(2 * L)]; ff[1:(2 * L - 1)]; 4 * L]
     end
 
-    return DiffEqBase.build_solution(prob, alg, mesh, y)
+    return DiffEqBase.build_solution(prob, alg, mesh, cache.y)
 end
 
 function BDF_disegna_blocchi(
