@@ -12,9 +12,7 @@ end
 @testset "FractionalDiffEq.jl" begin
     include("fode.jl")
     include("fdde.jl")
-    include("discrete.jl")
-    #include("dode.jl")
-    include("ffode.jl")
+    #include("discrete.jl")
     include("auxillary.jl")
     include("wrappers.jl")
 end

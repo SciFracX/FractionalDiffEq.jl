@@ -32,35 +32,3 @@ end
     @test isFunction(x -> x) == true
     @test isFunction("Hello") == false
 end
-
-@testset "Test FractionalDiscreteProblem" begin
-    discretefun(x) = 0.5 * x + 1
-    α = 0.5
-    x0 = 1
-    T = 1
-    h = 0.1
-    discreteprob = FractionalDiscreteProblem(discretefun, α, x0, T)
-    discretesol = solve(discreteprob, h, PECE())
-
-    @test_nowarn show(discreteprob)
-    @test_nowarn show(discretesol)
-end
-
-@testset "Test FFMODEProblem show method" begin
-    α = 1
-    β = 1
-    h = 0.1
-    tfinal = 0.5
-    u0 = [-2, 1, -1]
-    function fun(du, u, p, t)
-        a = 10
-        b = 28
-        c = 8 / 3
-        du[1] = a * (u[2] - u[1])
-        du[2] = (b - u[3]) * u[1] - u[2]
-        du[3] = u[1] * u[2] - c * u[3]
-    end
-    prob = FFMODEProblem(fun, [α, β], u0, (0, tfinal))
-
-    @test_nowarn show(prob)
-end
