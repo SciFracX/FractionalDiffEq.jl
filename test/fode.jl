@@ -81,6 +81,24 @@ end
         @test norm(analytical_sol .- sol.u) < 0.05
     end
 end
+
+@testset "Test Nonstiff FODE" begin
+    bet = 0.5
+    f(du, u, p, t) = (du .= 40320/gamma(9-bet) * t^(8-bet) - 3*gamma(5+bet/2)/gamma(5-bet/2)*t^(4-bet/2) + 9/4*gamma(bet+1) + (3/2*t^(bet/2)-t^4)^3 - u[1]^(3/2))
+    tspan = (0.0, 1.0)
+    analytical(u, p, t) = t^8 - 3*t^(4+bet/2) + 9/4*t^bet
+    fun = ODEFunction(f)
+    prob = FODEProblem(fun, bet, [0.0, 0.0], tspan)
+    dt = 0.0001
+    t = collect(tspan[1]:dt:tspan[2])
+    temp = analytical.(nothing, nothing, t)
+    analytical_sol = [[i] for i in temp]
+    for alg in [BDF(), Trapezoid(), NewtonGregory(), PITrap(), PECE()]#, PIRect()
+        sol = solve(prob, alg, dt = dt)
+        @test norm(sol.u .- analytical_sol) < 1e-4
+    end
+end
+
 @testset "Test GL method for FODEProblem" begin
     alpha = [0.99, 0.99, 0.99]
     u0 = [1.0, 0.0, 1.0]
@@ -466,67 +484,4 @@ end
          1.0 0.529265 -0.0101035 -0.430956 -0.733314 -0.916321 -1.06158 -1.2647 -1.5767 -1.99613 -2.37772
          1.0 1.37074 1.8176 2.17624 2.48899 2.67047 2.6624 2.46322 2.07376 1.55057 1.0049];
         atol = 1e-4)
-end
-
-#=
-@testset "Test Atangana Seda method" begin
-    fun(y, p, t) = 1-y
-    prob = SingleTermFODEProblem(fun, 0.5, 0, (0, 5))
-    sol = solve(prob, 0.5, AtanganaSeda())
-
-    @test isapprox(sol.u, [0.0
-    0.5
-    0.625
-    0.4122403564148137
-    0.9011748394667164
-   -0.11601114237053156
-    2.3113598236715522
-   -3.0656444401780365
-    9.199001384099954
-  -18.488162171353544
-   44.23628311938973]; atol=1e-3)
-end
-=#
-@testset "Test Atangana Seda method for Atangana-Baleanu FODEProblem" begin
-    tspan = (0.0, 2.0)
-    h = 0.5
-    α = [0.99, 0.99, 0.99]
-    u0 = [-0.1; 0.1; -0.1]
-    function fun(du, u, p, t)
-        a = 0.2
-        b = 4
-        ζ = 8
-        δ = 1
-        du[1] = -u[2]^2 - u[3]^2 - a * u[1] + a * ζ
-        du[2] = u[1] * u[2] - b * u[1] * u[3] - u[2] + δ
-        du[3] = b * u[1] * u[2] + u[1] * u[3] - u[3]
-    end
-    prob = FODEProblem(fun, α, u0, tspan)
-    sol = solve(prob, AtanganaSedaAB(), dt = 0.5)
-
-    @test isapprox(test_sol(sol),
-        [-0.1 0.7 1.18511 -1.41522 -31.0872
-         0.1 0.525 1.08088 -4.03383 32.0085
-         -0.1 -0.065 1.03463 4.10537 13.3441];
-        atol = 1e-2)
-end
-
-@testset "Test AtanganaSedaCF method" begin
-    a₁, a₂, a₃, a₄, a₅, a₆, a₇ = 3, 0.5, 4, 3, 4, 9, 4
-    function LotkaVolterra(du, u, p, t)
-        du[1] = u[1] * (a₁ - a₂ * u[1] - u[2] - u[3])
-        du[2] = u[2] * (1 - a₃ + a₄ * u[1])
-        du[3] = u[3] * (1 - a₅ + a₆ * u[1] + a₇ * u[2])
-    end
-    u0 = [0.5, 0.9, 0.1]
-    tspan = (0.0, 2.0)
-    α = ones(3) * 0.98
-    prob = FODEProblem(LotkaVolterra, α, u0, tspan)
-    sol = solve(prob, AtanganaSedaCF(), dt = 0.5)
-
-    isapprox(sol.u,
-        [0.0 1.375 3.37602 -5.46045 449.712
-         0.0 -0.45 -0.492188 -3.4828 62.7789
-         0.0 0.61 3.94806 96.048 -5989.62];
-        atol = 1e-3)
 end

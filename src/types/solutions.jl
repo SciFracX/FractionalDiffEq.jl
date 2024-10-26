@@ -30,16 +30,6 @@ struct DODESolution <: AbstractFDESolution
     u::AbstractArray
 end
 
-struct FFMODESolution <: AbstractFDESolution
-    t::AbstractArray
-    u::AbstractArray
-end
-
-struct FFMODESystemSolution <: AbstractFDESolution
-    t::AbstractArray
-    u::AbstractArray
-end
-
 struct FOLE
     t::AbstractArray
     LE::AbstractArray

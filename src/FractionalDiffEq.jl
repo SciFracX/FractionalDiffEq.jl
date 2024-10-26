@@ -35,8 +35,6 @@ include("fode/implicit_pi_rectangle.jl")
 include("fode/implicit_pi_trapzoid.jl")
 include("fode/grunwald_letnikov.jl")
 include("fode/nonlinearalg.jl")
-include("fode/newton_polynomials.jl")
-include("fode/atangana_seda.jl")
 
 # System of fractal-fractional ordinary differential equations
 include("ffode/atangana_seda.jl")
@@ -108,8 +106,6 @@ export MTPIRect, MTPITrap, MTPECE, MTPIEX
 
 # System of FODE solvers
 export NonLinearAlg, BDF, NewtonGregory, Trapezoid, NewtonPolynomial
-export AtanganaSedaCF
-export AtanganaSeda
 
 # FDDE solvers
 export DelayPIEX, DelayPECE, DelayABM, MatrixForm

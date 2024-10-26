@@ -31,33 +31,6 @@ function Base.show(io::IO, prob::FractionalDiscreteProblem)
     println("u0: $(prob.u0)")
 end
 
-function Base.show(io::IO, prob::FFPODEProblem)
-    printstyled(typeof(prob), color = :light_blue)
-    printstyled(" with order ")
-    printstyled("$(prob.order[1])", color = :red)
-    printstyled(" and $(prob.order[2])", color = :red)
-    println()
-    println("timespan: $(prob.tspan)")
-end
-
-function Base.show(io::IO, prob::FFEODEProblem)
-    printstyled(typeof(prob), color = :light_blue)
-    printstyled(" with order ")
-    printstyled("$(prob.order[1])", color = :red)
-    printstyled(" and $(prob.order[2])", color = :red)
-    println()
-    println("timespan: $(prob.tspan)")
-end
-
-function Base.show(io::IO, prob::FFMODEProblem)
-    printstyled(typeof(prob), color = :light_blue)
-    printstyled(" with order ")
-    printstyled("$(prob.order[1])", color = :red)
-    printstyled(" and $(prob.order[2])", color = :red)
-    println()
-    println("timespan: $(prob.tspan)")
-end
-
 function Base.show(io::IO, LE::FOLE)
     printstyled("Fractional Lyapunov exponents:", color = :light_blue)
     printstyled("$(LE.LE)")
