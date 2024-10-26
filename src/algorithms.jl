@@ -146,13 +146,6 @@ year={2018}
 struct PECE <: FODEAlgorithm end
 
 """
-AtanganaSedaAB
-
-Solve Atangana-Baleanu fractional order differential equations using Newton Polynomials.
-"""
-struct AtanganaSedaAB <: FODEAlgorithm end
-
-"""
 MatrixDiscrete
 
 [Triangular strip matrices](https://en.wikipedia.org/wiki/Triangular_matrix) to discrete fractional ordinary differential equations to simple algebra system and solve the system.
@@ -271,3 +264,7 @@ struct MTPIRect <: MultiTermsFODEAlgorithm end
 Use implicit product integration trapezoidal type method to solve multi-terms FODE.
 """
 struct MTPITrap <: MultiTermsFODEAlgorithm end
+
+###################### extension algorithms ######################
+
+struct FdeSolverPECE <: FODEAlgorithm end

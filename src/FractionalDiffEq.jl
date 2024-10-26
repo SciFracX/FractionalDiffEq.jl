@@ -12,8 +12,8 @@ import Polynomials: Polynomial
 
 @reexport using DiffEqBase, SciMLBase
 
-include("types/problems.jl")
-include("types/algorithms.jl")
+include("problems.jl")
+include("algorithms.jl")
 include("types/solutions.jl")
 
 # Multi-terms fractional ordinary differential equations
@@ -36,9 +36,6 @@ include("fode/implicit_pi_trapzoid.jl")
 include("fode/grunwald_letnikov.jl")
 include("fode/nonlinearalg.jl")
 
-# System of fractal-fractional ordinary differential equations
-include("ffode/atangana_seda.jl")
-
 # Fractional delay differential equations
 include("delay/pece.jl")
 include("delay/product_integral.jl")
@@ -58,8 +55,6 @@ include("mlfun.jl")
 
 # Lyapunov exponents
 #include("lyapunov.jl")
-
-include("utils.jl")
 include("auxiliary.jl")
 
 function __solve(
@@ -82,25 +77,19 @@ end
 export FDEProblem
 
 # FDDE problems
-export FDDEProblem, FDDESystem, FDDEMatrixProblem
+export FDDEProblem, FDDEMatrixProblem
 
 # FODE problems
-export FODEProblem, MultiTermsFODEProblem, DODEProblem, FFPODEProblem, FFEODEProblem,
-       FFMODEProblem
+export FODEProblem, MultiTermsFODEProblem, DODEProblem
 
 # Fractional Discrete probelms
 export FractionalDiscreteProblem, FractionalDiscreteSystem
 
 ###################################################
 
-export AbstractFDESolution
-export FODESolution, FDifferenceSolution, DODESolution, FFMODESolution
-export FODESystemSolution, FDDESystemSolution, FFMODESystem
-
 # FODE solvers
 export PIRect, PITrap, PECE, PIEX
 export MatrixDiscrete, GL
-export AtanganaSedaAB
 
 export MTPIRect, MTPITrap, MTPECE, MTPIEX
 
@@ -113,8 +102,8 @@ export DelayPIEX, DelayPECE, DelayABM, MatrixForm
 # DODE solvers
 export DOMatrixDiscrete
 
-# Fractional Differences Equations solvers
-# export PECE
+# export extension solvers
+export FdeSolverPECE
 
 ###################################################
 
@@ -129,5 +118,19 @@ export mittleff, mittleffderiv
 
 # Distributed order auxiliary SpecialFunctions
 export DOB, DOF, DORANORT, isFunction
+
+#=
+function chua!(du, x, p, t)
+    a, b, c, m0, m1 = p
+    du[1] = a*(x[2]-x[1]-(m1*x[1]+0.5*(m0-m1)*(abs(x[1]+1)-abs(x[1]-1))))
+    du[2] = x[1]-x[2]+x[3]
+    du[3] = -b*x[2]-c*x[3]
+end
+α = [0.93, 0.99, 0.92];
+x0 = [0.2, -0.1, 0.1];
+tspan = (0, 100);
+p = [10.725, 10.593, 0.268, -1.1726, -0.7872]
+prob = FODEProblem(chua!, α, x0, tspan, p)
+=#
 
 end
