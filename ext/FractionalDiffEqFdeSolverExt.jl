@@ -23,8 +23,9 @@ function SciMLBase.__solve(prob::FODEProblem, alg::FdeSolverPECE; dt = 0.0, abst
         end
     end
     par = p isa SciMLBase.NullParameters ? nothing : p
+    length(u0) == 1 && (u0 = first(u0))
     t, y = FDEsolver(newf, tSpan, u0, order, par, JF = prob.f.jac, h = dt, tol = abstol)
-    u = eachrow(y)
+    u = collect(Vector{eltype(y)}, eachrow(y))
 
     return DiffEqBase.build_solution(prob, alg, t, u)
 end

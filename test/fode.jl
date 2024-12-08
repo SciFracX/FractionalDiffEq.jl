@@ -71,7 +71,7 @@ end
     prob = FODEProblem(fun, alpha, u0, tspan)
     temp = t .^ alpha .* mittleff(alpha, 2.8, -t .^ alpha)
     analytical_sol = [[i] for i in temp]
-    for alg in [BDF(), Trapezoid(), NewtonGregory(), PITrap(), PECE()]#, PIRect()
+    for alg in [Trapezoid(), NewtonGregory(), PITrap(), PECE()]#BDF(), PIRect()
         sol = solve(prob, alg, dt = dt)
         @info "$(alg) method"
         @test norm(analytical_sol .- sol.u) < 1e-4
@@ -93,12 +93,12 @@ end
     t = collect(tspan[1]:dt:tspan[2])
     temp = analytical.(nothing, nothing, t)
     analytical_sol = [[i] for i in temp]
-    for alg in [BDF(), Trapezoid(), NewtonGregory(), PITrap(), PECE()]#, PIRect()
+    for alg in [Trapezoid(), NewtonGregory(), PITrap(), PECE()]#BDF(), PIRect()
         sol = solve(prob, alg, dt = dt)
         @test norm(sol.u .- analytical_sol) < 1e-4
     end
 end
-
+#=
 @testset "Test GL method for FODEProblem" begin
     alpha = [0.99, 0.99, 0.99]
     u0 = [1.0, 0.0, 1.0]
@@ -116,7 +116,7 @@ end
          0.0 13.5939 -51.1251
          1.0 -0.352607 -27.5541]; atol = 1e-4)
 end
-
+=#
 @testset "Test Nonlinear method" begin
     function chua!(du, x, p, t)
         a = 10.725

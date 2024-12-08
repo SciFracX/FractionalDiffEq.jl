@@ -39,13 +39,12 @@ Base.eltype(::BDFCache{iip, T}) where {iip, T} = T
 
 function SciMLBase.__init(prob::FODEProblem, alg::BDF; dt = 0.0, reltol = 1e-6,
         abstol = 1e-6, maxiters = 1000, kwargs...)
-    prob = _is_need_convert!(prob)
+    prob, iip = _is_need_convert!(prob)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
     (; f, order, u0, tspan, p) = prob
     t0 = tspan[1]
     tfinal = tspan[2]
     T = eltype(u0)
-    iip = isinplace(prob)
 
     all(x -> x == order[1], order) ? nothing :
     throw(ArgumentError("BDF method is only for commensurate order FODE"))
@@ -65,7 +64,7 @@ function SciMLBase.__init(prob::FODEProblem, alg::BDF; dt = 0.0, reltol = 1e-6,
     NNr = 2^(Q + 1) * r
 
     # Preallocation of some variables
-    y = [Vector{T}(undef, problem_size) for _ in 1:(N + 1)]
+    y = [u0 for _ in 1:(N + 1)]
     fy = similar(y)
     zn = zeros(T, problem_size, NNr + 1)
 
@@ -98,7 +97,11 @@ function SciMLBase.__init(prob::FODEProblem, alg::BDF; dt = 0.0, reltol = 1e-6,
     mesh = t0 .+ collect(0:N) * dt
     y[1] .= high_order_prob ? u0[1, :] : u0
     temp = high_order_prob ? similar(u0[1, :]) : similar(u0)
-    prob.f(temp, u0, p, t0)
+    if iip
+        prob.f(temp, u0, p, t0)
+    else
+        temp .= prob.f(u0, p, t0)
+    end
     fy[1] = temp
 
     return BDFCache{iip, T}(prob, alg, mesh, u0, alpha, halpha, y, fy, zn, jac, prob.p,
@@ -250,7 +253,11 @@ function BDF_first_approximations(cache::BDFCache{iip, T}) where {iip, T}
     F0 = similar(Y0)
     B0 = similar(Y0)
     for j in 1:s
-        prob.f(F0.u[j], cache.y[1], p, mesh[j + 1])
+        if iip
+            prob.f(F0.u[j], cache.y[1], p, mesh[j + 1])
+        else
+            F0.u[j] .= prob.f(cache.y[1], p, mesh[j + 1])
+        end
         St = ABM_starting_term(cache, mesh[j + 1])
         B0.u[j] = St + halpha * (omega[j + 1] + w[1, j + 1]) * cache.fy[1]
     end
@@ -269,7 +276,11 @@ function BDF_first_approximations(cache::BDFCache{iip, T}) where {iip, T}
     JF = zeros(T, s * problem_size, s * problem_size)
     J_temp = Matrix{T}(undef, problem_size, problem_size)
     for j in 1:s
-        jac(J_temp, cache.y[1], p, mesh[j + 1])
+        if iip
+            jac(J_temp, cache.y[1], p, mesh[j + 1])
+        else
+            J_temp .= jac(cache.y[1], p, mesh[j + 1])
+        end
         JF[((j - 1) * problem_size + 1):(j * problem_size), ((j - 1) * problem_size + 1):(j * problem_size)] .= J_temp
     end
     stop = false
@@ -381,7 +392,7 @@ function jacobian_of_fdefun(f, t, y, p)
 end
 
 function _is_need_convert!(prob::FODEProblem)
-    length(prob.u0) == 1 ? _convert_single_term_to_vectorized_prob!(prob) : prob
+    length(prob.u0) == 1 ? (_convert_single_term_to_vectorized_prob!(prob), true) : (prob, SciMLBase.isinplace(prob))
 end
 
 function _convert_single_term_to_vectorized_prob!(prob::FODEProblem)
@@ -389,7 +400,7 @@ function _convert_single_term_to_vectorized_prob!(prob::FODEProblem)
         if isa(prob.u0, AbstractArray)
             new_prob = remake(prob; order = [prob.order])
         else
-            new_prob = remake(prob; u0 = [prob.u0], order = [prob.order])
+            new_prob = remake(prob; u0 = prob.u0, order = [prob.order])
         end
         return new_prob
     else

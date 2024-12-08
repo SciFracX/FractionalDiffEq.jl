@@ -34,7 +34,7 @@ Base.eltype(::PIEXCache{iip, T}) where {iip, T} = T
 
 function SciMLBase.__init(prob::FODEProblem, alg::PIEX; dt = 0.0, abstol = 1e-6, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
-    prob = _is_need_convert!(prob)
+    prob, iip = _is_need_convert!(prob)
     (; f, order, u0, tspan, p) = prob
     t0 = tspan[1]
     tfinal = tspan[2]

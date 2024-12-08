@@ -23,12 +23,11 @@ Base.eltype(::NonlinearAlgCache{iip, T}) where {iip, T} = T
 function SciMLBase.__init(
         prob::FODEProblem, alg::NonLinearAlg; dt = 0.0, L0 = 1e10, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
-    prob = _is_need_convert!(prob)
+    prob, iip = _is_need_convert!(prob)
     (; f, order, u0, tspan, p) = prob
     t0 = tspan[1]
     tfinal = tspan[2]
     T = eltype(u0)
-    iip = isinplace(prob)
     mesh = collect(t0:dt:tfinal)
     problem_size = length(u0)
     N = round(Int, (tfinal - t0) / dt) + 1

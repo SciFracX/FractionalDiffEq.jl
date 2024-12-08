@@ -58,7 +58,7 @@ function SciMLBase.__init(prob::FDDEProblem, alg::DelayPECE; dt = 0.0, kwargs...
     N = length(t0:dt:(tfinal + dt))
     yp = _generate_similar_array(u0, N, u0)
     y = _generate_similar_array(u0, N - 1, u0)
-    y[1] = _generate_similar_array(u0, 1, h(p, 0))
+    y[1] = (length(u0) == 1) ? _generate_similar_array(u0, 1, h(p, 0)) : u0#_generate_similar_array(u0, 1, h(p, 0))
 
     return DelayPECECache{iip, T}(prob, alg, mesh, u0, order[1], τ, p, y, yp, dt, kwargs)
 end
@@ -87,7 +87,7 @@ function SciMLBase.solve!(cache::DelayPECECache{iip, T}) where {iip, T}
     (; prob, alg, mesh, u0, order, p, dt) = cache
     maxn = length(mesh)
     l = length(u0)
-    initial = _generate_similar_array(u0, 1, prob.h(p, 0))
+    initial = (length(u0) == 1) ? _generate_similar_array(u0, 1, prob.h(p, 0)) : u0
     for n in 1:(maxn - 1)
         order = OrderWrapper(order, mesh[n + 1])
         cache.yp[n + 1] = zeros(T, l)

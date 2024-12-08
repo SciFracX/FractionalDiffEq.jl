@@ -37,12 +37,11 @@ Base.eltype(::PITrapCache{iip, T}) where {iip, T} = T
 function SciMLBase.__init(
         prob::FODEProblem, alg::PITrap; dt = 0.0, abstol = 1e-6, maxiters = 1000, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
-    prob = _is_need_convert!(prob)
+    prob, iip = _is_need_convert!(prob)
     (; f, order, u0, tspan, p) = prob
     t0 = tspan[1]
     tfinal = tspan[2]
     T = eltype(u0)
-    iip = isinplace(prob)
 
     alpha_length = length(order)
     order = (alpha_length == 1) ? order : order[:]

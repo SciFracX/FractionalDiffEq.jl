@@ -39,17 +39,15 @@ Base.eltype(::PECECache{iip, T}) where {iip, T} = T
 
 function SciMLBase.__init(prob::FODEProblem, alg::PECE; dt = 0.0, abstol = 1e-6, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
-    prob = _is_need_convert!(prob)
+    prob, iip = _is_need_convert!(prob)
     (; f, order, u0, tspan, p) = prob
     t0 = tspan[1]
     tfinal = tspan[2]
     T = eltype(u0)
-    iip = isinplace(prob)
     mu = 1
 
     # Check compatibility size of the problem with number of fractional orders
     alpha_length = length(order)
-    order = (alpha_length == 1) ? order : order[:]
     problem_size = length(order)
     u0_size = length(u0)
     high_order_prob = problem_size !== u0_size

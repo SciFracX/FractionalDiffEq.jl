@@ -40,12 +40,11 @@ Base.eltype(::TrapezoidCache{iip, T}) where {iip, T} = T
 function SciMLBase.__init(prob::FODEProblem, alg::Trapezoid; dt = 0.0,
         reltol = 1e-6, abstol = 1e-6, maxiters = 1000, kwargs...)
     dt ≤ 0 ? throw(ArgumentError("dt must be positive")) : nothing
-    prob = _is_need_convert!(prob)
+    prob, iip = _is_need_convert!(prob)
     (; f, order, u0, tspan, p) = prob
     t0 = tspan[1]
     tfinal = tspan[2]
     T = eltype(u0)
-    iip = isinplace(prob)
     all(x -> x == order[1], order) ? nothing :
     throw(ArgumentError("BDF method is only for commensurate order FODE"))
     alpha = order[1] # commensurate ordre FODE

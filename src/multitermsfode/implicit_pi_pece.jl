@@ -146,7 +146,7 @@ function SciMLBase.solve!(cache::MTPECECache{T}) where {T}
 end
 
 function MTPECE_disegna_blocchi(cache::MTPECECache{T}, L, ff, nx0, nu0, t0) where {T}
-    (; r, N) = cache
+    (; r, N, Nr) = cache
 
     nxi::Int = nx0
     nxf::Int = nx0 + L * r - 1
