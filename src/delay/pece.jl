@@ -8,6 +8,7 @@
     p
     y
     yp
+    L
 
     dt
     kwargs
@@ -52,28 +53,18 @@ function SciMLBase.__init(prob::FDDEProblem, alg::DelayPECE; dt = 0.0, kwargs...
     t0 = tspan[1]
     tfinal = tspan[2]
     T = eltype(u0)
-    mesh = collect(Float64, t0:dt:tfinal)
-    size(mesh, 1)
-    yp = collect(Float64, t0:dt:(tfinal + dt))
-    N = length(t0:dt:(tfinal + dt))
-    yp = _generate_similar_array(u0, N, u0)
-    y = _generate_similar_array(u0, N - 1, u0)
-    y[1] = (length(u0) == 1) ? _generate_similar_array(u0, 1, h(p, 0)) : u0#_generate_similar_array(u0, 1, h(p, 0))
+    N = Int(cld(tfinal - t0, dt))
+    L = length(collect(-τ:dt:t0))
+    mesh = collect(range(t0; stop = tfinal, length = N + 1))
+    yp = _generate_similar_array(u0, N+1, u0)
+    y = _generate_similar_array(u0, L+N+1, u0)
+    y[L:-1:1] .= ifelse((length(u0) == 1), map(x->[h(p, x)], collect(-τ:dt:t0)), map(x->h(p, x), collect(-τ:dt:(t0))))
+    y[L+1] = ifelse((length(u0) == 1), [u0], u0)#_generate_similar_array(u0, 1, h(p, 0))
 
-    return DelayPECECache{iip, T}(prob, alg, mesh, u0, order[1], τ, p, y, yp, dt, kwargs)
+    return DelayPECECache{iip, T}(prob, alg, mesh, u0, order, τ, p, y, yp, L, dt, kwargs)
 end
 
-@inline function _generate_similar_array(u0, N, src)
-    if N ≠ 1
-        if length(u0) == 1
-            return [similar([src]) for i in 1:N]
-        else
-            return [similar(src) for i in 1:N]
-        end
-    else
-        return [src]
-    end
-end
+@inline _generate_similar_array(u0, N, src) = ifelse(length(u0) == 1, [[zero(u0)] for _ in 1:N], [zero(src) for _ in 1:N])
 
 @inline function OrderWrapper(order, t)
     if order isa Function
@@ -84,65 +75,70 @@ end
 end
 
 function SciMLBase.solve!(cache::DelayPECECache{iip, T}) where {iip, T}
-    (; prob, alg, mesh, u0, order, p, dt) = cache
-    maxn = length(mesh)
+    if length(cache.constant_lags) == 1
+        return solve_fdde_with_single_lag(cache)
+    else
+        return solve_fdde_with_multiple_lags(cache)
+    end
+end
+
+function solve_fdde_with_single_lag(cache::DelayPECECache{iip, T}) where {iip, T}
+    (; prob, alg, mesh, u0, order, L, p, dt) = cache
+    N = length(mesh)
     l = length(u0)
-    initial = (length(u0) == 1) ? _generate_similar_array(u0, 1, prob.h(p, 0)) : u0
-    for n in 1:(maxn - 1)
-        order = OrderWrapper(order, mesh[n + 1])
-        cache.yp[n + 1] = zeros(T, l)
-        for j in 1:n
+    initial = ifelse(l == 1, [u0], u0)
+    tmp = zeros(T, l)
+    for i in 0:N-2
+        order = OrderWrapper(order, mesh[i + 1])
+        # compute the yp part
+        for j in 0:i
             if iip
-                tmp = zeros(length(cache.yp[1]))
-                prob.f(tmp, cache.y[j], v(cache, j), p, mesh[j])
-                cache.yp[n + 1] = cache.yp[n + 1] +
-                                  generalized_binomials(j - 1, n - 1, order, dt) * tmp
+                prob.f(tmp, cache.y[L+j+1], v(cache, j), p, mesh[j + 1])
+                cache.yp[i + 1] = cache.yp[i + 1] +
+                                  generalized_binomials(j, i, order, dt) * tmp
             else
                 length(u0) == 1 ?
-                (tmp = prob.f(cache.y[j][1], v(cache, j)[1], p, mesh[j])) :
-                (tmp = prob.f(cache.y[j], v(cache, j), p, mesh[j]))
-                @. cache.yp[n + 1] = cache.yp[n + 1] +
-                                     generalized_binomials(j - 1, n - 1, order, dt) * tmp
+                (tmp = prob.f(cache.y[L+j+1][1], v(cache, j)[1], p, mesh[j + 1])) :
+                (tmp = prob.f(cache.y[L+j+1], v(cache, j), p, mesh[j+1]))
+                @. cache.yp[i + 1] = cache.yp[i + 1] +
+                                     generalized_binomials(j, i, order, dt) * tmp
             end
         end
-        cache.yp[n + 1] = cache.yp[n + 1] / gamma(order) + initial
+        cache.yp[i + 1] = cache.yp[i + 1] / gamma(order) + initial
 
-        cache.y[n + 1] = zeros(T, l)
-
-        @fastmath @inbounds @simd for j in 1:n
+        # compute the a part
+        for j in 0:i
             if iip
-                tmp = zeros(T, length(cache.y[1]))
-                prob.f(tmp, cache.y[j], v(cache, j), p, mesh[j])
-                cache.y[n + 1] = cache.y[n + 1] + a(j - 1, n - 1, order, dt) * tmp
+                prob.f(tmp, cache.y[L + j + 1], v(cache, j), p, mesh[j+1])
+                cache.y[L + i + 2] += a(j, i, order, dt) * tmp
             else
                 length(u0) == 1 ?
-                (tmp = prob.f(cache.y[j][1], v(cache, j)[1], p, mesh[j])) :
-                (tmp = prob.f(cache.y[j], v(cache, j), p, mesh[j]))
-                @. cache.y[n + 1] = cache.y[n + 1] + a(j - 1, n - 1, order, dt) * tmp
+                (tmp = prob.f(cache.y[L + j + 1][1], v(cache, j)[1], p, mesh[j+1])) :
+                (tmp = prob.f(cache.y[L + j + 1], v(cache, j), p, mesh[j]))
+                @. cache.y[L + i + 2] += a(j, i, order, dt) * tmp
             end
         end
 
         if iip
-            tmp = zeros(T, l)
-            prob.f(tmp, cache.yp[n + 1], v(cache, n + 1), p, mesh[n + 1])
-            cache.y[n + 1] = cache.y[n + 1] / gamma(order) +
-                             dt^order * tmp / gamma(order + 2) +
-                             initial
+            prob.f(tmp, cache.yp[i + 1], v(cache, i + 1), p, mesh[i + 2])
+            cache.y[L + i + 2] = cache.y[L + i + 2] / gamma(order) +
+                             dt^order * tmp / gamma(order + 2) + initial
         else
             length(u0) == 1 ?
-            (tmp = prob.f(cache.yp[n + 1][1], v(cache, n + 1)[1], p, mesh[n + 1])) :
-            (tmp = prob.f(cache.yp[n + 1], v(cache, n + 1), p, mesh[n + 1]))
-            @. cache.y[n + 1] = cache.y[n + 1] / gamma(order) +
-                                dt^order * tmp / gamma(order + 2) +
-                                initial
+            (tmp = prob.f(cache.yp[i + 1][1], v(cache, i + 1)[1], p, mesh[i + 2])) :
+            (tmp = prob.f(cache.yp[i + 1], v(cache, i + 1), p, mesh[i + 2]))
+            @. cache.y[L + i + 2] = cache.y[L + i + 2] / gamma(order) +
+                                dt^order * tmp / gamma(order + 2) + initial
         end
     end
 
-    return DiffEqBase.build_solution(prob, alg, mesh, cache.y)
+    u = cache.y[L+1:end]
+
+    return DiffEqBase.build_solution(prob, alg, mesh, u)
 end
 
 function a(j::I, n::I, order, dt) where {I <: Integer}
-    if j == n + 1
+    if j == n
         result = 1
     elseif j == 0
         result = n^(order + 1) - (n - order) * (n + 1)^order
@@ -153,11 +149,11 @@ function a(j::I, n::I, order, dt) where {I <: Integer}
 end
 
 function generalized_binomials(j, n, order, dt)
-    @. dt^order / order * ((n - j + 1)^order - (n - j)^order)
+    @. dt^order / order * ((n - j + 1)^order - (n - j )^order)
 end
 
 function v(cache::DelayPECECache{iip, T}, n) where {iip, T}
-    (; prob, mesh, dt, constant_lags, p) = cache
+    (; prob, mesh, dt, constant_lags, L, p) = cache
     τ = constant_lags
     if typeof(τ) <: Function
         m = floor.(Int, τ.(mesh) / dt)
@@ -172,26 +168,32 @@ function v(cache::DelayPECECache{iip, T}, n) where {iip, T}
             end
         end
     else
-        if τ >= (n - 1) * dt
-            if length(prob.u0) == 1
-                return [prob.h(p, (n - 1) * dt - τ)]
+        if isinteger(τ/dt)#y-τ fall in grid point
+            # case when δ == 0
+            if τ/dt < n
+                return cache.y[L + n - Int(τ/dt) + 1]
             else
-                return prob.h(p, (n - 1) * dt - τ)
+                if length(prob.u0) == 1
+                    return [prob.h(p, n * dt - τ)]
+                else
+                    return prob.h(p, n * dt - τ)
+                end
             end
         else
             m = floor(Int, τ / dt)
             δ = m - τ / dt
+            # interpolate by the two nearest points
             if m > 1
-                return δ * cache.y[n - m + 2] + (1 - δ) * cache.y[n - m + 1]
-            elseif m == 1
-                return δ * cache.yp[n + 1] + (1 - δ) * cache.y[n]
+                return δ * cache.y[n - m + L + 2] + (1 - δ) * cache.y[n - m + L + 1]
+            elseif m == 1 # h is larger than τ
+                return δ * cache.yp[n + 1] + (1 - δ) * cache.y[L + n + 1]
             end
         end
     end
 end
 
-function solve_fdde_with_multiple_lags(FDDE::FDDEProblem, dt)
-    (; f, h, order, constant_lags, p, tspan) = FDDE
+function solve_fdde_with_multiple_lags(cache::DelayPECECache)
+    (; f, h, order, constant_lags, p, tspan) = cache
     τ = constant_lags[1]
     mesh = collect(0:dt:tspan[2])
     maxn = length(mesh)

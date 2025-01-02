@@ -67,17 +67,17 @@ function SciMLBase.__init(
 
     y = Vector{T}(undef, N + 1)
     fy = similar(y)
-    zn = zeros(Float64, NNr + 1, orders_length)
+    zn = zeros(T, NNr + 1, orders_length)
 
     nvett = collect(0:(NNr + 1))
-    bn = zeros(orders_length, NNr + 1)
+    bn = [Vector{T}(undef, NNr+1) for _ in 1:orders_length]
     for i in 1:orders_length
         nbeta = nvett .^ bet[i]
-        bn[i, :] = (nbeta[2:end] - nbeta[1:(end - 1)]) * dt^bet[i] / gamma(bet[i] + 1)
+        bn[i] = (nbeta[2:end] - nbeta[1:(end - 1)]) * dt^bet[i] / gamma(bet[i] + 1)
     end
     C = 0
     for i in 1:(orders_length - 1)
-        C = C + lam_rat_i[i] * bn[i, 1]
+        C = C + lam_rat_i[i] * bn[i][1]
     end
 
     mesh = t0 .+ collect(0:N) * dt
@@ -175,7 +175,7 @@ function MTPX_multiterms_quadrato(cache::MTPIEXCache{T}, nxi, nxf, nyi, nyf) whe
     funz_end = nyf + 1
 
     for i in 1:orders_length
-        vett_coef = bn[i, coef_beg:coef_end]
+        vett_coef = bn[i][coef_beg:coef_end]
         if i < orders_length
             vett_funz = [permutedims(cache.y[funz_beg:funz_end]) zeros(1,
                 funz_end - funz_beg + 1)]
@@ -206,13 +206,13 @@ function MTPX_multiterms_triangolo(cache::MTPIEXCache{T}, nxi, nxf, t0) where {T
         for i in 1:(orders_length - 1)
             temp = zn[n + 1, i]
             for j in j_beg:(n - 1)
-                temp = temp + bn[i, n - j] * cache.y[j + 1]
+                temp = temp + bn[i][n - j] * cache.y[j + 1]
             end
             Phi_n = Phi_n - lam_rat_i[i] * temp
         end
         temp = zn[n + 1, orders_length]
         for j in j_beg:(n - 1)
-            temp = temp + bn[orders_length, n - j] * cache.fy[j + 1]
+            temp = temp + bn[orders_length][n - j] * cache.fy[j + 1]
         end
         Phi_n = Phi_n + temp / highest_order_parameter
 

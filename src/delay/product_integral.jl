@@ -75,9 +75,9 @@ function SciMLBase.solve!(cache::DelayPIEXCache{iip, T}) where {iip, T}
             prob.f(tmp, y[n], y_nm1_tau, p, tnm1)
             g[n] = tmp
         else
-            length(u0) == 1 ? (tmp = prob.f(y[n], y_nm1_tau[1], p, tnm1)) :
+            length(u0) == 1 ? (tmp = prob.f(y[n][1], y_nm1_tau[1], p, tnm1)) :
             (tmp = prob.f(y[n], y_nm1_tau, p, tnm1))
-            g[n] = tmp
+            g[n] = (tmp isa AbstractVector) ? tmp : [tmp]
         end
         f_mem = zeros(T, l)
         for j in 0:(n - 1)

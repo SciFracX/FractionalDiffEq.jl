@@ -80,7 +80,6 @@ function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::MTPIRect;
     zn = zeros(NNr + 1, orders_length)
 
     nvett = collect(0:(NNr + 1))
-    #bn = zeros(orders_length, NNr + 1)
     bn = [Vector{T}(undef, NNr+1) for _ in 1:orders_length]
     for i in 1:orders_length
         nbeta = nvett .^ bet[i]
@@ -91,7 +90,7 @@ function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::MTPIRect;
         C = C + lam_rat_i[i] * bn[i][1]
     end
 
-    mesh = collect(0:N) * dt
+    mesh = t0 .+ collect(0:N) * dt
     y[1] = u0[1]
     fy[1] = f(u0[1], p, t0)
 
@@ -103,7 +102,6 @@ end
 function SciMLBase.solve!(cache::MTPIRectCache{T}) where {T}
     (; prob, alg, mesh, u0, y, r, N, Qr) = cache
     t0 = mesh[1]
-    tfinal = mesh[end]
     MTPIRect_triangolo(cache, 1, r - 1, t0)
 
     ff = zeros(1, 2^(Qr + 2))

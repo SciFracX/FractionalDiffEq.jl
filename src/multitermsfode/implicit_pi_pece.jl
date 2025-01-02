@@ -75,9 +75,9 @@ function SciMLBase.__init(
 
     y = Vector{T}(undef, N+1)
     fy = similar(y)
-    zn_pred = zeros(NNr + 1, orders_length)
+    zn_pred = zeros(T, NNr + 1, orders_length)
     if mu > 0
-        zn_corr = zeros(NNr + 1, orders_length)
+        zn_corr = zeros(T, NNr + 1, orders_length)
     else
         zn_corr = 0
     end

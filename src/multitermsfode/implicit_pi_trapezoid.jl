@@ -78,7 +78,7 @@ function SciMLBase.__init(prob::MultiTermsFODEProblem, alg::MTPITrap;
 
     y = Vector{T}(undef, N + 1)
     fy = similar(y)
-    zn = zeros(NNr + 1, orders_length)
+    zn = zeros(T, NNr + 1, orders_length)
 
     nvett = collect(0:(NNr + 1))
     an = [Vector{T}(undef, NNr + 1) for _ in 1:orders_length]#zeros(orders_length, NNr + 1)
@@ -140,10 +140,10 @@ function MTPITrap_disegna_blocchi(cache::MTPITrapCache{T}, L, ff, nx0, nu0, t0) 
     nyi::Int = nu0
     nyf::Int = nu0 + L * r - 1
     is = 1
-    s_nxi = zeros(N)
-    s_nxf = zeros(N)
-    s_nyi = zeros(N)
-    s_nyf = zeros(N)
+    s_nxi = Vector{T}(undef, N)
+    s_nxf = similar(s_nxi)
+    s_nyi = similar(s_nxi)
+    s_nyf = similar(s_nxi)
     s_nxi[1] = nxi
     s_nxf[1] = nxf
     s_nyi[1] = nyi

@@ -27,6 +27,23 @@
         atol = 1e-7)
 end
 
+@testset "Test problem in wang" begin
+    using SpecialFunctions
+
+    f(u, h, p, t) = 2/gamma(3-alpha)*t^(2-alpha) - 1/gamma(2-alpha)*t^(1-alpha) + 2*tau*t - tau^2 - tau - u + h
+    function h(p, t)
+        return 0.0
+    end
+    alpha = 0.5
+    tau = 0.5
+    u0 = 0.0
+    tspan = (0.0, 5.0)
+    analytical(u, h, p, t) = [t^2-t]
+    #fun = DDEFunction(f, analytic = analytical)
+    prob1 = FDDEProblem(f, alpha, u0, h, constant_lags = [tau], tspan)
+    sol = solve(prob1, DelayPECE(), dt=0.01)
+end
+
 @testset "Test DelayPECE method with single constant lag with variable order" begin
     function h(p, t)
         if t == 0
