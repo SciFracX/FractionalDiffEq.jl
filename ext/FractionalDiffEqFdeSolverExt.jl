@@ -8,7 +8,6 @@ function SciMLBase.__solve(prob::FODEProblem, alg::FdeSolverPECE; dt = 0.0, abst
     (; f, order, tspan, u0, p) = prob
 
     iip = isinplace(prob)
-    
     tSpan = [first(tspan), last(tspan)]
     # FdeSolver only supports out-of-place computing
     newf = if iip
@@ -22,9 +21,26 @@ function SciMLBase.__solve(prob::FODEProblem, alg::FdeSolverPECE; dt = 0.0, abst
             return f.(y, par, t)
         end
     end
+
+    jacob_f = if !isnothing(prob.f.jac)
+        if iip
+            function (t, y, par)
+                J = similar(y, length(y), length(y))
+                prob.f.jac(J, u, par, t)
+                return J
+            end
+        else
+            function (t, y, par)
+                prob.f.jac(y, par, t)
+            end
+        end
+    else
+        nothing
+    end
+
     par = p isa SciMLBase.NullParameters ? nothing : p
     length(u0) == 1 && (u0 = first(u0))
-    t, y = FDEsolver(newf, tSpan, u0, order, par, JF = prob.f.jac, h = dt, tol = abstol)
+    t, y = FDEsolver(newf, tSpan, u0, order, par, JF = jacob_f, h = dt, tol = abstol)
     u = collect(Vector{eltype(y)}, eachrow(y))
 
     return DiffEqBase.build_solution(prob, alg, t, u)
