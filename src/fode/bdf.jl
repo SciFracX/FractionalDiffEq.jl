@@ -222,7 +222,7 @@ function BDF_triangolo(
         end
         
         nlprob = NonlinearProblem(bdf_nlprob_f!, yn0)
-        nlsol = solve(nlprob; reltol=cache.reltol, abstol=cache.abstol, maxiters=cache.maxiters)
+        nlsol = solve(nlprob, NewtonRaphson(); reltol=cache.reltol, abstol=cache.abstol, maxiters=cache.maxiters)
         
         cache.y[n1] = nlsol.u
         temp = zeros(length(nlsol.u))
@@ -287,7 +287,7 @@ function BDF_first_approximations(cache::BDFCache{iip, T}) where {iip, T}
     
     Y0_vec = vec(Y0)
     nlprob = NonlinearProblem(bdf_first_nlprob_f!, Y0_vec)
-    nlsol = solve(nlprob; reltol=abstol, abstol=abstol, maxiters=maxiters)
+    nlsol = solve(nlprob, NewtonRaphson(); reltol=abstol, abstol=abstol, maxiters=maxiters)
     
     recursive_unflatten!(Y1, nlsol.u)
     for j in 1:s

@@ -199,7 +199,7 @@ function NG_triangolo(
         end
         
         nlprob = NonlinearProblem(ng_nlprob_f!, yn0)
-        nlsol = solve(nlprob; reltol=cache.reltol, abstol=cache.abstol, maxiters=cache.maxiters)
+        nlsol = solve(nlprob, NewtonRaphson(); reltol=cache.reltol, abstol=cache.abstol, maxiters=cache.maxiters)
         
         cache.y[n1] = nlsol.u
         temp = zeros(length(nlsol.u))
@@ -254,7 +254,7 @@ function NG_first_approximations(cache::NewtonGregoryCache{iip, T}) where {iip, 
     
     Y0_vec = vec(Y0)
     nlprob = NonlinearProblem(ng_first_nlprob_f!, Y0_vec)
-    nlsol = solve(nlprob; reltol=abstol, abstol=abstol, maxiters=maxiters)
+    nlsol = solve(nlprob, NewtonRaphson(); reltol=abstol, abstol=abstol, maxiters=maxiters)
     
     recursive_unflatten!(Y1, nlsol.u)
     for j in 1:s
