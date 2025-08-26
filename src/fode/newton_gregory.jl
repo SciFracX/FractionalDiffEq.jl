@@ -189,36 +189,22 @@ function NG_triangolo(
         Phi_n = St + halpha * (zn[:, n1] + Phi)
 
         yn0 = cache.y[n]
-        temp = zeros(length(yn0))
-        prob.f(temp, yn0, p, mesh[n1])
-        fn0 = temp
-        Jfn0 = Jf_vectorfield(mesh[n1], yn0, Jfdefun)
-        Gn0 = yn0 - halpha * omega[1] * fn0 - Phi_n
-        stop = false
-        it = 0
-        yn1 = similar(yn0)
-        fn1 = similar(yn0)
-        while ~stop
-            JGn0 = zeros(problem_size, problem_size) + I - halpha * omega[1] * Jfn0
-            yn1 = yn0 - vec(JGn0 \ Gn0)
-            prob.f(fn1, yn1, p, mesh[n1])
-            Gn1 = yn1 - halpha * omega[1] * fn1 - Phi_n
-            it = it + 1
-
-            stop = (norm(yn1 - yn0, Inf) < abstol) || (norm(Gn1, Inf) < abstol)
-            if it > maxiters && ~stop
-                @warn "Non Convergence"
-                stop = true
-            end
-
-            yn0 = yn1
-            Gn0 = Gn1
-            if ~stop
-                Jfn0 = Jf_vectorfield(mesh[n1], yn0, Jfdefun)
-            end
+        
+        # Replace manual Newton iteration with NonlinearSolve.jl
+        # Solve: G(y) = y - halpha * omega[1] * f(y) - Phi_n = 0
+        function ng_nlprob_f!(G, y, p_nl)
+            temp = similar(y)
+            prob.f(temp, y, p, mesh[n1])
+            G .= y - halpha * omega[1] * temp - Phi_n
         end
-        cache.y[n1] = yn1
-        cache.fy[n1] = fn1
+        
+        nlprob = NonlinearProblem(ng_nlprob_f!, yn0)
+        nlsol = solve(nlprob; reltol=cache.reltol, abstol=cache.abstol, maxiters=cache.maxiters)
+        
+        cache.y[n1] = nlsol.u
+        temp = zeros(length(nlsol.u))
+        prob.f(temp, nlsol.u, p, mesh[n1])
+        cache.fy[n1] = temp
     end
 end
 
@@ -251,38 +237,29 @@ function NG_first_approximations(cache::NewtonGregoryCache{iip, T}) where {iip, 
         JF[((j - 1) * problem_size + 1):(j * problem_size), ((j - 1) * problem_size + 1):(j * problem_size)] = Jf_vectorfield(
             mesh[j + 1], cache.y[1], Jfdefun)
     end
-    stop = false
-    it = 0
     F1 = similar(F0)
     Y1 = similar(Y0)
-    while ~stop
-        JG = Ims - W * JF
-        recursive_unflatten!(Y1, vec(Y0) - JG \ G0)
-
+    
+    # Replace manual Newton iteration with NonlinearSolve.jl
+    # Solve: G(Y) = Y - B0 - W * F(Y) = 0
+    function ng_first_nlprob_f!(G, Y_vec, p_nl)
+        recursive_unflatten!(Y1, Y_vec)
         for j in 1:s
-            prob.f(F1.u[j], Y1.u[j], p, mesh[j + 1])
+            temp = similar(Y1.u[j])
+            prob.f(temp, Y1.u[j], p, mesh[j + 1])
+            F1.u[j] .= temp
         end
-        G1 = vec(Y1 - B0) - W * vec(F1)
-
-        it = it + 1
-
-        stop = (norm(Y1 - Y0, Inf) < abstol) || (norm(G1, Inf) < abstol)
-        if it > maxiters && ~stop
-            @warn "Non Convergence"
-            stop = 1
-        end
-
-        Y0 = Y1
-        G0 = G1
-        if ~stop
-            for j in 1:s
-                JF[((j - 1) * problem_size + 1):(j * problem_size), ((j - 1) * problem_size + 1):(j * problem_size)] = Jf_vectorfield(
-                    mesh[j + 1], Y1.u[j], Jfdefun)
-            end
-        end
+        G .= vec(Y1 - B0) - W * vec(F1)
     end
+    
+    Y0_vec = vec(Y0)
+    nlprob = NonlinearProblem(ng_first_nlprob_f!, Y0_vec)
+    nlsol = solve(nlprob; reltol=abstol, abstol=abstol, maxiters=maxiters)
+    
+    recursive_unflatten!(Y1, nlsol.u)
     for j in 1:s
         cache.y[j + 1] = Y1.u[j]
+        prob.f(F1.u[j], Y1.u[j], p, mesh[j + 1])
         cache.fy[j + 1] = F1.u[j]
     end
 end
