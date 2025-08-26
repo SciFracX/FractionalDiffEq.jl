@@ -192,36 +192,22 @@ function TrapTriangolo(
         Phi_n = St + halpha * (zn[:, n1] + Phi)
 
         yn0 = cache.y[n]
-        temp = zeros(length(yn0))
-        prob.f(temp, yn0, p, mesh[n1])
-        fn0 = temp
-        Jfn0 = Jf_vectorfield(mesh[n1], yn0, Jfdefun)
-        Gn0 = yn0 - halpha * omega[1] * fn0 - Phi_n
-        stop = false
-        it = 0
-        yn1 = similar(yn0)
-        fn1 = similar(yn0)
-        while ~stop
-            JGn0 = zeros(problem_size, problem_size) + I - halpha * omega[1] * Jfn0
-            yn1 = yn0 - vec(JGn0 \ Gn0)
-            prob.f(fn1, yn1, p, mesh[n1])
-            Gn1 = yn1 - halpha * omega[1] * fn1 - Phi_n
-            it = it + 1
-
-            stop = (norm(yn1 - yn0, Inf) < abstol) || (norm(Gn1, Inf) < abstol)
-            if it > maxiters && ~stop
-                @warn "Non Convergence"
-                stop = true
-            end
-
-            yn0 = yn1
-            Gn0 = Gn1
-            if ~stop
-                Jfn0 = Jf_vectorfield(mesh[n1], yn0, Jfdefun)
-            end
+        
+        # Replace manual Newton iteration with NonlinearSolve.jl
+        # Solve: G(y) = y - halpha * omega[1] * f(y) - Phi_n = 0
+        function trap_nlprob_f!(G, y, p_nl)
+            temp = similar(y)
+            prob.f(temp, y, p, mesh[n1])
+            G .= y - halpha * omega[1] * temp - Phi_n
         end
-        cache.y[n1] = yn1
-        cache.fy[n1] = fn1
+        
+        nlprob = NonlinearProblem(trap_nlprob_f!, yn0)
+        nlsol = solve(nlprob; reltol=cache.reltol, abstol=cache.abstol, maxiters=cache.maxiters)
+        
+        cache.y[n1] = nlsol.u
+        temp = zeros(length(nlsol.u))
+        prob.f(temp, nlsol.u, p, mesh[n1])
+        cache.fy[n1] = temp
     end
 end
 

@@ -1,7 +1,7 @@
 module FractionalDiffEq
 
 using LinearAlgebra, Reexport, SciMLBase, SpecialFunctions, SparseArrays, ToeplitzMatrices, RecursiveArrayTools,
-      FFTW, ForwardDiff, Polynomials, HypergeometricFunctions, DiffEqBase, ConcreteStructs, FastClosures
+      FFTW, ForwardDiff, Polynomials, HypergeometricFunctions, DiffEqBase, ConcreteStructs, FastClosures, NonlinearSolve
 
 import SciMLBase: __solve
 import DiffEqBase: solve
