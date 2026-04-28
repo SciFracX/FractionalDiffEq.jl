@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1736780497855,
+  "lastUpdate": 1777387930216,
   "repoUrl": "https://github.com/SciFracX/FractionalDiffEq.jl",
   "entries": {
     "Benchmark Results": [
@@ -924,6 +924,48 @@ window.BENCHMARK_DATA = {
             "value": 14508717,
             "unit": "ns",
             "extra": "gctime=0\nmemory=19959280\nallocs=312751\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"evals_set\":false,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "52615090+ErikQQY@users.noreply.github.com",
+            "name": "Qingyu Qu",
+            "username": "ErikQQY"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d10317b89257b617b74a3bdc6f63933d96188278",
+          "message": "Update Project.toml",
+          "timestamp": "2026-04-28T22:48:26+08:00",
+          "tree_id": "6f095e0f58dc3274c2942396cee99180c0640a47",
+          "url": "https://github.com/SciFracX/FractionalDiffEq.jl/commit/d10317b89257b617b74a3bdc6f63933d96188278"
+        },
+        "date": 1777387928641,
+        "tool": "julia",
+        "benches": [
+          {
+            "name": "FLMM/BDF",
+            "value": 13895154.5,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=19867432\nallocs=310632\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "FLMM/NewtonGregory",
+            "value": 14529489,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=20434736\nallocs=336427\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "FLMM/Trapezoid",
+            "value": 14617543,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=20290016\nallocs=334235\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
           }
         ]
       }
